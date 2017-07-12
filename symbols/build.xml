@@ -1,0 +1,16 @@
+<project name="myNetPCB" basedir="." default="jar">
+    <property name="target.dir"     value="classes"/>
+    <property name="file.name"   value="symbols.jar"/>    
+	<property name="deploy.dir" value="../../deploy/delete"/>
+	
+
+    <target name="compile">        
+        <javac srcdir="src" destdir="${target.dir}"/>
+    </target>
+
+    <target name="jar" depends="compile">        
+        <jar destfile="${deploy.dir}/${file.name}" basedir="${target.dir}">
+        </jar>
+    </target>
+
+</project>
