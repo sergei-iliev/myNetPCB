@@ -18,6 +18,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.pad.Net;
 import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.AlphaComposite;
@@ -38,13 +39,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Resizeable,ClearanceTarget,Sublineable,Externalizable{
+public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Resizeable,ClearanceTarget,Sublineable,Externalizable,Net{
     
     public  Point floatingStartPoint; //***the last wire point
 
@@ -58,6 +60,7 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
     
     private int clearance;
     
+    private String net;
     
     public PCBTrack(int thickness,int layermaskId){
         super(0,0,0,0,thickness,layermaskId);
@@ -172,7 +175,11 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
         if(!shape.getBoundingShape().intersects(this.getBoundingShape().getBounds())){
            return; 
         }
-    
+
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))){
+            return;
+        }
+        
         double lineThickness;
         if(this.clearance!=0){
           lineThickness=(thickness+2*this.getClearance()) *scale.getScaleX();            
@@ -572,7 +579,9 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
         if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
              return;  //not on the same layer
         } 
-        
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))){
+            return;
+        }
         GeneralPath line=null;
         int lineThickness;
         
@@ -595,22 +604,11 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
         g2.draw(line);
 
     }
-    @Override
-    public AbstractMemento getState(MementoType operationType) {
-        AbstractMemento memento = new Memento(operationType);
-        memento.saveStateFrom(this);
-        return memento;
-    }
-
-    @Override
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
-    }
 
     @Override
     public String toXML() {
         StringBuffer sb=new StringBuffer();
-        sb.append("<track layer=\""+this.copper.getName()+"\" thickness=\""+this.getThickness()+"\" clearance=\""+clearance+"\">");
+        sb.append("<track layer=\""+this.copper.getName()+"\" thickness=\""+this.getThickness()+"\" clearance=\""+clearance+"\" net=\""+this.net+"\" >");
         for(Point point:points){
             sb.append(point.x+","+point.y+","); 
         }        
@@ -625,20 +623,42 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
         this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
         this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));
-        //this.endType=EndType.values()[element.getAttribute("endtype").equals("")?1:Integer.parseInt(element.getAttribute("endtype"))];
+        this.net=element.getAttribute("net");
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
         while(st.hasMoreTokens()){
           this.addPoint(new Point(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())));  
         }    
     }
 
+    @Override
+    public String getNetName() {
+        
+        return this.net;
+    }
 
+    @Override
+    public void setNetName(String net) {
+       this.net=net;
+    }
+
+    @Override
+    public AbstractMemento getState(MementoType operationType) {
+        AbstractMemento memento = new Memento(operationType);
+        memento.saveStateFrom(this);
+        return memento;
+    }
+
+    @Override
+    public void setState(AbstractMemento memento) {
+        memento.loadStateTo(this);
+    }
     static class Memento extends AbstractMemento<Board, PCBTrack> {
 
         private int Ax[];
 
         private int Ay[];
 
+        private String net;
         
         public Memento(MementoType mementoType) {
             super(mementoType);
@@ -649,6 +669,7 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
         public void loadStateTo(PCBTrack shape) {
             super.loadStateTo(shape);
             shape.points.clear();
+            shape.net=net;
             for (int i = 0; i < Ax.length; i++) {
                 shape.addPoint(new Point(Ax[i], Ay[i])); 
             }
@@ -663,7 +684,7 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
         @Override
         public void saveStateFrom(PCBTrack shape) {
             super.saveStateFrom(shape);
-            
+            net=shape.net;
             Ax = new int[shape.points.size()];
             Ay = new int[shape.points.size()];
             for (int i = 0; i < shape.points.size(); i++) {
@@ -677,6 +698,7 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
             super.Clear();
             Ax = null;
             Ay = null;
+            net=null;
         }
 
         @Override
@@ -691,7 +713,7 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
             
             return (getUUID().equals(other.getUUID()) &&layerindex==other.layerindex&&
                     getMementoType().equals(other.getMementoType()) &&
-                    thickness==other.thickness&&
+                    thickness==other.thickness&&Objects.equals(net, other.net)&&
                     Arrays.equals(Ax, other.Ax) &&
                     Arrays.equals(Ay, other.Ay));
 
@@ -704,6 +726,7 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
             hash += thickness+layerindex;
             hash += Arrays.hashCode(Ax);
             hash += Arrays.hashCode(Ay);
+            hash += Objects.hashCode(net);
             return hash;
         }
 

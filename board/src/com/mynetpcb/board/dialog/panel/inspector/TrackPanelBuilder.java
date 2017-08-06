@@ -24,7 +24,7 @@ import javax.swing.SwingConstants;
 public class TrackPanelBuilder extends AbstractPanelBuilder<Shape>{
         
     public TrackPanelBuilder(BoardComponent component) {
-       super(component,new GridLayout(7,1));
+       super(component,new GridLayout(8,1));
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
@@ -51,7 +51,11 @@ public class TrackPanelBuilder extends AbstractPanelBuilder<Shape>{
                 label=new JLabel("Clearance"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
                 clearanceField=new JTextField(); clearanceField.addKeyListener(this); panel.add(clearanceField,BorderLayout.CENTER);
                 layoutPanel.add(panel);                      
-                
+        //***Net
+                panel=new JPanel(); panel.setLayout(new BorderLayout());
+                label=new JLabel("Net"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
+                netField=new JTextField(""); netField.addKeyListener(this); panel.add(netField,BorderLayout.CENTER);
+                layoutPanel.add(panel);                
     }
 
     @Override
@@ -62,7 +66,7 @@ public class TrackPanelBuilder extends AbstractPanelBuilder<Shape>{
         topField.setEnabled(p==null?false:true);
         leftField.setText(toUnitX(p==null?0:p.x));
         topField.setText(toUnitY(p==null?0:p.y));
-        
+        netField.setText(line.getNetName());
         setSelectedItem(layerCombo, line.getCopper());
         
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(line.getThickness())));
@@ -94,6 +98,9 @@ public class TrackPanelBuilder extends AbstractPanelBuilder<Shape>{
         }
         if(e.getSource()==this.clearanceField){
            line.setClearance(Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
+        }
+        if(e.getSource()==this.netField){
+           line.setNetName(this.netField.getText());
         }
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint(); 

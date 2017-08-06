@@ -211,9 +211,9 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
         submenu.add(menuItem);
         
         filemenu.addSeparator();
-        menuItem = new JMenuItem("Print Preview");
-        menuItem.addActionListener(this);
-        filemenu.add(menuItem);
+        //menuItem = new JMenuItem("Print Preview");
+        //menuItem.addActionListener(this);
+        //filemenu.add(menuItem);
         menuItem = new JMenuItem("Print");
         menuItem.setActionCommand("printcircuit");
         menuItem.addActionListener(this);

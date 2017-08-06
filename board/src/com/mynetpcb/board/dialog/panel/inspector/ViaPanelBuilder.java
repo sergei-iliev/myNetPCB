@@ -20,7 +20,7 @@ import javax.swing.SwingConstants;
 public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
     
     public ViaPanelBuilder(BoardComponent component) {
-        super(component, new GridLayout(4, 1));
+        super(component, new GridLayout(5, 1));
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
@@ -41,7 +41,12 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("Via size"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
                 widthField=new JTextField("0"); widthField.addKeyListener(this); panel.add(widthField,BorderLayout.CENTER);
-                layoutPanel.add(panel);  
+                layoutPanel.add(panel); 
+        //***Net
+                panel=new JPanel(); panel.setLayout(new BorderLayout());
+                label=new JLabel("Net"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
+                netField=new JTextField(""); netField.addKeyListener(this); panel.add(netField,BorderLayout.CENTER);
+                layoutPanel.add(panel);                
     }
 
     @Override
@@ -49,7 +54,7 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
         PCBVia via=(PCBVia)getTarget(); 
         leftField.setText(toUnitX(via.getX()));
         topField.setText(toUnitY(via.getY()));
-        
+        netField.setText(via.getNetName());
         thicknessField.setText(toUnit(via.getThickness()));
         widthField.setText(toUnit(via.getWidth()));
     }
@@ -76,7 +81,9 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
         if(e.getSource()==this.widthField){
            via.setWidth(fromUnit(this.widthField.getText()));
         }
-        
+        if(e.getSource()==this.netField){
+           via.setNetName(this.netField.getText());
+        }
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint(); 
     }

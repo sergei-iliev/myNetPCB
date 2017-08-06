@@ -18,6 +18,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.pad.Net;
 import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.AlphaComposite;
@@ -37,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,7 +47,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint>,ClearanceSource,Resizeable,Externalizable{
+public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint>,ClearanceSource,Resizeable,Externalizable,Net{
 
     public  Point floatingStartPoint;
     
@@ -56,6 +58,8 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
     private int clearance;
     
     private Polygonal polygon;
+    
+    private String net;
     
     public PCBCopperArea(int layermaskId) {
         super(0,0,0,0,0,layermaskId);
@@ -398,7 +402,7 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
     @Override
     public String toXML() {
         StringBuffer sb=new StringBuffer();
-        sb.append("<copperarea layer=\""+this.copper.getName()+"\" clearance=\""+this.clearance+"\">");
+        sb.append("<copperarea layer=\""+this.copper.getName()+"\" clearance=\""+this.clearance+"\" net=\""+this.net+"\" >");
         for(Point point:polygon.getLinePoints()){
             sb.append(point.x+","+point.y+","); 
         }        
@@ -412,6 +416,7 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
     
         this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
         this.clearance=Integer.parseInt(element.getAttribute("clearance"));
+        this.net=element.getAttribute("net");
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
         while(st.hasMoreTokens()){
           this.addPoint(new Point(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())));  
@@ -465,6 +470,17 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
     }
     
     @Override
+    public String getNetName() {
+        
+        return this.net;
+    }
+
+    @Override
+    public void setNetName(String net) {
+       this.net=net;
+    }
+    
+    @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
@@ -482,6 +498,8 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
 
         private int Ay[];
         
+        private String net;
+        
         public Memento(MementoType mementoType) {
             super(mementoType);
 
@@ -490,6 +508,7 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
         @Override
         public void loadStateTo(PCBCopperArea shape) {
             super.loadStateTo(shape);
+            shape.net=net;
             shape.polygon.reset();
             for (int i = 0; i < Ax.length; i++) {
                 shape.addPoint(new Point(Ax[i], Ay[i])); 
@@ -505,7 +524,7 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
         @Override
         public void saveStateFrom(PCBCopperArea shape) {
             super.saveStateFrom(shape);
-            
+            net=shape.net;
             Ax = new int[shape.polygon.getLinePoints().size()];
             Ay = new int[shape.polygon.getLinePoints().size()];
             for (int i = 0; i < shape.polygon.getLinePoints().size(); i++) {
@@ -519,6 +538,7 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
             super.Clear();
             Ax = null;
             Ay = null;
+            net=null;
         }
 
         @Override
@@ -533,7 +553,7 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
             
             return (getUUID().equals(other.getUUID())&&fill==other.fill&&layerindex==other.layerindex&&
                     getMementoType().equals(other.getMementoType()) &&
-                    Arrays.equals(Ax, other.Ax) &&
+                    Arrays.equals(Ax, other.Ax) &&Objects.equals(net, other.net)&&
                     Arrays.equals(Ay, other.Ay));
 
         }
@@ -546,6 +566,7 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
             hash+=fill;
             hash += Arrays.hashCode(Ax);
             hash += Arrays.hashCode(Ay);
+            hash+=Objects.hashCode(net);
             return hash;
         }
 

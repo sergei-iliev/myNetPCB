@@ -1,7 +1,7 @@
 package com.mynetpcb.core.pad;
 
 
-public interface Netaware {
+public interface Net {
     
     public String getNetName();
     

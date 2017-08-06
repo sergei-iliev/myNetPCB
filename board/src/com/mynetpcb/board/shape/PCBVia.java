@@ -14,6 +14,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.pad.Net;
 import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.BasicStroke;
@@ -25,6 +26,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
+import java.util.Objects;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -33,9 +36,11 @@ import org.w3c.dom.Node;
  * thickness -> internal diameter(drill size)
  * width     -> external diameter(via size)
  */
-public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externalizable{
+public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externalizable,Net{
 
     private int clearance;
+    
+    private String net;
     
     public enum Type{
         BURIED, 
@@ -134,9 +139,6 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
                                                                      ViewportWindow viewportWindow,
                                                                      AffineTransform scale, T source) {
         Shape shape=(Shape)source;
-//        if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
-//             return;  //not on the same layer
-//        } 
         
         Rectangle inner=getBoundingShape().getBounds();             
         inner.grow(source.getClearance(), source.getClearance());
@@ -145,9 +147,9 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
         if(!scaledRect.intersects(viewportWindow)){
           return;   
         }
-        
-        
-        
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))){
+            return;
+        }
         FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
         Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
         
@@ -163,6 +165,11 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
 
     @Override
     public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2, T source) {
+        
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))){
+            return;
+        }
+        
         FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
         Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
         
@@ -190,7 +197,7 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
     @Override
     public String toXML() {
         StringBuffer xml = new StringBuffer();
-        xml.append("<via type=\"\" x=\""+getX()+"\" y=\""+getY()+"\" width=\""+getWidth()+"\" drill=\""+thickness+"\"   clearance=\""+clearance+"\"/>");
+        xml.append("<via type=\"\" x=\""+getX()+"\" y=\""+getY()+"\" width=\""+getWidth()+"\" drill=\""+thickness+"\"   clearance=\""+clearance+"\" net=\""+this.net+"\" />");
         return xml.toString();
     }
 
@@ -202,7 +209,17 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
         setWidth(Integer.parseInt(element.getAttribute("width")));
         setThickness(Integer.parseInt(element.getAttribute("drill")));
         this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));
+        this.net=element.getAttribute("net");
+    }
+    @Override
+    public String getNetName() {
+        
+        return this.net;
+    }
 
+    @Override
+    public void setNetName(String net) {
+       this.net=net;
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {
@@ -224,6 +241,8 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
         
         private int width;
         
+        private String net;
+        
         public Memento(MementoType mementoType){
            super(mementoType); 
         }
@@ -233,6 +252,7 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
             shape.setX(Ax);
             shape.setY(Ay);
             shape.setWidth(width);
+            shape.setNetName(net);
         }
         
 
@@ -241,6 +261,7 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
             Ax=shape.getX();
             Ay=shape.getY();
             width=shape.getWidth();
+            net=shape.net;
         }
         @Override
         public boolean equals(Object obj){
@@ -256,7 +277,7 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
             return(getUUID().equals(other.getUUID())&&
                    getMementoType().equals(other.getMementoType())&&
                    Ax==other.Ax&&thickness==other.thickness&&width==other.width&&
-                   Ay==other.Ay                
+                   Ay==other.Ay&&Objects.equals(this.net, other.net)                
                 );
                       
         }
@@ -265,16 +286,16 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
         public int hashCode(){
             int hash=getUUID().hashCode();
                 hash+=this.getMementoType().hashCode();
-                hash+=Ax+Ay+thickness+width;
+                hash+=Ax+Ay+thickness+width+Objects.hashCode(net);
             return hash;
         }        
         public boolean isSameState(Board unit) {
-            PCBVia junction=(PCBVia)unit.getShape(getUUID());
+            PCBVia via=(PCBVia)unit.getShape(getUUID());
             return( 
-                  Ax==junction.getX()&&
-                  Ay==junction.getY()&&
-                  thickness==junction.getThickness()&&
-                  width==junction.getWidth()
+                  Ax==via.getX()&&
+                  Ay==via.getY()&&
+                  thickness==via.getThickness()&&
+                  width==via.getWidth()&&Objects.equals(this.net, via.net)
                 );
         }
     }

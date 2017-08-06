@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -395,6 +396,10 @@ public class PCBFootprint extends Shape implements PCBShape,ClearanceTarget,Text
         
         for(Shape pad:shapes){
             if(pad instanceof Pad){
+                if(Objects.equals(source.getNetName(), ((Pad)pad).getNetName())&&(!("".equals(source.getNetName())))){
+                    continue;
+                }
+                
                 ((Pad)pad).drawClearance(g2,viewportWindow,scale,source);
             }
         }
@@ -405,6 +410,9 @@ public class PCBFootprint extends Shape implements PCBShape,ClearanceTarget,Text
     public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2, T source) {
         for(Shape pad:shapes){
             if(pad instanceof Pad){
+                if(Objects.equals(source.getNetName(), ((Pad)pad).getNetName())&&(!("".equals(source.getNetName())))){
+                    continue;
+                }
                 ((Pad)pad).printClearance(g2,source);
             }
         }

@@ -19,7 +19,7 @@ import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.core.pad.Netaware;
+import com.mynetpcb.core.pad.Net;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.popup.FootprintPopupMenu;
 import com.mynetpcb.pad.unit.Footprint;
@@ -44,7 +44,7 @@ import org.w3c.dom.Node;
  *Pad is a composite shape consisting of circle,ellipse,rectangle combination
  * @author Sergey Iliev
  */
-public class Pad extends Shape implements Pinable, Netaware, Textable, Externalizable {
+public class Pad extends Shape implements Pinable, Net, Textable, Externalizable {
 
     public enum Shape {
         RECTANGULAR,
