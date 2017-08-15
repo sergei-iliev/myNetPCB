@@ -1,6 +1,8 @@
 package com.mynetpcb.gerber.processor;
 
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.gerber.processor.command.CommandArcProcessor;
 import com.mynetpcb.gerber.processor.command.CommandCircleProcessor;
@@ -36,7 +38,7 @@ public class CommandProcessor implements Processor{
    }
    
    
-   public void process(Board board,int layermask){
+   public void process(Unit<? extends Shape> board,int layermask){
        for(Processor processor:processors){
            processor.process(board, layermask);
        }

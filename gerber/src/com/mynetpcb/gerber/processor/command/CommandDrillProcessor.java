@@ -1,15 +1,16 @@
 package com.mynetpcb.gerber.processor.command;
 
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.shape.PCBHole;
-import com.mynetpcb.board.shape.PCBVia;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.shape.FootprintShape;
+import com.mynetpcb.core.board.shape.HoleShape;
+import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.Pinaware;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
-import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
-import com.mynetpcb.gerber.attribute.drill.ComponentDrillAttribute;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.Pad;
 
@@ -25,7 +26,7 @@ public class CommandDrillProcessor implements Processor {
     }
 
     @Override
-    public void process(Board board, int layermask) {
+    public void process(Unit<? extends Shape> board, int layermask) {
         if(layermask==Layer.NPTH_LAYER_DRILL){
            //non plated
            processPads(board,board.getHeight());
@@ -38,12 +39,12 @@ public class CommandDrillProcessor implements Processor {
 
     }
     
-    private void processPads(Board board,int height){
+    private void processPads(Unit<? extends Shape> board,int height){
         int lastX=-1,lastY=-1;
 
-        List<PCBFootprint> footprints= board.getShapes(PCBFootprint.class);              
-        for(PCBFootprint footrpint:footprints){
-            Collection<Pad> pads=footrpint.getPins();
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
+        for(FootprintShape footrpint:footprints){
+            Collection<Pad> pads=((Pinaware)footrpint).getPins();
             for(Pad pad:pads){
                 if(pad.getType()==Pad.Type.THROUGH_HOLE){
                     ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.ComponentDrill,pad.getDrill().getWidth());
@@ -68,11 +69,11 @@ public class CommandDrillProcessor implements Processor {
         }
     }    
     
-    private void processHoles(Board board,int height){
+    private void processHoles(Unit<? extends Shape>  board,int height){
         int lastX=-1,lastY=-1;
 
-        List<PCBHole> holes= board.getShapes(PCBHole.class);              
-        for(PCBHole hole:holes){
+        List<HoleShape> holes= board.getShapes(HoleShape.class);              
+        for(HoleShape hole:holes){
             ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.MechanicalDrill,hole.getWidth());
                     //set aperture if not same
             context.resetAperture(aperture);
@@ -95,11 +96,11 @@ public class CommandDrillProcessor implements Processor {
         
     }  
     
-    public void processVias(Board board,int height){
+    public void processVias(Unit<? extends Shape>  board,int height){
         int lastX=-1,lastY=-1;
         
-        List<PCBVia> vias= board.getShapes(PCBVia.class);              
-        for(PCBVia via:vias){
+        List<ViaShape> vias= board.getShapes(ViaShape.class);              
+        for(ViaShape via:vias){
             ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.ViaDrill,via.getThickness());
             //set aperture if not same
             context.resetAperture(aperture);

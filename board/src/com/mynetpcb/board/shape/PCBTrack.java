@@ -2,23 +2,18 @@ package com.mynetpcb.board.shape;
 
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.board.ClearanceSource;
-import com.mynetpcb.core.board.ClearanceTarget;
 import com.mynetpcb.core.board.CompositeLayerable;
 import com.mynetpcb.core.board.PCBShape;
-import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Resizeable;
+import com.mynetpcb.core.board.shape.TrackShape;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.line.LinePoint;
-import com.mynetpcb.core.capi.line.Sublineable;
-import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.core.pad.Net;
 import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.AlphaComposite;
@@ -46,7 +41,7 @@ import java.util.StringTokenizer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Resizeable,ClearanceTarget,Sublineable,Externalizable,Net{
+public class PCBTrack extends TrackShape implements PCBShape{
     
     public  Point floatingStartPoint; //***the last wire point
 
@@ -63,7 +58,7 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
     private String net;
     
     public PCBTrack(int thickness,int layermaskId){
-        super(0,0,0,0,thickness,layermaskId);
+        super(thickness,layermaskId);
         this.points=new LinkedList<LinePoint>();    
         this.fillColor=Color.BLUE;
         this.floatingStartPoint = new Point();
@@ -168,16 +163,15 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
     public <T extends PCBShape & ClearanceSource> void drawClearence(Graphics2D g2,
                                                                      ViewportWindow viewportWindow,
                                                                      AffineTransform scale, T source) {      
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
+            return;
+        }
         Shape shape=(Shape)source;
         if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
              return;  //not on the same layer
-        } 
+        }
         if(!shape.getBoundingShape().intersects(this.getBoundingShape().getBounds())){
            return; 
-        }
-
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))){
-            return;
         }
         
         double lineThickness;
@@ -579,7 +573,7 @@ public class PCBTrack extends Shape implements PCBShape,Trackable<LinePoint>,Res
         if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
              return;  //not on the same layer
         } 
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))){
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
             return;
         }
         GeneralPath line=null;

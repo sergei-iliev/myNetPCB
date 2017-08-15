@@ -1,18 +1,24 @@
 package com.mynetpcb.gerber.processor.command;
 
-import com.mynetpcb.board.shape.PCBCopperArea;
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.shape.PCBLabel;
-import com.mynetpcb.board.shape.PCBTrack;
-import com.mynetpcb.board.shape.PCBVia;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.ClearanceTarget;
+import com.mynetpcb.core.board.shape.CopperAreaShape;
+import com.mynetpcb.core.board.shape.FootprintShape;
+import com.mynetpcb.core.board.shape.TrackShape;
+import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.line.LinePoint;
+import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.pad.shape.PadShape;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.gerber.command.extended.LevelPolarityCommand;
 import com.mynetpcb.gerber.command.function.FunctionCommand;
-import com.mynetpcb.pad.shape.Pad;
+import com.mynetpcb.pad.shape.GlyphLabel;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -29,12 +35,12 @@ public class CommandRegionProcessor implements Processor {
     }
 
     @Override
-    public void process(Board board, int layermask) {
-        Collection<PCBCopperArea> regions=board.getShapes(PCBCopperArea.class,layermask);  
+    public void process(Unit<? extends Shape> board, int layermask) {
+        Collection<CopperAreaShape> regions=board.getShapes(CopperAreaShape.class,layermask);  
         
-        for(PCBCopperArea region:regions){
+        for(CopperAreaShape region:regions){
           //draw in dark polarity region
-          processRegion(region.getLinePoints(),board.getHeight());
+          processRegion(((Trackable<LinePoint>)region).getLinePoints(),board.getHeight());
         
          //draw in clean polarity stuff in it
           context.resetPolarity(LevelPolarityCommand.Polarity.CLEAR);  
@@ -47,21 +53,6 @@ public class CommandRegionProcessor implements Processor {
           context.resetPolarity(LevelPolarityCommand.Polarity.DARK);    
         }
 
-    }
-    private void processText(Board board,PCBCopperArea source){
-        List<PCBLabel> labels= board.getShapes(PCBLabel.class,source.getCopper().getLayerMaskID());
-        List<Point> region=new ArrayList<>(4);
-        for(PCBLabel label:labels){
-            Rectangle rect=label.getTexture().getBoundingShape();        
-            rect.grow(label.getClearance()!=0?label.getClearance():source.getClearance(), label.getClearance()!=0?label.getClearance():source.getClearance());
-            region.clear();
-            region.add(new Point(rect.x,rect.y));
-            region.add(new Point(rect.x+rect.width,rect.y));
-            region.add(new Point(rect.x+rect.width,rect.y+rect.height));
-            region.add(new Point(rect.x,rect.y+rect.height));
-            
-            processRegion(region, board.getHeight());
-        }
     }
 
     private void processRegion(List<? extends Point> region,int height){
@@ -122,18 +113,38 @@ public class CommandRegionProcessor implements Processor {
         context.getOutput().append(command.print());        
     }
     
-    private void processPads(Board board,PCBCopperArea source){
+        private void processText(Unit<? extends Shape> board,CopperAreaShape source){
+            List<Point> region=new ArrayList<>(4);
+            for(GlyphLabel label:board.<GlyphLabel>getShapes(GlyphLabel.class,source.getCopper().getLayerMaskID())){      
+               Rectangle rect=label.getTexture().getBoundingShape();
+               rect.grow(( ((ClearanceTarget)label).getClearance()!=0?((ClearanceTarget)label).getClearance():source.getClearance()), ((ClearanceTarget)label).getClearance()!=0?((ClearanceTarget)label).getClearance():source.getClearance());  
+               region.clear();
+               region.add(new Point(rect.x,rect.y));
+               region.add(new Point(rect.x+rect.width,rect.y));
+               region.add(new Point(rect.x+rect.width,rect.y+rect.height));
+               region.add(new Point(rect.x,rect.y+rect.height));
+                
+               processRegion(region, board.getHeight());
+            }                                      
+        }
+        
+    
+    private void processPads(Unit<? extends Shape> board,CopperAreaShape source){
         int height=board.getHeight();       
         int lastX=-1,lastY=-1;
         StringBuffer commandLine=new StringBuffer();
         
-        List<PCBFootprint> footprints= board.getShapes(PCBFootprint.class);                     
-        for(PCBFootprint footrpint:footprints){
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);                     
+        for(FootprintShape footrpint:footprints){
+            
             //set linear mode if not set
             context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
 
-            Collection<Pad> pads=footrpint.getPins();
-            for(Pad pad:pads){
+            Collection<PadShape> pads=footrpint.getPins();
+            for(PadShape pad:pads){
+                if(Utilities.isSameNet(source,pad)){
+                    continue;
+                }
                 if(!pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){  //a footprint may have pads on different layers
                    continue;
                 }
@@ -174,12 +185,15 @@ public class CommandRegionProcessor implements Processor {
         }    
     }
     
-    private void processTracks(Board board,PCBCopperArea source){
+    private void processTracks(Unit<? extends Shape> board,CopperAreaShape source){
         int height=board.getHeight();
         
-        List<PCBTrack> tracks= board.getShapes(PCBTrack.class, source.getCopper().getLayerMaskID());              
-        for(PCBTrack track:tracks){
-            int size=track.getThickness();
+        List<TrackShape> tracks= board.getShapes(TrackShape.class, source.getCopper().getLayerMaskID());              
+        for(TrackShape track:tracks){
+            if(Utilities.isSameNet(source,track)){
+                continue;
+            }
+            
             int lastX=-1,lastY=-1;
             boolean firstPoint=true;
 
@@ -222,16 +236,21 @@ public class CommandRegionProcessor implements Processor {
             
         }          
     }
-    private void processVias(Board board,PCBCopperArea source){
+    private void processVias(Unit<? extends Shape> board,CopperAreaShape source){
         int lastX=-1,lastY=-1;
         int height=board.getHeight(); 
         //select vias of the region layer
-        for(PCBVia via:board.<PCBVia>getShapes(PCBVia.class,source.getCopper().getLayerMaskID())){
+        for(ViaShape via:board.<ViaShape>getShapes(ViaShape.class,source.getCopper().getLayerMaskID())){
+            if(Utilities.isSameNet(source,via)){
+                continue;
+            }
+
             Rectangle inner=via.getBoundingShape().getBounds();             
-            inner.grow(source.getClearance(), source.getClearance());
+            inner.grow(via.getClearance()!=0?via.getClearance():source.getClearance(),via.getClearance()!=0?via.getClearance():source.getClearance());
             if(!source.getBoundingShape().intersects(inner)){
                continue; 
             }
+            
             //set linear mode if not set
             context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
             

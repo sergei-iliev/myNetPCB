@@ -1,24 +1,19 @@
 package com.mynetpcb.board.shape;
 
 import com.mynetpcb.board.unit.Board;
-import com.mynetpcb.core.board.ClearanceSource;
 import com.mynetpcb.core.board.ClearanceTarget;
 import com.mynetpcb.core.board.CompositeLayerable;
 import com.mynetpcb.core.board.PCBShape;
-import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.line.LinePoint;
-import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.core.pad.Net;
 import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.AlphaComposite;
@@ -47,7 +42,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint>,ClearanceSource,Resizeable,Externalizable,Net{
+public class PCBCopperArea extends CopperAreaShape implements PCBShape{
 
     public  Point floatingStartPoint;
     
@@ -62,7 +57,7 @@ public class PCBCopperArea extends Shape implements PCBShape,Trackable<LinePoint
     private String net;
     
     public PCBCopperArea(int layermaskId) {
-        super(0,0,0,0,0,layermaskId);
+        super(layermaskId);
         this.clearance=Grid.MM_TO_COORD(0.2); 
         floatingStartPoint=new Point();
         floatingEndPoint=new Point();

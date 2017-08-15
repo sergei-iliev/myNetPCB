@@ -1,15 +1,16 @@
 package com.mynetpcb.gerber.processor.command;
 
-import com.mynetpcb.board.shape.PCBTrack;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.shape.TrackShape;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.line.LinePoint;
+import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 import com.mynetpcb.gerber.capi.Processor;
-import com.mynetpcb.gerber.capi.StringBufferEx;
 import com.mynetpcb.gerber.command.AbstractCommand;
-import com.mynetpcb.gerber.command.function.FunctionCommand;
-import com.mynetpcb.gerber.command.function.SetApertureCodeCommand;
 
 import java.awt.Point;
 
@@ -22,12 +23,12 @@ public class CommandTrackProcessor  implements Processor{
     }
 
     @Override
-    public void process(Board board, int layermask) {
+    public void process(Unit<? extends Shape>  board, int layermask) {
                       
         int height=board.getHeight();
         
-        List<PCBTrack> tracks= board.getShapes(PCBTrack.class, layermask);              
-        for(PCBTrack track:tracks){
+        List<TrackShape> tracks= board.getShapes(TrackShape.class, layermask);              
+        for(TrackShape track:tracks){
             int size=track.getThickness();
             int lastX=-1,lastY=-1;
             boolean firstPoint=true;
@@ -39,7 +40,7 @@ public class CommandTrackProcessor  implements Processor{
             //set aperture if not same
             context.resetAperture(aperture);
             
-            for(Point point:track.getLinePoints()){
+            for(Point point:((Trackable<LinePoint>)track).getLinePoints()){
                 StringBuffer commandLine=new StringBuffer();
                 if (point.x != lastX){                   
                     lastX = point.x;

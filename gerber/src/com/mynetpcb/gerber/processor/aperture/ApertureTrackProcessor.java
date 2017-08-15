@@ -1,7 +1,9 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-import com.mynetpcb.board.shape.PCBTrack;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.shape.TrackShape;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.attribute.aperture.ConductorAttribute;
@@ -15,9 +17,9 @@ public class ApertureTrackProcessor implements Processor{
     }
 
     @Override
-    public void process(Board board, int layermask) {     
+    public void process(Unit<? extends Shape> board, int layermask) {     
             //tracks
-            for(PCBTrack line:board.<PCBTrack>getShapes(PCBTrack.class,layermask)){
+            for(TrackShape line:board.<TrackShape>getShapes(TrackShape.class,layermask)){
                  CircleAperture circle=new CircleAperture();
                  circle.setDiameter(line.getThickness());
                  circle.setAttribute(new ConductorAttribute());

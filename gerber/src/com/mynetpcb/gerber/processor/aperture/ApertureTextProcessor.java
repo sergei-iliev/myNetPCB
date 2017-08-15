@@ -1,15 +1,18 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.shape.PCBLabel;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.GlyphLabel;
+
+import java.util.Collection;
 
 public class ApertureTextProcessor implements Processor{
     private final ApertureDictionary dictionary;
@@ -19,21 +22,22 @@ public class ApertureTextProcessor implements Processor{
     }
         
     @Override
-    public void process(Board board, int layermask) {
+    public void process(Unit<? extends Shape> board, int layermask) {
         //board text
-        for(PCBLabel label:board.<PCBLabel>getShapes(PCBLabel.class,layermask)){
+        for(GlyphLabel label:board.<GlyphLabel>getShapes(GlyphLabel.class,layermask)){
                processTexture(label.getTexture());                               
         }
         //text in footprints
-        for(PCBFootprint footprint:board.<PCBFootprint>getShapes(PCBFootprint.class)){
+        for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
             //grab text
-            for(Texture text:footprint.getChipText().getChildren()){
+            for(Texture text:((Textable)footprint).getChipText().getChildren()){
                 if(!text.isEmpty()&&((text.getLayermaskId()&layermask)!=0)){
                     processTexture((GlyphTexture)text);
                 }
             }
             
-            for(Shape shape:footprint.getShapes() ){
+                Collection<Shape> shapes=footprint.<Shape>getShapes();
+                for(Shape shape:shapes){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }

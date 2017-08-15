@@ -2,19 +2,15 @@ package com.mynetpcb.board.shape;
 
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.board.ClearanceSource;
-import com.mynetpcb.core.board.ClearanceTarget;
 import com.mynetpcb.core.board.PCBShape;
-import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.core.pad.Net;
 import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.BasicStroke;
@@ -36,7 +32,7 @@ import org.w3c.dom.Node;
  * thickness -> internal diameter(drill size)
  * width     -> external diameter(via size)
  */
-public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externalizable,Net{
+public class PCBVia  extends ViaShape implements PCBShape{
 
     private int clearance;
     
@@ -49,11 +45,9 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
     }
     
     
-    public PCBVia() {
-        super(0,0,0,0,Grid.MM_TO_COORD(0.2),Layer.LAYER_ALL);
+    public PCBVia() {        
         this.fillColor=Color.WHITE;
-        this.setWidth(Grid.MM_TO_COORD(0.4));
-    
+        this.setWidth(Grid.MM_TO_COORD(0.4));    
     }
     
     @Override
@@ -137,18 +131,16 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
     @Override
     public <T extends PCBShape & ClearanceSource> void drawClearence(Graphics2D g2,
                                                                      ViewportWindow viewportWindow,
-                                                                     AffineTransform scale, T source) {
-        Shape shape=(Shape)source;
-        
+                                                                     AffineTransform scale, T source) {        
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
+            return;
+        }
         Rectangle inner=getBoundingShape().getBounds();             
-        inner.grow(source.getClearance(), source.getClearance());
-        
+        inner.grow(this.clearance!=0?this.clearance:source.getClearance(),this.clearance!=0?this.clearance:source.getClearance());
+
         Rectangle2D scaledRect = Utilities.getScaleRect(inner ,scale); 
         if(!scaledRect.intersects(viewportWindow)){
           return;   
-        }
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))){
-            return;
         }
         FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
         Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
@@ -166,7 +158,7 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
     @Override
     public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2, T source) {
         
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))){
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
             return;
         }
         
@@ -174,7 +166,8 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
         Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
         
         Rectangle rect = new Rectangle(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
-        rect.grow(source.getClearance(), source.getClearance());
+        rect.grow(this.clearance!=0?this.clearance:source.getClearance(), this.clearance!=0?this.clearance:source.getClearance());
+
         ellipse.setFrame(rect.x ,rect.y,rect.getWidth(),rect.getWidth());
                                         
         g2.setColor(Color.WHITE);                
@@ -208,7 +201,7 @@ public class PCBVia  extends Shape implements PCBShape,ClearanceTarget,Externali
         setY(Integer.parseInt(element.getAttribute("y")));
         setWidth(Integer.parseInt(element.getAttribute("width")));
         setThickness(Integer.parseInt(element.getAttribute("drill")));
-        this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));
+        this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));        
         this.net=element.getAttribute("net");
     }
     @Override

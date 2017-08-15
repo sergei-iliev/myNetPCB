@@ -2,24 +2,20 @@ package com.mynetpcb.pad.shape;
 
 
 import com.mynetpcb.core.board.ClearanceSource;
-import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Pinable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.print.Printaware;
-import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.ChipText;
 import com.mynetpcb.core.capi.text.Text;
-import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.core.pad.Net;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.popup.FootprintPopupMenu;
 import com.mynetpcb.pad.unit.Footprint;
@@ -44,25 +40,13 @@ import org.w3c.dom.Node;
  *Pad is a composite shape consisting of circle,ellipse,rectangle combination
  * @author Sergey Iliev
  */
-public class Pad extends Shape implements Pinable, Net, Textable, Externalizable {
-
-    public enum Shape {
-        RECTANGULAR,
-        CIRCULAR,
-        OVAL,
-        POLYGON
-    }
-
-    public enum Type {
-        THROUGH_HOLE,
-        SMD
-    }
+public class Pad extends PadShape {
 
     private int arc;
 
     private Drill drill;
 
-    private PadShape shape;
+    private PadDrawing shape;
 
     private Type type;
 
@@ -76,7 +60,7 @@ public class Pad extends Shape implements Pinable, Net, Textable, Externalizable
     }
 
     public Pad(int x, int y, int width, int height, Shape shape) {
-        super(x, y, width, height, -1, Layer.LAYER_BACK);
+        super(x, y, width, height);
         this.arc = width;
         text = new ChipText();
         text.Add(new FontTexture("number", "", x, y, Text.Alignment.LEFT, 4000));
@@ -145,7 +129,7 @@ public class Pad extends Shape implements Pinable, Net, Textable, Externalizable
         return type;
     }
 
-    public Shape getShape() {
+    public PadShape.Shape getShape() {
         return this.shape.getShape();
     }
 
@@ -573,7 +557,7 @@ public class Pad extends Shape implements Pinable, Net, Textable, Externalizable
     }
 
 
-    private interface PadShape extends Printaware {
+    private interface PadDrawing extends Printaware {
         public Shape getShape();
 
         public boolean Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale);
@@ -589,7 +573,7 @@ public class Pad extends Shape implements Pinable, Net, Textable, Externalizable
 
     }
 
-    private class CircularShape implements PadShape {
+    private class CircularShape implements PadDrawing {
 
         private final Ellipse2D ellipse;
 
@@ -668,7 +652,7 @@ public class Pad extends Shape implements Pinable, Net, Textable, Externalizable
         }
     }
 
-    private class OvalShape implements PadShape {
+    private class OvalShape implements PadDrawing {
 
         private final RoundRectangle2D roundRect;
 
@@ -762,7 +746,7 @@ public class Pad extends Shape implements Pinable, Net, Textable, Externalizable
 //        }
     }
 
-    private class RectangularShape implements PadShape {
+    private class RectangularShape implements PadDrawing {
         private final Rectangle2D rectangle;
 
         private RectangularShape() {
@@ -840,7 +824,7 @@ public class Pad extends Shape implements Pinable, Net, Textable, Externalizable
         }
     }
 
-    private class PolygonShape implements PadShape {
+    private class PolygonShape implements PadDrawing {
         GeneralPath polygon;
         
         public PolygonShape() {

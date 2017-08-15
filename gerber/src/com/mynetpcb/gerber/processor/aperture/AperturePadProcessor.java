@@ -1,14 +1,16 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.shape.FootprintShape;
+import com.mynetpcb.core.capi.Pinaware;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.aperture.type.ObroundAperture;
 import com.mynetpcb.gerber.aperture.type.PolygonAperture;
 import com.mynetpcb.gerber.aperture.type.RectangleAperture;
-import com.mynetpcb.gerber.attribute.drill.ComponentDrillAttribute;
 import com.mynetpcb.gerber.attribute.aperture.ComponentPadAttribute;
 import com.mynetpcb.gerber.attribute.aperture.SMDPadAttribute;
 import com.mynetpcb.gerber.capi.Processor;
@@ -26,10 +28,10 @@ public class AperturePadProcessor implements Processor{
     }
 
     @Override
-    public void process(Board board, int layermask) {       
-        List<PCBFootprint> footprints= board.getShapes(PCBFootprint.class);              
-        for(PCBFootprint footrpint:footprints){
-            Collection<Pad> pads=footrpint.getPins();
+    public void process(Unit<? extends Shape> board, int layermask) {       
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
+        for(FootprintShape footrpint:footprints){
+            Collection<Pad> pads=((Pinaware)footrpint).getPins();
             for(Pad pad:pads){
                 if(pad.isVisibleOnLayers(layermask)){
                     ApertureDefinition apperture=null;

@@ -1,9 +1,12 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.shape.PCBHole;
-import com.mynetpcb.board.shape.PCBVia;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.shape.FootprintShape;
+import com.mynetpcb.core.board.shape.HoleShape;
+import com.mynetpcb.core.board.shape.ViaShape;
+import com.mynetpcb.core.capi.Pinaware;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
@@ -24,7 +27,7 @@ public class ApertureDrillProcessor implements Processor{
     }
 
     @Override
-    public void process(Board board, int layermask) {
+    public void process(Unit<? extends Shape> board, int layermask) {
         if(layermask==Layer.NPTH_LAYER_DRILL){
            //non plated
            processPads(board);
@@ -34,17 +37,12 @@ public class ApertureDrillProcessor implements Processor{
            processVias(board); 
             
         }
-        //process pads
-        
-        //process vias
-        
-        //process mechanical holes
     }
     
-    private void processPads(Board board){
-        List<PCBFootprint> footprints= board.getShapes(PCBFootprint.class);              
-        for(PCBFootprint footrpint:footprints){
-            Collection<Pad> pads=footrpint.getPins();
+    private void processPads(Unit<? extends Shape> board ){
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
+        for(FootprintShape footrpint:footprints){
+            Collection<Pad> pads=((Pinaware)footrpint).getPins();
             for(Pad pad:pads){
                 if(pad.getType()==Pad.Type.THROUGH_HOLE){
                     CircleAperture drill=new CircleAperture(); 
@@ -56,9 +54,9 @@ public class ApertureDrillProcessor implements Processor{
         }
     }
     
-    private void processHoles(Board board){
-        List<PCBHole> holes= board.getShapes(PCBHole.class);              
-        for(PCBHole hole:holes){
+    private void processHoles(Unit<? extends Shape> board ){
+        List<HoleShape> holes= board.getShapes(HoleShape.class);              
+        for(HoleShape hole:holes){
             CircleAperture drill=new CircleAperture(); 
             drill.setDiameter(hole.getWidth());
             drill.setAttribute(new MechanicalDrillAttribute());
@@ -69,9 +67,9 @@ public class ApertureDrillProcessor implements Processor{
         
     }
     
-    private void processVias(Board board){
-        List<PCBVia> vias= board.getShapes(PCBVia.class);              
-        for(PCBVia via:vias){
+    private void processVias(Unit<? extends Shape> board ){
+        List<ViaShape> vias= board.getShapes(ViaShape.class);              
+        for(ViaShape via:vias){
             CircleAperture drill=new CircleAperture(); 
             drill.setDiameter(via.getThickness());
             drill.setAttribute(new ViaDrillAttribute());

@@ -1,19 +1,14 @@
 package com.mynetpcb.gerber.processor.command;
 
-import com.mynetpcb.board.shape.PCBCircle;
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.unit.Board;
+import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
-import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 import com.mynetpcb.gerber.capi.Processor;
-import com.mynetpcb.gerber.capi.StringBufferEx;
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.gerber.command.function.FunctionCommand;
-import com.mynetpcb.gerber.command.function.SetApertureCodeCommand;
-
 import com.mynetpcb.pad.shape.Circle;
 
 import java.awt.geom.Point2D;
@@ -31,18 +26,19 @@ public class CommandCircleProcessor implements Processor {
 
 
     @Override
-    public void process(Board board, int layermask) {
+    public void process(Unit<? extends Shape> board, int layermask) {
    
 
 
-        List<PCBCircle> circles = board.getShapes(PCBCircle.class, layermask);
+        List<Circle> circles = board.getShapes(Circle.class, layermask);
         for (Circle circle : circles) {
            processCircle(circle,board.getHeight());
         }
         //do circles in footprints
-        List<PCBFootprint> footprints = board.getShapes(PCBFootprint.class, layermask);
-        for (PCBFootprint footprint : footprints) {
-            for(Shape shape:footprint.getShapes() ){
+        List<FootprintShape> footprints = board.getShapes(FootprintShape.class, layermask);
+        for (FootprintShape footprint : footprints) {
+            Collection<Shape> shapes=footprint.<Shape>getShapes();
+            for(Shape shape:shapes){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }

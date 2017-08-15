@@ -1,27 +1,17 @@
 package com.mynetpcb.gerber.processor.command;
 
-import com.mynetpcb.board.shape.PCBArc;
-import com.mynetpcb.board.shape.PCBCircle;
-import com.mynetpcb.board.shape.PCBLine;
-import com.mynetpcb.board.shape.PCBRoundRect;
-import com.mynetpcb.board.unit.Board;
-import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
+
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 import com.mynetpcb.gerber.capi.Processor;
-
-import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.pad.shape.Arc;
 import com.mynetpcb.pad.shape.Circle;
 import com.mynetpcb.pad.shape.Line;
 
 import com.mynetpcb.pad.shape.RoundRect;
-
-import java.awt.Point;
-
 import java.awt.geom.Point2D;
 
-import java.util.List;
 
 public class CommandCutOutProcessor implements Processor {
 
@@ -32,22 +22,22 @@ public class CommandCutOutProcessor implements Processor {
     }
 
     @Override
-    public void process(Board board, int layermask) {
+    public void process(Unit<? extends Shape> board, int layermask) {
         //lines
                      
-        for(PCBLine line:board.<PCBLine>getShapes(PCBLine.class, layermask)){
+        for(Line line:board.<Line>getShapes(Line.class, layermask)){
             processLine(line,board.getHeight());
         } 
         //round rect
-        for(PCBRoundRect rect:board.<PCBRoundRect>getShapes(PCBRoundRect.class,layermask)){
+        for(RoundRect rect:board.<RoundRect>getShapes(RoundRect.class,layermask)){
             processRect(rect,board.getHeight());
         }
         //circle
-        for(PCBCircle circle:board.<PCBCircle>getShapes(PCBCircle.class,layermask)){
+        for(Circle circle:board.<Circle>getShapes(Circle.class,layermask)){
             processCircle(circle,board.getHeight());
         }
         //arc
-        for(PCBArc circle:board.<PCBArc>getShapes(PCBArc.class,layermask)){
+        for(Arc circle:board.<Arc>getShapes(Arc.class,layermask)){
             processArc(circle,board.getHeight());
         }
         

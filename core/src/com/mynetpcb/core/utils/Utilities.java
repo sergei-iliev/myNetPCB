@@ -1,11 +1,13 @@
 package com.mynetpcb.core.utils;
 
 
+import com.mynetpcb.core.board.ClearanceSource;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.tree.AttachedItem;
+import com.mynetpcb.core.pad.Net;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -31,6 +33,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Objects;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -431,7 +434,12 @@ public final class Utilities {
             }
         }
     }
-
+    public static boolean isSameNet(ClearanceSource source,Net target){
+        if(Objects.equals(source.getNetName(), target.getNetName())&&(!("".equals(target.getNetName())))&&(!(null==(target.getNetName())))){
+            return true;
+        }
+        return false;
+    }
     public static String trimCRLF(String value) {
         if (value == null || value.length() < 3)
             return value;

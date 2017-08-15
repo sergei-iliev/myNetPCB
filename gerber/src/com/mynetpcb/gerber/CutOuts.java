@@ -1,7 +1,9 @@
 package com.mynetpcb.gerber;
 
-import com.mynetpcb.board.unit.Board;
+
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.VersionUtils;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
@@ -29,9 +31,9 @@ public class CutOuts implements Gerberable{
     
     private  ApertureDictionary apertureDictionary;
     private final CommandDictionary commandDictionary;
-    private final Board board;
+    private final Unit<? extends Shape> board;
     
-    public CutOuts(Board board){
+    public CutOuts(Unit<? extends Shape> board){
         this.apertureDictionary=new ApertureDictionary();
         this.commandDictionary=new CommandDictionary();
         this.board=board;

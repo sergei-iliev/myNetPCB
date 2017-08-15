@@ -1,18 +1,16 @@
 package com.mynetpcb.gerber.processor.command;
 
-import com.mynetpcb.board.shape.PCBVia;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 import com.mynetpcb.gerber.capi.Processor;
-import com.mynetpcb.gerber.capi.StringBufferEx;
 import com.mynetpcb.gerber.command.AbstractCommand;
-import com.mynetpcb.gerber.command.function.FunctionCommand;
-import com.mynetpcb.gerber.command.function.SetApertureCodeCommand;
 
 import java.util.List;
-import java.util.Objects;
 
 public class CommandViaProcessor  implements Processor{
     private final GraphicsStateContext context;
@@ -22,14 +20,14 @@ public class CommandViaProcessor  implements Processor{
     }
 
     @Override
-    public void process(Board board, int layermask) {
+    public void process(Unit<? extends Shape>  board, int layermask) {
         
         int height=board.getHeight();       
         int lastX=-1,lastY=-1;
          
 
-        List<PCBVia> vias= board.getShapes(PCBVia.class, layermask);     
-        for(PCBVia via:vias){
+        List<ViaShape> vias= board.getShapes(ViaShape.class, layermask);     
+        for(ViaShape via:vias){
             //set linear mode if not set
             context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
             

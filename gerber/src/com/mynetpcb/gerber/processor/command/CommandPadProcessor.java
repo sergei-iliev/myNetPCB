@@ -1,16 +1,14 @@
 package com.mynetpcb.gerber.processor.command;
 
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.unit.Board;
+import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.Pinaware;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 import com.mynetpcb.gerber.capi.Processor;
-import com.mynetpcb.gerber.capi.StringBufferEx;
 import com.mynetpcb.gerber.command.AbstractCommand;
-import com.mynetpcb.gerber.command.extended.LevelPolarityCommand;
-import com.mynetpcb.gerber.command.function.FunctionCommand;
-import com.mynetpcb.gerber.command.function.SetApertureCodeCommand;
 import com.mynetpcb.pad.shape.Pad;
 
 import java.util.Collection;
@@ -25,18 +23,18 @@ public class CommandPadProcessor  implements Processor{
     }
 
     @Override
-    public void process(Board board, int layermask) {                                                                       
+    public void process(Unit<? extends Shape>  board, int layermask) {                                                                       
                       
             int height=board.getHeight();       
             int lastX=-1,lastY=-1;
             StringBuffer commandLine=new StringBuffer();
             
-            List<PCBFootprint> footprints= board.getShapes(PCBFootprint.class);                     
-            for(PCBFootprint footrpint:footprints){
+            List<FootprintShape> footprints= board.getShapes(FootprintShape.class);                     
+            for(FootprintShape footrpint:footprints){
                 //set linear mode if not set
                 context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
 
-                Collection<Pad> pads=footrpint.getPins();
+                Collection<Pad> pads=((Pinaware)footrpint).getPins();
                 for(Pad pad:pads){
                     if(!pad.isVisibleOnLayers(layermask)){  //a footprint may have pads on different layers
                        continue;

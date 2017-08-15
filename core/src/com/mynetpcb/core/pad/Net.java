@@ -3,8 +3,12 @@ package com.mynetpcb.core.pad;
 
 public interface Net {
     
-    public String getNetName();
+    public default String getNetName(){
+        return null;
+    }
     
-    public void setNetName(String net);
+    public default void setNetName(String net){
+        
+    }
     
 }

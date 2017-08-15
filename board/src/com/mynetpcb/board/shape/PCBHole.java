@@ -2,18 +2,15 @@ package com.mynetpcb.board.shape;
 
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.board.ClearanceSource;
-import com.mynetpcb.core.board.ClearanceTarget;
 import com.mynetpcb.core.board.PCBShape;
-import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.core.board.shape.HoleShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.BasicStroke;
@@ -28,14 +25,13 @@ import java.awt.geom.Rectangle2D;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class PCBHole extends Shape implements PCBShape,ClearanceTarget,Externalizable{
+public class PCBHole extends HoleShape implements PCBShape{
     
     private static final int THICKNESS=1000;
     
     private int clearance;
     
     public PCBHole() {
-        super(0,0,0,0,0,Layer.LAYER_ALL);
         this.fillColor=Color.WHITE;
         this.setWidth(Grid.MM_TO_COORD(1.6));
     }

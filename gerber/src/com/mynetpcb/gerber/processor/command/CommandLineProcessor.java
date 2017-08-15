@@ -1,20 +1,19 @@
 package com.mynetpcb.gerber.processor.command;
 
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.shape.PCBLine;
-import com.mynetpcb.board.shape.PCBTrack;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 import com.mynetpcb.gerber.capi.Processor;
-
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.pad.shape.Line;
 
 import java.awt.Point;
 
+import java.util.Collection;
 import java.util.List;
 
 public class CommandLineProcessor implements Processor {
@@ -25,17 +24,18 @@ public class CommandLineProcessor implements Processor {
     }
 
     @Override
-    public void process(Board board, int layermask) {
+    public void process(Unit<? extends Shape>  board, int layermask) {
         //process board lines
-        List<PCBLine> lines= board.getShapes(PCBLine.class, layermask);              
-        for(PCBLine line:lines){
+        List<Line> lines= board.getShapes(Line.class, layermask);              
+        for(Line line:lines){
             processLine(line,board.getHeight());
         }
         
         //process board lines
-        List<PCBFootprint> footprints= board.getShapes(PCBFootprint.class, layermask);              
-        for(PCBFootprint footprint:footprints){
-            for(Shape shape:footprint.getShapes() ){
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);              
+        for(FootprintShape footprint:footprints){
+            Collection<Shape> shapes=footprint.<Shape>getShapes();
+            for(Shape shape:shapes){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }

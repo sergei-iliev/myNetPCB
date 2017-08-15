@@ -11,6 +11,7 @@ import com.mynetpcb.core.capi.Typeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
+import com.mynetpcb.core.capi.shape.Container;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.ChipText;
 import com.mynetpcb.core.capi.text.Text;
@@ -51,7 +52,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class SCHSymbol extends Shape implements Textable,Pinaware<Pin>,Packageable,Externalizable{
+public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>,Packageable,Externalizable{
     private Typeable.Type type;
     
     private List<Shape> shapes;
@@ -128,6 +129,7 @@ public class SCHSymbol extends Shape implements Textable,Pinaware<Pin>,Packageab
     public Typeable.Type getType() {
         return type;
     }
+    @Override
     public List<Shape> getShapes(){
         return shapes;
     }

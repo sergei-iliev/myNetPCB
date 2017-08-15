@@ -1,14 +1,13 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-
-import com.mynetpcb.board.shape.PCBCopperArea;
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.shape.PCBLabel;
-import com.mynetpcb.board.shape.PCBTrack;
-import com.mynetpcb.board.shape.PCBVia;
-import com.mynetpcb.board.unit.Board;
-import com.mynetpcb.core.board.ClearanceTarget;
+import com.mynetpcb.core.board.shape.CopperAreaShape;
+import com.mynetpcb.core.board.shape.FootprintShape;
+import com.mynetpcb.core.board.shape.TrackShape;
+import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
@@ -16,18 +15,9 @@ import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.aperture.type.ObroundAperture;
 import com.mynetpcb.gerber.aperture.type.PolygonAperture;
 import com.mynetpcb.gerber.aperture.type.RectangleAperture;
-import com.mynetpcb.gerber.attribute.aperture.ComponentPadAttribute;
-import com.mynetpcb.gerber.attribute.aperture.ConductorAttribute;
-import com.mynetpcb.gerber.attribute.aperture.SMDPadAttribute;
-import com.mynetpcb.gerber.attribute.aperture.ViaPadAttribute;
-import com.mynetpcb.gerber.attribute.drill.ComponentDrillAttribute;
 import com.mynetpcb.gerber.capi.Processor;
 
-import com.mynetpcb.pad.shape.Pad;
-
 import java.awt.Rectangle;
-
-import java.awt.geom.Rectangle2D;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,9 +30,9 @@ public class ApertureRegionProcessor implements Processor{
     }
 
     @Override
-    public void process(Board board, int layermask) {        
+    public void process(Unit<? extends Shape> board, int layermask) {        
         //add D10 if not there
-        Collection<PCBCopperArea> regions=board.getShapes(PCBCopperArea.class,layermask);                       
+        Collection<CopperAreaShape> regions=board.getShapes(CopperAreaShape.class,layermask);                       
         if(regions.size()>0){
            ApertureDefinition aperture= dictionary.get(10);
            if(aperture==null){
@@ -53,18 +43,21 @@ public class ApertureRegionProcessor implements Processor{
            }
         }
         
-        for(PCBCopperArea region:regions){
-          processVias(board,region);    
-          processTracks(board, region);
-          processPads(board, region); 
+        for(CopperAreaShape region:regions){
+          this.processVias(board,region);    
+          this.processTracks(board, region);
+          this.processPads(board, region); 
         }
     }
-        
-    private void processPads(Board board,PCBCopperArea source){
-        List<PCBFootprint> footprints= board.getShapes(PCBFootprint.class);              
-        for(PCBFootprint footrpint:footprints){
-            Collection<Pad> pads=footrpint.getPins();
-            for(Pad pad:pads){
+                
+    private void processPads(Unit<? extends Shape> board,CopperAreaShape source){
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
+        for(FootprintShape footrpint:footprints){
+            Collection<PadShape> pads=footrpint.getPins();
+            for(PadShape pad:pads){            
+                if(Utilities.isSameNet(source,pad)){
+                    continue;
+                }
                 if(pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){
                     ApertureDefinition apperture=null;
                     switch(pad.getShape()){
@@ -94,8 +87,12 @@ public class ApertureRegionProcessor implements Processor{
             }    
     }
     }
-    private void processTracks(Board board,PCBCopperArea source){
-        for(PCBTrack track:board.<PCBTrack>getShapes(PCBTrack.class,source.getCopper().getLayerMaskID())){
+    private void processTracks(Unit<? extends Shape> board,CopperAreaShape source){
+        for(TrackShape track:board.<TrackShape>getShapes(TrackShape.class,source.getCopper().getLayerMaskID())){
+            
+            if(Utilities.isSameNet(source,track)){
+                continue;
+            }
             
             int lineThickness;
             if(track.getClearance()!=0){
@@ -109,14 +106,19 @@ public class ApertureRegionProcessor implements Processor{
             dictionary.add(circle);                           
         }
     }
-    private void processVias(Board board,PCBCopperArea source){
+    private  void  processVias(Unit<? extends Shape> board,CopperAreaShape source){
         //select vias of the region layer
-        for(PCBVia via:board.<PCBVia>getShapes(PCBVia.class,source.getCopper().getLayerMaskID())){
+        for(ViaShape via:board.<ViaShape>getShapes(ViaShape.class,source.getCopper().getLayerMaskID())){          
+            if(Utilities.isSameNet(source,via)){
+                continue;
+            }
             Rectangle inner=via.getBoundingShape().getBounds();             
-            inner.grow(source.getClearance(), source.getClearance());
+            inner.grow(via.getClearance()!=0?via.getClearance():source.getClearance(),via.getClearance()!=0?via.getClearance():source.getClearance());
+
             if(!source.getBoundingShape().intersects(inner)){
                continue; 
             }
+            
             CircleAperture circle=new CircleAperture();
             circle.setDiameter((int)inner.getWidth());            
             dictionary.add(circle);                         

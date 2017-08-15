@@ -1,14 +1,15 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-import com.mynetpcb.board.shape.PCBArc;
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.unit.Board;
+
+import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.Arc;
-import com.mynetpcb.pad.shape.Circle;
+
+import java.util.Collection;
 
 public class ApertureArcProcessor implements Processor{
     private final ApertureDictionary dictionary;
@@ -18,14 +19,15 @@ public class ApertureArcProcessor implements Processor{
     }
 
     @Override
-    public void process(Board board, int layermask) {          
+    public void process(Unit<? extends Shape> board, int layermask) {          
         //arcs
-        for(PCBArc arc:board.<PCBArc>getShapes(PCBArc.class,layermask)){                        
+        for(Arc arc:board.<Arc>getShapes(Arc.class,layermask)){                        
             processArc(arc);
         }
         //arcs in footprints
-        for(PCBFootprint footprint:board.<PCBFootprint>getShapes(PCBFootprint.class)){
-            for(Shape shape:footprint.getShapes() ){
+        for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
+            Collection<Shape> shapes=footprint.<Shape>getShapes();
+            for(Shape shape:shapes){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }
