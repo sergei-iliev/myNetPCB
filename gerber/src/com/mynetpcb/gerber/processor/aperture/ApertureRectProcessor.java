@@ -23,7 +23,7 @@ public class ApertureRectProcessor implements Processor{
     public void process(Unit<? extends Shape> board, int layermask) {
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);   
         for(FootprintShape footrpint:footprints){
-            Collection<Shape> shapes=footrpint.<Shape>getShapes();
+            Collection<? extends Shape> shapes=footrpint.getShapes();
             for(Shape shape:shapes){
                 if(shape.getClass()==RoundRect.class){
                     processRect((RoundRect)shape);

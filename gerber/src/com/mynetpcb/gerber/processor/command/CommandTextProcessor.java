@@ -16,8 +16,6 @@ import com.mynetpcb.pad.shape.GlyphLabel;
 
 import java.awt.Rectangle;
 
-import java.util.Collection;
-
 public class CommandTextProcessor implements Processor {
     private final GraphicsStateContext context;
 
@@ -40,8 +38,7 @@ public class CommandTextProcessor implements Processor {
                 }
             }
             
-                Collection<Shape> shapes=footprint.<Shape>getShapes();
-                for(Shape shape:shapes){
+                for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }

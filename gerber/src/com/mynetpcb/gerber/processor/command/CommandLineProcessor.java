@@ -33,9 +33,8 @@ public class CommandLineProcessor implements Processor {
         
         //process board lines
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);              
-        for(FootprintShape footprint:footprints){
-            Collection<Shape> shapes=footprint.<Shape>getShapes();
-            for(Shape shape:shapes){
+        for(FootprintShape footprint:footprints){            
+            for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }

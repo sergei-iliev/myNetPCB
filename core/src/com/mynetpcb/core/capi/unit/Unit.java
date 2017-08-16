@@ -23,6 +23,7 @@ import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.print.PrintCallable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
+import com.mynetpcb.core.capi.shape.Container;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
@@ -67,7 +68,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 
-public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, PrintCallable,Undoable, Stateable, Cloneable,Clipboardable {
+public abstract class Unit<S extends Shape> implements Container,ShapeEventDispatcher, PrintCallable,Undoable, Stateable, Cloneable,Clipboardable {
     private UUID uuid;
 
     private int width, height;

@@ -8,16 +8,13 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.pad.shape.PadShape;
 
-import java.util.List;
-
 /*
- * reduce dependency to board
+ * reduce dependency to board jar
  */
 public abstract class FootprintShape<P extends PadShape> extends Shape implements Container,ClearanceTarget,Textable,Pinaware<P>,Externalizable{
     public FootprintShape(int layermask) {
         super(0,0,0,0,0,layermask);
     }
-    
-    public abstract List<Shape> getShapes();
+
     
 }

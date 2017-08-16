@@ -36,8 +36,7 @@ public class ApertureTextProcessor implements Processor{
                 }
             }
             
-                Collection<Shape> shapes=footprint.<Shape>getShapes();
-                for(Shape shape:shapes){
+                for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }

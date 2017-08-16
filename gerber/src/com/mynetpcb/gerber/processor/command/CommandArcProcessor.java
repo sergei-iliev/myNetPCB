@@ -34,8 +34,8 @@ public class CommandArcProcessor implements Processor {
         //do arcs in footprints
         List<FootprintShape> footprints = board.getShapes(FootprintShape.class, layermask);
         for (FootprintShape footprint : footprints) {
-            Collection<Shape> shapes=footprint.<Shape>getShapes();
-            for(Shape shape:shapes){
+
+            for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }

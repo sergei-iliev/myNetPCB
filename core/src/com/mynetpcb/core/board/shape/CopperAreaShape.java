@@ -8,6 +8,9 @@ import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.Net;
 
+/*
+ * reduce dependency to board jar
+ */
 public abstract class CopperAreaShape extends Shape implements Trackable<LinePoint>,ClearanceSource,Resizeable,Externalizable,Net{
     
     public CopperAreaShape(int layermaskId) {

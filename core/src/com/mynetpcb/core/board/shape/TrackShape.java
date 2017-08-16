@@ -9,6 +9,9 @@ import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.Net;
 
+/*
+ * reduce dependency to board jar
+ */
 public abstract class TrackShape extends Shape implements Trackable<LinePoint>,Resizeable,ClearanceTarget,Sublineable,Externalizable,Net{
     
     public TrackShape(int thickness,int layermaskId){

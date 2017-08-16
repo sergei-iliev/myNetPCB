@@ -25,7 +25,7 @@ public class CommandRectProcessor implements Processor {
     public void process(Unit<? extends Shape> board, int layermask) {                
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);                     
         for(FootprintShape footrpint:footprints){
-            Collection<Shape> shapes=footrpint.getShapes();
+            Collection<? extends Shape> shapes=footrpint.getShapes();
             for(Shape shape:shapes){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;

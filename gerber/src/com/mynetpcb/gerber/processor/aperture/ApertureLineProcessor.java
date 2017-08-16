@@ -26,8 +26,8 @@ public class ApertureLineProcessor implements Processor{
         }
         //line if footprints
         for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
-            Collection<Shape> shapes=footprint.<Shape>getShapes();
-            for(Shape shape:shapes){
+
+            for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }
