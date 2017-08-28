@@ -6,7 +6,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.symbol.component.SymbolComponent;
-import com.mynetpcb.symbol.shape.Label;
+import com.mynetpcb.symbol.shape.FontLabel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -63,7 +63,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
 
     @Override
     public void updateUI() {
-          Label label=(Label)getTarget();
+          FontLabel label=(FontLabel)getTarget();
           setSelectedIndex(textOrientationCombo,(label.getTexture().getAlignment().getOrientation().ordinal()));    
           textField.setText(label.getTexture().getText());
           leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x ));
@@ -75,7 +75,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Label label=(Label)getTarget();        
+        FontLabel label=(FontLabel)getTarget();        
         if(e.getSource()==textOrientationCombo){ 
                 label.getTexture().setOrientation((Text.Orientation)textOrientationCombo.getSelectedItem());
                 validateAlignmentComboText(textAlignmentCombo, label.getTexture());
@@ -90,7 +90,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void keyReleased(KeyEvent e){
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
-        Label label=(Label)getTarget();
+        FontLabel label=(FontLabel)getTarget();
           if(e.getSource()==textField&&textField.getText().length()>0){
             label.getTexture().setText(textField.getText());
           }

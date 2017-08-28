@@ -11,6 +11,7 @@ import com.mynetpcb.core.capi.Pinaware;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Textable;
@@ -263,33 +264,31 @@ public class UnitMgr<U extends Unit, T extends Shape> {
      * Rule 2:Horizontal Pin-Text alignment:Anchor Point must be left most to Pin line
      */
 
-    public Texture getTextureByTag(U unit, String tag) {
-        return this.getTextureByTag(tag, unit.getShapes());
-    }
+//    public Texture getTextureByTag(U unit, String tag) {
+//        return this.getTextureByTag(tag, unit.getShapes());
+//    }
 
     public T getLabelByTag(U unit, String tag) {
-        Collection<T> shapes = unit.getShapes(Textable.class);
-        for (T shape : shapes) {
-            if (shape instanceof Textable) {
-                Texture text = ((Textable) shape).getChipText().getTextureByTag(tag);
-                if (text != null)
-                    return shape;
-            }
+        Collection<T> shapes = unit.getShapes(Label.class);
+        for (T shape : shapes) {            
+                Texture text = ((Label) shape).getTexture();
+                if (text.getTag().equals(tag))
+                    return shape;            
         }
         return null;
     }
 
 
-    public Texture getTextureByTag(String tag, Collection<T> symbols) {
-        for (T element : symbols) {
-            if (element instanceof Textable) {
-                Texture text = ((Textable) element).getChipText().getTextureByTag(tag);
-                if (text != null)
-                    return text;
-            }
-        }
-        return null;
-    }
+//    public Texture getTextureByTag(String tag, Collection<T> symbols) {
+//        for (T element : symbols) {
+//            if (element instanceof Textable) {
+//                Texture text = ((Textable) element).getChipText().getTextureByTag(tag);
+//                if (text != null)
+//                    return text;
+//            }
+//        }
+//        return null;
+//    }
 
 
     private void normalizePinText(PinLineable pin) {

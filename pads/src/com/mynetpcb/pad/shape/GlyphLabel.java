@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -22,7 +23,7 @@ import java.awt.geom.Rectangle2D;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class GlyphLabel extends Shape implements Externalizable{
+public class GlyphLabel extends Shape implements Label,Externalizable{
     protected GlyphTexture texture;
     
     public GlyphLabel(String text,int thickness,int layermaskId) {
@@ -45,6 +46,7 @@ public class GlyphLabel extends Shape implements Externalizable{
     public Rectangle calculateShape(){ 
      return texture.getBoundingShape();
     }
+    @Override
     public GlyphTexture getTexture(){
        return texture;    
     }

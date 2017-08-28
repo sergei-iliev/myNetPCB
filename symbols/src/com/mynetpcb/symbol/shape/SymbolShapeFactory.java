@@ -21,7 +21,7 @@ public class SymbolShapeFactory implements AbstractShapeFactory<Symbol,Shape>{
             }
 
             if (element.getTagName().equals("label")) {
-                Label label = new Label();
+                FontLabel label = new FontLabel();
                 label.fromXML(node);
                 return label;
             }
@@ -79,8 +79,8 @@ public class SymbolShapeFactory implements AbstractShapeFactory<Symbol,Shape>{
           return pin;          
         }
         
-        if(memento instanceof Label.Memento){
-            Label label=new Label();          
+        if(memento instanceof FontLabel.Memento){
+            FontLabel label=new FontLabel();          
             label.setState(memento);  
             return label;             
         }      

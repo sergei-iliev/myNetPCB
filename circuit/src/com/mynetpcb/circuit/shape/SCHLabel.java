@@ -9,12 +9,12 @@ import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.symbol.shape.Label;
+import com.mynetpcb.symbol.shape.FontLabel;
 
 import java.lang.ref.WeakReference;
 
 
-public class SCHLabel extends Label implements Ownerable<Shape>, Externalizable {
+public class SCHLabel extends FontLabel implements Ownerable<Shape>, Externalizable {
 
     
 

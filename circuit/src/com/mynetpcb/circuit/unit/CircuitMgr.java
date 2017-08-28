@@ -17,7 +17,7 @@ import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.unit.UnitMgr;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.symbol.container.SymbolContainer;
-import com.mynetpcb.symbol.shape.Label;
+import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.shape.Pin;
 import com.mynetpcb.symbol.unit.Symbol;
 
@@ -59,13 +59,13 @@ public final class CircuitMgr extends UnitMgr<Circuit, Shape> {
     public SCHSymbol createSCHSymbol(Symbol module) {
         SCHSymbol schsymbol = new SCHSymbol();
         for (Shape symbol : module.getShapes()) {
-            if (symbol instanceof Label) {
-                if (((Label)symbol).getTexture().getTag().equals("unit")) {
-                    schsymbol.getChipText().getTextureByTag("unit").copy(((Label)symbol).getTexture());
+            if (symbol instanceof FontLabel) {
+                if (((FontLabel)symbol).getTexture().getTag().equals("unit")) {
+                    schsymbol.getChipText().getTextureByTag("unit").copy(((FontLabel)symbol).getTexture());
                     continue;
                 }
-                if (((Label)symbol).getTexture().getTag().equals("reference")) {
-                    schsymbol.getChipText().getTextureByTag("reference").copy(((Label)symbol).getTexture());
+                if (((FontLabel)symbol).getTexture().getTag().equals("reference")) {
+                    schsymbol.getChipText().getTextureByTag("reference").copy(((FontLabel)symbol).getTexture());
                     continue;
                 }
             }
@@ -93,12 +93,12 @@ public final class CircuitMgr extends UnitMgr<Circuit, Shape> {
         }
         //2.text
             if (schsymbol.getChipText().getTextureByTag("reference") != null&&! schsymbol.getChipText().getTextureByTag("reference").isEmpty() ) {
-                Label value=new Label();
+                FontLabel value=new FontLabel();
                 value.getTexture().copy(schsymbol.getChipText().getTextureByTag("reference"));
                 symbol.Add(value);
             }
             if (schsymbol.getChipText().getTextureByTag("unit") != null && ! schsymbol.getChipText().getTextureByTag("unit").isEmpty()) {
-                Label value=new Label();
+                FontLabel value=new FontLabel();
                 value.getTexture().copy(schsymbol.getChipText().getTextureByTag("unit"));
                 symbol.Add(value);
             }
@@ -112,13 +112,13 @@ public final class CircuitMgr extends UnitMgr<Circuit, Shape> {
     }     
     private void createSCHSymbol(Symbol symbol,SCHSymbol schsymbol) {
         for (Shape shape : symbol.getShapes()) {
-            if (shape instanceof Label) {
-                    if (((Label)shape).getTexture().getTag().equals("unit")) {
-                    schsymbol.getChipText().getTextureByTag("unit").copy(((Label)shape).getTexture());
+            if (shape instanceof FontLabel) {
+                    if (((FontLabel)shape).getTexture().getTag().equals("unit")) {
+                    schsymbol.getChipText().getTextureByTag("unit").copy(((FontLabel)shape).getTexture());
                     continue;
                 }
-                    if (((Label)shape).getTexture().getTag().equals("reference")) {
-                    schsymbol.getChipText().getTextureByTag("reference").copy(((Label)shape).getTexture());
+                    if (((FontLabel)shape).getTexture().getTag().equals("reference")) {
+                    schsymbol.getChipText().getTextureByTag("reference").copy(((FontLabel)shape).getTexture());
                     continue;
                 }
             }

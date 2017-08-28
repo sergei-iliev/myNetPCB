@@ -3,12 +3,12 @@ package com.mynetpcb.symbol.dialog.panel.inspector;
 
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
+import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.tree.AttachedItem;
 import com.mynetpcb.symbol.component.SymbolComponent;
-import com.mynetpcb.symbol.shape.Label;
+import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.unit.SymbolMgr;
 
 import java.awt.BorderLayout;
@@ -95,8 +95,8 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
         
         //Texture atext = SymbolMgr.getInstance().getTextureByTag(getComponent().getModel().getUnit(),"reference");
         //***get could be Owners list 
-        for(Shape symbol:((SymbolComponent)getComponent()).getModel().getUnit().<Shape>getShapes(Label.class)){
-             Texture text=((Label)symbol).getTexture();     
+        for(Shape symbol:((SymbolComponent)getComponent()).getModel().getUnit().<Shape>getShapes(FontLabel.class)){
+             Texture text=((FontLabel)symbol).getTexture();     
              AttachedItem item=new AttachedItem.Builder(text.getText()).setUUID(symbol.getUUID()).build();  
              referenceCombo.addItem(item);                          
              if(text.getTag().equals("reference"))
@@ -112,7 +112,7 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
         
         //atext = SymbolMgr.getInstance().getTextureByTag(getComponent().getModel().getUnit(),"unit");
         //***get could be Owners list        
-        for(Label symbol:((SymbolComponent)getComponent()).getModel().getUnit().<Label>getShapes(Label.class)){
+        for(FontLabel symbol:((SymbolComponent)getComponent()).getModel().getUnit().<FontLabel>getShapes(FontLabel.class)){
              Texture text=symbol.getTexture();     
              AttachedItem item=new AttachedItem.Builder(text.getText()).setUUID(symbol.getUUID()).build();   
              valueCombo.addItem(item);  
@@ -135,27 +135,27 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==referenceCombo){
            Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)referenceCombo.getSelectedItem()).getUUID());
-           Texture texture = SymbolMgr.getInstance().getTextureByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"reference");
+           Label text = (Label)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"reference");
            //***demark the old one
-           if(texture!=null)
-              texture.setTag("label");  
+           if(text!=null)
+              text.getTexture().setTag("label");  
            //***mark the new one 
            if(element!=null){
-               texture=((Textable)element).getChipText().get(0);
-               texture.setTag("reference");
+               text=((Label)element);
+               text.getTexture().setTag("reference");
            }           
         }
         
         if(e.getSource()==valueCombo){
            Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)valueCombo.getSelectedItem()).getUUID());
-           Texture texture = SymbolMgr.getInstance().getTextureByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"unit");
+           Label text = (Label)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"unit");
            //***demark the old one
-           if(texture!=null)
-              texture.setTag("label");  
+           if(text!=null)
+              text.getTexture().setTag("label");  
            //***mark the new one 
            if(element!=null){
-               texture=((Textable)element).getChipText().get(0);
-               texture.setTag("unit");
+               text=(Label)element;
+               text.getTexture().setTag("unit");
            }           
         }
         

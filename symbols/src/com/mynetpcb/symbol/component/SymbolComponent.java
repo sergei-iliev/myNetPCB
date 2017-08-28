@@ -28,7 +28,7 @@ import com.mynetpcb.symbol.popup.SymbolPopupMenu;
 import com.mynetpcb.symbol.shape.Arc;
 import com.mynetpcb.symbol.shape.Arrow;
 import com.mynetpcb.symbol.shape.Ellipse;
-import com.mynetpcb.symbol.shape.Label;
+import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.shape.Line;
 import com.mynetpcb.symbol.shape.Pin;
 import com.mynetpcb.symbol.shape.RoundRect;
@@ -125,7 +125,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
             getEventMgr().setEventHandle("cursor",shape);   
             break;
         case LABEL_MODE:
-            shape=new Label();
+            shape=new FontLabel();
             setContainerCursor(shape);               
             getEventMgr().setEventHandle("cursor",shape);  
             break;
@@ -184,7 +184,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
                     //***block operation
                     if (SymbolMgr.getInstance().isBlockSelected(getModel().getUnit()) && shape.isSelected())
                         getEventMgr().setEventHandle("block", shape);
-                    else if (!(shape instanceof Label) && (shape instanceof Textable) &&
+                    else if (!(shape instanceof FontLabel) && (shape instanceof Textable) &&
                              (((Textable)shape).getChipText().getClickedTexture(scaledEvent.getX(),
                                                                                 scaledEvent.getY()) != null))
                         getEventMgr().setEventHandle("texture", shape);

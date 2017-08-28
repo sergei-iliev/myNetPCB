@@ -6,7 +6,7 @@ import com.mynetpcb.symbol.component.SymbolComponent;
 import com.mynetpcb.symbol.shape.Arc;
 import com.mynetpcb.symbol.shape.Arrow;
 import com.mynetpcb.symbol.shape.Ellipse;
-import com.mynetpcb.symbol.shape.Label;
+import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.shape.Line;
 import com.mynetpcb.symbol.shape.Pin;
 import com.mynetpcb.symbol.shape.RoundRect;
@@ -23,7 +23,7 @@ public class SymbolBuilderFactory extends AbstractPanelBuilderFactory<Shape>{
           panelsMap.put(Line.class,new LinePanelBuilder(component)); 
           panelsMap.put(Arrow.class,new ArrowPanelBuilder(component)); 
           panelsMap.put(Pin.class,new PinPanelBuilder(component));  
-          panelsMap.put(Label.class,new LabelPanelBuilder(component)); 
+          panelsMap.put(FontLabel.class,new LabelPanelBuilder(component)); 
           panelsMap.put(SymbolComponent.class,new ComponentPanelBuilder(component)); 
         }
 

@@ -143,27 +143,27 @@ public class FootprintPanelBuilder extends AbstractPanelBuilder<Shape>{
         }
         if(e.getSource()==referenceCombo){
            Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)referenceCombo.getSelectedItem()).getUUID());
-           Texture texture = FootprintMgr.getInstance().getTextureByTag((Footprint)getComponent().getModel().getUnit(),"reference");
+           GlyphLabel text = (GlyphLabel)FootprintMgr.getInstance().getLabelByTag((Footprint)getComponent().getModel().getUnit(),"reference");
            //***demark the old one
-           if(texture!=null)
-              texture.setTag("label");  
+           if(text!=null)
+              text.getTexture().setTag("label");  
            //***mark the new one 
            if(element!=null){
-               texture=((GlyphLabel)element).getTexture();
-               texture.setTag("reference");
+               text=((GlyphLabel)element);
+               text.getTexture().setTag("reference");
            }           
         }
         
         if(e.getSource()==valueCombo){
            Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)valueCombo.getSelectedItem()).getUUID());
-           Texture texture = FootprintMgr.getInstance().getTextureByTag((Footprint)getComponent().getModel().getUnit(),"value");
+           GlyphLabel text = (GlyphLabel)FootprintMgr.getInstance().getLabelByTag((Footprint)getComponent().getModel().getUnit(),"value");
            //***demark the old one
-           if(texture!=null)
-              texture.setTag("label");  
+           if(text!=null)
+              text.getTexture().setTag("label");  
            //***mark the new one 
            if(element!=null){
-               texture=((GlyphLabel)element).getTexture();
-               texture.setTag("value");
+               text=((GlyphLabel)element);
+               text.getTexture().setTag("value");
            }           
         }
         

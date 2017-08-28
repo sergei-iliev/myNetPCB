@@ -4,6 +4,7 @@ package com.mynetpcb.symbol.shape;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Texture;
@@ -23,11 +24,11 @@ import java.awt.geom.Rectangle2D;
 import org.w3c.dom.Node;
 
 
-public class Label extends Shape implements Externalizable{
+public class FontLabel extends Shape implements Label,Externalizable{
     
     protected FontTexture texture;
     
-    public Label(){
+    public FontLabel(){
        this(0,0,0); 
     }
     public String toXML() {
@@ -37,7 +38,7 @@ public class Label extends Shape implements Externalizable{
           return "";  
     }
 
-    public Label(int x,int y,int layermaskId) {
+    public FontLabel(int x,int y,int layermaskId) {
         super(x,y,0,0, -1,layermaskId);
         texture=new FontTexture("label","Label",x,y,Text.Alignment.LEFT,8);
         texture.setFillColor(Color.BLACK);
@@ -45,12 +46,12 @@ public class Label extends Shape implements Externalizable{
     
     
     @Override
-    public Label clone()throws CloneNotSupportedException{
-        Label copy=(Label)super.clone();
+    public FontLabel clone()throws CloneNotSupportedException{
+        FontLabel copy=(FontLabel)super.clone();
         copy.texture=this.texture.clone();
         return copy;
     }
-    
+    @Override
     public Texture getTexture(){
         return this.texture;
     }
@@ -138,7 +139,7 @@ public class Label extends Shape implements Externalizable{
     }
     
     
-    public static class Memento extends AbstractMemento<Symbol,Label>{
+    public static class Memento extends AbstractMemento<Symbol,FontLabel>{
         Texture.Memento textureMemento;
         
         public Memento(MementoType mementoType){
@@ -146,12 +147,12 @@ public class Label extends Shape implements Externalizable{
           textureMemento=new FontTexture.Memento();
         }
         @Override
-        public void loadStateTo(Label shape) {
+        public void loadStateTo(FontLabel shape) {
           super.loadStateTo(shape);  
           textureMemento.loadStateTo(shape.texture);  
         }
         @Override
-        public void saveStateFrom(Label shape){
+        public void saveStateFrom(FontLabel shape){
             super.saveStateFrom(shape);
             textureMemento.saveStateFrom(shape.texture);
         }
@@ -183,7 +184,7 @@ public class Label extends Shape implements Externalizable{
         }     
         
         public boolean isSameState(Symbol unit) {
-            Label label=(Label)unit.getShape(getUUID());
+            FontLabel label=(FontLabel)unit.getShape(getUUID());
             return (label.getState(getMementoType()).equals(this)); 
         }
     }

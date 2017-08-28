@@ -7,10 +7,9 @@ import com.mynetpcb.core.capi.Packageable;
 import com.mynetpcb.core.capi.Typeable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
-import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.Packaging;
-import com.mynetpcb.symbol.shape.Label;
+import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.shape.SymbolShapeFactory;
 
 import java.awt.Color;
@@ -140,17 +139,17 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
                    (packaging.getFootprintName() == null ? "" : packaging.getFootprintName()) + "\"/>\r\n");
         xml.append("<name>" + this.unitName + "</name>\r\n");
         //***reference
-        Texture text = SymbolMgr.getInstance().getTextureByTag("reference", shapes);
+        FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"reference");
         if (text != null) {
             xml.append("<reference>");
-            xml.append(text.toXML());
+            xml.append(text.getTexture().toXML());
             xml.append("</reference>\r\n");
         }
         //unit
-        text = SymbolMgr.getInstance().getTextureByTag("unit", shapes);
+        text =(FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"unit");
         if (text != null) {
             xml.append("<unit>");
-            xml.append(text.toXML());
+            xml.append(text.getTexture().toXML());
             xml.append("</unit>\r\n");
         }
 
@@ -195,7 +194,7 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
         NodeList nodelist = ((Element) node).getElementsByTagName("reference");
         Node n = nodelist.item(0);
         if (n != null && !n.getTextContent().equals("")) {
-            Label label = new Label();
+            FontLabel label = new FontLabel();
             label.getTexture().setTag("reference");
             label.fromXML(n);
             Add(label);
@@ -203,7 +202,7 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
         nodelist = ((Element) node).getElementsByTagName("unit");
         n = nodelist.item(0);
         if (n != null && !n.getTextContent().equals("")) {
-            Label label = new Label();
+            FontLabel label = new FontLabel();
             label.getTexture().setTag("unit");
             label.fromXML(n);
             Add(label);
