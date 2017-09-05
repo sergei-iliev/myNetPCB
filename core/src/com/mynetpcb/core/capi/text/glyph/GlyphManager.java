@@ -35,7 +35,7 @@ public enum GlyphManager {
     
     private void initialize() throws Exception{
         
-        try(InputStream istream =getClass().getResourceAsStream("defaultfont.xml")){
+        try(InputStream istream =getClass().getResourceAsStream("/com/mynetpcb/core/fonts/defaultfont.xml")){
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputSource is = new InputSource(istream);
