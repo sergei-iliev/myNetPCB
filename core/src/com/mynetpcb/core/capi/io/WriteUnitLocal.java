@@ -40,7 +40,7 @@ public class WriteUnitLocal extends Command {
          }
         }
         
-        this.libraryName=Objects.requireNonNull(libraryName);
+        this.libraryName=(libraryName==null?"":libraryName);
         this.categoryName=categoryName==null?"":categoryName;
         this.repositoryRoot=repositoryRoot;
         this.override = override;

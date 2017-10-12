@@ -4,6 +4,7 @@ package com.mynetpcb.pad.unit;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.pad.shape.FootprintShapeFactory;
@@ -21,6 +22,8 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -111,7 +114,21 @@ public class Footprint extends Unit<Shape> {
         }
         xml.append("<units raster=\"" + this.getGrid().getGridValue() + "\">" + this.getGrid().getGridUnits() +
                    "</units>\r\n");
-        xml.append(Format(getShapes()));
+        
+        //exclude ref and value tags
+        List shapes=getShapes().stream().filter(s->{
+            if(s instanceof Label){
+                if(((Label)s).getTexture().getTag().equals("reference")||((Label)s).getTexture().getTag().equals("value")){
+                   return false; 
+                }else{
+                   return true; 
+                }                
+            }else{
+                return true;
+            }
+        }).collect(Collectors.toList());
+        
+        xml.append(Format(shapes));
         xml.append("</footprint>");
         return xml;
     }
