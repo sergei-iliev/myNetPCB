@@ -50,7 +50,7 @@ public class Pad extends PadShape {
 
     private Type type;
 
-    private final Point offset;
+    private Point offset;
 
     private ChipText text;
 
@@ -73,7 +73,17 @@ public class Pad extends PadShape {
     public Pad() {
         this(0, 0, 0, 0);
     }
-
+    public Pad clone() throws CloneNotSupportedException {
+        Pad copy = (Pad) super.clone();
+        copy.offset=new Point(this.offset.x,this.offset.y);
+        copy.setShape(this.getShape());
+        copy.setType(this.getType());
+        copy.text = this.text.clone();
+        if (drill != null) {
+            copy.drill = drill.clone();
+        }
+        return copy;
+    }
     @Override
     public Method showContextPopup() throws NoSuchMethodException, SecurityException {
         return FootprintPopupMenu.class
@@ -86,7 +96,7 @@ public class Pad extends PadShape {
         switch (type) {
         case THROUGH_HOLE:
             if (drill == null) {
-                drill = new Drill(Grid.MM_TO_COORD(0.6), Grid.MM_TO_COORD(0.6));
+                drill = new Drill(Grid.MM_TO_COORD(0.8), Grid.MM_TO_COORD(0.8));
                 drill.setLocation(getX(), getY());
             }
             break;
@@ -96,8 +106,15 @@ public class Pad extends PadShape {
                 drill = null;
             }
             break;
-            //case CONNECTOR:
-
+        case CONNECTOR:
+            if(!(this.shape instanceof CircularShape)){
+                this.shape=new CircularShape();
+            }
+            if (drill == null) {
+                drill = new Drill(Grid.MM_TO_COORD(0.8), Grid.MM_TO_COORD(0.8));
+                drill.setLocation(getX(), getY());
+            }            
+            break;
         }
     }
 
@@ -172,16 +189,6 @@ public class Pad extends PadShape {
         return 1;
     }
 
-    public Pad clone() throws CloneNotSupportedException {
-        Pad copy = (Pad) super.clone();
-        copy.setShape(this.getShape());
-        copy.text = this.text.clone();
-        if (drill != null) {
-            copy.drill = drill.clone();
-        }
-        return copy;
-    }
-
     @Override
     public void setLocation(int x, int y) {
         setX(x);
@@ -189,7 +196,8 @@ public class Pad extends PadShape {
         if (drill != null) {
             drill.setLocation(x, y);
         }
-        text.setLocation(0, 0);
+        text.get(0).getAnchorPoint().setLocation(0, 0);
+        text.get(1).getAnchorPoint().setLocation(0, 0);
     }
 
     @Override
@@ -340,22 +348,28 @@ public class Pad extends PadShape {
                 if (drill != null) {
                     drill.Paint(g2, viewportWindow, scale, layermask);
                 }
+                text.Paint(g2, viewportWindow, scale, layermask);
             }
             break;
         case SMD:
-            shape.Paint(g2, viewportWindow, scale);
+            if(shape.Paint(g2, viewportWindow, scale))
+                text.Paint(g2, viewportWindow, scale, layermask);
             break;
-
-            //case CONNECTOR:
-            //    throw new IllegalStateException("CONNECTOR is not defined");
+        case CONNECTOR:
+            if (shape.Paint(g2, viewportWindow, scale)) {
+                if (drill != null) {
+                    drill.Paint(g2, viewportWindow, scale, layermask);
+                }
+            }
+            
         }
-        text.Paint(g2, viewportWindow, scale, layermask);
+        
     }
 
     @Override
     public void Print(Graphics2D g2, PrintContext printContext, int layermask) {
         switch (type) {
-        case THROUGH_HOLE:
+        case THROUGH_HOLE:case CONNECTOR:
             shape.Print(g2, printContext, layermask);
             if (drill != null) {
                 drill.Print(g2, printContext, layermask);
@@ -364,10 +378,6 @@ public class Pad extends PadShape {
         case SMD:
             shape.Print(g2, printContext, layermask);
             break;
-
-            //case CONNECTOR:
-
-            //    break;
         }
     }
 
@@ -613,8 +623,12 @@ public class Pad extends PadShape {
 
             ellipse.setFrame(scaledRect.getX() - viewportWindow.x, scaledRect.getY() - viewportWindow.y,
                              scaledRect.getWidth(), scaledRect.getWidth());
-            g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
-
+            
+            if(getType()==Type.CONNECTOR){
+              g2.setColor(isSelected() ? Color.GRAY : Color.WHITE);
+            }else{    
+              g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
+            }
             g2.fill(ellipse);
 
             return true;
@@ -651,6 +665,8 @@ public class Pad extends PadShape {
             Pad.super.setHeight(height);
         }
     }
+    
+    
 
     private class OvalShape implements PadDrawing {
 

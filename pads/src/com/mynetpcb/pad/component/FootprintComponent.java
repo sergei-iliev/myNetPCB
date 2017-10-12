@@ -217,7 +217,6 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
             case MEASUMENT_MODE:
                 if ((getEventMgr().getTargetEventHandle() != null) ||
                     (getEventMgr().getTargetEventHandle() instanceof MeasureEventHandle)) {
-                    this.getModel().getUnit().getRuler().setResizingPoint(null);
                     getEventMgr().resetEventHandle();
                     this.Repaint();
                 }else{

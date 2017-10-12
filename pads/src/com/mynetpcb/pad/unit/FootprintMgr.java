@@ -31,8 +31,8 @@ public final class FootprintMgr extends UnitMgr<Footprint,Shape> {
         int size=footprint.getShapes(Pad.class).size();
         Pad pad=null;
         if(size==0){
-            pad=new Pad(0,0,Grid.MM_TO_COORD(1.47),Grid.MM_TO_COORD(1.47));
-            pad.setDrill(new Drill(Grid.MM_TO_COORD(0.6),Grid.MM_TO_COORD(0.6)));
+            pad=new Pad(0,0,Grid.MM_TO_COORD(1.52),Grid.MM_TO_COORD(1.52));
+            pad.setDrill(new Drill(Grid.MM_TO_COORD(0.8),Grid.MM_TO_COORD(0.8)));
         }else{
             
             Pad last=((List<Pad>)footprint.<Pad>getShapes(Pad.class)).get(0);

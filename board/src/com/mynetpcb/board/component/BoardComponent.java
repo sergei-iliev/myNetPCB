@@ -273,7 +273,6 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
             case MEASUMENT_MODE:
                 if ((getEventMgr().getTargetEventHandle() != null) ||
                     (getEventMgr().getTargetEventHandle() instanceof MeasureEventHandle)) {
-                    this.getModel().getUnit().getRuler().setResizingPoint(null);
                     getEventMgr().resetEventHandle();
                     this.Repaint();
                 } else {

@@ -398,24 +398,31 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
     public abstract void Parse(Node node) throws XPathExpressionException, ParserConfigurationException;
 
 
-    protected List<ClickableOrderItem> buildClickableOrderItem(boolean isTextIncluded) {
+    protected List<ClickableOrderItem> buildClickableOrderItem(int x, int y, boolean isTextIncluded) {
         List<ClickableOrderItem> orderElements = new ArrayList<ClickableOrderItem>();
         int index = 0;
         for (Shape shape : getShapes()) {
+            if (isTextIncluded && shape instanceof Textable) {                   
+                if(((Textable)shape).getChipText().isClicked(x, y)){ 
+                  orderElements.add(new ClickableOrderItem(index, 0,shape.getCopper().getLayerMaskID()));
+                }
+            }
+            if(!shape.isClicked(x, y)){
+               index++;
+               continue; 
+            }
             //***give selected a higher priority
             orderElements.add(new ClickableOrderItem(index,
                                                      (shape.isSelected() && shape.getOrderWeight() > 1 ? 2 : shape.getOrderWeight()),shape.getCopper().getLayerMaskID()));
 
-                if (isTextIncluded && shape instanceof Textable) {                   
-                    orderElements.add(new ClickableOrderItem(index, 0,shape.getCopper().getLayerMaskID()));
-                }
             index++;
         }
+
         return orderElements;
     }
 
     public S getClickedShape(int x, int y, boolean isTextIncluded) {
-        List<ClickableOrderItem> orderedElements = buildClickableOrderItem(isTextIncluded);
+        List<ClickableOrderItem> orderedElements = buildClickableOrderItem(x,y,isTextIncluded);
         Collections.sort(orderedElements, new Comparator<ClickableOrderItem>() {
                 public int compare(ClickableOrderItem o1, ClickableOrderItem o2) {
                     if(Unit.this instanceof CompositeLayerable){
@@ -454,9 +461,12 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
                     return shape;
                 }
             } else {
-                if (shape.isClicked(x, y)) {
+                /*
+                buildClickableOrderItem garantees that shape is clicked
+                */
+                //if (shape.isClicked(x, y)) {
                     return shape;
-                }
+                //}
             }
         }
 

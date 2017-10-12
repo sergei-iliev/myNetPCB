@@ -33,7 +33,7 @@ public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                layerCombo=new JComboBox(Layer.GRAPHICS_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
+                layerCombo=new JComboBox(Layer.PCB_SYMBOL_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());

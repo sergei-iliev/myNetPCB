@@ -59,11 +59,11 @@ public class CoordinateSystem extends Shape {
         return "Coordinate Origin";
     }
 
-    @Override
-    public void Move(int xoffset, int yoffset) {
-        setX(getX() +xoffset);
-        setY(getY() +yoffset);
-    }
+//    @Override
+//    public void Move(int xoffset, int yoffset) {
+//        setX(getX() +xoffset);
+//        setY(getY() +yoffset);
+//    }
 
     /*
      * Reset origin to a new position

@@ -18,7 +18,8 @@ public abstract class PadShape extends Shape implements Pinable, Net, Textable, 
 
     public enum Type {
         THROUGH_HOLE,
-        SMD
+        SMD,
+        CONNECTOR
     }
     
     public PadShape(int x, int y, int width, int height) {

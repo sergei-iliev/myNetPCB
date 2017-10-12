@@ -667,9 +667,17 @@ public class GlyphTexture implements Texture {
     }
     
     public void setOrientation(Text.Orientation orientation) {        
+      if(orientation==this.alignment.getOrientation()){
+            return;
+      }
       Rectangle r=getBoundingShape();
-      AffineTransform rotation = AffineTransform.getRotateInstance(-Math.PI / 2, r.getCenterX(), r.getCenterY());
-      this.Rotate(rotation);
+      AffineTransform rotation;
+      if(orientation==Text.Orientation.VERTICAL){ //from horizontal to vertical
+        rotation = AffineTransform.getRotateInstance(-Math.PI / 2, r.getCenterX(), r.getCenterY());        
+      }else{
+        rotation = AffineTransform.getRotateInstance(Math.PI / 2, r.getCenterX(), r.getCenterY());                       
+      }
+      this.Rotate(rotation); 
     }
     
     public Text.Alignment getAlignment() {

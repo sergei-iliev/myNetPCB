@@ -233,6 +233,11 @@ public class Circle extends Shape implements ArcGerberable,Resizeable,Externaliz
     }
     
     @Override
+    public long getOrderWeight(){
+       return ((long)(2*getWidth())*(long)(2*getWidth())); 
+    }
+    
+    @Override
     public AbstractMemento getState(MementoType operationType) {
         Memento memento=new Memento(operationType);
         memento.saveStateFrom(this);        

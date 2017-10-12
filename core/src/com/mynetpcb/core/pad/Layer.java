@@ -324,6 +324,10 @@ public class Layer {
                       Layer.Copper.FMask, Layer.Copper.All).toArray(new Copper[7]);
     public static final Layer.Copper[] PAD_LAYERS =
         Arrays.asList(Layer.Copper.FCu, Layer.Copper.BCu, Layer.Copper.Cu).toArray(new Copper[3]);
+
+    public static final Layer.Copper[] PCB_SYMBOL_LAYERS =
+        Arrays.asList(Layer.Copper.FCu, Layer.Copper.BCu, Layer.Copper.BSilkS, Layer.Copper.FSilkS).toArray(new Copper[3]);
+    
     public static final Layer.Copper[] GRAPHICS_LAYERS =
         Arrays.asList(Layer.Copper.BSilkS, Layer.Copper.FSilkS, Layer.Copper.BMask, Layer.Copper.FMask,
                       Layer.Copper.All).toArray(new Copper[5]);
