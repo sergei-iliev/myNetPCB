@@ -97,12 +97,12 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
              getEventMgr().setEventHandle("cursor",shape);   
              break;
             case ARC_MODE:
-             shape=new Arc(0,0,Grid.MM_TO_COORD(3.4),Grid.MM_TO_COORD(0.4),Layer.SILKSCREEN_LAYER_FRONT);
+             shape=new Arc(0,0,Grid.MM_TO_COORD(3.4),Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;                           
             case ELLIPSE_MODE:
-             shape=new Circle(0,0,Grid.MM_TO_COORD(3.4),Grid.MM_TO_COORD(0.4),Layer.SILKSCREEN_LAYER_FRONT);
+             shape=new Circle(0,0,Grid.MM_TO_COORD(3.4),Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;             

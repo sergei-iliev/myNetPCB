@@ -610,7 +610,12 @@ public class GlyphTexture implements Texture {
     }
     @Override
     public boolean isClicked(int x, int y) {
-        return false;
+        Rectangle r=getBoundingShape();
+        if ((r != null) && (r.contains(x, y)))
+            return true;
+        else
+            return false;
+    
     }
 
     @Override
