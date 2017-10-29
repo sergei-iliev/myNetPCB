@@ -1,10 +1,11 @@
 
 # myNetPCB
 PCB Layout and Schematic capture tool for Win/Linux/Mac
-Download myNetPCB application at
+
+>Download myNetPCB application at
 https://sourceforge.net/projects/mynetpcb/
 
-Repository clone of
+>Repository clone of
 https://sourceforge.net/projects/mynetpcb/
 
 > **Features:**
