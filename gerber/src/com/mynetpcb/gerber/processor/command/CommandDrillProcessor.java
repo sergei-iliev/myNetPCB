@@ -46,7 +46,7 @@ public class CommandDrillProcessor implements Processor {
         for(FootprintShape footrpint:footprints){
             Collection<Pad> pads=((Pinaware)footrpint).getPins();
             for(Pad pad:pads){
-                if(pad.getType()==Pad.Type.THROUGH_HOLE){
+                if(pad.getType()==Pad.Type.THROUGH_HOLE || pad.getType()==Pad.Type.CONNECTOR){
                     ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.ComponentDrill,pad.getDrill().getWidth());
                     //set aperture if not same
                     context.resetAperture(aperture);

@@ -26,6 +26,8 @@ public abstract class AbstractAttribute implements Printable{
                  return SMDPad; 
             }else if(Pad.Type.THROUGH_HOLE==pad){
                 return ComponentPad;  
+            }else if(Pad.Type.CONNECTOR==pad){
+                return ComponentPad;     
             }else{            
                 throw new IllegalStateException("Unknown pad:"+pad);
             }

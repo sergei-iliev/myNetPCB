@@ -44,7 +44,7 @@ public class ApertureDrillProcessor implements Processor{
         for(FootprintShape footrpint:footprints){
             Collection<Pad> pads=((Pinaware)footrpint).getPins();
             for(Pad pad:pads){
-                if(pad.getType()==Pad.Type.THROUGH_HOLE){
+                if(pad.getType()==Pad.Type.THROUGH_HOLE ||pad.getType()==Pad.Type.CONNECTOR){
                     CircleAperture drill=new CircleAperture(); 
                     drill.setDiameter(pad.getDrill().getWidth());
                     drill.setAttribute(new ComponentDrillAttribute());

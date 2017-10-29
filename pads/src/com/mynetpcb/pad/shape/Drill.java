@@ -94,9 +94,21 @@ public class Drill extends Shape implements Externalizable{
         rotation.transform(new Point(getX(),getY()), dst);
         setX(dst.x);
         setY(dst.y);
-        int w=getWidth();
-        setWidth(getHeight());
-        setHeight(w);      
+        //drill is a circle!!!
+        
+        //int w=getWidth();
+        //setWidth(getHeight());
+        //setHeight(w);      
+    }
+   
+    @Override
+    public int getHeight() {        
+        return width;
+    }
+    
+    @Override
+    public void setHeight(int height) {
+                
     }
 
     @Override
