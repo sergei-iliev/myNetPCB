@@ -13,6 +13,8 @@ import java.awt.geom.Point2D;
  * @author Sergey Iliev
  */
 public class ScalableTransformation implements Cloneable{
+    public static int DEFAULT_MAX_SCALE_FACTOR=15;
+    
     private double scaleRatio; 
     //{1:2:4:8} 1.25 - 0.8
     private int scaleFactor;
@@ -28,7 +30,7 @@ public class ScalableTransformation implements Cloneable{
     }
     
     public ScalableTransformation(double scaleRatio) {
-          this.Reset(scaleRatio,0,0,10);
+          this.Reset(scaleRatio,0,0,DEFAULT_MAX_SCALE_FACTOR);
     }   
     
     public void Reset(double scaleRatio,int scaleFactor,int minScaleFactor,int maxScaleFactor){

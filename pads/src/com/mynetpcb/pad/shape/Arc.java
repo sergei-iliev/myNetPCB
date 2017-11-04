@@ -36,7 +36,7 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
     public Arc(int x,int y,int r,int thickness,int layermaskid) {
         super(x, y, r,thickness,layermaskid);  
         this.startAngle=90;
-        this.extendAngle=230;
+        this.extendAngle=-230;
         this.selectionRectWidth=3000;
     }
     
@@ -55,6 +55,74 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
         return "Arc";
     }
 
+    @Override
+    public Point isControlRectClicked(int x, int y) {
+        
+        Point result= super.isControlRectClicked(x, y);
+        if(result==null){
+            FlyweightProvider rectFlyweightProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+            Rectangle2D rect = (Rectangle2D)rectFlyweightProvider.getShape();
+
+            
+            try{
+                Point2D p=getStartPoint();
+                rect.setRect((p.getX()) - selectionRectWidth / 2, (p.getY()) - selectionRectWidth / 2,
+                             selectionRectWidth, selectionRectWidth);
+                if (rect.contains(x,y)) {
+                    return new Point((int)p.getX(),(int)p.getY());
+                }
+                p=getEndPoint();
+                rect.setRect((p.getX()) - selectionRectWidth / 2, (p.getY()) - selectionRectWidth / 2,
+                             selectionRectWidth, selectionRectWidth);
+                if (rect.contains(x,y)) {
+                    return new Point((int)p.getX(),(int)p.getY());
+                }
+                
+            }finally{
+                rectFlyweightProvider.reset();
+            }
+            return null;       
+        }else{
+            return result;
+        }
+    }
+    
+    public boolean isStartAnglePointClicked(int x,int y){
+        FlyweightProvider rectFlyweightProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+        Rectangle2D rect = (Rectangle2D)rectFlyweightProvider.getShape();
+
+        
+        try{
+            Point2D p=getStartPoint();
+            rect.setRect((p.getX()) - selectionRectWidth / 2, (p.getY()) - selectionRectWidth / 2,
+                         selectionRectWidth, selectionRectWidth);
+            if (rect.contains(x,y)) {
+                return true;
+            }            
+        }finally{
+            rectFlyweightProvider.reset();
+        }        
+        return false;
+    }
+    public boolean isExtendAnglePointClicked(int x,int y){
+        FlyweightProvider rectFlyweightProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+        Rectangle2D rect = (Rectangle2D)rectFlyweightProvider.getShape();
+
+        
+        try{
+            
+            Point2D  p=getEndPoint();
+            rect.setRect((p.getX()) - selectionRectWidth / 2, (p.getY()) - selectionRectWidth / 2,
+                         selectionRectWidth, selectionRectWidth);
+            if (rect.contains(x,y)) {
+                return true;
+            }
+            
+        }finally{
+            rectFlyweightProvider.reset();
+        }         
+        return false;
+    }
     public double getStartAngle(){
         return startAngle ;
     }
@@ -63,11 +131,14 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
        return extendAngle;
     }
     public void setExtendAngle(double extendAngle){
-       this.extendAngle=extendAngle;
+    
+       this.extendAngle=Math.round(extendAngle*100.0)/100.0;;
+    
     }
-    public void setStartAngle(double startAngle){
-       this.startAngle=startAngle;
+    public void setStartAngle(double startAngle){        
+       this.startAngle=Math.round(startAngle*100.0)/100.0;
     }
+    
     @Override
     public void Mirror(Point A,Point B) {
         super.Mirror(A,B);

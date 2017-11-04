@@ -68,8 +68,6 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
 
     public static final int LABEL_MODE = 0x09;
     
-    public static final int DRAGHEAND_MODE=0x0A;
-    
     public static final int PIN_MODE=0x0B;
 
     private final SymbolPopupMenu popup;

@@ -24,6 +24,8 @@ public class FootprintEventMgr extends EventMgr<FootprintComponent,Shape> {
 
     @Override
     protected void Initialize(FootprintComponent component) {
+        hash.put("arc.start.angle",new ArcStartAngleEventHandle<FootprintComponent,Shape>(component));
+        hash.put("arc.extend.angle",new ArcExtendAngleEventHandler<FootprintComponent,Shape>(component));
         hash.put("move",new MoveEventHandle<FootprintComponent,Shape>(component));
         hash.put("component", new UnitEventHandle<FootprintComponent,Shape>(component));
         hash.put("line",new LineEventHandle(component));

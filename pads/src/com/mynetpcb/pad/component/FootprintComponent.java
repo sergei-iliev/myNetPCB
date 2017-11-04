@@ -62,8 +62,6 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
     
     public static final int ARC_MODE = 0x05;
     
-    public static final int DRAGHEAND_MODE=0x07;
-    
     public static final int LABEL_MODE = 0x09;
     
     private final FootprintPopupMenu popup;
@@ -160,7 +158,17 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                 Shape shape=getModel().getUnit().isControlRectClicked(scaledEvent.getX() , scaledEvent.getY());
                 
                 if(shape!=null){
-                      getEventMgr().setEventHandle("resize",shape);                    
+                    if(shape instanceof Arc){
+                        if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
+                          getEventMgr().setEventHandle("arc.start.angle",shape);                    
+                        }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                          getEventMgr().setEventHandle("arc.extend.angle",shape);                      
+                        }else{
+                          getEventMgr().setEventHandle("resize",shape);    
+                        }
+                    }else{
+                      getEventMgr().setEventHandle("resize",shape);  
+                    }
                 }else if((shape = getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true))!=null){
                     //***block operation
                     if (FootprintMgr.getInstance().isBlockSelected(getModel().getUnit()) && shape.isSelected())

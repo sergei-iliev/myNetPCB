@@ -1,7 +1,6 @@
 package com.mynetpcb.gerber;
 
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Reshapeable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.Layer;

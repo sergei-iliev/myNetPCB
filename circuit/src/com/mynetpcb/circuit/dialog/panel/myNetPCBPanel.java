@@ -12,6 +12,7 @@ import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.DialogFrame;
+import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.container.UnitContainer;
 import com.mynetpcb.core.capi.credentials.User;
@@ -117,7 +118,8 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
     private JToggleButton ConnectorButton = new JToggleButton();
     private JToggleButton NoConnectorButton = new JToggleButton();
     private JToggleButton NetLabelButton = new JToggleButton();
-
+    private JToggleButton CoordButton = new JToggleButton();
+    
     private JButton SymbolButton = new JButton();
     private ButtonGroup group = new ButtonGroup();
     private JPanel basePanel;
@@ -407,6 +409,12 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
         NetLabelButton.setToolTipText("Add Net label");
         NetLabelButton.setPreferredSize(new Dimension(35, 35));
 
+        CoordButton.addActionListener(this);
+        CoordButton.setActionCommand("CoordOrigin");
+        CoordButton.setToolTipText("Change coordinate origin");
+        CoordButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/origin.png"));
+        CoordButton.setPreferredSize(new Dimension(35, 35));
+        
         //group.add(SymbolButton);
         group.add(SelectionButton);
         group.add(WireButton);
@@ -417,6 +425,7 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
         group.add(ConnectorButton);
         group.add(NoConnectorButton);
         group.add(NetLabelButton);
+        group.add(CoordButton);
         group.add(DragHeand);
 
         //***construct Top Buttons Panel
@@ -520,7 +529,9 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
         leftButtonGroupPanel.add(NoConnectorButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(NetLabelButton);
-
+        leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
+        leftButtonGroupPanel.add(CoordButton);
+        
         WestPanel.add(leftButtonGroupPanel, BorderLayout.NORTH);
         basePanel.add(WestPanel, BorderLayout.WEST);
         //****EAST PANEL
@@ -871,6 +882,9 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
         if (e.getActionCommand().equals("netlabel")) {
             circuitComponent.setMode(CircuitComponent.NETLABEL_MODE);
         }        
+        if (e.getActionCommand().equals("CoordOrigin")) {
+            circuitComponent.setMode(CircuitComponent.ORIGIN_SHIFT_MODE);
+        }        
         if (e.getActionCommand().equals("junction")) {
             circuitComponent.setMode(CircuitComponent.JUNCTION_MODE);
         }
@@ -1024,7 +1038,7 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
         for (Circuit circuit : source.getUnits()) {
             try {
                 Circuit copy = (Circuit) circuit.clone();
-                copy.getScalableTransformation().Reset(1.2, 2, 0, 10);
+                copy.getScalableTransformation().Reset(1.2, 2, 0, ScalableTransformation.DEFAULT_MAX_SCALE_FACTOR);
                 circuitComponent.getModel().Add(copy);
                 copy.notifyListeners(ShapeEvent.ADD_SHAPE);
             } catch (CloneNotSupportedException f) {

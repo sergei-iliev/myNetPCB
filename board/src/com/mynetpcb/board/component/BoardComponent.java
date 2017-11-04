@@ -40,6 +40,8 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
 
+import com.mynetpcb.pad.shape.Arc;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -72,8 +74,6 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
     public static final int VIA_MODE = 0x04;
 
     public static final int LABEL_MODE = 0x05;
-
-    public static final int DRAGHEAND_MODE = 0x06;
 
     public static final int ARC_MODE = 0x09;
 
@@ -199,8 +199,18 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
 
                 Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
 
-                if (shape != null) {
-                    getEventMgr().setEventHandle("resize", shape);
+                if (shape != null) {                    
+                    if(shape instanceof Arc){
+                        if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
+                          getEventMgr().setEventHandle("arc.start.angle",shape);                    
+                        }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                          getEventMgr().setEventHandle("arc.extend.angle",shape);                      
+                        }else{
+                          getEventMgr().setEventHandle("resize",shape);    
+                        }
+                    }else{
+                      getEventMgr().setEventHandle("resize",shape);  
+                    }
                 } else if ((shape =
                             getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true)) !=
                            null) {

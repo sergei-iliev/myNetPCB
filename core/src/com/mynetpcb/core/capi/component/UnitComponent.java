@@ -13,7 +13,6 @@ import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerEventDispatcher;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.EventMgr;
-import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
 import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
@@ -60,15 +59,11 @@ import java.util.Map;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.Size2DSyntax;
-import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.JobName;
 import javax.print.attribute.standard.MediaPrintableArea;
 import javax.print.attribute.standard.MediaSize;
-import javax.print.attribute.standard.NumberOfDocuments;
 import javax.print.attribute.standard.OrientationRequested;
-
 import javax.print.attribute.standard.PageRanges;
-
 import javax.print.attribute.standard.PrintQuality;
 
 import javax.swing.BorderFactory;
@@ -99,7 +94,9 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     
     public static final int MEASUMENT_MODE=0x0C;
     
-    private static final int MIN_UNIT_INCREAMEN=8; 
+    private static final int MIN_UNIT_INCREAMEN=0x10; 
+    
+    public static final int DRAGHEAND_MODE=0x11; 
     
     private M model;
 

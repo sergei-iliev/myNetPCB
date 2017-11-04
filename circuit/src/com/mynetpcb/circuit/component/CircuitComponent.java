@@ -73,9 +73,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape,CircuitContai
 
     public static final int LABEL_MODE = 0x06;
 
-    public static final int CONNECTOR_MODE = 0x07;
-    
-    public static final int DRAGHEAND_MODE=0x08;    
+    public static final int CONNECTOR_MODE = 0x07;       
     
     public static final int NOCONNECTION_MODE=0x09;   
     
@@ -164,7 +162,10 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape,CircuitContai
                 shape = new SCHNoConnector();
                 setContainerCursor(shape);               
                 getEventMgr().setEventHandle("cursor",shape); 
-                break;        
+                break;
+        case ORIGIN_SHIFT_MODE:  
+                 getEventMgr().setEventHandle("origin",null);   
+                 break;        
         case DRAGHEAND_MODE:
             cursor =
                     Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),
