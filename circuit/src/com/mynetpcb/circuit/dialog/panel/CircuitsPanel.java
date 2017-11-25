@@ -4,7 +4,6 @@ package com.mynetpcb.circuit.dialog.panel;
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.shape.SCHJunction;
 import com.mynetpcb.circuit.shape.SCHNoConnector;
-import com.mynetpcb.core.capi.TreeNodeData;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.ShapeEvent;
@@ -12,7 +11,10 @@ import com.mynetpcb.core.capi.event.ShapeListener;
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.event.UnitListener;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.tree.TreeDragDropHandler;
+import com.mynetpcb.core.capi.tree.TreeNodeData;
 import com.mynetpcb.core.capi.tree.UnitTreeCellRenderer;
+import com.mynetpcb.core.capi.tree.UnitTreeDragDropListener;
 import com.mynetpcb.core.capi.unit.Unitable;
 import com.mynetpcb.core.utils.Utilities;
 
@@ -23,6 +25,7 @@ import java.awt.geom.Point2D;
 
 import java.util.UUID;
 
+import javax.swing.DropMode;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -36,7 +39,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 
 public class CircuitsPanel extends JPanel implements TreeSelectionListener, UnitListener, ShapeListener,
-                                                     ContainerListener {
+                                                     ContainerListener,UnitTreeDragDropListener {
     private final CircuitComponent circuitComponent;
 
     private PropertyInspectorPanel circuitInspector;
@@ -54,6 +57,9 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
         this.circuitComponent = circuitComponent;
         this.setPreferredSize(new Dimension(200, 200));
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
+        circuitsTree.setDragEnabled(true);
+        circuitsTree.setDropMode(DropMode.ON_OR_INSERT);
+        circuitsTree.setTransferHandler(new TreeDragDropHandler(this));
         circuitsTree.setShowsRootHandles(true);
         circuitsTree.setVisibleRowCount(10);
         circuitsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -383,5 +389,10 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
         } finally {
             circuitsTree.addTreeSelectionListener(this);
         }
+    }
+
+    @Override
+    public void onUnitDragDrop(int index,UUID uuid) {
+        circuitComponent.getModel().reorder(index, uuid);
     }
 }

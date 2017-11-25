@@ -1,4 +1,4 @@
-package com.mynetpcb.core.capi;
+package com.mynetpcb.core.capi.tree;
 
 
 import java.util.UUID;

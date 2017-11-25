@@ -1,14 +1,16 @@
 package com.mynetpcb.board.dialog.panel;
 
 import com.mynetpcb.board.component.BoardComponent;
-import com.mynetpcb.core.capi.TreeNodeData;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeListener;
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.event.UnitListener;
+import com.mynetpcb.core.capi.tree.TreeDragDropHandler;
+import com.mynetpcb.core.capi.tree.TreeNodeData;
 import com.mynetpcb.core.capi.tree.UnitTreeCellRenderer;
+import com.mynetpcb.core.capi.tree.UnitTreeDragDropListener;
 import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.BorderLayout;
@@ -18,6 +20,7 @@ import java.awt.geom.Point2D;
 
 import java.util.UUID;
 
+import javax.swing.DropMode;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -30,7 +33,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitListener, ShapeListener,
-                                                     ContainerListener {
+                                                     ContainerListener,UnitTreeDragDropListener {
     
     private final BoardComponent boardComponent;
     
@@ -49,6 +52,9 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
         this.boardComponent = boardComponent;
         this.setPreferredSize(new Dimension(200, 200));
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
+        boardsTree.setDragEnabled(true);
+        boardsTree.setDropMode(DropMode.ON_OR_INSERT);
+        boardsTree.setTransferHandler(new TreeDragDropHandler(this));
         boardsTree.setShowsRootHandles(true);
         boardsTree.setVisibleRowCount(10);
         boardsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -376,5 +382,10 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
         } finally {
             boardsTree.addTreeSelectionListener(this);
         }
+    }
+
+    @Override
+    public void onUnitDragDrop(int index) {
+        System.out.println(index); 
     }
 }

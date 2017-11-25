@@ -129,6 +129,11 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget,Own
     }
     @Override
     public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2, T source) {
+        
+        if((source.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
+             return;  //not on the same layer
+        }
+        
         Rectangle rect=texture.getBoundingShape();        
         rect.grow(this.clearance!=0?this.clearance:source.getClearance(), this.clearance!=0?this.clearance:source.getClearance());
         

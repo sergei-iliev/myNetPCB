@@ -283,22 +283,44 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
     public void removeShapeListener(ShapeListener listener) {
         unitListeners.remove(ShapeListener.class, listener);
     }
-
-    //    public Object clone() throws CloneNotSupportedException {
-    //        UnitContainer copy=(UnitContainer)super.clone();
-    //        copy.unit=null;
-    //        copy.unitListeners = new EventListenerList();
-    //        copy.unitsMap = new LinkedHashMap<UUID, T>();
-    //        for(T unit:this.unitsMap.values()){
-    //            T u=(T)unit.clone();
-    //            copy.Add(u);
-    //        }
-    //        copy.formatedFileName=formatedFileName==null?"":new String(formatedFileName);
-    //        copy.fileName=fileName==null?"":new String(fileName);
-    //        copy.categoryName=categoryName==null?"":new String(categoryName);
-    //        copy.libraryName=libraryName==null?"":new String(libraryName);
-    //        copy.designerName =designerName==null?"": new String(designerName);
-    //        return copy;
-    //    }
+    /*
+     * D&D on tree fires reorder of underlying units
+     */
+    public void reorder(int index,UUID uuid){
+        int i=0;
+        for (UUID key : unitsMap.keySet()) {
+           if (key.equals(uuid)) {
+             break;
+           }
+          i++;           
+        }  
+        if(index>i){
+          index--;  
+        }
+        
+        Map.Entry<UUID,T> target=null;
+        List<Map.Entry<UUID, T>> rest = new ArrayList<>();
+        for (Map.Entry<UUID, T> entry : unitsMap.entrySet()) {
+              if (entry.getKey().equals(uuid)) {
+                target=entry;
+                continue;
+              }
+            rest.add(entry);
+        }
+        
+        unitsMap.clear();
+        for(int j=0;j<rest.size();j++){
+            if(index==j){
+                unitsMap.put(target.getKey(), target.getValue());
+            }
+            unitsMap.put(rest.get(j).getKey(), rest.get(j).getValue()); 
+            
+        }
+        //if last one
+        if(!unitsMap.containsKey(target.getKey())){
+            unitsMap.put(target.getKey(), target.getValue()); 
+        }
+        
+    }
 }
 
