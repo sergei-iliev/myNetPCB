@@ -33,8 +33,9 @@ public class CommandArcProcessor implements Processor {
         }
         
         //do arcs in footprints
-        List<FootprintShape> footprints = board.getShapes(FootprintShape.class, layermask);
-        for (FootprintShape footprint : footprints) {
+        if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){
+         List<FootprintShape> footprints = board.getShapes(FootprintShape.class, layermask);
+         for (FootprintShape footprint : footprints) {
 
             for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
@@ -44,8 +45,8 @@ public class CommandArcProcessor implements Processor {
                     processArc((Arc)shape,board.getHeight());                    
                 }
             }
+         }
         }
-
     }
 
     protected void processArc(Arc arc,int height){

@@ -33,8 +33,9 @@ public class CommandLineProcessor implements Processor {
         }
         
         //process board lines
-        List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);              
-        for(FootprintShape footprint:footprints){            
+        if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){        
+         List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);              
+         for(FootprintShape footprint:footprints){            
             for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
@@ -43,8 +44,8 @@ public class CommandLineProcessor implements Processor {
                     processLine((Line)shape,board.getHeight());
                 }
             }
+         }
         }
-        
 
     }
     protected void processLine(Line line,int height){

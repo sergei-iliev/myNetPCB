@@ -24,7 +24,8 @@ public class ApertureLineProcessor implements Processor{
                processLine(line);                               
         }
         //line if footprints
-        for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
+        if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){        
+         for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
 
             for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
@@ -34,8 +35,8 @@ public class ApertureLineProcessor implements Processor{
                     processLine((Line)shape);
                 }
             }
+         }
         }
-        
     }
     
     private void processLine(Line line){

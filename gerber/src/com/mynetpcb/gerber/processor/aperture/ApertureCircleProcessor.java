@@ -24,7 +24,8 @@ public class ApertureCircleProcessor implements Processor{
             processCircle(circle);
         }
         //circles if footprints
-        for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
+        if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){        
+         for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
             for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
@@ -33,8 +34,8 @@ public class ApertureCircleProcessor implements Processor{
                     processCircle((Circle)shape);
                 }
             }
-        }        
-        
+         }        
+        }
         
     }
     

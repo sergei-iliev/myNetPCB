@@ -25,8 +25,14 @@ public class CommandRectProcessor implements Processor {
 
     @Override
     public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {                
-        List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);                     
-        for(FootprintShape footrpint:footprints){
+        //board shapes
+        for(RoundRect rect:board.<RoundRect>getShapes(RoundRect.class,layermask)){
+               processRect(rect,board.getHeight());                               
+        }
+        //footprint shapes
+        if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){        
+         List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);                     
+         for(FootprintShape footrpint:footprints){
             Collection<? extends Shape> shapes=footrpint.getShapes();
             for(Shape shape:shapes){
                 if(!shape.isVisibleOnLayers(layermask)){
@@ -36,11 +42,7 @@ public class CommandRectProcessor implements Processor {
                     processRect((RoundRect)shape,board.getHeight());   
                 }
             }
-        }
-        
-        //board lines
-        for(RoundRect rect:board.<RoundRect>getShapes(RoundRect.class,layermask)){
-               processRect(rect,board.getHeight());                               
+         }
         }
     }
     

@@ -89,7 +89,6 @@ public class GerberExportDialog extends BoardPrintDialog implements ActionListen
 
         fmask = new JCheckBox("Footprint reference on silkscreen");
         panel.add(fmask);
-        fmask.setSelected(true);
         
         fsilk = new JCheckBox("Footprint value on silkscreen");
         panel.add(fsilk);
