@@ -13,6 +13,7 @@ import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.attribute.drill.ComponentDrillAttribute;
 import com.mynetpcb.gerber.attribute.drill.MechanicalDrillAttribute;
 import com.mynetpcb.gerber.attribute.drill.ViaDrillAttribute;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.Pad;
 
@@ -27,7 +28,7 @@ public class ApertureDrillProcessor implements Processor{
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
         if(layermask==Layer.NPTH_LAYER_DRILL){
            //non plated
            processPads(board);

@@ -15,6 +15,7 @@ import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.aperture.type.ObroundAperture;
 import com.mynetpcb.gerber.aperture.type.PolygonAperture;
 import com.mynetpcb.gerber.aperture.type.RectangleAperture;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
 
 import java.awt.Rectangle;
@@ -30,7 +31,7 @@ public class ApertureRegionProcessor implements Processor{
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {        
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {        
         //add D10 if not there
         Collection<CopperAreaShape> regions=board.getShapes(CopperAreaShape.class,layermask);                       
         if(regions.size()>0){

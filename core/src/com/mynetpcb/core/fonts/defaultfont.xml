@@ -123,14 +123,17 @@
         <line>0,40,25,40</line>
     </symbol>
     <symbol char="3" delta="12">
-        <line>0,5,5,0</line>
+        <line>0,5,5,0</line>        
         <line>5,0,15,0</line>
         <line>15,0,20,5</line>
-        <line>20,5,20,35</line>
+        <line>20,5,20,15</line> 
+        <line>15,20,20,15</line>
+        <line>15,20,20,25</line> 
+        <line>20,25,20,35</line> 
         <line>15,40,20,35</line>
         <line>5,40,15,40</line>
-        <line>0,35,5,40</line>
-        <line>5,20,20,20</line>
+        <line>0,35,5,40</line>        
+        <line>5,20,15,20</line> 
     </symbol>
     <symbol char="4" delta="12">
         <line>0,20,20,0</line>

@@ -10,20 +10,13 @@ import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.shape.Arc;
 
 
-public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape>  extends EventHandle<U,S>{
-    
-    private Arc arc;
+public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape>  extends EventHandle<U,S>{    
 
     
     public ArcExtendAngleEventHandler(U component) {
         super(component);
     }
     
-    @Override
-    public void Attach() {        
-        super.Attach();
-        arc=(Arc)this.getTarget();
-    }
     @Override
     protected void Clear() {   
     }
@@ -43,6 +36,8 @@ public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape
     public void mouseScaledDragged(MouseScaledEvent e) {
         int new_mx = e.getX();
         int new_my = e.getY();
+        
+        Arc arc=(Arc)this.getTarget();
         
         int centerX=arc.getCenterX();
         int centerY=arc.getCenterY();

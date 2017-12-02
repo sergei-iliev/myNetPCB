@@ -11,6 +11,8 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
+import com.mynetpcb.gerber.capi.GraphicsStateContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.Pad;
 
@@ -26,7 +28,7 @@ public class CommandDrillProcessor implements Processor {
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
         if(layermask==Layer.NPTH_LAYER_DRILL){
            //non plated
            processPads(board,board.getHeight());

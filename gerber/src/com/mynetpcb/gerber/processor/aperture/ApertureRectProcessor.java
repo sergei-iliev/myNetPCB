@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.RoundRect;
 
@@ -20,7 +21,12 @@ public class ApertureRectProcessor implements Processor{
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
+        //board rects
+        for(RoundRect rect:board.<RoundRect>getShapes(RoundRect.class,layermask)){
+               processRect(rect);                               
+        }
+        
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);   
         for(FootprintShape footrpint:footprints){
             Collection<? extends Shape> shapes=footrpint.getShapes();
@@ -29,11 +35,6 @@ public class ApertureRectProcessor implements Processor{
                     processRect((RoundRect)shape);
                 }
             }
-        }
-        
-        //board lines
-        for(RoundRect rect:board.<RoundRect>getShapes(RoundRect.class,layermask)){
-               processRect(rect);                               
         }
     }
     

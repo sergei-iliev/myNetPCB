@@ -11,7 +11,9 @@ import com.mynetpcb.gerber.attribute.file.CreationDateAttribute;
 import com.mynetpcb.gerber.attribute.file.FileFunctionAttribute;
 import com.mynetpcb.gerber.attribute.file.GenerationSoftwareAttribute;
 import com.mynetpcb.gerber.attribute.file.PartFunctionAttribute;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Gerberable;
+import com.mynetpcb.gerber.capi.GraphicsStateContext;
 import com.mynetpcb.gerber.capi.StringBufferEx;
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.gerber.command.CommandDictionary;
@@ -21,7 +23,6 @@ import com.mynetpcb.gerber.command.extended.StepAndRepeatCommand;
 import com.mynetpcb.gerber.command.extended.UnitCommand;
 import com.mynetpcb.gerber.processor.ApertureProcessor;
 import com.mynetpcb.gerber.processor.CommandProcessor;
-import com.mynetpcb.gerber.processor.command.GraphicsStateContext;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -45,9 +46,9 @@ public class Gerber implements Gerberable{
     }
 
     
-    public void build(String fileName,int layermask)throws IOException{
+    public void build(GerberServiceContext serviceContext, String fileName,int layermask)throws IOException{
         ApertureProcessor apertureProcessor=new ApertureProcessor(apertureDictionary);
-        apertureProcessor.process(board, layermask) ;
+        apertureProcessor.process(serviceContext,board, layermask) ;
         
         Path gerberFile = Paths.get(fileName);
         try (BufferedWriter writer = Files.newBufferedWriter(gerberFile,
@@ -56,14 +57,14 @@ public class Gerber implements Gerberable{
            GraphicsStateContext context=new GraphicsStateContext(apertureDictionary, commandDictionary, new StringBufferEx());
            
            writer.write(createHeader(context,layermask));
-           writer.write(createCommands(context,layermask));
+           writer.write(createCommands(serviceContext,context,layermask));
            writer.write(createFooter(context));                    
        } 
        
         
     }
     
-    private String createCommands(GraphicsStateContext context,int layermask){
+    private String createCommands(GerberServiceContext serviceContext,GraphicsStateContext context,int layermask){
         StringBufferEx sb=new StringBufferEx();
         
         /*Start dark polarity*/
@@ -73,7 +74,8 @@ public class Gerber implements Gerberable{
         sb.append(stepAndRepeat.print());
         
         CommandProcessor processor=new CommandProcessor(context);
-        processor.process(board, layermask);
+        processor.process(serviceContext,board, layermask);
+        
         sb.append(context.getOutput());
         return sb.toString();
     }

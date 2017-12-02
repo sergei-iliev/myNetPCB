@@ -3,6 +3,8 @@ package com.mynetpcb.gerber.processor;
 
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
+import com.mynetpcb.gerber.capi.GraphicsStateContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.gerber.processor.command.CommandArcProcessor;
 import com.mynetpcb.gerber.processor.command.CommandCircleProcessor;
@@ -13,7 +15,6 @@ import com.mynetpcb.gerber.processor.command.CommandRegionProcessor;
 import com.mynetpcb.gerber.processor.command.CommandTextProcessor;
 import com.mynetpcb.gerber.processor.command.CommandTrackProcessor;
 import com.mynetpcb.gerber.processor.command.CommandViaProcessor;
-import com.mynetpcb.gerber.processor.command.GraphicsStateContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,9 +39,9 @@ public class CommandProcessor implements Processor{
    }
    
    
-   public void process(Unit<? extends Shape> board,int layermask){
+   public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board,int layermask){
        for(Processor processor:processors){
-           processor.process(board, layermask);
+           processor.process(serviceContext, board, layermask);
        }
    }
 

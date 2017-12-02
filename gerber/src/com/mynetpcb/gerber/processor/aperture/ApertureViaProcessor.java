@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.attribute.aperture.ViaPadAttribute;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
 
 public class ApertureViaProcessor implements Processor{
@@ -18,7 +19,7 @@ public class ApertureViaProcessor implements Processor{
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
             
             for(ViaShape via:board.<ViaShape>getShapes(ViaShape.class,layermask)){
                 CircleAperture circle=new CircleAperture();

@@ -1,7 +1,7 @@
 package com.mynetpcb.pad.dialog.panel;
 
 
-import com.mynetpcb.core.capi.TreeNodeData;
+import com.mynetpcb.core.capi.tree.TreeNodeData;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.ShapeEvent;

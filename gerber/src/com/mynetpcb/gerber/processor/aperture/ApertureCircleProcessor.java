@@ -6,10 +6,9 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.Circle;
-
-import java.util.Collection;
 
 public class ApertureCircleProcessor implements Processor{
     private final ApertureDictionary dictionary;
@@ -19,7 +18,7 @@ public class ApertureCircleProcessor implements Processor{
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {  
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {  
         //circles
         for(Circle circle:board.<Circle>getShapes(Circle.class,layermask)){
             processCircle(circle);

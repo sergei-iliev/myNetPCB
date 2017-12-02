@@ -56,7 +56,10 @@ public class LineEventHandle extends EventHandle<CircuitComponent,Shape>{
             if(((Trackable)getTarget()).getLinePoints().size()>=2){
             //this could be a click over wire ->accomodate junction
                 Trackable  track=CircuitMgr.getInstance().getClickedLine(getComponent().getModel().getUnit(), p.x, p.y,(Trackable)getTarget());
-                if(track!=null&&(track.getClass()==SCHWire.class)){
+                //is press on track
+                if(track!=null&&(track.getClass()==SCHWire.class))
+                 //is press on junction
+                 if(!getComponent().getModel().getUnit().getShapeAt(p.x, p.y,SCHJunction.class).isPresent()){
                   //create junction
                   SCHJunction junction = new SCHJunction();
                   junction.setLocation(p.x,p.y);               
@@ -64,7 +67,7 @@ public class LineEventHandle extends EventHandle<CircuitComponent,Shape>{
                   
                   getComponent().getModel().getUnit().registerMemento(junction.getState(MementoType.CREATE_MEMENTO));
                   getComponent().getModel().getUnit().registerMemento(junction.getState(MementoType.MOVE_MEMENTO));    
-                }
+                 }
                   getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));    
                  
             }            

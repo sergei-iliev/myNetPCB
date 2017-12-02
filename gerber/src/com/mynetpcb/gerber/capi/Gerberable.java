@@ -4,6 +4,6 @@ import java.io.IOException;
 
 public interface Gerberable {
 
-    public void build(String fileName,int layermask)throws IOException;
+    public void build(GerberServiceContext serviceContext,String fileName,int layermask)throws IOException;
         
 }

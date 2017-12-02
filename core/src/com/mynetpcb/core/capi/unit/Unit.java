@@ -56,6 +56,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.swing.event.EventListenerList;
@@ -420,7 +421,19 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
 
         return orderElements;
     }
-
+    /*
+     * is junshion click
+     */
+    public Optional<S> getShapeAt(int x,int y,Class<?> clazz){
+        S s=getClickedShape(x, y, false);
+    
+                
+        if (clazz.isAssignableFrom(s.getClass())) {
+            return Optional.of(s);
+        }else{
+            return Optional.empty();
+        }                
+    }
     public S getClickedShape(int x, int y, boolean isTextIncluded) {
         List<ClickableOrderItem> orderedElements = buildClickableOrderItem(x,y,isTextIncluded);
         Collections.sort(orderedElements, new Comparator<ClickableOrderItem>() {

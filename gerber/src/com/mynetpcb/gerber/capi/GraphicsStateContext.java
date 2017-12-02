@@ -1,14 +1,12 @@
-package com.mynetpcb.gerber.processor.command;
+package com.mynetpcb.gerber.capi;
 
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.aperture.type.RectangleAperture;
-import com.mynetpcb.gerber.capi.StringBufferEx;
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.gerber.command.CommandDictionary;
 import com.mynetpcb.gerber.command.extended.LevelPolarityCommand;
 import com.mynetpcb.gerber.command.function.FunctionCommand;
-
 import com.mynetpcb.gerber.command.function.SetApertureCodeCommand;
 
 import java.text.DecimalFormat;
@@ -28,7 +26,7 @@ public final class GraphicsStateContext {
     private final StringBufferEx sb;
     private final SetApertureCodeCommand currentApertureCommand;
     
-    public GraphicsStateContext(ApertureDictionary apertureDictionary, CommandDictionary commandDictionary,StringBufferEx sb){
+    public GraphicsStateContext( ApertureDictionary apertureDictionary, CommandDictionary commandDictionary,StringBufferEx sb){
         this.apertureDictionary = apertureDictionary;
         this.commandDictionary = commandDictionary;
         this.currentAperture=new RectangleAperture();

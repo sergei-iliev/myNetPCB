@@ -4,12 +4,13 @@ package com.mynetpcb.gerber.processor.command;
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.glyph.Glyph;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
+import com.mynetpcb.gerber.capi.GraphicsStateContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.pad.shape.GlyphLabel;
@@ -24,7 +25,7 @@ public class CommandTextProcessor implements Processor {
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
         //board text
         for(GlyphLabel label:board.<GlyphLabel>getShapes(GlyphLabel.class,layermask)){
                processTexture(label.getTexture(),board.getHeight());                               
@@ -32,13 +33,23 @@ public class CommandTextProcessor implements Processor {
         //text in footprints
         for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
             //grab text
-            for(Texture text:((Textable)footprint).getChipText().getChildren()){
-                if(!text.isEmpty()&&((text.getLayermaskId()&layermask)!=0)){
-                    processTexture((GlyphTexture)text,board.getHeight());
+            for(Texture text:(footprint).getChipText().getChildren()){                
+                boolean isRefPrintable=serviceContext.getParameter(GerberServiceContext.FOOTPRINT_REFERENCE_ON_SILKSCREEN, Boolean.class);
+                if(text.getTag().equals("reference")&&isRefPrintable){
+                    if(!text.isEmpty()&&((text.getLayermaskId()&layermask)!=0)){
+                        processTexture((GlyphTexture)text,board.getHeight());
+                    }   
                 }
+                boolean isValPrintable=serviceContext.getParameter(GerberServiceContext.FOOTPRINT_VALUE_ON_SILKSCREEN, Boolean.class);
+                if(text.getTag().equals("value")&&isValPrintable){
+                    if(!text.isEmpty()&&((text.getLayermaskId()&layermask)!=0)){
+                        processTexture((GlyphTexture)text,board.getHeight());
+                    }   
+                }
+                                
             }
             
-                for(Shape shape:footprint.getShapes()){
+            for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }

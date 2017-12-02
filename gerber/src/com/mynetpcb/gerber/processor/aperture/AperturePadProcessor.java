@@ -2,7 +2,6 @@ package com.mynetpcb.gerber.processor.aperture;
 
 
 import com.mynetpcb.core.board.shape.FootprintShape;
-import com.mynetpcb.core.capi.Pinaware;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
@@ -13,6 +12,7 @@ import com.mynetpcb.gerber.aperture.type.PolygonAperture;
 import com.mynetpcb.gerber.aperture.type.RectangleAperture;
 import com.mynetpcb.gerber.attribute.aperture.ComponentPadAttribute;
 import com.mynetpcb.gerber.attribute.aperture.SMDPadAttribute;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.Pad;
 
@@ -28,10 +28,10 @@ public class AperturePadProcessor implements Processor{
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {       
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {       
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
         for(FootprintShape footrpint:footprints){
-            Collection<Pad> pads=((Pinaware)footrpint).getPins();
+            Collection<Pad> pads=(footrpint).getPins();
             for(Pad pad:pads){
                 if(pad.isVisibleOnLayers(layermask)){
                     ApertureDefinition apperture=null;

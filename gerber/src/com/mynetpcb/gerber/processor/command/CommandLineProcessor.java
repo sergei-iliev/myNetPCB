@@ -7,13 +7,14 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
+import com.mynetpcb.gerber.capi.GraphicsStateContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.pad.shape.Line;
 
 import java.awt.Point;
 
-import java.util.Collection;
 import java.util.List;
 
 public class CommandLineProcessor implements Processor {
@@ -24,7 +25,7 @@ public class CommandLineProcessor implements Processor {
     }
 
     @Override
-    public void process(Unit<? extends Shape>  board, int layermask) {
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape>  board, int layermask) {
         //process board lines
         List<Line> lines= board.getShapes(Line.class, layermask);              
         for(Line line:lines){

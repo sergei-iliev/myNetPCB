@@ -14,6 +14,8 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
+import com.mynetpcb.gerber.capi.GraphicsStateContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.gerber.command.extended.LevelPolarityCommand;
@@ -35,7 +37,7 @@ public class CommandRegionProcessor implements Processor {
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
         Collection<CopperAreaShape> regions=board.getShapes(CopperAreaShape.class,layermask);  
         
         for(CopperAreaShape region:regions){

@@ -18,22 +18,11 @@ import javax.swing.SwingUtilities;
 
 public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape>  extends EventHandle<U,S>{
     
-    private Arc arc;
-    private Point center;
     
     public ArcStartAngleEventHandle(U component) {
         super(component);
     }
     
-    @Override
-    public void Attach() {        
-        super.Attach();
-        arc=(Arc)this.getTarget();
-    }
-    @Override
-    protected void Clear() {   
-    }
-
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
       
@@ -49,6 +38,8 @@ public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape> 
     public void mouseScaledDragged(MouseScaledEvent e) {
         int new_mx = e.getX();
         int new_my = e.getY();
+        
+        Arc arc=(Arc)this.getTarget();
         
         int centerX=arc.getCenterX();
         int centerY=arc.getCenterY();
@@ -81,9 +72,11 @@ public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape> 
     public void doubleScaledClick(MouseScaledEvent e) {
       
     }
-    
 
-    
-    
+
+    @Override
+    protected void Clear() {
+
+    }
 }
 

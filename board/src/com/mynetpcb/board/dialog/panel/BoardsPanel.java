@@ -318,9 +318,6 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
 
     @Override
     public void addShapeEvent(ShapeEvent e) {
-//        if((e.getObject()instanceof Trackable)|| (e.getObject() instanceof SCHJunction)|| (e.getObject() instanceof SCHNoConnector)){
-//          return; 
-//        }
         this.boardsTree.removeTreeSelectionListener(this);
         try {
             DefaultMutableTreeNode root = (DefaultMutableTreeNode)boardsTree.getModel().getRoot();
@@ -385,7 +382,7 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
     }
 
     @Override
-    public void onUnitDragDrop(int index) {
+    public void onUnitDragDrop(int index,UUID uuid) {
         System.out.println(index); 
     }
 }

@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.attribute.aperture.ConductorAttribute;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
 
 public class ApertureTrackProcessor implements Processor{
@@ -17,7 +18,7 @@ public class ApertureTrackProcessor implements Processor{
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {     
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {     
             //tracks
             for(TrackShape line:board.<TrackShape>getShapes(TrackShape.class,layermask)){
                  CircleAperture circle=new CircleAperture();

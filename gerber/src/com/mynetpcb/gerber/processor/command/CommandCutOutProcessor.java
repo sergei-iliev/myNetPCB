@@ -4,6 +4,8 @@ package com.mynetpcb.gerber.processor.command;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
+import com.mynetpcb.gerber.capi.GerberServiceContext;
+import com.mynetpcb.gerber.capi.GraphicsStateContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.Arc;
 import com.mynetpcb.pad.shape.Circle;
@@ -22,7 +24,7 @@ public class CommandCutOutProcessor implements Processor {
     }
 
     @Override
-    public void process(Unit<? extends Shape> board, int layermask) {
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
         //lines
                      
         for(Line line:board.<Line>getShapes(Line.class, layermask)){
@@ -74,30 +76,30 @@ public class CommandCutOutProcessor implements Processor {
         }else{
            //draw 4 arcs and a line                
            CommandArcProcessor arcProcessor=new CommandArcProcessor(context);           
-           Arc arc=new Arc(rect.getX()+rect.getArc(),rect.getY()+rect.getArc(),rect.getArc(),rect.getThickness(),rect.getCopper().getLayerMaskID());
+           Arc arc=new Arc(rect.getX()+(rect.getArc()/2),rect.getY()+(rect.getArc()/2),(rect.getArc()/2),rect.getThickness(),rect.getCopper().getLayerMaskID());
            arc.setStartAngle(90);
            arc.setExtendAngle(90); 
            arcProcessor.processArc(arc, height,AbstractAttribute.Type.CutOut); 
            Point2D tlStart=arc.getStartPoint();
            Point2D tlEnd=arc.getEndPoint();
             
-           arc.setX((rect.getX()+rect.getWidth())-rect.getArc());
+           arc.setX((rect.getX()+rect.getWidth())-(rect.getArc()/2));
            arc.setStartAngle(0);
            arc.setExtendAngle(90); 
            arcProcessor.processArc(arc, height,AbstractAttribute.Type.CutOut); 
            Point2D trStart=arc.getStartPoint();
            Point2D trEnd=arc.getEndPoint(); 
            
-           arc.setX((rect.getX()+rect.getWidth())-rect.getArc());
-           arc.setY((rect.getY()+rect.getHeight())-rect.getArc()); 
+           arc.setX((rect.getX()+rect.getWidth())-(rect.getArc()/2));
+           arc.setY((rect.getY()+rect.getHeight())-(rect.getArc()/2)); 
            arc.setStartAngle(270);
            arc.setExtendAngle(90); 
            arcProcessor.processArc(arc, height,AbstractAttribute.Type.CutOut); 
            Point2D brStart=arc.getStartPoint();
            Point2D brEnd=arc.getEndPoint(); 
            
-           arc.setX((rect.getX())+rect.getArc());
-           arc.setY((rect.getY()+rect.getHeight())-rect.getArc()); 
+           arc.setX((rect.getX())+(rect.getArc()/2));
+           arc.setY((rect.getY()+rect.getHeight())-(rect.getArc()/2)); 
            arc.setStartAngle(180);
            arc.setExtendAngle(90); 
            arcProcessor.processArc(arc, height,AbstractAttribute.Type.CutOut); 

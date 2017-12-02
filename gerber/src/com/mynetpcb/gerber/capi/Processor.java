@@ -5,5 +5,5 @@ import com.mynetpcb.core.capi.unit.Unit;
 
 public interface Processor {
     
-    public void process(Unit<? extends Shape> board,int layermask);
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board,int layermask);
 }
