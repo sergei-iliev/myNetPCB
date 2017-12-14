@@ -1,5 +1,4 @@
-![myNetPCB](screenshots/logo.png?raw=true "myNetPCB")
-# myNetPCB
+![myNetPCB](screenshots/logo.png?raw=true "myNetPCB") # myNetPCB
 PCB Layout and Schematic capture tool for Win/Linux/Mac
 
 Download myNetPCB application at
