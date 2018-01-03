@@ -21,6 +21,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 
@@ -33,7 +34,7 @@ public class FontLabel extends Shape implements Label,Externalizable{
     }
     public String toXML() {
         if(texture!=null)
-          return "<label>"+texture.toXML()+"</label>\r\n";
+          return "<label color=\""+this.texture.getFillColor().getRGB()+"\">"+texture.toXML()+"</label>\r\n";
         else
           return "";  
     }
@@ -120,11 +121,14 @@ public class FontLabel extends Shape implements Label,Externalizable{
     }
     @Override
     public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
+        texture.setFillColor(printContext.isBlackAndWhite()?Color.BLACK:texture.getFillColor());        
         texture.Paint(g2, new ViewportWindow(0,0,0,0), AffineTransform.getScaleInstance(1, 1),layermask);
     }
 
 
     public void fromXML(Node node){              
+            Element  element= (Element)node;
+            this.texture.setFillColor(element.getAttribute("color").equals("")?Color.BLACK:new Color(Integer.parseInt(element.getAttribute("color"))));
             this.texture.fromXML(node);
     }
     

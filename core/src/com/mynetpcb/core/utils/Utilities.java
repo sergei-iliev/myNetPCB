@@ -75,6 +75,13 @@ public final class Utilities {
 
     public static final int ROTATION_RIGHT = 0x02;
 
+    public static String toHex(Color color){
+        return null;
+    }
+    public static Color fromHex(String value){
+        return null;
+    }
+
     /** Returns an ImageIcon, or null if the path was invalid. */
     public static ImageIcon loadImageIcon(Object o, String filename) {
         Image image = null;

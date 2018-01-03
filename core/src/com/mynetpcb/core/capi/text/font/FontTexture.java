@@ -667,6 +667,8 @@ public class FontTexture implements Texture {
          
          private int size;
          
+         private int sRGB;
+         
          private Text.Style style;
 
          public void loadStateTo(Texture _symbol) {
@@ -679,6 +681,7 @@ public class FontTexture implements Texture {
              symbol.text = this.text;
              symbol.alignment = alignment;
              symbol.setStyle(this.style);
+             symbol.fillColor=new Color(sRGB);
              symbol.compositeTextMetrics.UpdateMetrics();
          }
         @Override
@@ -693,6 +696,8 @@ public class FontTexture implements Texture {
              this.size=symbol.size;
              this.alignment = symbol.alignment;
              this.style=symbol.style;
+             this.sRGB=symbol.fillColor.getRGB();
+             
          }
          
          @Override
@@ -717,7 +722,8 @@ public class FontTexture implements Texture {
                      other.Ax==this.Ax  &&
                      other.Ay==this.Ay &&
                      other.size==this.size &&
-                     other.style==this.style);
+                     other.style==this.style)&&
+                     other.sRGB==this.sRGB;
          }
 
          @Override
@@ -732,7 +738,7 @@ public class FontTexture implements Texture {
              int hash = 1;
              hash =
              hash * 31 +this.id+ this.layermaskId+this.alignment.hashCode() + this.size+
-             this.tag.hashCode() + this.text.hashCode() + Ax +Ay+this.style.hashCode();
+             this.tag.hashCode() + this.text.hashCode() + Ax +Ay+this.style.hashCode()+sRGB;
              return hash;
          }
     }

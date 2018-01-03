@@ -75,6 +75,7 @@ public class CircuitImageExportDialog extends CircuitPrintDialog implements Acti
                 return;
           }           
           unitComponent.get().Export(targetFile.getText(), createContext());
+          this.close();
           return;
         }
         super.actionPerformed(e);
