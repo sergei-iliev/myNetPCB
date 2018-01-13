@@ -329,14 +329,6 @@ public class Pad extends PadShape {
         shape.drawClearance(g2, viewportWindow, scale, source);
     }
 
-
-    public void printClearance(Graphics2D g2, ClearanceSource source) {
-        if ((source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {
-            return; //not on the same layer
-        }
-        shape.printClearance(g2, source);
-    }
-
     @Override
     public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         if ((this.getCopper().getLayerMaskID() & layermask) == 0) {
@@ -380,7 +372,14 @@ public class Pad extends PadShape {
             break;
         }
     }
-
+    
+    public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source) {
+        if ((source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {
+            return; //not on the same layer
+        }
+        shape.printClearance(g2, printContext,source);
+    }
+    
     @Override
     public String toXML() {
         StringBuffer buffer = new StringBuffer();
@@ -575,7 +574,7 @@ public class Pad extends PadShape {
         public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
                                   ClearanceSource source);
 
-        public void printClearance(Graphics2D g2, ClearanceSource source);
+        public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source);
 
         public void setWidth(int width);
 
@@ -605,12 +604,12 @@ public class Pad extends PadShape {
         }
 
         @Override
-        public void printClearance(Graphics2D g2, ClearanceSource source) {
+        public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source) {
             Rectangle rect = getBoundingShape().getBounds();
             rect.grow(source.getClearance(), source.getClearance());
             ellipse.setFrame(rect.x, rect.y, rect.getWidth(), rect.getWidth());
 
-            g2.setColor(Color.WHITE);
+            g2.setColor(printContext.getBackgroundColor());
             g2.fill(ellipse);
         }
 
@@ -703,11 +702,11 @@ public class Pad extends PadShape {
         }
 
         @Override
-        public void printClearance(Graphics2D g2, ClearanceSource source) {
+        public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source) {
             Rectangle rect = getBoundingShape().getBounds();
             rect.grow(source.getClearance(), source.getClearance());
             roundRect.setRoundRect(rect.x, rect.y, rect.getWidth(), rect.getHeight(), arc, arc);
-            g2.setColor(Color.WHITE);
+            g2.setColor(printContext.getBackgroundColor());
             g2.fill(roundRect);
         }
 
@@ -800,12 +799,12 @@ public class Pad extends PadShape {
         }
 
         @Override
-        public void printClearance(Graphics2D g2, ClearanceSource source) {
+        public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source) {
             Rectangle rect = getBoundingShape().getBounds();
             rect.grow(source.getClearance(), source.getClearance());
             rectangle.setFrame(rect.x, rect.y, rect.getWidth(), rect.getHeight());
 
-            g2.setColor(Color.WHITE);
+            g2.setColor(printContext.getBackgroundColor());
             g2.fill(rectangle);
 
         }
@@ -929,13 +928,13 @@ public class Pad extends PadShape {
         }
 
         @Override
-        public void printClearance(Graphics2D g2, ClearanceSource source) {
+        public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source) {
 
             GeneralPath temporal=initPoints((getWidth()+2*source.getClearance())/2);
             AffineTransform translate = AffineTransform.getTranslateInstance(getX(), getY());
             temporal.transform(translate);
 
-            g2.setColor(Color.WHITE);
+            g2.setColor(printContext.getBackgroundColor());
             g2.fill(temporal); 
             
         }

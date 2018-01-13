@@ -12,7 +12,7 @@ import com.mynetpcb.core.pad.Net;
  */
 public abstract class ViaShape extends Shape implements ClearanceTarget,Externalizable,Net{
     public ViaShape() {
-        super(0,0,0,0,Grid.MM_TO_COORD(0.2),Layer.LAYER_ALL);
+        super(0,0,0,0,Grid.MM_TO_COORD(0.3),Layer.LAYER_ALL);
     }
 
 }

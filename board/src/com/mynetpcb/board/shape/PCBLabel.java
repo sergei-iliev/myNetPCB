@@ -9,6 +9,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.Ownerable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -127,8 +128,9 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget,Own
         
         
     }
+    
     @Override
-    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2, T source) {
+    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
         
         if((source.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
              return;  //not on the same layer
@@ -137,9 +139,10 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget,Own
         Rectangle rect=texture.getBoundingShape();        
         rect.grow(this.clearance!=0?this.clearance:source.getClearance(), this.clearance!=0?this.clearance:source.getClearance());
         
-        g2.setColor(Color.WHITE);        
+        g2.setColor(printContext.getBackgroundColor());        
         g2.fill(rect);
     }
+    
     @Override
     public void setClearance(int clearance) {
           this.clearance=clearance;    

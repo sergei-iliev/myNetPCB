@@ -47,7 +47,7 @@ public class PCBVia  extends ViaShape implements PCBShape{
     
     public PCBVia() {        
         this.fillColor=Color.WHITE;
-        this.setWidth(Grid.MM_TO_COORD(0.4));    
+        this.setWidth(Grid.MM_TO_COORD(0.5));    
     }
     
     @Override
@@ -113,14 +113,36 @@ public class PCBVia  extends ViaShape implements PCBShape{
         Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
         
         ellipse.setFrame(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
-        g2.setColor(Color.WHITE);                
+        g2.setColor(printContext.getBackgroundColor()==Color.BLACK?Color.WHITE:Color.BLACK);                
         g2.fill(ellipse);
-        g2.setStroke(new BasicStroke(Grid.MM_TO_COORD(0.1)));
-        g2.setColor(Color.BLACK); 
-        g2.draw(ellipse);
+
+        ellipse.setFrame(getX() - thickness/2, getY() - thickness/2, thickness,thickness);                
+        g2.setColor(printContext.getBackgroundColor());                
+        g2.fill(ellipse);        
         
         ellipseProvider.reset();
     
+    }
+    
+    @Override
+    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
+        
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
+            return;
+        }
+        
+        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
+        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
+        
+        Rectangle rect = new Rectangle(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
+        rect.grow(this.clearance!=0?this.clearance:source.getClearance(), this.clearance!=0?this.clearance:source.getClearance());
+
+        ellipse.setFrame(rect.x ,rect.y,rect.getWidth(),rect.getWidth());
+                                        
+        g2.setColor(printContext.getBackgroundColor());                
+        g2.fill(ellipse);
+        
+        ellipseProvider.reset();    
     }
     
     @Override
@@ -155,27 +177,6 @@ public class PCBVia  extends ViaShape implements PCBShape{
         
     }
 
-    @Override
-    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2, T source) {
-        
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
-            return;
-        }
-        
-        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
-        
-        Rectangle rect = new Rectangle(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
-        rect.grow(this.clearance!=0?this.clearance:source.getClearance(), this.clearance!=0?this.clearance:source.getClearance());
-
-        ellipse.setFrame(rect.x ,rect.y,rect.getWidth(),rect.getWidth());
-                                        
-        g2.setColor(Color.WHITE);                
-        g2.fill(ellipse);
-        
-        ellipseProvider.reset();    
-
-    }
     
     @Override
     public void setClearance(int clearance) {

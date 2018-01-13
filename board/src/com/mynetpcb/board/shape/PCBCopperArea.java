@@ -287,7 +287,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         //print clearence background
          Collection<ClearanceTarget> targets=getOwningUnit().getShapes(ClearanceTarget.class);
          for(ClearanceTarget target:targets){
-              target.printClearence(g2, this);
+              target.printClearence(g2,printContext, this);
          }        
     }
     @Override

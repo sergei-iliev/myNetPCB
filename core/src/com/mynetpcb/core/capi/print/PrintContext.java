@@ -1,5 +1,7 @@
 package com.mynetpcb.core.capi.print;
 
+import java.awt.Color;
+
 
 public class PrintContext {
     
@@ -10,6 +12,11 @@ public class PrintContext {
     private boolean isMirrored;
 
     private int penWidth;
+    /*
+     * 1.WHITE for white image/sheet printing{default}
+     * 2.BLACK for image board 
+     */
+    private Color backgroundColor=Color.WHITE;
     
     private String tag;
     /**
@@ -79,4 +86,11 @@ public class PrintContext {
     }
 
 
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
 }

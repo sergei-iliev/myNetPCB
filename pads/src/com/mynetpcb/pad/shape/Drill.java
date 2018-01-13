@@ -162,7 +162,7 @@ public class Drill extends Shape implements Externalizable{
                     Rectangle2D scaledRect = getBoundingShape().getBounds();
                     ellipse.setFrame(scaledRect.getX(),scaledRect.getY(),scaledRect.getWidth(),scaledRect.getHeight());
                                             
-                    g2.setColor(Color.WHITE);  
+                    g2.setColor(printContext.getBackgroundColor());  
                     g2.fill(ellipse);  
                                
     }

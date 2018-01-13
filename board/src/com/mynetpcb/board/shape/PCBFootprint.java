@@ -245,6 +245,18 @@ public class PCBFootprint extends FootprintShape<Pad> implements PCBShape{
     }
 
     @Override
+    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
+        for(Shape pad:shapes){
+            if(pad instanceof Pad){
+                if(Objects.equals(source.getNetName(), ((Pad)pad).getNetName())&&(!("".equals(source.getNetName())))&&(!(null==source.getNetName()))){
+                    continue;
+                }
+                ((Pad)pad).printClearance(g2,printContext,source);
+            }
+        }
+    }
+    
+    @Override
     public Collection<Pad> getPins() {
         List<Pad> pins=new LinkedList<Pad>();
         for(Shape shape:shapes)
@@ -402,18 +414,6 @@ public class PCBFootprint extends FootprintShape<Pad> implements PCBShape{
             }
         }
         
-    }
-
-    @Override
-    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2, T source) {
-        for(Shape pad:shapes){
-            if(pad instanceof Pad){
-                if(Objects.equals(source.getNetName(), ((Pad)pad).getNetName())&&(!("".equals(source.getNetName())))&&(!(null==source.getNetName()))){
-                    continue;
-                }
-                ((Pad)pad).printClearance(g2,source);
-            }
-        }
     }
     
     @Override

@@ -97,13 +97,28 @@ public class PCBHole extends HoleShape implements PCBShape{
         
         ellipse.setFrame(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
         g2.setStroke(new BasicStroke(Grid.MM_TO_COORD(0.2)));
-        g2.setColor(Color.BLACK); 
+        g2.setColor(printContext.getBackgroundColor()==Color.BLACK?Color.WHITE:Color.BLACK); 
         g2.draw(ellipse);
         
         ellipseProvider.reset();
         
       
-    }
+    } 
+    
+    @Override
+    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
+        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
+        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
+        
+        Rectangle rect = new Rectangle(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
+        rect.grow(this.clearance!=0?this.clearance:source.getClearance(),this.clearance!=0?this.clearance:source.getClearance());
+        ellipse.setFrame(rect.x ,rect.y,rect.getWidth(),rect.getWidth());
+                                        
+        g2.setColor(printContext.getBackgroundColor());                
+        g2.fill(ellipse);
+        
+        ellipseProvider.reset();   
+    }     
     
     public void drawControlShape(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){   
         Utilities.drawCrosshair(g2, viewportWindow, scale,null, getWidth(),new Point(getX(),getY()));
@@ -132,21 +147,6 @@ public class PCBHole extends HoleShape implements PCBShape{
         g2.fill(ellipse);
 
         ellipseProvider.reset();
-    }
-
-    @Override
-    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2, T source) {
-        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
-        
-        Rectangle rect = new Rectangle(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
-        rect.grow(this.clearance!=0?this.clearance:source.getClearance(),this.clearance!=0?this.clearance:source.getClearance());
-        ellipse.setFrame(rect.x ,rect.y,rect.getWidth(),rect.getWidth());
-                                        
-        g2.setColor(Color.WHITE);                
-        g2.fill(ellipse);
-        
-        ellipseProvider.reset();   
     }
     
     @Override

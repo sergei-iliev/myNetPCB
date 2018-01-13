@@ -175,9 +175,8 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
                   double scale=(context.getCustomSizeRatio() / 254000d);
                   int width = (int)(this.getWidth() *scale);
                   int height = (int)(this.getHeight() * scale);            
-                  BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                    
-                    
+                  BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);                    
+                  
                   Graphics2D g2 = (Graphics2D)bi.getGraphics();
                  
                   g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
@@ -190,7 +189,9 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
                   g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         
                   
-                  g2.setColor(Color.WHITE);
+                  context.setBackgroundColor(context.isBlackAndWhite()?Color.WHITE:Color.BLACK);
+                  
+                  g2.setColor(context.getBackgroundColor());
                   g2.fillRect(0, 0, width, height);
                   
                   g2.scale(scale, scale);
@@ -208,8 +209,9 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
     public void prepare(PrintContext context) {
         this.printboard = new Board(0, 0);
         this.context = new WeakReference<>(context);
-
-
+        
+        //***white sheet of paper
+        this.context.get().setBackgroundColor(Color.WHITE);
         for (Shape shape : shapes) {
             try {
                 Shape copy = shape.clone();

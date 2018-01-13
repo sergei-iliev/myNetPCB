@@ -9,6 +9,8 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.line.LinePoint;
+import com.mynetpcb.core.capi.line.Trackable.EndType;
+import com.mynetpcb.core.capi.line.Trackable.JoinType;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -493,6 +495,38 @@ public class PCBTrack extends TrackShape implements PCBShape{
     }
 
     @Override
+    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
+        Shape shape=(Shape)source;
+        if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
+             return;  //not on the same layer
+        } 
+        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
+            return;
+        }
+        GeneralPath line=null;
+        int lineThickness;
+        
+        if(this.clearance!=0){
+          lineThickness=(thickness+2*this.getClearance()) ;            
+        }else{
+          lineThickness=(thickness+2*source.getClearance());              
+        }
+        
+        
+        line = new GeneralPath(GeneralPath.WIND_EVEN_ODD,points.size());      
+        line.moveTo((float)points.get(0).getX(),(float)points.get(0).getY());
+         for(int i=1;i<points.size();i++){            
+             line.lineTo((float)points.get(i).getX(),(float)points.get(i).getY());       
+         } 
+
+        g2.setStroke(new BasicStroke(lineThickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal()));
+        g2.setColor(printContext.getBackgroundColor());
+        
+        g2.draw(line);
+
+    }
+    
+    @Override
     public void setResizingPoint(Point point) {
       this.resizingPoint=point;
     }
@@ -566,38 +600,6 @@ public class PCBTrack extends TrackShape implements PCBShape{
     public int getClearance() {
         return this.clearance;
     }    
-    
-    @Override
-    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2, T source) {
-        Shape shape=(Shape)source;
-        if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
-             return;  //not on the same layer
-        } 
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
-            return;
-        }
-        GeneralPath line=null;
-        int lineThickness;
-        
-        if(this.clearance!=0){
-          lineThickness=(thickness+2*this.getClearance()) ;            
-        }else{
-          lineThickness=(thickness+2*source.getClearance());              
-        }
-        
-        
-        line = new GeneralPath(GeneralPath.WIND_EVEN_ODD,points.size());      
-        line.moveTo((float)points.get(0).getX(),(float)points.get(0).getY());
-         for(int i=1;i<points.size();i++){            
-             line.lineTo((float)points.get(i).getX(),(float)points.get(i).getY());       
-         } 
-
-        g2.setStroke(new BasicStroke(lineThickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal()));
-        g2.setColor(Color.WHITE);
-        
-        g2.draw(line);
-
-    }
 
     @Override
     public String toXML() {
