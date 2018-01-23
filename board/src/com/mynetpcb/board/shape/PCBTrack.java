@@ -604,7 +604,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
     @Override
     public String toXML() {
         StringBuffer sb=new StringBuffer();
-        sb.append("<track layer=\""+this.copper.getName()+"\" thickness=\""+this.getThickness()+"\" clearance=\""+clearance+"\" net=\""+this.net+"\" >");
+        sb.append("<track layer=\""+this.copper.getName()+"\" thickness=\""+this.getThickness()+"\" clearance=\""+clearance+"\" net=\""+(this.net==null?"":this.net)+"\" >");
         for(Point point:points){
             sb.append(point.x+","+point.y+","); 
         }        
@@ -619,7 +619,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
         this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
         this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));
-        this.net=element.getAttribute("net");
+        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");   
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
         while(st.hasMoreTokens()){
           this.addPoint(new Point(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())));  
@@ -634,7 +634,11 @@ public class PCBTrack extends TrackShape implements PCBShape{
 
     @Override
     public void setNetName(String net) {
-       this.net=net;
+        if((net!=null)&&(!net.trim().isEmpty())){
+          this.net=net;
+        }else{
+          this.net=null;  
+        }
     }
 
     @Override

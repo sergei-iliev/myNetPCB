@@ -32,13 +32,17 @@ public class FontLabel extends Shape implements Label,Externalizable{
     public FontLabel(){
        this(0,0,0); 
     }
+    
     public String toXML() {
-        if(texture!=null)
-          return "<label color=\""+this.texture.getFillColor().getRGB()+"\">"+texture.toXML()+"</label>\r\n";
-        else
-          return "";  
+       return toXML(this.texture);
     }
-
+    
+    public static String toXML(Texture texture){
+        if(texture!=null&&!texture.isEmpty())
+          return "<label color=\""+texture.getFillColor().getRGB()+"\">"+texture.toXML()+"</label>\r\n";
+        else
+          return "";          
+    }
     public FontLabel(int x,int y,int layermaskId) {
         super(x,y,0,0, -1,layermaskId);
         texture=new FontTexture("label","Label",x,y,Text.Alignment.LEFT,8);
@@ -127,9 +131,15 @@ public class FontLabel extends Shape implements Label,Externalizable{
 
 
     public void fromXML(Node node){              
-            Element  element= (Element)node;
-            this.texture.setFillColor(element.getAttribute("color").equals("")?Color.BLACK:new Color(Integer.parseInt(element.getAttribute("color"))));
-            this.texture.fromXML(node);
+          fromXML(node,this.texture);              
+    }
+    /*
+     * Use from SCHSymbol
+     */
+    public static void fromXML(Node node,Texture texture){
+        Element  element= (Element)node;
+        texture.setFillColor(element.getAttribute("color").equals("")?Color.BLACK:new Color(Integer.parseInt(element.getAttribute("color"))));
+        texture.fromXML(node);
     }
     
     public AbstractMemento getState(MementoType operationType) {

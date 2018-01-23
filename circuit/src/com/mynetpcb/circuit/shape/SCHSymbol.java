@@ -22,6 +22,7 @@ import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Packaging;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.shape.Pin;
 import com.mynetpcb.symbol.shape.SymbolShapeFactory;
 import com.mynetpcb.symbol.unit.Symbol;
@@ -297,14 +298,27 @@ public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>
         }       
         n=element.getElementsByTagName("reference").item(0);
         if(n!=null){
-           reference.fromXML(n);
+            Element ref=(Element)n;  
+            NodeList refList=ref.getElementsByTagName("label");            
+            if(refList.getLength()==0){
+                reference.fromXML(n);              //old schema 
+            }else{
+                FontLabel.fromXML(refList.item(0),reference);    //new schema 
+            }
         }else{
            reference.Move(this.getBoundingShape().getBounds().x,this.getBoundingShape().getBounds().y);
         }    
 
         n=element.getElementsByTagName("unit").item(0);
         if(n!=null){
-           unit.fromXML(n);
+            Element unt=(Element)n;  
+            NodeList unitList=unt.getElementsByTagName("label");
+            
+            if(unitList.getLength()==0){
+               unit.fromXML(n);                //old schema
+            }else{
+               FontLabel.fromXML(unitList.item(0),unit);    //new schema 
+            }                       
         }else{
            unit.Move(this.getBoundingShape().getBounds().x,this.getBoundingShape().getBounds().y);       
         }    
@@ -331,8 +345,8 @@ public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>
                xml.append("<footprint library=\""+ (packaging.getFootprintLibrary()==null?"":packaging.getFootprintLibrary())+"\" category=\""+(packaging.getFootprintCategory()==null?"":packaging.getFootprintCategory())+"\"  filename=\""+(packaging.getFootprintFileName()==null?"":packaging.getFootprintFileName())+"\" name=\""+(packaging.getFootprintName()==null?"":packaging.getFootprintName())+"\"/>\r\n");
                xml.append("<name>"+symbolName+"</name>\r\n");
 
-               xml.append("<reference>"+(text.getTextureByTag("reference")==null?"":text.getTextureByTag("reference").toXML())+"</reference>\r\n");                           
-               xml.append("<unit>"+(text.getTextureByTag("unit")==null?"":text.getTextureByTag("unit").toXML())+"</unit>\r\n");
+               xml.append("<reference>"+(text.getTextureByTag("reference")==null?"":FontLabel.toXML(text.getTextureByTag("reference")))+"</reference>\r\n");                           
+               xml.append("<unit>"+(text.getTextureByTag("unit")==null?"":FontLabel.toXML(text.getTextureByTag("unit")))+"</unit>\r\n");
                
                //***labels and connectors
                CircuitMgr circuitMgr = CircuitMgr.getInstance();

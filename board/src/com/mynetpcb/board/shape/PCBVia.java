@@ -191,7 +191,7 @@ public class PCBVia  extends ViaShape implements PCBShape{
     @Override
     public String toXML() {
         StringBuffer xml = new StringBuffer();
-        xml.append("<via type=\"\" x=\""+getX()+"\" y=\""+getY()+"\" width=\""+getWidth()+"\" drill=\""+thickness+"\"   clearance=\""+clearance+"\" net=\""+this.net+"\" />");
+        xml.append("<via type=\"\" x=\""+getX()+"\" y=\""+getY()+"\" width=\""+getWidth()+"\" drill=\""+thickness+"\"   clearance=\""+clearance+"\" net=\""+(this.net==null?"":this.net)+"\" />");
         return xml.toString();
     }
 
@@ -203,7 +203,7 @@ public class PCBVia  extends ViaShape implements PCBShape{
         setWidth(Integer.parseInt(element.getAttribute("width")));
         setThickness(Integer.parseInt(element.getAttribute("drill")));
         this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));        
-        this.net=element.getAttribute("net");
+        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");   
     }
     @Override
     public String getNetName() {
@@ -213,7 +213,11 @@ public class PCBVia  extends ViaShape implements PCBShape{
 
     @Override
     public void setNetName(String net) {
-       this.net=net;
+        if((net!=null)&&(!net.trim().isEmpty())){
+          this.net=net;
+        }else{
+          this.net=null;  
+        }
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {

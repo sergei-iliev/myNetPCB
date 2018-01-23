@@ -18,15 +18,18 @@ import javax.swing.SwingUtilities;
 
 public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape>  extends EventHandle<U,S>{
     
+    int centerX;
+    int centerY;
     
     public ArcStartAngleEventHandle(U component) {
-        super(component);
+        super(component);        
     }
     
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-      
-      
+        Arc arc=(Arc)this.getTarget();
+        centerX=arc.getCenterX();
+        centerY=arc.getCenterY();      
     }
 
     @Override
@@ -40,9 +43,6 @@ public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape> 
         int new_my = e.getY();
         
         Arc arc=(Arc)this.getTarget();
-        
-        int centerX=arc.getCenterX();
-        int centerY=arc.getCenterY();
         
         
         double start = (180/Math.PI*Math.atan2(new_my-centerY,new_mx-centerX));

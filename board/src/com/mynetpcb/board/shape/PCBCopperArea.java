@@ -71,7 +71,6 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         copy.floatingStartPoint = new Point();
         copy.floatingEndPoint = new Point();
         copy.polygon=this.polygon.clone();  
-        copy.clearance=this.clearance;
         return copy;
     }
     @Override
@@ -253,7 +252,12 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         if(isFloating()){
             g2.draw(temporal);
         }
-        
+        //draw bounding 
+        if(this.isSelected()){           
+           g2.setColor(Color.BLUE); 
+           g2.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0));            
+           g2.draw(temporal);
+        }
         provider.reset();
         
         if(this.fill==Fill.FILLED){
@@ -294,7 +298,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     public void drawControlShape(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){   
         if((!this.isSelected())){
           return;
-        }
+        }        
         Utilities.drawCrosshair(g2, viewportWindow, scale, polygon.getLinePoints(), resizingPoint, selectionRectWidth);
     }
     
@@ -397,7 +401,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     @Override
     public String toXML() {
         StringBuffer sb=new StringBuffer();
-        sb.append("<copperarea layer=\""+this.copper.getName()+"\" clearance=\""+this.clearance+"\" net=\""+this.net+"\" >");
+        sb.append("<copperarea layer=\""+this.copper.getName()+"\" clearance=\""+this.clearance+"\" net=\""+(this.net==null?"":this.net) +"\" >");
         for(Point point:polygon.getLinePoints()){
             sb.append(point.x+","+point.y+","); 
         }        
@@ -411,7 +415,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     
         this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
         this.clearance=Integer.parseInt(element.getAttribute("clearance"));
-        this.net=element.getAttribute("net");
+        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");        
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
         while(st.hasMoreTokens()){
           this.addPoint(new Point(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())));  
@@ -465,14 +469,17 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     }
     
     @Override
-    public String getNetName() {
-        
+    public String getNetName() {        
         return this.net;
     }
 
     @Override
     public void setNetName(String net) {
-       this.net=net;
+       if((net!=null)&&(!net.trim().isEmpty())){
+         this.net=net;
+       }else{
+         this.net=null;  
+       }
     }
     
     @Override

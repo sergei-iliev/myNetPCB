@@ -4,6 +4,7 @@ package com.mynetpcb.circuit.popup;
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.shape.SCHBus;
 import com.mynetpcb.circuit.shape.SCHBusPin;
+import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.Packageable;
 import com.mynetpcb.core.capi.Pinaware;
@@ -142,6 +143,11 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equalsIgnoreCase("EditSymbol")) {
+            CircuitMgr.getInstance().openSymbolInlineEditorDialog(getUnitComponent(),(SCHSymbol)getTarget());       
+            getUnitComponent().Repaint();
+            return;
+        }                
         if (e.getActionCommand().equalsIgnoreCase("assignpackage")) {
             FootprintMgr.getInstance().assignPackage(getUnitComponent().getDialogFrame().getParentFrame(),
                                                      ((Packageable) getTarget()).getPackaging());

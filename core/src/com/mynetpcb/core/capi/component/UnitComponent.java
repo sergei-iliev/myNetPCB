@@ -264,7 +264,9 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                              getModel().getUnit().getScalableTransformation().getCurrentTransformation(),Layer.Copper.All.getLayerMaskID());
 
             }
+            g2.dispose();
         }
+        
         repaint();
     }
 

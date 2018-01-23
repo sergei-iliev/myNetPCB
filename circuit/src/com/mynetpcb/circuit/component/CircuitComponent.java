@@ -191,12 +191,15 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape,CircuitContai
                                                                                                                        getViewportWindow().y +
                                                                                                                        event.getY())));
 
-            Shape shape = null;
+  
             switch (getMode()) {
             case COMPONENT_MODE:
                 //***is this a symbol click - this could be eighter wire,chip,junction,buss or empty(circuit)
-                
-                shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
+                if(getModel().getUnit().getCoordinateSystem().isClicked(scaledEvent.getX(), scaledEvent.getY())){
+                    getEventMgr().setEventHandle("origin",null); 
+                    break;
+                }
+                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
                 if(shape instanceof Resizeable){
                     getEventMgr().setEventHandle("resize", shape);   
                 }else{

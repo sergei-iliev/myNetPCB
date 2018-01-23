@@ -14,7 +14,12 @@ public class VersionUtils {
      * Library/Symbols
      * Library/Footprints
      */  
-    public static final double SYMBOL_VERSION=2.0;
+    
+    /*
+     * 3.0 Change reference and unit tag to include sub tag<label> instead of plain text.
+     * The idea is to use color and size for Symbol reference and unit
+     */
+    public static final double SYMBOL_VERSION=3.0;
        
     public static final double CIRCUIT_VERSION=1.2; 
     

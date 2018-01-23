@@ -43,7 +43,7 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
     public void mouseScaledReleased(MouseScaledEvent e) {
 
         getComponent().getModel().getUnit().getCoordinateSystem().alignToGrid((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)); 
-        
+        getComponent().getModel().fireUnitEvent(new UnitEvent(null, UnitEvent.PROPERTY_CHANGE));
         getComponent().getDialogFrame().setButtonGroup(getComponent().COMPONENT_MODE);
         getComponent().setMode(getComponent().COMPONENT_MODE);
         getComponent().Repaint();

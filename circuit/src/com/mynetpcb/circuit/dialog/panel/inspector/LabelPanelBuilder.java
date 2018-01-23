@@ -15,9 +15,12 @@ import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.tree.AttachedItem;
 import com.mynetpcb.core.capi.undo.MementoType;
 
+import com.mynetpcb.symbol.shape.FontLabel;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -123,10 +126,6 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape> implements Co
     }
 
     public void updateUI() {
-        
-        
-        
-        //System.out.println(("#"+Integer.toHexString(c.)));
         SCHLabel label=(SCHLabel)getTarget(); 
         colorButton.setSelectedColor(label.getTexture().getFillColor());
         textField.setText(label.getTexture().getText());                                                             
@@ -141,7 +140,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape> implements Co
 
     @Override
     public void colorChanged(Color color) {
-        SCHLabel label=(SCHLabel)getTarget(); 
+        FontLabel label=(FontLabel)getTarget(); 
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         label.getTexture().setFillColor(color);
     }

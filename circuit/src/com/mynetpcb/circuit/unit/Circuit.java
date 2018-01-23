@@ -156,7 +156,6 @@ public class Circuit extends Unit<Shape> {
         xml.append("</netlabels>\r\n");
         
         xml.append("</symbols>\r\n");
-
         return xml;
     }
     public StringBuffer Format() {

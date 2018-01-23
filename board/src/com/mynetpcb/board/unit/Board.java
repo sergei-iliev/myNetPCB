@@ -168,7 +168,6 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         //frame
         frame.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), -1);
 
-
     }
     @Override
     public void export(String fileName,PrintContext context)throws IOException{

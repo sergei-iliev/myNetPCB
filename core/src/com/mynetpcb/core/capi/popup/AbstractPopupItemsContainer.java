@@ -130,7 +130,11 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
     
     protected void createChipMenuItems(){  
         Map<String,JMenuItem> submenu=new LinkedHashMap<String,JMenuItem>(); 
-        JMenuItem item=new JMenuItem("Left"); item.setActionCommand("RotateLeft"); item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+        
+        JMenuItem item=new JMenuItem("Edit Symbol"); item.setActionCommand("EditSymbol");
+        chipMenu.put("Edit Symbol",item);
+        
+        item=new JMenuItem("Left"); item.setActionCommand("RotateLeft"); item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         submenu.put("RotateLeft",item);  
         item=new JMenuItem("Right"); item.setActionCommand("RotateRight"); item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));       
         submenu.put("RotateRight",item);  

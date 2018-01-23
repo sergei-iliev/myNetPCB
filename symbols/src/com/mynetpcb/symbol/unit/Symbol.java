@@ -145,14 +145,14 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
         FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"reference");
         if (text != null) {
             xml.append("<reference>");
-            xml.append(text.getTexture().toXML());
+            xml.append(text.toXML());
             xml.append("</reference>\r\n");
         }
         //unit
         text =(FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"unit");
         if (text != null) {
             xml.append("<unit>");
-            xml.append(text.getTexture().toXML());
+            xml.append(text.toXML());
             xml.append("</unit>\r\n");
         }
 
@@ -208,17 +208,31 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
         NodeList nodelist = ((Element) node).getElementsByTagName("reference");
         Node n = nodelist.item(0);
         if (n != null && !n.getTextContent().equals("")) {
+            Element ref=(Element)n;  
+            NodeList refList=ref.getElementsByTagName("label");
+            
             FontLabel label = new FontLabel();
             label.getTexture().setTag("reference");
-            label.fromXML(n);
+            if(refList.getLength()==0){
+               label.fromXML(n);                //old schema
+            }else{
+               label.fromXML(refList.item(0));    //new schema 
+            }
             Add(label);
         }
         nodelist = ((Element) node).getElementsByTagName("unit");
         n = nodelist.item(0);
         if (n != null && !n.getTextContent().equals("")) {
+            Element unit=(Element)n;  
+            NodeList unitList=unit.getElementsByTagName("label");
+
             FontLabel label = new FontLabel();
             label.getTexture().setTag("unit");
-            label.fromXML(n);
+            if(unitList.getLength()==0){
+               label.fromXML(n);                //old schema
+            }else{
+               label.fromXML(unitList.item(0));    //new schema 
+            }
             Add(label);
         }
         parseSelection(node, false);
