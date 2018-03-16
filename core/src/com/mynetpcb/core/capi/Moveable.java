@@ -9,13 +9,13 @@ import java.awt.geom.AffineTransform;
  * @author Sergey Iliev
  */
 public interface Moveable extends Drawable,Cloneable {
-    public enum Rotate{
-        LEFT,RIGHT
-    };
+//    public enum Rotate{
+//        LEFT,RIGHT
+//    };
     
-    public enum Mirror{
-        HORIZONTAL,VERTICAL
-    };
+//    public enum Mirror{
+//        HORIZONTAL,VERTICAL
+//    };
     public void Move(int xoffset, int yoffset);
         
     public void Mirror(Point A,Point B);
@@ -26,9 +26,11 @@ public interface Moveable extends Drawable,Cloneable {
       
     public void setLocation(int x,int y);
 
-    public int getCenterX();
+    public Point getCenter();
     
-    public int getCenterY();
+//    public int getCenterX();
+//    
+//    public int getCenterY();
 /**
      *
      * @return the order of the shape in Z coordinate when a 

@@ -35,7 +35,6 @@ public class Drill extends Shape implements Externalizable{
     public Drill(int width,int height) {
         super(0,0,width,height,-1,0);
         this.ellipse=new Ellipse2D.Double();
-        this.enableCache(false);
         this.type = Type.CIRCULAR;
         setFillColor(Color.BLACK);
     }

@@ -118,6 +118,7 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget,Own
         if(!shape.getBoundingShape().intersects(rect)){
            return; 
         }        
+        
         Rectangle2D scaledRect = Utilities.getScaleRect(rect,scale);
         if(!scaledRect.intersects(viewportWindow)){
           return;   
@@ -131,13 +132,17 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget,Own
     
     @Override
     public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
-        
+        Shape shape=(Shape)source;
         if((source.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
              return;  //not on the same layer
         }
         
         Rectangle rect=texture.getBoundingShape();        
         rect.grow(this.clearance!=0?this.clearance:source.getClearance(), this.clearance!=0?this.clearance:source.getClearance());
+        
+        if(!shape.getBoundingShape().intersects(rect)){
+           return; 
+        }  
         
         g2.setColor(printContext.getBackgroundColor());        
         g2.fill(rect);

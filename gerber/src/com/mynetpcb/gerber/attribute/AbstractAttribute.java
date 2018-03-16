@@ -18,6 +18,7 @@ public abstract class AbstractAttribute implements Printable{
         Conductor,
         ComponentPad,
         CutOut,
+        ThermalReliefPad,
         SMDPad;
         
         public static Type resolvePad(Pad.Type pad){

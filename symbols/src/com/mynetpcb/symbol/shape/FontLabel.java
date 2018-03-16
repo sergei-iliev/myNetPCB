@@ -65,7 +65,10 @@ public class FontLabel extends Shape implements Label,Externalizable{
     public void Clear() {
         texture.Clear();
     }
-    
+    @Override
+    public Point getCenter() {        
+        return new Point((int)texture.getBoundingShape().getBounds().getCenterX(),(int)texture.getBoundingShape().getBounds().getCenterY());
+    }
     @Override
     public void Move(int xoffset, int yoffset) {
         texture.Move(xoffset, yoffset);

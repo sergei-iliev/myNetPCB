@@ -15,7 +15,7 @@ public interface ArcGerberable {
     public Point2D getEndPoint();
     
     
-    public Point getCenterPoint();
+    public Point getCenter();
     
     public int getI();
     

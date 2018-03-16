@@ -14,7 +14,10 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
+
+import com.mynetpcb.pad.shape.Pad;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -56,6 +59,8 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     
     private String net;
     
+    private PadShape.PadConnection padConnection;
+    
     public PCBCopperArea(int layermaskId) {
         super(layermaskId);
         this.clearance=Grid.MM_TO_COORD(0.2); 
@@ -63,6 +68,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         floatingEndPoint=new Point();
         this.polygon = new Polygonal(); 
         this.selectionRectWidth=3000;
+        this.padConnection=PadShape.PadConnection.DIRECT;
         this.fill=Fill.FILLED;
     }
 
@@ -215,9 +221,6 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
           return;   
         }
 
-        //GeneralPath polyline = 
-        //    new GeneralPath(GeneralPath.WIND_EVEN_ODD, polygon.npoints+(isFloating()?1:0));
-
         FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);
         GeneralPath temporal=(GeneralPath)provider.getShape();
         
@@ -247,7 +250,6 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         }else{
             g2.draw(temporal);
         }
-        g2.setComposite(originalComposite);
         
         if(isFloating()){
             g2.draw(temporal);
@@ -258,7 +260,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
            g2.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0));            
            g2.draw(temporal);
         }
-        provider.reset();
+        
         
         if(this.fill==Fill.FILLED){
         //draw clearence background
@@ -267,6 +269,9 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
               target.drawClearence(g2, viewportWindow, scale, this);
          }
         }
+        
+        g2.setComposite(originalComposite);
+        provider.reset();
     }
     @Override
     public void Print(Graphics2D g2,PrintContext printContext, int layersmask) {
@@ -401,7 +406,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     @Override
     public String toXML() {
         StringBuffer sb=new StringBuffer();
-        sb.append("<copperarea layer=\""+this.copper.getName()+"\" clearance=\""+this.clearance+"\" net=\""+(this.net==null?"":this.net) +"\" >");
+        sb.append("<copperarea layer=\""+this.copper.getName()+"\" clearance=\""+this.clearance+"\" net=\""+(this.net==null?"":this.net) +"\" padconnect=\""+this.padConnection+"\" >");
         for(Point point:polygon.getLinePoints()){
             sb.append(point.x+","+point.y+","); 
         }        
@@ -415,7 +420,9 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     
         this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
         this.clearance=Integer.parseInt(element.getAttribute("clearance"));
-        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");        
+        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");         
+        this.padConnection=element.getAttribute("padconnect").isEmpty()?PadShape.PadConnection.DIRECT:PadShape.PadConnection.valueOf(element.getAttribute("padconnect"));
+        
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
         while(st.hasMoreTokens()){
           this.addPoint(new Point(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())));  
@@ -481,7 +488,15 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
          this.net=null;  
        }
     }
-    
+
+    public void setPadConnection(PadShape.PadConnection padConnection) {
+        this.padConnection = padConnection;
+    }
+
+    public PadShape.PadConnection getPadConnection() {
+        return padConnection;
+    }
+
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
@@ -502,6 +517,8 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         
         private String net;
         
+        private PadShape.PadConnection padConnection;
+        
         public Memento(MementoType mementoType) {
             super(mementoType);
 
@@ -511,6 +528,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         public void loadStateTo(PCBCopperArea shape) {
             super.loadStateTo(shape);
             shape.net=net;
+            shape.padConnection=padConnection;
             shape.polygon.reset();
             for (int i = 0; i < Ax.length; i++) {
                 shape.addPoint(new Point(Ax[i], Ay[i])); 
@@ -527,6 +545,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         public void saveStateFrom(PCBCopperArea shape) {
             super.saveStateFrom(shape);
             net=shape.net;
+            padConnection=shape.padConnection;            
             Ax = new int[shape.polygon.getLinePoints().size()];
             Ay = new int[shape.polygon.getLinePoints().size()];
             for (int i = 0; i < shape.polygon.getLinePoints().size(); i++) {
@@ -555,7 +574,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
             
             return (getUUID().equals(other.getUUID())&&fill==other.fill&&layerindex==other.layerindex&&
                     getMementoType().equals(other.getMementoType()) &&
-                    Arrays.equals(Ax, other.Ax) &&Objects.equals(net, other.net)&&
+                    Arrays.equals(Ax, other.Ax) &&Objects.equals(net, other.net)&&padConnection.equals(other.padConnection)&&
                     Arrays.equals(Ay, other.Ay));
 
         }
@@ -569,6 +588,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
             hash += Arrays.hashCode(Ax);
             hash += Arrays.hashCode(Ay);
             hash+=Objects.hashCode(net);
+            hash+=Objects.hashCode(padConnection);
             return hash;
         }
 

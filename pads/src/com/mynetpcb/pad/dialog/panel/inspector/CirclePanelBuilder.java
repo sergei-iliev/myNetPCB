@@ -109,7 +109,6 @@ public class CirclePanelBuilder extends AbstractPanelBuilder<Shape> {
         }
         
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
-        getTarget().clearCache();
         getComponent().Repaint();          
     }
 }

@@ -2,7 +2,6 @@ package com.mynetpcb.symbol.shape;
 
 
 import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Rectangular;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.ResizableShape;
@@ -26,7 +25,7 @@ import java.util.StringTokenizer;
 import org.w3c.dom.Node;
 
 
-public class Triangle extends ResizableShape implements Rectangular,Externalizable{
+public class Triangle extends ResizableShape implements Externalizable{
     public static final int DIRECTION_WEST = 0x01;
 
     public static final int DIRECTION_NORTH = 0x02;

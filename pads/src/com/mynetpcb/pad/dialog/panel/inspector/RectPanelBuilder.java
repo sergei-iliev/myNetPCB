@@ -133,7 +133,6 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
            getTarget().setHeight(Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));  
         }
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
-        getTarget().clearCache();
         getComponent().Repaint();  
     }
     

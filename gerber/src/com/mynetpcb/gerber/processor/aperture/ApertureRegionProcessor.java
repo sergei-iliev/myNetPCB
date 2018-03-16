@@ -48,19 +48,54 @@ public class ApertureRegionProcessor implements Processor{
           this.processVias(board,region);    
           this.processTracks(board, region);
           this.processPads(board, region); 
+          //TODO process text
         }
     }
                 
     private void processPads(Unit<? extends Shape> board,CopperAreaShape source){
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
-        for(FootprintShape footrpint:footprints){
-            Collection<PadShape> pads=footrpint.getPins();
+        for(FootprintShape footprint:footprints){
+            //check if footprint in copper area
+            if(!source.getBoundingShape().intersects(footprint.getBoundingShape().getBounds())){
+               continue; 
+            }
+            Collection<PadShape> pads=footprint.getPins();
             for(PadShape pad:pads){            
-                if(Utilities.isSameNet(source,pad)){
-                    continue;
+                // is pad  within copper area
+                Rectangle rect = pad.getBoundingShape().getBounds();
+                rect.grow(source.getClearance(), source.getClearance());
+                
+                if(!(source).getBoundingShape().intersects(rect)){
+                   continue; 
                 }
-                if(pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){
-                    ApertureDefinition apperture=null;
+
+                if(Utilities.isSameNet(source,pad)){
+                    //is this THERMAL pad
+                    if(source.getPadConnection()==PadShape.PadConnection.THERMAL){
+                      //add drawing line    
+                      switch(pad.getShape()){
+                      case CIRCULAR: 
+                         CircleAperture apperture=new CircleAperture();
+                         apperture.setDiameter(pad.getWidth()/2);
+                         dictionary.add(apperture);  
+                      break;
+                      case OVAL: case RECTANGULAR:
+                         apperture=new CircleAperture();
+                         apperture.setDiameter(pad.getWidth()/2);
+                         dictionary.add(apperture); 
+                          
+                         apperture=new CircleAperture();
+                         apperture.setDiameter(pad.getHeight()/2);
+                         dictionary.add(apperture);                           
+                       break;
+                      }
+                    }else{
+                       //there is no clearence when both Copper area and Pad have the same Net value
+                       continue;
+                    }
+                }
+                ApertureDefinition apperture=null;
+                if(pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){                    
                     switch(pad.getShape()){
                     case CIRCULAR:                                                
                         apperture=new CircleAperture();
@@ -80,10 +115,19 @@ public class ApertureRegionProcessor implements Processor{
                         apperture= new PolygonAperture();
                         ((PolygonAperture)apperture).setDiameter(pad.getWidth()+(2*source.getClearance()));
                         ((PolygonAperture)apperture).setVerticesNumber(6);
+                    }                    
+                                 
+                }else{
+                  //in case of DRILL hole and pad has no part in this layer, still clearance has to be provided  
+                    if(pad.getType()==PadShape.Type.THROUGH_HOLE){
+                        apperture=new CircleAperture();
+                        ((CircleAperture)apperture).setDiameter(pad.getWidth()+(2*source.getClearance()));                     
                     }
-                    
-
-                    dictionary.add(apperture);                    
+                }
+                
+                
+                if(apperture!=null){
+                   dictionary.add(apperture);
                 }
             }    
     }
@@ -113,15 +157,15 @@ public class ApertureRegionProcessor implements Processor{
             if(Utilities.isSameNet(source,via)){
                 continue;
             }
-            Rectangle inner=via.getBoundingShape().getBounds();             
-            inner.grow(via.getClearance()!=0?via.getClearance():source.getClearance(),via.getClearance()!=0?via.getClearance():source.getClearance());
+            Rectangle rect=via.getBoundingShape().getBounds();             
+            rect.grow(via.getClearance()!=0?via.getClearance():source.getClearance(),via.getClearance()!=0?via.getClearance():source.getClearance());
 
-            if(!source.getBoundingShape().intersects(inner)){
+            if(!source.getBoundingShape().intersects(rect)){
                continue; 
             }
             
             CircleAperture circle=new CircleAperture();
-            circle.setDiameter((int)inner.getWidth());            
+            circle.setDiameter((int)rect.getWidth());            
             dictionary.add(circle);                         
         }            
     }

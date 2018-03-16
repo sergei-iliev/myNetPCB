@@ -31,7 +31,7 @@ public interface Metrics {
  * Mark the current text metrics as obsolete,make them recalculated next time Canvas is drawn
  * Happens at text change->rotation,mirror,text change
  */
-    public void UpdateMetrics();
+    public void updateMetrics();
 
 /**
      *Calculate text rectangle metrics

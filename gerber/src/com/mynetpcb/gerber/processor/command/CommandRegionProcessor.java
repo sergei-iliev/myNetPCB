@@ -7,8 +7,6 @@ import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.board.shape.TrackShape;
 import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.line.LinePoint;
-import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.shape.PadShape;
@@ -21,6 +19,7 @@ import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.gerber.command.extended.LevelPolarityCommand;
 import com.mynetpcb.gerber.command.function.FunctionCommand;
 import com.mynetpcb.pad.shape.GlyphLabel;
+import com.mynetpcb.pad.shape.Line;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -42,7 +41,7 @@ public class CommandRegionProcessor implements Processor {
         
         for(CopperAreaShape region:regions){
           //draw in dark polarity region
-          processRegion(((Trackable<LinePoint>)region).getLinePoints(),board.getHeight());
+          processRegion(region.getLinePoints(),board.getHeight());
         
          //draw in clean polarity stuff in it
           context.resetPolarity(LevelPolarityCommand.Polarity.CLEAR);  
@@ -52,11 +51,166 @@ public class CommandRegionProcessor implements Processor {
           processPads(board, region); 
           processText(board,region); 
             
-          context.resetPolarity(LevelPolarityCommand.Polarity.DARK);    
+          context.resetPolarity(LevelPolarityCommand.Polarity.DARK);
+          
+          //process THERMAL pads   
+          processThermalPads(board,region);   
         }
 
     }
+    
+    private void processPads(Unit<? extends Shape> board,CopperAreaShape source){
+        int height=board.getHeight();       
+        int lastX=-1,lastY=-1;
+        StringBuffer commandLine=new StringBuffer();
+        
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);                     
+        for(FootprintShape footprint:footprints){
+            //check if footprint in copper area
+            if(!source.getBoundingShape().intersects(footprint.getBoundingShape().getBounds())){
+               continue; 
+            }
+            //set linear mode if not set
+            context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
 
+            Collection<PadShape> pads=footprint.getPins();
+            for(PadShape pad:pads){
+                // is pad  within copper area
+                Rectangle rect = pad.getBoundingShape().getBounds();
+                rect.grow(source.getClearance(), source.getClearance());
+                
+                if(!(source).getBoundingShape().intersects(rect)){
+                   continue; 
+                }
+                
+                //this could be DIRECT pad-> no clearance                    
+                if(Utilities.isSameNet(source,pad)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){                    
+                       continue;                          
+                }
+                
+                if(pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){  //a footprint may have pads on different layers                                   
+                    ApertureDefinition aperture=null;
+                    switch(pad.getShape()){
+                        case CIRCULAR:
+                            aperture=context.getApertureDictionary().findCircle(pad.getWidth()+(2*source.getClearance()));
+                        break;
+                        case OVAL:
+                            aperture=context.getApertureDictionary().findObround(pad.getWidth()+(2*source.getClearance()),pad.getHeight()+(2*source.getClearance()));
+                        break;
+                        case RECTANGULAR:
+                            aperture=context.getApertureDictionary().findRectangle(pad.getWidth()+(2*source.getClearance()),pad.getHeight()+(2*source.getClearance()));
+                        break;
+                        case POLYGON:
+                            aperture=context.getApertureDictionary().findPolygon(pad.getWidth()+(2*source.getClearance()),6);
+                        break;                                          
+                    }
+                    //set aperture if not same
+                    context.resetAperture(aperture);
+
+                    //flash the pad!!!
+                    commandLine.setLength(0); 
+                    if (pad.getX() != lastX){                   
+                        lastX = pad.getX();
+                        commandLine.append("X"+context.getFormatter().format(Grid.COORD_TO_MM(pad.getX())*100000));
+                    }
+                    if (pad.getY() != lastY)
+                    {                   
+                        lastY = pad.getY();
+                        commandLine.append("Y"+context.getFormatter().format(Grid.COORD_TO_MM(height-pad.getY())*100000));
+                    }
+                    commandLine.append("D03*");                               
+                    context.getOutput().append(commandLine); 
+                }else{
+                    //in case of DRILL hole and pad has no part in this layer, still clearance has to be provided  
+                    if(pad.getType()==PadShape.Type.THROUGH_HOLE){
+                        ApertureDefinition aperture=context.getApertureDictionary().findCircle(pad.getWidth()+(2*source.getClearance()));  
+                        //set aperture if not same
+                        context.resetAperture(aperture);
+
+                        //flash the pad!!!
+                        commandLine.setLength(0); 
+                        if (pad.getX() != lastX){                   
+                            lastX = pad.getX();
+                            commandLine.append("X"+context.getFormatter().format(Grid.COORD_TO_MM(pad.getX())*100000));
+                        }
+                        if (pad.getY() != lastY)
+                        {                   
+                            lastY = pad.getY();
+                            commandLine.append("Y"+context.getFormatter().format(Grid.COORD_TO_MM(height-pad.getY())*100000));
+                        }
+                        commandLine.append("D03*");                               
+                        context.getOutput().append(commandLine);
+                    } 
+                }
+            }
+        }    
+    }    
+    /*
+     * draw cross hair to represent THERMAL pads connections
+     */
+    private void processThermalPads(Unit<? extends Shape> board,CopperAreaShape source){
+        int height=board.getHeight();       
+        CommandLineProcessor lineProcessor=new CommandLineProcessor(context); 
+        
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);                     
+        for(FootprintShape footprint:footprints){  
+            //check if footprint in copper area
+            if(!source.getBoundingShape().intersects(footprint.getBoundingShape().getBounds())){
+               continue; 
+            }
+            Collection<PadShape> pads=footprint.getPins();
+            for(PadShape pad:pads){ 
+                // is pad  within copper area
+                Rectangle rect = pad.getBoundingShape().getBounds();
+                rect.grow(source.getClearance(), source.getClearance());
+                
+                if(!(source).getBoundingShape().intersects(rect)){
+                   continue; 
+                }
+                
+                /*
+                 * Both pad and copper must be on the same layer and copper pad connection
+                 * registered as THERMAL                 
+                 */
+                if(Utilities.isSameNet(source,pad)&&source.getPadConnection()==PadShape.PadConnection.THERMAL){
+                    //THERMAL pad -> draw crossing                     
+                    switch(pad.getShape()){
+                        case CIRCULAR:                            
+                              
+                            Line line =new Line(pad.getWidth()/2,0);
+                            
+                            line.add((int)(rect.getMinX()+(rect.getHeight()/2)), (int)rect.getMinY());
+                            line.add((int)(rect.getMinX()+(rect.getHeight()/2)), (int)rect.getMaxY());            
+                            lineProcessor.processLine(line, height); 
+
+                            
+                            line.Clear();
+                            line.add((int)rect.getMinX(),(int)(rect.getMinY()+(rect.getWidth()/2)));
+                            line.add((int)rect.getMaxX(), (int)(rect.getMinY()+(rect.getWidth()/2)));            
+                            lineProcessor.processLine(line, height);                         
+                        break;
+                    case OVAL:case RECTANGULAR:
+                            line =new Line(pad.getWidth()/2,0);
+                            line.add((int)(rect.getMinX()+(rect.getWidth()/2)), (int)rect.getMinY());
+                            line.add((int)(rect.getMinX()+(rect.getWidth()/2)), (int)rect.getMaxY());            
+                            lineProcessor.processLine(line, height);
+                                                   
+                            line.Clear();
+                            line.setThickness(pad.getHeight()/2); 
+                            line.add((int)rect.getMinX(), (int)(rect.getMinY()+(rect.getHeight()/2)));
+                            line.add((int)rect.getMaxX(), (int)(rect.getMinY()+(rect.getHeight()/2)));                                    
+                            lineProcessor.processLine(line, height);
+                        break;
+
+                    }
+                      
+                    
+                                    
+               }
+            }
+        }
+    }
+    
     private void processRegion(List<? extends Point> region,int height){
         
         int lastX=-1,lastY=-1;
@@ -120,6 +274,10 @@ public class CommandRegionProcessor implements Processor {
             for(GlyphLabel label:board.<GlyphLabel>getShapes(GlyphLabel.class,source.getCopper().getLayerMaskID())){      
                Rectangle rect=label.getTexture().getBoundingShape();
                rect.grow(( ((ClearanceTarget)label).getClearance()!=0?((ClearanceTarget)label).getClearance():source.getClearance()), ((ClearanceTarget)label).getClearance()!=0?((ClearanceTarget)label).getClearance():source.getClearance());  
+               //is this in region
+               if(!(source).getBoundingShape().intersects(rect)){
+                   continue; 
+               }
                region.clear();
                region.add(new Point(rect.x,rect.y));
                region.add(new Point(rect.x+rect.width,rect.y));
@@ -128,64 +286,7 @@ public class CommandRegionProcessor implements Processor {
                 
                processRegion(region, board.getHeight());
             }                                      
-        }
-        
-    
-    private void processPads(Unit<? extends Shape> board,CopperAreaShape source){
-        int height=board.getHeight();       
-        int lastX=-1,lastY=-1;
-        StringBuffer commandLine=new StringBuffer();
-        
-        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);                     
-        for(FootprintShape footrpint:footprints){
-            
-            //set linear mode if not set
-            context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
-
-            Collection<PadShape> pads=footrpint.getPins();
-            for(PadShape pad:pads){
-                if(Utilities.isSameNet(source,pad)){
-                    continue;
-                }
-                if(!pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){  //a footprint may have pads on different layers
-                   continue;
-                }
-                ApertureDefinition aperture=null;
-                switch(pad.getShape()){
-                    case CIRCULAR:
-                     aperture=context.getApertureDictionary().findCircle(pad.getWidth()+(2*source.getClearance()));
-                        break;
-                    case OVAL:
-                     aperture=context.getApertureDictionary().findObround(pad.getWidth()+(2*source.getClearance()),pad.getHeight()+(2*source.getClearance()));
-                        break;
-                    case RECTANGULAR:
-                     aperture=context.getApertureDictionary().findRectangle(pad.getWidth()+(2*source.getClearance()),pad.getHeight()+(2*source.getClearance()));
-                     break;
-                    case POLYGON:
-                    aperture=context.getApertureDictionary().findPolygon(pad.getWidth()+(2*source.getClearance()),6);
-                    break;                         
-                default:
-                    throw new IllegalStateException("Unknown shape - "+pad.getShape());
-                }
-                //set aperture if not same
-                context.resetAperture(aperture);
-
-                //flash the pad!!!
-                commandLine.setLength(0); 
-                if (pad.getX() != lastX){                   
-                    lastX = pad.getX();
-                    commandLine.append("X"+context.getFormatter().format(Grid.COORD_TO_MM(pad.getX())*100000));
-                }
-                if (pad.getY() != lastY)
-                  {                   
-                    lastY = pad.getY();
-                    commandLine.append("Y"+context.getFormatter().format(Grid.COORD_TO_MM(height-pad.getY())*100000));
-                  }
-                commandLine.append("D03*");                               
-                context.getOutput().append(commandLine);                                        
-            }
-        }    
-    }
+        }        
     
     private void processTracks(Unit<? extends Shape> board,CopperAreaShape source){
         int height=board.getHeight();
@@ -243,20 +344,21 @@ public class CommandRegionProcessor implements Processor {
         int height=board.getHeight(); 
         //select vias of the region layer
         for(ViaShape via:board.<ViaShape>getShapes(ViaShape.class,source.getCopper().getLayerMaskID())){
+            Rectangle rect=via.getBoundingShape().getBounds();             
+            rect.grow(via.getClearance()!=0?via.getClearance():source.getClearance(),via.getClearance()!=0?via.getClearance():source.getClearance());
+            
+            if(!source.getBoundingShape().intersects(rect)){
+               continue; 
+            }
+            
             if(Utilities.isSameNet(source,via)){
                 continue;
-            }
-
-            Rectangle inner=via.getBoundingShape().getBounds();             
-            inner.grow(via.getClearance()!=0?via.getClearance():source.getClearance(),via.getClearance()!=0?via.getClearance():source.getClearance());
-            if(!source.getBoundingShape().intersects(inner)){
-               continue; 
             }
             
             //set linear mode if not set
             context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
             
-            ApertureDefinition aperture=context.getApertureDictionary().findCircle((int)inner.getWidth());
+            ApertureDefinition aperture=context.getApertureDictionary().findCircle((int)rect.getWidth());
             
             //set aperture if not same        
             context.resetAperture(aperture);

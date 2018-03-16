@@ -102,32 +102,37 @@ public class SCHBusPin extends SCHWire implements Textable{
         super.Rotate(rotation);
         text.Rotate(rotation);
     }
-    
     @Override
-    public void Rotate(Moveable.Rotate type) {
-        switch(type){
-        case LEFT:
-            Rotate(AffineTransform.getRotateInstance(Math.PI/2,getLinePoints().get(0).x,getLinePoints().get(0).y)); 
-            break;
-        case RIGHT:
-            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,getLinePoints().get(0).x,getLinePoints().get(0).y));
-        }
+    public Point getCenter() {
+        
+        return new Point(getLinePoints().get(0).x,getLinePoints().get(0).y);
     }
+    
+//    @Override
+//    public void Rotate(Moveable.Rotate type) {
+//        switch(type){
+//        case LEFT:
+//            Rotate(AffineTransform.getRotateInstance(Math.PI/2,getLinePoints().get(0).x,getLinePoints().get(0).y)); 
+//            break;
+//        case RIGHT:
+//            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,getLinePoints().get(0).x,getLinePoints().get(0).y));
+//        }
+//    }
     @Override
     public void Mirror(Point A,Point B){
        super.Mirror(A,B);
        text.Mirror(A,B);
     }
-    @Override
-    public void Mirror(Moveable.Mirror type) {
-        switch(type){
-        case HORIZONTAL:
-            Mirror(new Point(getLinePoints().get(0).x-10,getLinePoints().get(0).y),new Point(getLinePoints().get(0).x+10,getLinePoints().get(0).y)); 
-            break;
-        case VERTICAL:
-            Mirror(new Point(getLinePoints().get(0).x,getLinePoints().get(0).y-10),new Point(getLinePoints().get(0).x,getLinePoints().get(0).y+10));             
-        }
-    }
+//    @Override
+//    public void Mirror(Moveable.Mirror type) {
+//        switch(type){
+//        case HORIZONTAL:
+//            Mirror(new Point(getLinePoints().get(0).x-10,getLinePoints().get(0).y),new Point(getLinePoints().get(0).x+10,getLinePoints().get(0).y)); 
+//            break;
+//        case VERTICAL:
+//            Mirror(new Point(getLinePoints().get(0).x,getLinePoints().get(0).y-10),new Point(getLinePoints().get(0).x,getLinePoints().get(0).y+10));             
+//        }
+//    }
     
     public LinePoint isControlRectClicked(int x, int y) {
         LinePoint point=super.isControlRectClicked(x, y);

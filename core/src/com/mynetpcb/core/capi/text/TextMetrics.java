@@ -50,7 +50,7 @@ public class TextMetrics implements Metrics {
 
 
     @Override
-    public void UpdateMetrics() {
+    public void updateMetrics() {
        this.updated=false;
        fontSize=-1;
     }
@@ -131,7 +131,7 @@ public class TextMetrics implements Metrics {
     }
     
     private void fixTextMetrics(Text.Alignment alignment,Text.Style style,int fontSize, String text){
-        tmHelper.UpdateMetrics();
+        tmHelper.updateMetrics();
         tmHelper.calculateMetrics(null, alignment, style,BUG_FONT_SIZE, text);
         
         

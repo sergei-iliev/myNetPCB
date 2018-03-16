@@ -283,10 +283,10 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
         return new Point2D.Double(x,y);
     }
 
-    @Override
-    public Point getCenterPoint() {        
-        return new Point(x,y);
-    }
+//    @Override
+//    public Point getCenterPoint() {        
+//        return new Point(x,y);
+//    }
 
     @Override
     public boolean isSingleQuadrant() {
@@ -301,7 +301,7 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
     public int getI(){
         int i=0;
         //loss of pressiosion!!!!!!!!!!!!!!!
-        Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation( getCenterPoint(),(int)getStartPoint().getX(),(int)getStartPoint().getY());
+        Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation( getCenter(),(int)getStartPoint().getX(),(int)getStartPoint().getY());
         //if(isSingleQuadrant()){
             switch(quadrant){
              case SECOND:case THIRD:
@@ -318,7 +318,7 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
     
     public int getJ(){
         int j=0;
-        Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation(getCenterPoint(),(int)getStartPoint().getX(),(int)getStartPoint().getY());
+        Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation(getCenter(),(int)getStartPoint().getX(),(int)getStartPoint().getY());
         //if(isSingleQuadrant()){
             switch(quadrant){
              case FIRST:case SECOND:

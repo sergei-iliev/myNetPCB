@@ -186,18 +186,22 @@ public class ChipText  implements Moveable{
            text.setFillColor(color);
         }
     }
+    public Point getCenter() {
 
-    @Override
-    public int getCenterX() {
-        // TODO Implement this method
-        return 0;
+            return null;
     }
-
-    @Override
-    public int getCenterY() {
-        // TODO Implement this method
-        return 0;
-    }
+      
+//    @Override
+//    public int getCenterX() {
+//        // TODO Implement this method
+//        return 0;
+//    }
+//
+//    @Override
+//    public int getCenterY() {
+//        // TODO Implement this method
+//        return 0;
+//    }
 
     public static class Memento{
        

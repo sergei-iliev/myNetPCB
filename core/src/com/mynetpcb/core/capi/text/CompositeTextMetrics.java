@@ -12,9 +12,9 @@ public class CompositeTextMetrics{
       scaledTextMetrics=new TextMetrics();
     }
 
-    public void UpdateMetrics() {
-        baseTextMetrics.UpdateMetrics();
-        scaledTextMetrics.UpdateMetrics();
+    public void updateMetrics() {
+        baseTextMetrics.updateMetrics();
+        scaledTextMetrics.updateMetrics();
     }
 
     public Metrics getBaseTextMetrics(){

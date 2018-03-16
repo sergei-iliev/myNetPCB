@@ -3,6 +3,7 @@ package com.mynetpcb.board.shape;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.board.ClearanceSource;
 import com.mynetpcb.core.board.PCBShape;
+import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
@@ -125,27 +126,6 @@ public class PCBVia  extends ViaShape implements PCBShape{
     }
     
     @Override
-    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
-        
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
-            return;
-        }
-        
-        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
-        
-        Rectangle rect = new Rectangle(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
-        rect.grow(this.clearance!=0?this.clearance:source.getClearance(), this.clearance!=0?this.clearance:source.getClearance());
-
-        ellipse.setFrame(rect.x ,rect.y,rect.getWidth(),rect.getWidth());
-                                        
-        g2.setColor(printContext.getBackgroundColor());                
-        g2.fill(ellipse);
-        
-        ellipseProvider.reset();    
-    }
-    
-    @Override
     public long getOrderWeight() {
         return 3;
     }
@@ -154,16 +134,25 @@ public class PCBVia  extends ViaShape implements PCBShape{
     public <T extends PCBShape & ClearanceSource> void drawClearence(Graphics2D g2,
                                                                      ViewportWindow viewportWindow,
                                                                      AffineTransform scale, T source) {        
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
+        
+        
+        if(Utilities.isSameNet(source, this)){
             return;
+        } 
+        
+        Rectangle rect=getBoundingShape().getBounds();             
+        rect.grow(this.clearance!=0?this.clearance:source.getClearance(),this.clearance!=0?this.clearance:source.getClearance());        
+        
+        //is via within copper area
+        if(!((CopperAreaShape)source).getBoundingShape().intersects(rect)){
+           return; 
         }
-        Rectangle inner=getBoundingShape().getBounds();             
-        inner.grow(this.clearance!=0?this.clearance:source.getClearance(),this.clearance!=0?this.clearance:source.getClearance());
-
-        Rectangle2D scaledRect = Utilities.getScaleRect(inner ,scale); 
+        
+        Rectangle2D scaledRect = Utilities.getScaleRect(rect ,scale); 
         if(!scaledRect.intersects(viewportWindow)){
           return;   
         }
+        
         FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
         Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
         
@@ -177,6 +166,31 @@ public class PCBVia  extends ViaShape implements PCBShape{
         
     }
 
+    @Override
+    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
+        
+        if(Utilities.isSameNet(source, this)){
+            return;
+        } 
+        
+        Rectangle rect=getBoundingShape().getBounds();             
+        rect.grow(this.clearance!=0?this.clearance:source.getClearance(),this.clearance!=0?this.clearance:source.getClearance());        
+        
+        //is via within copper area
+        if(!((CopperAreaShape)source).getBoundingShape().intersects(rect)){
+           return; 
+        }
+        
+        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
+        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
+        
+        ellipse.setFrame(rect.x ,rect.y,rect.getWidth(),rect.getWidth());
+                                        
+        g2.setColor(printContext.getBackgroundColor());                
+        g2.fill(ellipse);
+        
+        ellipseProvider.reset();    
+    }
     
     @Override
     public void setClearance(int clearance) {

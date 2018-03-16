@@ -202,15 +202,20 @@ public class SCHConnector extends Shape implements Pinaware<Pin>,Ownerable<Shape
     }
     
     @Override
-    public void Rotate(Moveable.Rotate type) {
-        switch(type){
-        case LEFT:
-            Rotate(AffineTransform.getRotateInstance(Math.PI/2,pin.getX(),pin.getY()));
-            break;
-        case RIGHT:
-            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,pin.getX(),pin.getY()));
-        }
+    public Point getCenter() {    
+        return new Point(pin.getX(),pin.getY());
     }
+    
+//    @Override
+//    public void Rotate(Moveable.Rotate type) {
+//        switch(type){
+//        case LEFT:
+//            Rotate(AffineTransform.getRotateInstance(Math.PI/2,pin.getX(),pin.getY()));
+//            break;
+//        case RIGHT:
+//            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,pin.getX(),pin.getY()));
+//        }
+//    }
     
     public void Mirror(Point A,Point B) {
       pin.Mirror(A,B);
@@ -218,17 +223,17 @@ public class SCHConnector extends Shape implements Pinaware<Pin>,Ownerable<Shape
       style.calculatePoints();
     }
     
-    @Override
-    public void Mirror(Moveable.Mirror type) {
-        switch(type){
-        case HORIZONTAL:
-            Mirror(new Point(pin.getX()-10,pin.getY()),new Point(pin.getX()+10,pin.getY()));
-            break;
-        case VERTICAL:
-            Mirror(new Point(pin.getX(),pin.getY()-10),new Point(pin.getX(),pin.getY()+10));
-        }
-        
-    }
+//    @Override
+//    public void Mirror(Moveable.Mirror type) {
+//        switch(type){
+//        case HORIZONTAL:
+//            Mirror(new Point(pin.getX()-10,pin.getY()),new Point(pin.getX()+10,pin.getY()));
+//            break;
+//        case VERTICAL:
+//            Mirror(new Point(pin.getX(),pin.getY()-10),new Point(pin.getX(),pin.getY()+10));
+//        }
+//        
+//    }
     public void Translate(AffineTransform translate) {
         pin.Translate(translate);  
         text.Translate(translate);    

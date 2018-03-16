@@ -2,9 +2,11 @@ package com.mynetpcb.circuit.dialog.panel;
 
 
 import com.mynetpcb.board.container.BoardContainer;
+import com.mynetpcb.board.container.BoardContainerFactory;
 import com.mynetpcb.board.dialog.BoardEditorDialog;
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.container.CircuitContainer;
+import com.mynetpcb.circuit.container.CircuitContainerFactory;
 import com.mynetpcb.circuit.dialog.print.CircuitPrintDialog;
 import com.mynetpcb.circuit.dialog.save.CircuitImageExportDialog;
 import com.mynetpcb.circuit.dialog.save.CircuitSaveDialog;
@@ -15,6 +17,7 @@ import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.container.UnitContainer;
+import com.mynetpcb.core.capi.container.UnitContainerProducer;
 import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
@@ -40,8 +43,10 @@ import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.core.utils.VersionUtils;
 import com.mynetpcb.pad.container.FootprintContainer;
+import com.mynetpcb.pad.container.FootprintContainerFactory;
 import com.mynetpcb.pad.dialog.FootprintEditorDialog;
 import com.mynetpcb.symbol.container.SymbolContainer;
+import com.mynetpcb.symbol.container.SymbolContainerFactory;
 import com.mynetpcb.symbol.dialog.SymbolEditorDialog;
 import com.mynetpcb.symbol.dialog.SymbolLoadDialog;
 import com.mynetpcb.symbol.unit.Symbol;
@@ -144,6 +149,8 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
     private JMenuBar menuBar;
     private JMenu filemenu;
     private JMenuItem menuItem;
+    
+    private UnitContainerProducer unitContainerProducer;
 
     public myNetPCBPanel(JRootPane rootPane, Frame parent) {
         this.rootPane = rootPane;
@@ -152,6 +159,7 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
     }
 
     private void Init() {
+        this.unitContainerProducer=createUnitContainerProducer();
         Container content = rootPane.getContentPane();
         basePanel = new JPanel();
         basePanel.setLayout(new BorderLayout());
@@ -562,6 +570,15 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
         requestFocus();
 
     }
+    
+    private UnitContainerProducer createUnitContainerProducer(){
+     UnitContainerProducer unitContainerProducer=new UnitContainerProducer();
+     unitContainerProducer.addFactory("circuits", new CircuitContainerFactory());
+     unitContainerProducer.addFactory("modules", new SymbolContainerFactory());
+     unitContainerProducer.addFactory("footprints", new FootprintContainerFactory());
+     unitContainerProducer.addFactory("boards", new BoardContainerFactory());
+     return unitContainerProducer;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -592,7 +609,7 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
                     }
                     CommandExecutor.INSTANCE.addTask("import",
                                                      new XMLImportTask(this,
-                                                                       circuitComponent.getUnitContainerProducer(),
+                                                                       this.unitContainerProducer,
                                                                        context, XMLImportTask.class));
                 } catch (Exception ioe) {
                     ioe.printStackTrace(System.out);

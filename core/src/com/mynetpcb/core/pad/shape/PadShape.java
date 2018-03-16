@@ -22,9 +22,16 @@ public abstract class PadShape extends Shape implements Pinable, Net, Textable, 
         CONNECTOR
     }
     
+    public enum PadConnection{
+       DIRECT,
+       THERMAL
+    }
+    
     public PadShape(int x, int y, int width, int height) {
         super(x, y, width, height, -1, Layer.LAYER_BACK);
     }
     
     public abstract PadShape.Shape getShape();
+    
+    public abstract PadShape.Type getType();
 }

@@ -4,6 +4,7 @@ import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.board.ClearanceSource;
 import com.mynetpcb.core.board.CompositeLayerable;
 import com.mynetpcb.core.board.PCBShape;
+import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.board.shape.TrackShape;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
@@ -161,13 +162,15 @@ public class PCBTrack extends TrackShape implements PCBShape{
         }
         Utilities.drawCrosshair(g2, viewportWindow, scale, points, resizingPoint, selectionRectWidth);
     }
+    
     @Override
     public <T extends PCBShape & ClearanceSource> void drawClearence(Graphics2D g2,
                                                                      ViewportWindow viewportWindow,
                                                                      AffineTransform scale, T source) {      
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
+        if(Utilities.isSameNet(source, this)){
             return;
-        }
+        }       
+        
         Shape shape=(Shape)source;
         if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
              return;  //not on the same layer
@@ -175,13 +178,9 @@ public class PCBTrack extends TrackShape implements PCBShape{
         if(!shape.getBoundingShape().intersects(this.getBoundingShape().getBounds())){
            return; 
         }
+                
+        double lineThickness=(thickness+2*(this.clearance!=0?this.getClearance():source.getClearance())) *scale.getScaleX();            
         
-        double lineThickness;
-        if(this.clearance!=0){
-          lineThickness=(thickness+2*this.getClearance()) *scale.getScaleX();            
-        }else{
-          lineThickness=(thickness+2*source.getClearance()) *scale.getScaleX();              
-        }
         
         FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);
         GeneralPath temporal=(GeneralPath)provider.getShape();            
@@ -204,6 +203,38 @@ public class PCBTrack extends TrackShape implements PCBShape{
         g2.setClip(null);
         
         provider.reset();
+
+//          g2.setStroke(new BasicStroke((float)lineThickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal())); 
+//          g2.setColor(Color.BLACK);        
+//
+//        
+//          g2.setClip(source.getClippingRegion(viewportWindow,scale));
+//        
+//          FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);            
+//          GeneralPath temporal=(GeneralPath)provider.getShape();
+//        
+//          java.awt.Shape  copperArea=shape.getBoundingShape();
+//          AffineTransform translate= AffineTransform.getTranslateInstance(-viewportWindow.x,-viewportWindow.y);
+//        
+//          Point first=points.get(0);
+//          temporal.moveTo(points.get(0).getX(),points.get(0).getY());
+//          for(int i=1;i<points.size();i++){            
+//              temporal.reset();
+//              temporal.moveTo(first.getX(),first.getY());
+//              temporal.lineTo(points.get(i).getX(),points.get(i).getY());
+//              first=points.get(i);
+//              if(!copperArea.intersects(temporal.getBounds())){
+//                 continue; 
+//              }
+//              
+//              temporal.transform(scale);
+//              temporal.transform(translate); 
+//              g2.draw(temporal); 
+//          }
+//          
+//          g2.setClip(null);
+//          provider.reset();
+        
     }
     @Override
     public String getDisplayName() {
@@ -292,7 +323,6 @@ public class PCBTrack extends TrackShape implements PCBShape{
     
     @Override
     public void Move(int xoffset, int yoffset) {
-        this.clearCache();
         for(Point wirePoint:points){
             wirePoint.setLocation(wirePoint.x + xoffset,
                                   wirePoint.y + yoffset);            
@@ -301,14 +331,12 @@ public class PCBTrack extends TrackShape implements PCBShape{
 
     @Override
     public void Mirror(Point A,Point B) {
-        this.clearCache();
         for (Point wirePoint : points) {
             wirePoint.setLocation(Utilities.mirrorPoint(A,B, wirePoint));
         }
     }
     @Override
     public void Rotate(AffineTransform rotation) {
-        this.clearCache();
         for(Point wirePoint:points){
             rotation.transform(wirePoint, wirePoint);
         }

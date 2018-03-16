@@ -184,10 +184,13 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
     
     private void createLineSelectMenuItems(){
         lineSelectMenu=new LinkedHashMap<String,Object>();
-        JMenuItem item=new JMenuItem("Delete"); item.setActionCommand("Delete");       
-        lineSelectMenu.put("Delete",item);  
+        
+        JMenuItem item=new JMenuItem("Clone"); item.setActionCommand("clone");       
+        lineSelectMenu.put("Clone",item);  
+        
         //***separator
         lineSelectMenu.put("Separator",null); 
+
         
         item=new JMenuItem("Resume"); item.setActionCommand("Resume");                                                                                    
         lineSelectMenu.put("Resume",item); 
@@ -197,6 +200,12 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         
         item=new JMenuItem("Delete Bending point"); item.setActionCommand("DeleteBendingPoint");                                                                                    
         lineSelectMenu.put("DeleteBendingPoint",item); 
+        
+        //***separator
+        lineSelectMenu.put("Separator1",null);
+        
+        item=new JMenuItem("Delete"); item.setActionCommand("Delete");       
+        lineSelectMenu.put("Delete",item);  
     }
     
     

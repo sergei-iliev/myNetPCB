@@ -2,7 +2,6 @@ package com.mynetpcb.pad.shape;
 
 
 import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Rectangular;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.ResizableShape;
@@ -26,7 +25,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 
-public class RoundRect extends ResizableShape implements Rectangular, Externalizable {
+public class RoundRect extends ResizableShape implements  Externalizable {
 
     private RoundRectangle2D roundRect;
 

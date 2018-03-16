@@ -2,7 +2,6 @@ package com.mynetpcb.symbol.shape;
 
 
 import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Rectangular;
 import com.mynetpcb.core.capi.Reshapeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
@@ -31,7 +30,7 @@ import java.util.StringTokenizer;
 import org.w3c.dom.Node;
 
 
-public class Arc extends ResizableShape implements Rectangular,Reshapeable,Externalizable{
+public class Arc extends ResizableShape implements Reshapeable,Externalizable{
     
     private Arc2D arc;
                       

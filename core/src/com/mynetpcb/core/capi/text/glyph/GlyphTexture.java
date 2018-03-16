@@ -225,7 +225,6 @@ public class GlyphTexture implements Texture {
 
     //@Override
     public void Mirror(Point A, Point B) {
-        Text.Alignment newAlignment;
         Utilities.mirrorPoint(A,B, anchorPoint);
                 
         if (A.x ==B.x) { //right-left mirroring

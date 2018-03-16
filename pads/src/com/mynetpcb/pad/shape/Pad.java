@@ -2,6 +2,7 @@ package com.mynetpcb.pad.shape;
 
 
 import com.mynetpcb.core.board.ClearanceSource;
+import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
@@ -20,6 +21,7 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.popup.FootprintPopupMenu;
 import com.mynetpcb.pad.unit.Footprint;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -27,6 +29,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
@@ -41,7 +44,7 @@ import org.w3c.dom.Node;
  * @author Sergey Iliev
  */
 public class Pad extends PadShape {
-
+    
     private int arc;
 
     private Drill drill;
@@ -142,7 +145,7 @@ public class Pad extends PadShape {
         return offset;
     }
 
-    public Pad.Type getType() {
+    public PadShape.Type getType() {
         return type;
     }
 
@@ -272,15 +275,9 @@ public class Pad extends PadShape {
             this.drill.Clear();
     }
 
-    //    @Override
-    //    public Rectangle getPinsRect() {
-    //        return new Rectangle(getX(), getY(), 0,0);
-    //    }
-
     @Override
     public void Mirror(Point A, Point B) {
-        this.clearCache();
-        Point source = new Point(getX(), getY());
+        Point source = new Point(x,y);
         Utilities.mirrorPoint(A, B, source);
         setX(source.x);
         setY(source.y);
@@ -292,7 +289,6 @@ public class Pad extends PadShape {
 
     @Override
     public void Translate(AffineTransform translate) {
-        this.clearCache();
         Point dst = new Point();
         translate.transform(new Point(getX(), getY()), dst);
         setX(dst.x);
@@ -305,7 +301,6 @@ public class Pad extends PadShape {
 
     @Override
     public void Rotate(AffineTransform rotation) {
-        this.clearCache();
         Point dst = new Point();
         rotation.transform(new Point(getX(), getY()), dst);
         setX(dst.x);
@@ -320,14 +315,42 @@ public class Pad extends PadShape {
 
     }
 
-    public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
-                              ClearanceSource source) {
-
+    private boolean validateClearance(ClearanceSource source){
+        //is different layer and SMD -> no clearance
         if ((source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {
-            return; //not on the same layer
+            if(this.getType()==PadShape.Type.SMD)
+               return false; //not on the same layer
+        }
+        //2. is same net 
+        if(Utilities.isSameNet(source,this)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
+            return false;
+        }
+        //3. is pad  within copper area
+        Rectangle rect = getBoundingShape().getBounds();
+        rect.grow(source.getClearance(), source.getClearance());
+        
+        if(!((CopperAreaShape)source).getBoundingShape().intersects(rect)){
+           return false; 
+        }   
+  
+        return true;
+    }
+    
+    public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
+                              ClearanceSource source) {        
+
+        if(!validateClearance(source)){
+            return;
         }
         shape.drawClearance(g2, viewportWindow, scale, source);
     }
+    
+    public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source) {
+        if(!validateClearance(source)){
+            return;
+        }
+        shape.printClearance(g2, printContext,source);
+    }    
 
     @Override
     public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
@@ -371,13 +394,6 @@ public class Pad extends PadShape {
             shape.Print(g2, printContext, layermask);
             break;
         }
-    }
-    
-    public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source) {
-        if ((source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {
-            return; //not on the same layer
-        }
-        shape.printClearance(g2, printContext,source);
     }
     
     @Override
@@ -593,14 +609,42 @@ public class Pad extends PadShape {
 
         @Override
         public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
-                                  ClearanceSource source) {
+                                  ClearanceSource source) {                            
             Rectangle rect = getBoundingShape().getBounds();
-            rect.grow(source.getClearance(), source.getClearance());
+            rect.grow(source.getClearance(), source.getClearance());                                    
+            
             Rectangle2D scaledRect = Utilities.getScaleRect(rect, scale);
             ellipse.setFrame(scaledRect.getX() - viewportWindow.x, scaledRect.getY() - viewportWindow.y,
                              scaledRect.getWidth(), scaledRect.getWidth());
+            
             g2.setColor(Color.BLACK);
             g2.fill(ellipse);
+            
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & Pad.this.copper.getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(Utilities.isSameNet(source,Pad.this) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){
+               //draw thermal
+                g2.setClip(ellipse);                              
+                FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Line2D.class);
+                Line2D temporal=(Line2D)provider.getShape(); 
+                //radius of outer whole
+                g2.setStroke(new BasicStroke((float)((Pad.this.getWidth()/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));            
+                g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
+            
+
+                
+                temporal.setLine((scaledRect.getMinX()+(scaledRect.getHeight()/2))-viewportWindow.x, scaledRect.getMinY()-viewportWindow.y,(scaledRect.getMinX()+(scaledRect.getHeight()/2))-viewportWindow.x, scaledRect.getMaxY()-viewportWindow.y);            
+                g2.draw(temporal);
+
+                temporal.setLine(scaledRect.getMinX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getWidth()/2))-viewportWindow.y,scaledRect.getMaxX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getWidth()/2))-viewportWindow.y);            
+                g2.draw(temporal);
+            
+                g2.setClip(null);
+                
+                provider.reset();
+            }
         }
 
         @Override
@@ -610,7 +654,32 @@ public class Pad extends PadShape {
             ellipse.setFrame(rect.x, rect.y, rect.getWidth(), rect.getWidth());
 
             g2.setColor(printContext.getBackgroundColor());
-            g2.fill(ellipse);
+            g2.fill(ellipse);                        
+            
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & Pad.this.copper.getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(Utilities.isSameNet(source,Pad.this) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){
+               //draw thermal
+                
+                g2.setColor(printContext.isBlackAndWhite() ? Color.BLACK : copper.getColor());
+                
+                FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Line2D.class);
+                Line2D temporal=(Line2D)provider.getShape(); 
+                //radius of outer whole
+                g2.setStroke(new BasicStroke(((Pad.this.getWidth()/2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));            
+                            
+                
+                temporal.setLine((rect.getMinX()+(rect.getHeight()/2)), rect.getMinY(),(rect.getMinX()+(rect.getHeight()/2)), rect.getMaxY());            
+                g2.draw(temporal);
+
+                temporal.setLine(rect.getMinX(), (rect.getMinY()+(rect.getWidth()/2)),rect.getMaxX(), (rect.getMinY()+(rect.getWidth()/2)));            
+                g2.draw(temporal);
+                            
+                
+                provider.reset();
+            }            
         }
 
         @Override
@@ -699,6 +768,30 @@ public class Pad extends PadShape {
             g2.setColor(Color.BLACK);
             g2.fill(roundRect);
 
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & Pad.this.copper.getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(Utilities.isSameNet(source,Pad.this) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){
+               //draw thermal
+                g2.setClip(roundRect);                              
+                FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Line2D.class);
+                Line2D temporal=(Line2D)provider.getShape(); 
+                
+                g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
+                //radius of outer whole
+                g2.setStroke(new BasicStroke((float)((Pad.this.getWidth()/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));                                            
+                temporal.setLine((scaledRect.getMinX()+(scaledRect.getWidth()/2))-viewportWindow.x, scaledRect.getMinY()-viewportWindow.y,(scaledRect.getMinX()+(scaledRect.getWidth()/2))-viewportWindow.x, scaledRect.getMaxY()-viewportWindow.y);            
+                g2.draw(temporal);
+
+                g2.setStroke(new BasicStroke((float)((Pad.this.getHeight()/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));            
+                temporal.setLine(scaledRect.getMinX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getHeight()/2))-viewportWindow.y,scaledRect.getMaxX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getHeight()/2))-viewportWindow.y);            
+                g2.draw(temporal);
+            
+                g2.setClip(null);
+                
+                provider.reset();
+            }
         }
 
         @Override
@@ -707,7 +800,30 @@ public class Pad extends PadShape {
             rect.grow(source.getClearance(), source.getClearance());
             roundRect.setRoundRect(rect.x, rect.y, rect.getWidth(), rect.getHeight(), arc, arc);
             g2.setColor(printContext.getBackgroundColor());
-            g2.fill(roundRect);
+            g2.fill(roundRect);          
+
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & Pad.this.copper.getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(Utilities.isSameNet(source,Pad.this) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){
+               //draw thermal
+                          
+                FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Line2D.class);
+                Line2D temporal=(Line2D)provider.getShape(); 
+                
+                g2.setColor(printContext.isBlackAndWhite() ? Color.BLACK : copper.getColor());
+                //radius of outer whole
+                g2.setStroke(new BasicStroke(((Pad.this.getWidth()/2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));                                            
+                temporal.setLine((roundRect.getMinX()+(roundRect.getWidth()/2)), roundRect.getMinY(),(roundRect.getMinX()+(roundRect.getWidth()/2)), roundRect.getMaxY());            
+                g2.draw(temporal);
+
+                g2.setStroke(new BasicStroke((float)((Pad.this.getHeight()/2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));            
+                temporal.setLine(roundRect.getMinX(), (roundRect.getMinY()+(roundRect.getHeight()/2)),roundRect.getMaxX(), (roundRect.getMinY()+(roundRect.getHeight()/2)));            
+                g2.draw(temporal);            
+                
+                provider.reset();
+            }            
         }
 
         @Override
@@ -796,6 +912,32 @@ public class Pad extends PadShape {
 
             g2.setColor(Color.BLACK);
             g2.fill(rectangle);
+            
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & Pad.this.copper.getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(Utilities.isSameNet(source,Pad.this) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){
+               //draw thermal
+                g2.setClip(rectangle);                              
+                FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Line2D.class);
+                Line2D temporal=(Line2D)provider.getShape(); 
+                
+                g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
+                //radius of outer whole
+                g2.setStroke(new BasicStroke((float)((Pad.this.getWidth()/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));                                            
+                temporal.setLine((scaledRect.getMinX()+(scaledRect.getWidth()/2))-viewportWindow.x, scaledRect.getMinY()-viewportWindow.y,(scaledRect.getMinX()+(scaledRect.getWidth()/2))-viewportWindow.x, scaledRect.getMaxY()-viewportWindow.y);            
+                g2.draw(temporal);
+
+                g2.setStroke(new BasicStroke((float)((Pad.this.getHeight()/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));            
+                temporal.setLine(scaledRect.getMinX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getHeight()/2))-viewportWindow.y,scaledRect.getMaxX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getHeight()/2))-viewportWindow.y);            
+                g2.draw(temporal);
+            
+                g2.setClip(null);
+                
+                provider.reset();
+            }            
+            
         }
 
         @Override
@@ -806,6 +948,28 @@ public class Pad extends PadShape {
 
             g2.setColor(printContext.getBackgroundColor());
             g2.fill(rectangle);
+
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & Pad.this.copper.getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(Utilities.isSameNet(source,Pad.this) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){
+               //draw thermal                              
+                FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Line2D.class);
+                Line2D temporal=(Line2D)provider.getShape(); 
+                
+                g2.setColor(printContext.isBlackAndWhite() ? Color.BLACK : copper.getColor());
+                //radius of outer whole
+                g2.setStroke(new BasicStroke(((Pad.this.getWidth()/2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));                                            
+                temporal.setLine((rectangle.getMinX()+(rectangle.getWidth()/2)), rectangle.getMinY(),(rectangle.getMinX()+(rectangle.getWidth()/2)), rectangle.getMaxY());            
+                g2.draw(temporal);
+                
+                g2.setStroke(new BasicStroke((float)((Pad.this.getHeight()/2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));            
+                temporal.setLine(rectangle.getMinX(), (rectangle.getMinY()+(rectangle.getHeight()/2)),rectangle.getMaxX(), (rectangle.getMinY()+(rectangle.getHeight()/2)));            
+                g2.draw(temporal);
+                
+                provider.reset();
+            }            
 
         }
 

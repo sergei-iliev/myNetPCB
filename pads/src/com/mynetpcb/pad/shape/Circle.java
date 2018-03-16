@@ -1,7 +1,6 @@
 package com.mynetpcb.pad.shape;
 
 import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Rectangular;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
@@ -297,10 +296,10 @@ public class Circle extends Shape implements ArcGerberable,Resizeable,Externaliz
         return getStartPoint();
     }
 
-    @Override
-    public Point getCenterPoint() {        
-        return new Point(x,y);
-    }
+//    @Override
+//    public Point getCenterPoint() {        
+//        return new Point(x,y);
+//    }
 
     @Override
     public int getI() {

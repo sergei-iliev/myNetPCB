@@ -383,6 +383,7 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
 
     @Override
     public void onUnitDragDrop(int index,UUID uuid) {
-        System.out.println(index); 
+        //reorder units
+        boardComponent.getModel().reorder(index, uuid);
     }
 }

@@ -90,11 +90,6 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
         this.setModel(new BoardContainer());
         this.eventMgr = new BoardEventMgr(this);
         this.setBackground(Color.BLACK);
-        //this.setLineBendingProcessor(LineBendingProcessor.resolve("topbend"));
-        //this.unitContainerProducer=new UnitContainerProducer();
-        //this.unitContainerProducer.addFactory("circuits", new CircuitContainerFactory());
-        //this.unitContainerProducer.addFactory("modules", new SymbolContainerFactory());
-        //this.unitContainerProducer.addFactory("footprints", new FootprintContainerFactory());
 
         this.loadDialogBuilder = new BoardLoadDialog.Builder();
         popup = new BoardPopupMenu(this);

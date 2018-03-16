@@ -28,8 +28,8 @@ public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape> 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
         Arc arc=(Arc)this.getTarget();
-        centerX=arc.getCenterX();
-        centerY=arc.getCenterY();      
+        centerX=arc.getCenter().x;
+        centerY=arc.getCenter().y;      
     }
 
     @Override

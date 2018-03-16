@@ -321,7 +321,6 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
            pad.getDrill().setWidth(Grid.MM_TO_COORD(Double.parseDouble(drillWidth.getText())));  
         }
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
-        getTarget().clearCache();
         getComponent().Repaint();  
         
     }

@@ -66,7 +66,12 @@ public class FontTexture implements Texture {
         this.selectionRectWidth=4;
         this.alignment=alignment;
     }
-    
+    public FontTexture clone() throws CloneNotSupportedException {
+        FontTexture copy=(FontTexture)super.clone();
+        copy.anchorPoint=(Point)anchorPoint.clone();
+        copy.compositeTextMetrics=new CompositeTextMetrics();
+        return copy;
+    }
     public void copy(Texture _copy){
         FontTexture copy=(FontTexture)_copy;
         this.getAnchorPoint().setLocation(copy.anchorPoint); 
@@ -78,7 +83,7 @@ public class FontTexture implements Texture {
         this.size=copy.size;
         this.fillColor=copy.fillColor;
         this.selectionRectWidth=copy.selectionRectWidth;           
-        compositeTextMetrics.UpdateMetrics();
+        compositeTextMetrics.updateMetrics();
     }
     
     public void setSelectionRectWidth(int selectionRectWidth) {
@@ -121,7 +126,7 @@ public class FontTexture implements Texture {
             break;
         }
 
-        compositeTextMetrics.UpdateMetrics();
+        compositeTextMetrics.updateMetrics();
     }
     
     public void setAlignment(Text.Alignment alignment) {
@@ -141,7 +146,7 @@ public class FontTexture implements Texture {
                 anchorPoint.setLocation(anchorPoint.x,
                                         anchorPoint.y + compositeTextMetrics.getBaseTextMetrics().getWidth());
         this.alignment = alignment;
-        compositeTextMetrics.UpdateMetrics();
+        compositeTextMetrics.updateMetrics();
     }
 
 
@@ -188,8 +193,6 @@ public class FontTexture implements Texture {
            return; 
         }
         
-        Layer.Side side= (Layer.Side.resolve(layermask));
-        
         if (this.isSelected())
             g2.setColor(Color.GRAY);
         else
@@ -203,8 +206,7 @@ public class FontTexture implements Texture {
 
         compositeTextMetrics.getBaseTextMetrics().calculateMetrics(null,alignment,style,size,text);
         compositeTextMetrics.getScaledTextMetrics().calculateMetrics(g2,alignment,style,font.getSize(),text);
-
-
+        
 
         Point2D A = new Point2D.Double();
         scale.transform(anchorPoint, A);
@@ -215,9 +217,6 @@ public class FontTexture implements Texture {
             {
                 
                 AffineTransform saved=g2.getTransform();
-                if(side==Layer.Side.BOTTOM){ 
-                   invertText(g2,(int)A.getX(),-(int)A.getX()+compositeTextMetrics.getScaledTextMetrics().getWidth());
-                }
                 TextLayout layout =
                     new TextLayout(text, g2.getFont(), g2.getFontRenderContext());
                 layout.draw(g2, (int)A.getX() - compositeTextMetrics.getScaledTextMetrics().getWidth(),
@@ -243,9 +242,6 @@ public class FontTexture implements Texture {
             {
                 
                 AffineTransform saved=g2.getTransform();
-                if(side==Layer.Side.BOTTOM){ 
-                    invertText(g2,(int)A.getX(),-(int)A.getX()-compositeTextMetrics.getScaledTextMetrics().getWidth());
-                }
                 TextLayout layout =
                     new TextLayout(text, g2.getFont(), g2.getFontRenderContext());
                 layout.draw(g2, (int)A.getX(), (int)A.getY());
@@ -273,9 +269,6 @@ public class FontTexture implements Texture {
                                                       A.getX(),
                                                       A.getY());
                 g2.transform(rotate);
-                if(side==Layer.Side.BOTTOM){         
-                    invertText(g2,(int)A.getX(),-(int)A.getX()+compositeTextMetrics.getScaledTextMetrics().getWidth());
-                }
                 TextLayout layout =
                     new TextLayout(text, g2.getFont(), g2.getFontRenderContext());
                 layout.draw(g2, (int)A.getX() - compositeTextMetrics.getScaledTextMetrics().getWidth(),
@@ -304,11 +297,7 @@ public class FontTexture implements Texture {
                     AffineTransform.getRotateInstance(-Math.PI / 2,
                                                       A.getX(),
                                                       A.getY());
-                g2.transform(rotate);
-                
-                if(side==Layer.Side.BOTTOM){ 
-                    invertText(g2,(int)A.getX(),-(int)A.getX()-compositeTextMetrics.getScaledTextMetrics().getWidth());
-                }
+                g2.transform(rotate);                
                 TextLayout layout =
                     new TextLayout(text, g2.getFont(), g2.getFontRenderContext());
                 layout.draw(g2, (int)A.getX(), (int)A.getY());
@@ -346,19 +335,12 @@ public class FontTexture implements Texture {
         g2.setColor(fillColor);
         
         //change on zoom out/in   
-        Font font=new Font(Text.FONT_NAME,style.ordinal(),(int)Math.round(size));
+        Font font=new Font(Text.FONT_NAME,style.ordinal(),size);
         g2.setFont(font);
         
         //***INITIALIZE UNSCALED METRICS.do this only once after load.
 
         compositeTextMetrics.getBaseTextMetrics().calculateMetrics(null,alignment,style,size,text);
-        compositeTextMetrics.getScaledTextMetrics().calculateMetrics(g2,alignment,style,font.getSize(),text);
-
-
-
-        //Point2D A = new Point2D.Double();
-        //scale.transform(anchorPoint, A);
-        //A.setLocation(A.getX()-viewportWindow.x, A.getY()-viewportWindow.y);
         
         switch (this.alignment) {
         case RIGHT:
@@ -367,7 +349,7 @@ public class FontTexture implements Texture {
                 AffineTransform saved=g2.getTransform();
                 TextLayout layout =
                     new TextLayout(text, g2.getFont(), g2.getFontRenderContext());
-                layout.draw(g2, anchorPoint.x - compositeTextMetrics.getScaledTextMetrics().getWidth(),
+                layout.draw(g2, anchorPoint.x - compositeTextMetrics.getBaseTextMetrics().getWidth(),
                             anchorPoint.y);
 
                 g2.setTransform(saved);
@@ -394,7 +376,7 @@ public class FontTexture implements Texture {
                 g2.transform(rotate);
                 TextLayout layout =
                     new TextLayout(text, g2.getFont(), g2.getFontRenderContext());
-                layout.draw(g2, anchorPoint.x - compositeTextMetrics.getScaledTextMetrics().getWidth(),
+                layout.draw(g2, anchorPoint.x - compositeTextMetrics.getBaseTextMetrics().getWidth(),
                             anchorPoint.y);
 
                 g2.setTransform(saved);
@@ -420,11 +402,6 @@ public class FontTexture implements Texture {
         }
     }
 
-    private void invertText(Graphics2D g2,int origin,int width){
-        g2.translate(origin, 0);
-        g2.scale(-1, 1);
-        g2.translate(width, 0);         
-    }
     private void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
         Utilities.drawCrosshair(g2, viewportWindow, scale, null, selectionRectWidth, anchorPoint);
     }
@@ -448,7 +425,7 @@ public class FontTexture implements Texture {
             }
         }
         
-        compositeTextMetrics.UpdateMetrics();
+        compositeTextMetrics.updateMetrics();
 
     }
     
@@ -472,7 +449,7 @@ public class FontTexture implements Texture {
         anchorPoint.setLocation(Integer.parseInt(st.nextToken()),
                                 Integer.parseInt(st.nextToken()));        
         this.alignment = Text.Alignment.valueOf(st.nextToken().toUpperCase());
-        compositeTextMetrics.UpdateMetrics();
+        compositeTextMetrics.updateMetrics();
         try{
           this.setStyle(Text.Style.valueOf(st.nextToken().toUpperCase()));
         }catch(NoSuchElementException e){
@@ -486,14 +463,6 @@ public class FontTexture implements Texture {
             //old symbol label has constant font size of 8
             this.setSize(8);
             }
-    }
-
-
-    public FontTexture clone() throws CloneNotSupportedException {
-        FontTexture copy=(FontTexture)super.clone();
-        copy.anchorPoint=(Point)anchorPoint.clone();
-        copy.compositeTextMetrics=new CompositeTextMetrics();
-        return copy;
     }
 
     public void Translate(AffineTransform translate) {
@@ -522,7 +491,7 @@ public class FontTexture implements Texture {
                                         (compositeTextMetrics.getBaseTextMetrics().getAscent() - compositeTextMetrics.getBaseTextMetrics().getDescent()));
             }
         }
-        compositeTextMetrics.UpdateMetrics();
+        compositeTextMetrics.updateMetrics();
     }
     
     @Override
@@ -605,7 +574,7 @@ public class FontTexture implements Texture {
     @Override
     public void setText(String text) {
         this.text = text;
-        compositeTextMetrics.UpdateMetrics();
+        compositeTextMetrics.updateMetrics();
     }
 
     public boolean isTextLayoutVisible() {
@@ -630,7 +599,7 @@ public class FontTexture implements Texture {
 
     public void setStyle(Text.Style style) {
       this.style=style;
-      compositeTextMetrics.UpdateMetrics(); 
+      compositeTextMetrics.updateMetrics(); 
     }
 
     public Text.Style getStyle() {
@@ -682,7 +651,7 @@ public class FontTexture implements Texture {
              symbol.alignment = alignment;
              symbol.setStyle(this.style);
              symbol.fillColor=new Color(sRGB);
-             symbol.compositeTextMetrics.UpdateMetrics();
+             symbol.compositeTextMetrics.updateMetrics();
          }
         @Override
          public void saveStateFrom(Texture _symbol) {

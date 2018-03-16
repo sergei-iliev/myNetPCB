@@ -67,7 +67,10 @@ public abstract class ResizableShape extends Shape implements Resizeable {
         Point point=getOwningUnit().getGrid().positionOnGrid(targetPoint.x,targetPoint.y);  
         Resize(point.x -targetPoint.x,point.y-targetPoint.y,targetPoint);     
     }
-    
+    @Override
+    public Point getCenter() {        
+        return new Point(getX()+(getWidth()/2), getY()+ (getHeight()/2));
+    }    
     @Override
     public java.awt.Shape calculateShape() {
       return new Rectangle(getX(), getY(), getWidth(), getHeight());
@@ -241,13 +244,13 @@ public abstract class ResizableShape extends Shape implements Resizeable {
         bottomRight.setLocation(bottomRight.x, upperRight.y + height);
     }
     
-    public int getCenterX(){
-        return (int)(upperLeft.getX()+((upperRight.getX()-upperLeft.getX())/2));
-    }
-    
-    public int getCenterY(){
-        return (int)(upperRight.getY()+((bottomRight.getY()-upperRight.getY())/2));        
-    }
+//    public int getCenterX(){
+//        return (int)(upperLeft.getX()+((upperRight.getX()-upperLeft.getX())/2));
+//    }
+//    
+//    public int getCenterY(){
+//        return (int)(upperRight.getY()+((bottomRight.getY()-upperRight.getY())/2));        
+//    }
     
     @Override
     public AbstractMemento getState(MementoType operationType) {

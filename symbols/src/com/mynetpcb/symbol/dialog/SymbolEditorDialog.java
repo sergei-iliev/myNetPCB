@@ -2,6 +2,7 @@ package com.mynetpcb.symbol.dialog;
 
 
 import com.mynetpcb.core.capi.DialogFrame;
+import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
@@ -547,7 +548,7 @@ exit();
         for (Symbol symbol : source.getUnits()) {
             try {
                 Symbol copy = symbol.clone();
-                copy.getScalableTransformation().setScaleFactor(4);
+                copy.getScalableTransformation().Reset(1.2, 2, 0, ScalableTransformation.DEFAULT_MAX_SCALE_FACTOR);
                 symbolComponent.getModel().Add(copy);
                 copy.notifyListeners(ShapeEvent.ADD_SHAPE);
             } catch (CloneNotSupportedException f) {

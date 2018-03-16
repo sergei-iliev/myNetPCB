@@ -79,29 +79,18 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape,CircuitContai
     
     public static final int NETLABEL_MODE=0x0A;       
     
-    private final UnitContainerProducer unitContainerProducer;
-    
     private final CircuitPopupMenu popup;
     
     public CircuitComponent(DialogFrame dialog) {
         super(dialog);
         this.setModel(new CircuitContainer());
         this.eventMgr = new CircuitEventMgr(this);
-        this.unitContainerProducer=new UnitContainerProducer();
-        this.unitContainerProducer.addFactory("circuits", new CircuitContainerFactory());
-        this.unitContainerProducer.addFactory("modules", new SymbolContainerFactory());
-        this.unitContainerProducer.addFactory("footprints", new FootprintContainerFactory());
-        this.unitContainerProducer.addFactory("boards", new BoardContainerFactory());
         
         this.loadDialogBuilder= new CircuitLoadDialog.Builder(); 
         this.setParameter("snaptogrid", true);
         popup = new CircuitPopupMenu(this);
         bendingProcessorFactory=new CircuitBendingProcessorFactory();
         setLineBendingProcessor(bendingProcessorFactory.resolve("defaultbend",null));
-    }
-    
-    public UnitContainerProducer getUnitContainerProducer(){
-        return unitContainerProducer;
     }
 
     public void setMode(int mode) {

@@ -129,16 +129,10 @@ public abstract class EventHandle<C extends UnitComponent,S extends Shape> imple
         this.ctrlButtonPress = false;
         mx=0;
         my=0;  
-        if(getTarget()!=null){
-          getTarget().enableCache(false);
-        }
     }
     //***use to clean resources on Handle close
 
     public void Detach() {
-        if(getTarget()!=null){
-          getTarget().enableCache(true);
-        }
         Clear();
     }
 

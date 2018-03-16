@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.Packageable;
 import com.mynetpcb.core.capi.Typeable;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
@@ -20,6 +21,8 @@ import java.awt.print.PageFormat;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+
+import java.lang.ref.WeakReference;
 
 import java.util.Collection;
 import java.util.List;
@@ -72,6 +75,14 @@ public class Symbol extends Unit<Shape> implements Typeable, Packageable {
         }
     }
 
+    private WeakReference<PrintContext> context;
+    
+    
+    @Override
+    public void prepare(PrintContext context) {        
+        this.context = new WeakReference<>(context);     
+    }
+    
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
         Graphics2D g2 = (Graphics2D) graphics;
 
@@ -113,7 +124,7 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
 
             //***draw figures
             for (Shape shape : getShapes()) {
-                shape.Print(g2, null, 0);
+                shape.Print(g2, context.get(), 0);
             }
             return (PAGE_EXISTS);
         } else

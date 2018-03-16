@@ -51,7 +51,6 @@ public abstract class AbstractMemento<U extends Unit,S extends Shape> {
 
     public  void loadStateTo(S shape){
         shape.setUUID(UUID.fromString(uuid.toString()));
-        shape.clearCache();
         shape.setCopper(Layer.Copper.values()[layerindex]);
         shape.setThickness(this.thickness);
         shape.setFill(Fill.values()[this.fill]);

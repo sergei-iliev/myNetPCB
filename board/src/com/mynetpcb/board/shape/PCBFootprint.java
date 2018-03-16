@@ -85,6 +85,11 @@ public class PCBFootprint extends FootprintShape<Pad> implements PCBShape{
         return copy;        
     }
     public void setSide(Layer.Side side){
+        //mirror footprint
+        Rectangle r=getBoundingShape().getBounds();
+        Point p=new Point((int)r.getCenterX(),(int)r.getCenterY()); 
+        Mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10));
+        
         for(Shape shape:shapes){
             shape.setCopper(Layer.Side.change(shape.getCopper()));
         }
@@ -246,14 +251,22 @@ public class PCBFootprint extends FootprintShape<Pad> implements PCBShape{
 
     @Override
     public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
+        Shape shape=(Shape)source;
+        Rectangle2D targetRect=getBoundingShape().getBounds();
+        
+        if(!shape.getBoundingShape().intersects(targetRect)){
+           return; 
+        }
+        
+        
         for(Shape pad:shapes){
             if(pad instanceof Pad){
-                if(Objects.equals(source.getNetName(), ((Pad)pad).getNetName())&&(!("".equals(source.getNetName())))&&(!(null==source.getNetName()))){
-                    continue;
-                }
+                //if(Objects.equals(source.getNetName(), ((Pad)pad).getNetName())&&(!("".equals(source.getNetName())))&&(!(null==source.getNetName()))){
+                //    continue;
+                //}
                 ((Pad)pad).printClearance(g2,printContext,source);
             }
-        }
+        }               
     }
     
     @Override
@@ -386,7 +399,9 @@ public class PCBFootprint extends FootprintShape<Pad> implements PCBShape{
         }   
     }
 
-
+    /*
+     * Investigate if footprint intersects copper layer
+     */
     @Override
     public <T extends PCBShape & ClearanceSource> void drawClearence(Graphics2D g2,
                                                                      ViewportWindow viewportWindow,
@@ -405,11 +420,7 @@ public class PCBFootprint extends FootprintShape<Pad> implements PCBShape{
         }
         
         for(Shape pad:shapes){
-            if(pad instanceof Pad){
-                if(Objects.equals(source.getNetName(), ((Pad)pad).getNetName())&&(!("".equals(source.getNetName())))&&(!(null==source.getNetName()))){
-                    continue;
-                }
-                
+            if(pad instanceof Pad){                                
                 ((Pad)pad).drawClearance(g2,viewportWindow,scale,source);
             }
         }

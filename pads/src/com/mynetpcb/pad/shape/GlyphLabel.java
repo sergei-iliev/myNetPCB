@@ -41,7 +41,10 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         copy.texture = this.texture.clone();        
         return copy;
     }
-    
+    @Override
+    public Point getCenter() {
+        return new Point((int)texture.getBoundingShape().getBounds().getCenterX(),(int)texture.getBoundingShape().getBounds().getCenterY());
+    }
     @Override 
     public Rectangle calculateShape(){ 
      return texture.getBoundingShape();

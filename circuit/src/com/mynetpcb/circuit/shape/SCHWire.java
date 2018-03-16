@@ -250,7 +250,6 @@ public SCHWire(int thickness){
     
     @Override
     public void Move(int xoffset, int yoffset) {
-        this.clearCache();
         for(Point wirePoint:points){
             wirePoint.setLocation(wirePoint.x + xoffset,
                                   wirePoint.y + yoffset);            
@@ -259,7 +258,6 @@ public SCHWire(int thickness){
 
     @Override
     public void Mirror(Point A,Point B) {
-        this.clearCache();
         for (Point wirePoint : points) {
             wirePoint.setLocation(Utilities.mirrorPoint(A,B, wirePoint));
         }
@@ -267,7 +265,6 @@ public SCHWire(int thickness){
 
     @Override
     public void Translate(AffineTransform translate) {
-        this.clearCache();
         for(Point wirePoint:points){
             translate.transform(wirePoint, wirePoint);
         }
@@ -275,7 +272,6 @@ public SCHWire(int thickness){
 
     @Override
     public void Rotate(AffineTransform rotation) {
-        this.clearCache();
         for(Point wirePoint:points){
             rotation.transform(wirePoint, wirePoint);
         }

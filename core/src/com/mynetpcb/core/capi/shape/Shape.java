@@ -29,7 +29,7 @@ import java.util.UUID;
  * Shape belongs to a layer wich is not accounted for in the context of circuit
  * @author Sergey Iliev
  */
-public abstract class Shape implements Moveable, BoundsCacheable,Printaware,Stateable,Unitable<Unit>,Layerable{
+public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Unit>,Layerable{
     public enum Fill{
         EMPTY(1),
         FILLED(2),
@@ -46,10 +46,6 @@ public abstract class Shape implements Moveable, BoundsCacheable,Printaware,Stat
         }
         
     }
-    
-    protected java.awt.Shape shapeCacheBounds;
-
-    protected boolean isCasheEnabled;
     
     protected UUID uuid;    
     
@@ -118,7 +114,6 @@ public abstract class Shape implements Moveable, BoundsCacheable,Printaware,Stat
     public Shape clone()throws CloneNotSupportedException{
         Shape copy=(Shape)super.clone();
         copy.uuid = UUID.randomUUID(); 
-        copy.shapeCacheBounds=null;
         copy.owningUnit=null;
         return copy;
     }
@@ -171,12 +166,16 @@ public abstract class Shape implements Moveable, BoundsCacheable,Printaware,Stat
     public void setHeight(int height) {
         this.height = height;
     }
-    public int getCenterX(){
-        return x;
-    }
+//    public int getCenterX(){
+//        return x;
+//    }
+//    
+//    public int getCenterY(){
+//        return y;
+//    }
     
-    public int getCenterY(){
-        return y;
+    public Point getCenter(){
+        return new Point(x,y);
     }
     
     @Override
@@ -201,32 +200,32 @@ public abstract class Shape implements Moveable, BoundsCacheable,Printaware,Stat
         setY(point.y);
     }
     
-    public void Mirror(Moveable.Mirror type) {
-        Rectangle r=getBoundingShape().getBounds();
-        Point p=new Point((int)r.getCenterX(),(int)r.getCenterY()); 
-        switch(type){
-         case HORIZONTAL:
-            Mirror(new Point(p.x-10,p.y),new Point(p.x+10,p.y));
-        break;
-         case VERTICAL:
-            Mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
-        }
-    }
+//    public void Mirror(Moveable.Mirror type) {
+//        Rectangle r=getBoundingShape().getBounds();
+//        Point p=new Point((int)r.getCenterX(),(int)r.getCenterY()); 
+//        switch(type){
+//         case HORIZONTAL:
+//            Mirror(new Point(p.x-10,p.y),new Point(p.x+10,p.y));
+//        break;
+//         case VERTICAL:
+//            Mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
+//        }
+//    }
     @Override
     public void Translate(AffineTransform translate) {
     
     }
 
     
-    public void Rotate(Moveable.Rotate type) {
-        switch(type){
-        case LEFT:
-            Rotate(AffineTransform.getRotateInstance(Math.PI/2,getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()));          
-            break;
-        case RIGHT:
-            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()));         
-        }
-    }
+//    public void Rotate(Moveable.Rotate type) {
+//        switch(type){
+//        case LEFT:
+//            Rotate(AffineTransform.getRotateInstance(Math.PI/2,getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()));          
+//            break;
+//        case RIGHT:
+//            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()));         
+//        }
+//    }
 
     @Override
     public void setLocation(int x, int y) {
@@ -254,11 +253,7 @@ public abstract class Shape implements Moveable, BoundsCacheable,Printaware,Stat
 
     @Override
     public java.awt.Shape getBoundingShape() {
-        //if(shapeCacheBounds==null||(!isCasheEnabled)){
-            shapeCacheBounds=calculateShape();
-            
-       // }
-        return shapeCacheBounds;        
+          return calculateShape();
     }
 
     @Override
@@ -271,19 +266,8 @@ public abstract class Shape implements Moveable, BoundsCacheable,Printaware,Stat
         return selected;
     }
 
-    @Override
     public java.awt.Shape calculateShape(){
      throw new RuntimeException("Shape does not implement cacheing");
-    }
-
-    @Override
-    public void enableCache(boolean enable) {
-        isCasheEnabled=enable;
-    }
-
-    @Override
-    public void clearCache() {
-       shapeCacheBounds=null; 
     }
 
     @Override
