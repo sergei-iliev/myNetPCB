@@ -19,6 +19,8 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
@@ -54,7 +56,26 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
     public String getDisplayName(){
         return "Arc";
     }
-
+//    @Override
+//    public java.awt.Shape calculateShape() {    
+//      return new Arc2D.Double(getX()-getWidth(),getY()-getWidth(),2*getWidth(),2*getWidth(),startAngle,extendAngle,Arc2D.OPEN);
+//    }
+    @Override
+    public boolean isClicked(int x, int y) {
+        FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+        Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
+        rect.setFrame(x-(selectionRectWidth/2), y-(selectionRectWidth/2),selectionRectWidth, selectionRectWidth);
+        
+        Arc2D arc= new Arc2D.Double(getX()-getWidth(),getY()-getWidth(),2*getWidth(),2*getWidth(),startAngle,extendAngle,Arc2D.OPEN);
+        try{
+          if(arc.intersects(rect))
+            return true;
+          else
+            return false;   
+        }finally{
+            rectProvider.reset();
+        }
+    }
     @Override
     public Point isControlRectClicked(int x, int y) {
         

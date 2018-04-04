@@ -812,7 +812,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                                           "Security exception", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public final class Canvas extends BufferedImage {
+    public static final class Canvas extends BufferedImage {
 
         public Canvas(int width, int height) {
             super(width, height, TYPE_BYTE_INDEXED);

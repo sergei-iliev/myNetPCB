@@ -227,7 +227,7 @@ public class Circle extends Shape implements ArcGerberable,Resizeable,Externaliz
     }
     
     @Override
-    public Rectangle calculateShape() {    
+    public java.awt.Shape calculateShape() {    
       return new Rectangle(getX()-getWidth(),getY()-getWidth(),2*getWidth(),2*getWidth());
     }
     

@@ -65,7 +65,8 @@ public class myNetPCB extends JFrame{
         Utilities.setUILookAndFeel();
         Utilities.setUIFont (new javax.swing.plaf.FontUIResource(new Font("Verdana",Font.PLAIN, 12)));
         myNetPCB myNetPCB = new myNetPCB("myNetPCB");
-        myNetPCB.setSize(900, 800);
+        //myNetPCB.setSize(900, 800);
+        myNetPCB.setExtendedState(JFrame.MAXIMIZED_BOTH);
         myNetPCB.pack();
         myNetPCB.setLocationRelativeTo(null);
         myNetPCB.setVisible(true);
