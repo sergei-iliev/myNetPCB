@@ -62,7 +62,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     private BorderLayout borderLayout1 = new BorderLayout();
     private JPanel leftPanel = new JPanel();
     private BorderLayout borderLayout2 = new BorderLayout();
-    private JComboBox libraryCombo = new JComboBox();
+    private JComboBox projectCombo = new JComboBox();
     private DefaultListModel model = new DefaultListModel();
     private JList boardList = new JList(model);
     private JScrollPane boardListScroll=new JScrollPane();
@@ -91,7 +91,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
         leftPanel.setPreferredSize(new Dimension(150, 10));
         leftPanel.setLayout(borderLayout2);
         bottomPanel.setPreferredSize(new Dimension(10, 40));
-        leftPanel.add(libraryCombo, BorderLayout.NORTH);
+        leftPanel.add(projectCombo, BorderLayout.NORTH);
         leftPanel.add(boardListScroll, BorderLayout.CENTER);
         basePanel.add(leftPanel, BorderLayout.WEST);
         basePanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -119,8 +119,8 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
         CenterPanel.add(scrollViewer, BorderLayout.CENTER);
         basePanel.add(CenterPanel, BorderLayout.CENTER);
         
-        libraryCombo.setRenderer(new IconListCellRenderer(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/library.png")));
-        libraryCombo.addActionListener(this); 
+        projectCombo.setRenderer(new IconListCellRenderer(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/library.png")));
+        projectCombo.addActionListener(this); 
             
         //moduleList.setBackground(TopPanel.getBackground());
         boardList.addListSelectionListener(this); 
@@ -136,10 +136,10 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
           public void windowOpened(WindowEvent e) {
               //***Read Libraries
               if(!Configuration.get().isIsApplet()){  
-                   Command reader=new ReadRepositoryLocal(BoardLoadDialog.this, Configuration.get().getBoardsRoot(),BoardLoadDialog.this.libraryCombo.getClass());
+                   Command reader=new ReadRepositoryLocal(BoardLoadDialog.this, Configuration.get().getBoardsRoot(),BoardLoadDialog.this.projectCombo.getClass());
                    CommandExecutor.INSTANCE.addTask("ReadRepositoryLocal",reader);
               }else{         
-                   Command reader=new ReadConnector(BoardLoadDialog.this,new RestParameterMap.ParameterBuilder("/boards").build(),BoardLoadDialog.this.libraryCombo.getClass());           
+                   Command reader=new ReadConnector(BoardLoadDialog.this,new RestParameterMap.ParameterBuilder("/boards").addURI("projects").build(),BoardLoadDialog.this.projectCombo.getClass());           
                    CommandExecutor.INSTANCE.addTask("ReadProjects",reader);                                           
               }
                   
@@ -180,7 +180,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
                 if (reciever.getSimpleName().equals("JComboBox")) {                
                     for (int i = 0; i < nodes.getLength(); i++) {
                         Node node=nodes.item(i);
-                        libraryCombo.addItem(node.getTextContent());                     
+                        projectCombo.addItem(node.getTextContent());                     
                     }    
                 }else{
                     //clear selection
@@ -234,12 +234,12 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==libraryCombo){
+        if(e.getSource()==projectCombo){
             if(!Configuration.get().isIsApplet()){  
-              Command reader=new ReadUnitsLocal(this,Configuration.get().getBoardsRoot().resolve((String)libraryCombo.getSelectedItem()),"boards",model.getClass());    
+              Command reader=new ReadUnitsLocal(this,Configuration.get().getBoardsRoot().resolve((String)projectCombo.getSelectedItem()),"boards",model.getClass());    
               CommandExecutor.INSTANCE.addTask("ReadUnitsLocal",reader);
             }else{
-              Command reader=new ReadConnector(this,new RestParameterMap.ParameterBuilder("/boards").addURI((String)libraryCombo.getSelectedItem()).build(),model.getClass());
+              Command reader=new ReadConnector(this,new RestParameterMap.ParameterBuilder("/boards").addURI("projects").addURI((String)projectCombo.getSelectedItem()).build(),model.getClass());
               CommandExecutor.INSTANCE.addTask("ReadBoards",reader);
             }
                 
@@ -257,10 +257,10 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()&&boardList.getSelectedValue()!=null) {
             if(!Configuration.get().isIsApplet()){ 
-                Command reader=new ReadUnitLocal(this, Configuration.get().getBoardsRoot(),(String)libraryCombo.getSelectedItem(),null,((AttachedItem)boardList.getSelectedValue()).getFileName(),Board.class);         
+                Command reader=new ReadUnitLocal(this, Configuration.get().getBoardsRoot(),(String)projectCombo.getSelectedItem(),null,((AttachedItem)boardList.getSelectedValue()).getFileName(),Board.class);         
                 CommandExecutor.INSTANCE.addTask("ReadUnitLocal",reader);
             }else{
-                Command reader=new ReadConnector(this,new RestParameterMap.ParameterBuilder("/boards").addURI((String)libraryCombo.getSelectedItem()).addURI(((AttachedItem)boardList.getSelectedValue()).getFileName()).build(),Board.class);
+                Command reader=new ReadConnector(this,new RestParameterMap.ParameterBuilder("/boards").addURI("projects").addURI((String)projectCombo.getSelectedItem()).addURI(((AttachedItem)boardList.getSelectedValue()).getFileName()).build(),Board.class);
                 CommandExecutor.INSTANCE.addTask("ReadBoard",reader);                
             }
         } 
@@ -269,13 +269,13 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     private void enableControls() {
         LoadButton.setEnabled(true);
         boardList.setEnabled(true);
-        libraryCombo.setEnabled(true);
+        projectCombo.setEnabled(true);
     }
 
     private void disableControls() {
         LoadButton.setEnabled(false);
         boardList.setEnabled(false);
-        libraryCombo.setEnabled(false);
+        projectCombo.setEnabled(false);
     }
     
     public UnitContainer getSelectedModel() {

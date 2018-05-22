@@ -27,7 +27,7 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
         if(SwingUtilities.isRightMouseButton(e)){           
-            getComponent().getPopupMenu().registerLinePopup(e,getTarget());  
+            getComponent().getPopupMenu().registerTrackPopup(e,getTarget());  
             return;
         }
         
@@ -81,7 +81,7 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
     @Override
     public void doubleScaledClick(MouseScaledEvent e) {
             
-        getComponent().getLineBendingProcessor().Relaese();  
+        getComponent().getLineBendingProcessor().Release();  
         getTarget().setSelected(false);
         getComponent().getEventMgr().resetEventHandle();
         getComponent().Repaint();
@@ -104,7 +104,7 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
     @Override
     public boolean forwardKeyPress(KeyEvent keyEvent) {
         if(keyEvent.getKeyCode()==KeyEvent.VK_ESCAPE){  
-            getComponent().getLineBendingProcessor().Relaese();
+            getComponent().getLineBendingProcessor().Release();
             getComponent().getEventMgr().resetEventHandle();
             getComponent().Repaint();
             return true;
@@ -114,7 +114,7 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
     public void Detach(){
         if(getTarget()!=null){
           if(getComponent().getLineBendingProcessor().getLine()!=null)
-              getComponent().getLineBendingProcessor().Relaese(); 
+              getComponent().getLineBendingProcessor().Release(); 
         }
         super.Detach();     
      }

@@ -49,7 +49,7 @@ public abstract class LineBendingProcessor {
      */
     public abstract String getActionCommand();
     
-    public void Relaese(){
+    public void Release(){
         //***end the line by puting floating into one point   
         getLine().Reset(); 
         if(getLine().getLinePoints().size()<2&&getLine().getOwningUnit()!=null){

@@ -132,7 +132,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         Map<String,JMenuItem> submenu=new LinkedHashMap<String,JMenuItem>(); 
         
         JMenuItem item=new JMenuItem("Edit Symbol"); item.setActionCommand("EditSymbol");
-        chipMenu.put("Edit Symbol",item);
+        chipMenu.put("EditSymbol",item);
         
         item=new JMenuItem("Left"); item.setActionCommand("RotateLeft"); item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         submenu.put("RotateLeft",item);  
@@ -479,7 +479,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         
         if (e.getActionCommand().equalsIgnoreCase("cancelwiring")) {
             //****empty circuit space could be right clicked without a wire beneath
-            getUnitComponent().getLineBendingProcessor().Relaese();  
+            getUnitComponent().getLineBendingProcessor().Release();  
             getTarget().setSelected(false);
             getUnitComponent().getEventMgr().resetEventHandle();
             getUnitComponent().getDialogFrame().setButtonGroup(0x00);

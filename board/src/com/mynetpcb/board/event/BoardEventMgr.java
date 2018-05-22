@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.event.CursorEventHandle;
 import com.mynetpcb.core.capi.event.DragingEventHandle;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.EventMgr;
+import com.mynetpcb.core.capi.event.LineEventHandle;
 import com.mynetpcb.core.capi.event.MeasureEventHandle;
 import com.mynetpcb.core.capi.event.MoveEventHandle;
 import com.mynetpcb.core.capi.event.OriginEventHandle;
@@ -54,7 +55,7 @@ public class BoardEventMgr extends EventMgr<BoardComponent,Shape> {
      hash.put("move",new MoveEventHandle<BoardComponent,Shape>(component));
      hash.put("component",new UnitEventHandle<BoardComponent,Shape>(component));
      hash.put("block",new BlockEventHandle<BoardComponent,Shape>(component,true));
-     hash.put("line",new LineEventHandle(component));     
+     hash.put("line",new LineEventHandle<BoardComponent,Shape>(component));     
      hash.put("track",new TrackEventHandle(component));  
      hash.put("copperarea",new CopperAreaEventHandle(component));
      hash.put("resize",new ResizeEventHandle<BoardComponent,Shape>(component));

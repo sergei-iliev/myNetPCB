@@ -81,7 +81,7 @@ public class LineEventHandle extends EventHandle<SymbolComponent,Shape>{
 
     @Override
     public void doubleScaledClick(MouseScaledEvent e) {
-        getComponent().getLineBendingProcessor().Relaese();  
+        getComponent().getLineBendingProcessor().Release();  
         getTarget().setSelected(false);
         getComponent().getEventMgr().resetEventHandle();
         getComponent().Repaint();
@@ -95,7 +95,7 @@ public class LineEventHandle extends EventHandle<SymbolComponent,Shape>{
     public void Detach(){
         if(getTarget()!=null){
           if(getComponent().getLineBendingProcessor().getLine()!=null)
-              getComponent().getLineBendingProcessor().Relaese(); 
+              getComponent().getLineBendingProcessor().Release(); 
         }
         super.Detach();     
      }

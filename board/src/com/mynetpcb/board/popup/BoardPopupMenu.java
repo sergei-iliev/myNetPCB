@@ -24,48 +24,53 @@ import javax.swing.JRadioButtonMenuItem;
 
 public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
     
+    private Map<String,Object>  trackMenu; 
+    
     public BoardPopupMenu(BoardComponent component) {
         super(component);
+        this.createTrackMenuItems();
     }
     
-    @Override
-    protected void createLineMenuItems(){       
-       JMenuItem item=new JMenuItem("Add Via"); item.setActionCommand("addvia");
-       lineMenu.put("AddVia",item); 
-       Map<String,JMenuItem> submenu=new LinkedHashMap<String,JMenuItem>(); 
-         
-        //***Wire Bending
-       ButtonGroup group = new ButtonGroup();
-       JMenuItem radioItem = new JRadioButtonMenuItem("Line Slope Bending");radioItem.setActionCommand("lineslopebend");
-       group.add(radioItem);
-       submenu.put("lineslopebend",radioItem);
-
-       radioItem = new JRadioButtonMenuItem("Slope Line Bending");radioItem.setActionCommand("slopelinebend");
-       group.add(radioItem);                                                        
-       submenu.put("slopelinebend",radioItem);
+    
+    protected void createTrackMenuItems(){
+        trackMenu=new LinkedHashMap<String,Object>();
         
-       radioItem = new JRadioButtonMenuItem("Default Bending");radioItem.setActionCommand("defaultbend"); radioItem.setSelected(true);    
-       group.add(radioItem);                                                            
-       submenu.put("defaultbend",radioItem);
+        JMenuItem item=new JMenuItem("Add Via"); item.setActionCommand("addvia");
+        trackMenu.put("AddVia",item); 
+        
+        Map<String,JMenuItem> submenu=new LinkedHashMap<String,JMenuItem>(); 
+        //***Wire Bending
+        ButtonGroup group = new ButtonGroup();
+        JMenuItem radioItem = new JRadioButtonMenuItem("Line Slope Bending");radioItem.setActionCommand("lineslopebend");
+        group.add(radioItem);
+        submenu.put("lineslopebend",radioItem);
+
+        radioItem = new JRadioButtonMenuItem("Slope Line Bending");radioItem.setActionCommand("slopelinebend");
+        group.add(radioItem);
+        submenu.put("slopelinebend",radioItem);
+        
+        radioItem = new JRadioButtonMenuItem("Default Bending");radioItem.setActionCommand("defaultbend"); radioItem.setSelected(true);
+        group.add(radioItem);
+        submenu.put("defaultbend",radioItem);
          
-       lineMenu.put("Bending",submenu); 
+        trackMenu.put("Bending",submenu);
          
-       //***separator
-       lineMenu.put("Separator1",null); 
-       super.createLineMenuItems();
+        //***separator
+        trackMenu.put("Separator1",null);
+        
+        item=new JMenuItem("Delete last point"); item.setActionCommand("DeleteLastPoint");
+        trackMenu.put("DeleteLastPoint",item);
+        item=new JMenuItem("Delete line"); item.setActionCommand("deleteline");
+        trackMenu.put("DeleteWire",item); 
+        item=new JMenuItem("Cancel"); item.setActionCommand("CancelWiring");
+        trackMenu.put("CancelWiring",item); 
     }
     
-    @Override
-    public void registerLinePopup(MouseScaledEvent mouseScaledEvent, Shape target) {        
-        super.registerLinePopup(mouseScaledEvent, target);
-        if(target instanceof PCBLine){
-          super.setEnabled("Bending",false);
-          super.setEnabled("addvia",false);
-        }else{
-          super.setEnabled("Bending",true);
-          super.setEnabled("addvia",true);            
-        }
+    public void registerTrackPopup(MouseScaledEvent e, Shape target) {
+        initializePopupMenu(e, target, trackMenu);
+        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
     }
+    
     @Override
     protected void createBlockMenuItems(){
         super.createBlockMenuItems();    
@@ -84,7 +89,8 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
     protected void createChipMenuItems(){       
        JMenuItem item=new JMenuItem("Edit Footprint"); item.setActionCommand("EditFootprint");
        chipMenu.put("Edit Footprint",item);        
-       super.createChipMenuItems();       
+       super.createChipMenuItems();     
+       chipMenu.remove("EditSymbol");
        chipMenu.remove("SelectPackege");
        chipMenu.remove("Separator");
        chipMenu.remove("ChildConnectors");

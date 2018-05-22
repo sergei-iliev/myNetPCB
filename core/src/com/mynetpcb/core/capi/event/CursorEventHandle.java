@@ -21,6 +21,7 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
         super.Attach();
         mx=getTarget().getCenter().x;
         my=getTarget().getCenter().y;
+        System.out.println(mx);
     } 
     @Override
     protected void Clear() {

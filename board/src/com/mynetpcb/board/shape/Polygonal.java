@@ -29,7 +29,16 @@ public class Polygonal extends Polygon implements Cloneable{
          }         
          return copy;
     }
-    
+    public void alignPoint(Point oldPoint,Point newPoint) {        
+        for(int i=0;i<this.npoints;i++){
+            if((this.xpoints[i]==oldPoint.x)&&(this.ypoints[i]==oldPoint.y)){
+                this.xpoints[i]=newPoint.x;
+                this.ypoints[i]=newPoint.y;                  
+                this.invalidate();
+            }
+        }  
+        
+    }
     @Override
     public void reset() {        
         super.reset();

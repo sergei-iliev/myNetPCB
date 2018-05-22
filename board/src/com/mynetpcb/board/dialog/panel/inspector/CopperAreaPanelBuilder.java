@@ -28,6 +28,11 @@ public class CopperAreaPanelBuilder extends AbstractPanelBuilder<Shape>{
     
     public CopperAreaPanelBuilder(BoardComponent component) {
        super(component,new GridLayout(7,1));
+        //layer
+                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+                label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                layerCombo=new JComboBox(new Layer.Copper[]{Layer.Copper.FCu,Layer.Copper.BCu});layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
+                layoutPanel.add(panel);
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
@@ -38,11 +43,6 @@ public class CopperAreaPanelBuilder extends AbstractPanelBuilder<Shape>{
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
                 topField=new JTextField("0"); topField.addKeyListener(this); panel.add(topField,BorderLayout.CENTER);
-                layoutPanel.add(panel);
-        //layer
-                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                layerCombo=new JComboBox(new Layer.Copper[]{Layer.Copper.FCu,Layer.Copper.BCu});layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);
          //fill       
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 

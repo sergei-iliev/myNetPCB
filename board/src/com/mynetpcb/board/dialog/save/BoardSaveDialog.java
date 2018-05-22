@@ -15,6 +15,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 public class BoardSaveDialog extends AbstractSaveDialog{
     
@@ -42,7 +43,7 @@ public class BoardSaveDialog extends AbstractSaveDialog{
       } else {
               Command reader =
                   new ReadConnector(this,
-                                    new RestParameterMap.ParameterBuilder("/boards").build(),
+                                    new RestParameterMap.ParameterBuilder("/boards").addURI("projects").build(),
                                     JComboBox.class);
               CommandExecutor.INSTANCE.addTask("ReadProjects", reader);
       }
@@ -54,6 +55,13 @@ public class BoardSaveDialog extends AbstractSaveDialog{
         if (e.getSource() == SaveButton) {
         if (fileNameText.getText() == null ||
             fileNameText.getText().length() == 0) {
+            JOptionPane.showMessageDialog(this, "Name must not be empty", "Error",
+                                          JOptionPane.ERROR_MESSAGE);             
+            return;
+        }
+        if(libraryCombo.getSelectedItem()==null){
+            JOptionPane.showMessageDialog(this, "Project name must not be empty", "Error",
+                                          JOptionPane.ERROR_MESSAGE);   
             return;
         }
         if (!isonline) {
@@ -68,7 +76,7 @@ public class BoardSaveDialog extends AbstractSaveDialog{
         } else {
 
             Command writer =
-                new WriteConnector(this, getComponent().getModel().Format(), new RestParameterMap.ParameterBuilder("/boards").addURI((String)libraryCombo.getSelectedItem()).addURI(fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
+                new WriteConnector(this, getComponent().getModel().Format(), new RestParameterMap.ParameterBuilder("/boards").addURI("projects").addURI((String)libraryCombo.getSelectedItem()).addAttribute("boardName",fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
                                    WriteConnector.class);
             CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
         }

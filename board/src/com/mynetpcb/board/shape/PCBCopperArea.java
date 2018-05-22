@@ -17,8 +17,6 @@ import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
 
-import com.mynetpcb.pad.shape.Pad;
-
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -81,7 +79,9 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     }
     @Override
     public void alignResizingPointToGrid(Point targetPoint) {
-        getOwningUnit().getGrid().snapToGrid(targetPoint);   
+        Point oldPoint=new Point(targetPoint);
+        getOwningUnit().getGrid().snapToGrid(targetPoint);
+        polygon.alignPoint(oldPoint, targetPoint);        
     }
     @Override
     public List<LinePoint> getLinePoints() {

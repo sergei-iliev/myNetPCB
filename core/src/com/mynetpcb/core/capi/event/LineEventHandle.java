@@ -1,10 +1,6 @@
-package com.mynetpcb.board.event;
+package com.mynetpcb.core.capi.event;
 
-
-import com.mynetpcb.board.component.BoardComponent;
-import com.mynetpcb.core.capi.event.EventHandle;
-import com.mynetpcb.core.capi.event.MouseScaledEvent;
-import com.mynetpcb.core.capi.event.ShapeEvent;
+import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -14,10 +10,9 @@ import java.awt.Point;
 
 import javax.swing.SwingUtilities;
 
-
-public class LineEventHandle extends EventHandle<BoardComponent,Shape>{
+public class LineEventHandle <U extends UnitComponent,S extends Shape> extends EventHandle<U,S>{
     
-    public LineEventHandle(BoardComponent component) {
+    public LineEventHandle(U component) {
         super(component);
     }
     
@@ -40,7 +35,7 @@ public class LineEventHandle extends EventHandle<BoardComponent,Shape>{
         getTarget().setSelected(true); 
         
         Point p;      
-        if(getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)){
+        if((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)){
             p=getComponent().getModel().getUnit().getGrid().positionOnGrid(e.getX(),e.getY()); 
             getComponent().getLineBendingProcessor().setGridAlignable(true);
         }else{
@@ -83,9 +78,8 @@ public class LineEventHandle extends EventHandle<BoardComponent,Shape>{
     }
 
     @Override
-    public void doubleScaledClick(MouseScaledEvent e) {
-            
-        getComponent().getLineBendingProcessor().Relaese();  
+    public void doubleScaledClick(MouseScaledEvent e) {       
+        getComponent().getLineBendingProcessor().Release();  
         getTarget().setSelected(false);
         getComponent().getEventMgr().resetEventHandle();
         getComponent().Repaint();
@@ -99,9 +93,8 @@ public class LineEventHandle extends EventHandle<BoardComponent,Shape>{
     public void Detach(){
         if(getTarget()!=null){
           if(getComponent().getLineBendingProcessor().getLine()!=null)
-              getComponent().getLineBendingProcessor().Relaese(); 
+              getComponent().getLineBendingProcessor().Release(); 
         }
         super.Detach();     
      }
-    
 }

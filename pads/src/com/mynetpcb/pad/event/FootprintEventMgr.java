@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.event.CursorEventHandle;
 import com.mynetpcb.core.capi.event.DragingEventHandle;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.EventMgr;
+import com.mynetpcb.core.capi.event.LineEventHandle;
 import com.mynetpcb.core.capi.event.MeasureEventHandle;
 import com.mynetpcb.core.capi.event.MoveEventHandle;
 import com.mynetpcb.core.capi.event.OriginEventHandle;
@@ -28,7 +29,7 @@ public class FootprintEventMgr extends EventMgr<FootprintComponent,Shape> {
         hash.put("arc.extend.angle",new ArcExtendAngleEventHandler<FootprintComponent,Shape>(component));
         hash.put("move",new MoveEventHandle<FootprintComponent,Shape>(component));
         hash.put("component", new UnitEventHandle<FootprintComponent,Shape>(component));
-        hash.put("line",new LineEventHandle(component));
+        hash.put("line",new LineEventHandle<FootprintComponent,Shape>(component));
         hash.put("block",new BlockEventHandle<FootprintComponent,Shape>(component,false));
         hash.put("cursor",new CursorEventHandle<FootprintComponent,Shape>(component));
         hash.put("resize",new ResizeEventHandle<FootprintComponent,Shape>(component));
