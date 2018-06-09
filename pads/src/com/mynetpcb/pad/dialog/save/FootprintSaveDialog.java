@@ -33,7 +33,6 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-
 public class FootprintSaveDialog extends AbstractSaveDialog {
     public FootprintSaveDialog(Window owner, UnitComponent component,boolean isonline) {
         super(owner, component, "Save",isonline);
@@ -48,7 +47,7 @@ public class FootprintSaveDialog extends AbstractSaveDialog {
             CommandExecutor.INSTANCE.addTask("ReadRepositoryLocal", reader);
         } else {
             Command reader =
-                new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").build(), JComboBox.class);
+                new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").build(), JComboBox.class);
             CommandExecutor.INSTANCE.addTask("ReadLibraries", reader);
         }
     }
@@ -79,7 +78,7 @@ public class FootprintSaveDialog extends AbstractSaveDialog {
                     CommandExecutor.INSTANCE.addTask("ReadCategoriesLocal", reader);
                 } else {
                     Command reader =
-                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI((String)libraryCombo.getSelectedItem()).addURI("null").build(),
+                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI((String)libraryCombo.getSelectedItem()).addURI("categories").addAttribute("includefiles","false") .build(),
                                           FootprintSaveDialog.class);
                     CommandExecutor.INSTANCE.addTask("ReadCategories", reader);
 
@@ -99,7 +98,7 @@ public class FootprintSaveDialog extends AbstractSaveDialog {
                 CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
             } else {   
                 Command writer =
-                    new WriteConnector(this, getComponent().getModel().Format(), new RestParameterMap.ParameterBuilder("/footprints").addURI((String)libraryCombo.getSelectedItem()).addURI(categoryCombo.getSelectedItem()==null||"".equals(categoryCombo.getSelectedItem())?"null":(String)categoryCombo.getSelectedItem()).addURI(fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
+                    new WriteConnector(this, getComponent().getModel().Format(), new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI((String)libraryCombo.getSelectedItem()).addURI("categories").addURI(categoryCombo.getSelectedItem()==null||"".equals(categoryCombo.getSelectedItem())?"null":(String)categoryCombo.getSelectedItem()).addAttribute("footprintName",fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
                                        WriteConnector.class);
                 CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
             }

@@ -515,6 +515,10 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
     
     public abstract void Reload();
+    /*
+     * Import external asset to current project
+     */
+    public abstract void Import(String targetFile);
     
     public void componentMoved(ComponentEvent e) {
     }

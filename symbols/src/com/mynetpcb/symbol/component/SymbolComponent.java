@@ -348,7 +348,10 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
         }
     }
     
-
+    @Override
+    public void Import(String string) {
+        // TODO Implement this method
+    }
     @Override
     public void Reload() {
         if(getModel().getFileName()==null){

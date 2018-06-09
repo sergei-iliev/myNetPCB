@@ -368,7 +368,10 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
         }
         return false;
     }
-
+    @Override
+    public void Import(String string) {
+        // TODO Implement this method
+    }
     @Override
     public void Reload() {
 

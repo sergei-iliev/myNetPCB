@@ -316,7 +316,10 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         }
         return false;
     }
-
+    @Override
+    public void Import(String string) {
+        // TODO Implement this method
+    }
     @Override
     public void Reload() {
         if(getModel().getFileName()==null){

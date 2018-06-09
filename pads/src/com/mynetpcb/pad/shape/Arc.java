@@ -19,8 +19,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
@@ -225,7 +223,7 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
         this.setExtendAngle(Double.parseDouble(element.getAttribute("extend")));
 
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
-        //this.setFill(Fill.values()[(element.getAttribute("fill")==""?0:Integer.parseInt(element.getAttribute("fill")))]);
+        this.setFill(Fill.values()[(element.getAttribute("fill")==""?0:Integer.parseInt(element.getAttribute("fill")))]);
 
     }
 
@@ -250,7 +248,12 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
         g2.setColor(isSelected()?Color.GRAY:copper.getColor()); 
         double wireWidth=thickness*scale.getScaleX();       
         g2.setStroke(new BasicStroke((float)wireWidth,1,1));          
-        g2.draw(temporal);
+        
+        if(this.fill==Fill.EMPTY){
+         g2.draw(temporal);       
+        }else{
+         g2.fill(temporal);   
+        }
         g2.setComposite(originalComposite);
         
         provider.reset();
@@ -273,7 +276,11 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
         double wireWidth=thickness;       
         g2.setStroke(new BasicStroke((float)wireWidth,1,1));    
         g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());        
-        g2.draw(temporal);       
+        if(this.fill==Fill.EMPTY){
+         g2.draw(temporal);       
+        }else{
+         g2.fill(temporal);   
+        }
         
         provider.reset();
     }

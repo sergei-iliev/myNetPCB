@@ -150,7 +150,6 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
     private JMenu filemenu;
     private JMenuItem menuItem;
     
-    private UnitContainerProducer unitContainerProducer;
 
     public myNetPCBPanel(JRootPane rootPane, Frame parent) {
         this.rootPane = rootPane;
@@ -159,7 +158,6 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
     }
 
     private void Init() {
-        this.unitContainerProducer=createUnitContainerProducer();
         Container content = rootPane.getContentPane();
         basePanel = new JPanel();
         basePanel.setLayout(new BorderLayout());
@@ -571,14 +569,7 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
 
     }
     
-    private UnitContainerProducer createUnitContainerProducer(){
-     UnitContainerProducer unitContainerProducer=new UnitContainerProducer();
-     unitContainerProducer.addFactory("circuits", new CircuitContainerFactory());
-     unitContainerProducer.addFactory("modules", new SymbolContainerFactory());
-     unitContainerProducer.addFactory("footprints", new FootprintContainerFactory());
-     unitContainerProducer.addFactory("boards", new BoardContainerFactory());
-     return unitContainerProducer;
-    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -601,16 +592,21 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
             fc.addChoosableFileFilter(new ImpexFileFilter(".xml"));
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 try {
-                    Map<String, Object> context = new HashMap<String, Object>(1);
+                    String targetFile ;
                     if (fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml")) {
-                        context.put("target.file", fc.getSelectedFile().getAbsolutePath());
+                        targetFile=fc.getSelectedFile().getAbsolutePath();
                     } else {
-                        context.put("target.file", fc.getSelectedFile().getAbsolutePath() + ".xml");
+                        targetFile= fc.getSelectedFile().getAbsolutePath() + ".xml";
                     }
+                    
+                    UnitContainerProducer unitContainerProducer=new UnitContainerProducer().withFactory("circuits", new CircuitContainerFactory()).withFactory("modules", new SymbolContainerFactory()).
+                         withFactory("footprints", new FootprintContainerFactory()).withFactory("boards", new BoardContainerFactory());
+                    
+                    
                     CommandExecutor.INSTANCE.addTask("import",
                                                      new XMLImportTask(this,
-                                                                       this.unitContainerProducer,
-                                                                       context, XMLImportTask.class));
+                                                                       unitContainerProducer,
+                                                                       targetFile, XMLImportTask.class));
                 } catch (Exception ioe) {
                     ioe.printStackTrace(System.out);
                     return;
@@ -1054,7 +1050,7 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
 
         for (Circuit circuit : source.getUnits()) {
             try {
-                Circuit copy = (Circuit) circuit.clone();
+                Circuit copy = circuit.clone();
                 copy.getScalableTransformation().Reset(1.2, 2, 0, ScalableTransformation.DEFAULT_MAX_SCALE_FACTOR);
                 circuitComponent.getModel().Add(copy);
                 copy.notifyListeners(ShapeEvent.ADD_SHAPE);

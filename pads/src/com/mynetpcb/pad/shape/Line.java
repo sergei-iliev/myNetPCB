@@ -6,8 +6,10 @@ import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -27,6 +29,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -42,32 +45,28 @@ import org.w3c.dom.Node;
  * Line shape is not part of cooper layer.
  * Basic primitive of the footprint.
  */
-public class Line extends Shape implements Trackable<Point>, Resizeable, Externalizable {
+public class Line extends AbstractLine implements Externalizable {
 
-    public Point floatingStartPoint; //***the last wire point
-
-    public Point floatingMidPoint; //***mid 90 degree forming
-
-    public Point floatingEndPoint;
-
-    private List<Point> points;
-
-    private Point resizingPoint;
-
+    
     public Line(int thickness,int layermaskId) {
-        super(0, 0, 0, 0, thickness, layermaskId);
-        this.points = new LinkedList<Point>();
-        this.floatingStartPoint = new Point();
-        this.floatingMidPoint = new Point();
-        this.floatingEndPoint = new Point();
-        this.selectionRectWidth = 3000;
+        super(thickness, layermaskId);
     }
     
 
     public Line() {
         this(0,Layer.SILKSCREEN_LAYER_FRONT);
     }
-
+    public Line clone() throws CloneNotSupportedException {
+        Line copy = (Line) super.clone();
+        copy.floatingStartPoint = new Point();
+        copy.floatingMidPoint = new Point();
+        copy.floatingEndPoint = new Point();
+        copy.points = new LinkedList<LinePoint>();
+        for (Point point : points) {
+            copy.points.add(new LinePoint(point.x, point.y));
+        }
+        return copy;
+    }
     @Override
     public Point alignToGrid(boolean isRequired) {
         if (isRequired) {
@@ -79,191 +78,183 @@ public class Line extends Shape implements Trackable<Point>, Resizeable, Externa
         return null;
     }
     
-    @Override
-    public void alignResizingPointToGrid(Point targetPoint) {
-        getOwningUnit().getGrid().snapToGrid(targetPoint);         
-    }
     
-    @Override
-    public List<Point> getLinePoints() {
-        return points;
-    }
 
-    @Override
-    public void insertPoint(int x, int y) {
-        if (this.points.size() == 0) {
-            return;
-        }
-        boolean flag = false;
-        Point point = getOwningUnit().getGrid().positionOnGrid(x, y);
+//    @Override
+//    public void insertPoint(int x, int y) {
+//        if (this.points.size() == 0) {
+//            return;
+//        }
+//        boolean flag = false;
+//        Point point = getOwningUnit().getGrid().positionOnGrid(x, y);
+//
+//        Rectangle rect =
+//            new Rectangle(x - getOwningUnit().getGrid().getGridPointToPoint() / 2,
+//                          y - getOwningUnit().getGrid().getGridPointToPoint() / 2,
+//                          getOwningUnit().getGrid().getGridPointToPoint(),
+//                          getOwningUnit().getGrid().getGridPointToPoint());
+//
+//        Line2D line = new Line2D.Double();
+//
+//
+//        Point tmp = new Point(point.x, point.y);
+//        Point midium = new Point();
+//
+//        //***add point to the end;
+//        addPoint(point);
+//
+//        Point prev = points.get(0);
+//        for (Point next : points) {
+//
+//            if (!flag) {
+//                //***find where the point is - 2 points between the new one
+//                line.setLine(prev, next);
+//                if (line.intersects(rect))
+//                    flag = true;
+//            } else {
+//                midium.setLocation(tmp); //midium.setPin(tmp.getPin());
+//                tmp.setLocation(prev); //tmp.setPin(prev.getPin());
+//                prev.setLocation(midium); //prev.setPin(midium.getPin());
+//            }
+//            prev = next;
+//        }
+//        if (flag)
+//            prev.setLocation(tmp); //prev.setPin(tmp.getPin());
+//    }
 
-        Rectangle rect =
-            new Rectangle(x - getOwningUnit().getGrid().getGridPointToPoint() / 2,
-                          y - getOwningUnit().getGrid().getGridPointToPoint() / 2,
-                          getOwningUnit().getGrid().getGridPointToPoint(),
-                          getOwningUnit().getGrid().getGridPointToPoint());
+//    @Override
+//    public void deleteLastPoint() {
+//        if (points.size() == 0)
+//            return;
+//
+//        points.remove(points.get(points.size() - 1));
+//
+//        //***reset floating start point
+//        if (points.size() > 0)
+//            floatingStartPoint.setLocation(points.get(points.size() - 1));
+//    }
+//
+//    @Override
+//    public void addPoint(Point point) {
+//        points.add(point);
+//    }
+//
+//    @Override
+//    public void add(int x, int y) {
+//        points.add(new Point(x, y));
+//    }
 
-        Line2D line = new Line2D.Double();
+//    @Override
+//    public Point isBendingPointClicked(int x, int y) {
+//        FlyweightProvider rectProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+//        Rectangle2D rect = (Rectangle2D) rectProvider.getShape();
+//        rect.setFrame(x - (thickness / 2), y - (thickness / 2), thickness, thickness);
+//
+//        Point point = null;
+//
+//        for (Point wirePoint : points) {
+//            if (rect.contains(wirePoint)) {
+//                point = wirePoint;
+//                break;
+//            }
+//        }
+//        rectProvider.reset();
+//        return point;
+//    }
+//
+//    public Point isControlRectClicked(int x, int y) {
+//        FlyweightProvider rectProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+//        Rectangle2D rect = (Rectangle2D) rectProvider.getShape();
+//        rect.setFrame(x - (thickness / 2), y - (thickness / 2), thickness, thickness);
+//
+//        Point point = null;
+//        Point click = new Point(x, y);
+//        int distance = Integer.MAX_VALUE;
+//
+//        for (Point wirePoint : points) {
+//            if (rect.contains(wirePoint)) {
+//                int min = (int) click.distance(wirePoint);
+//                if (distance > min) {
+//                    distance = min;
+//                    point = wirePoint;
+//                }
+//            }
+//        }
+//
+//        rectProvider.reset();
+//        return point;
+//    }
 
+//    @Override
+//    public Point getResizingPoint() {
+//        return resizingPoint;
+//    }
 
-        Point tmp = new Point(point.x, point.y);
-        Point midium = new Point();
+//    @Override
+//    public void setResizingPoint(Point point) {
+//        this.resizingPoint = point;
+//    }
 
-        //***add point to the end;
-        addPoint(point);
+//    @Override
+//    public void Resize(int xOffset, int yOffset, Point clickedPoint) {
+//        clickedPoint.setLocation(clickedPoint.x + xOffset, clickedPoint.y + yOffset);
+//    }
 
-        Point prev = points.get(0);
-        for (Point next : points) {
+//    @Override
+//    public Point getFloatingStartPoint() {
+//        return floatingStartPoint;
+//    }
+//
+//    @Override
+//    public Point getFloatingMidPoint() {
+//        return floatingMidPoint;
+//    }
+//
+//    @Override
+//    public Point getFloatingEndPoint() {
+//        return floatingEndPoint;
+//    }
 
-            if (!flag) {
-                //***find where the point is - 2 points between the new one
-                line.setLine(prev, next);
-                if (line.intersects(rect))
-                    flag = true;
-            } else {
-                midium.setLocation(tmp); //midium.setPin(tmp.getPin());
-                tmp.setLocation(prev); //tmp.setPin(prev.getPin());
-                prev.setLocation(midium); //prev.setPin(midium.getPin());
-            }
-            prev = next;
-        }
-        if (flag)
-            prev.setLocation(tmp); //prev.setPin(tmp.getPin());
-    }
+//    @Override
+//    public void shiftFloatingPoints() {
+//
+//    }
 
-    @Override
-    public void deleteLastPoint() {
-        if (points.size() == 0)
-            return;
+//    @Override
+//    public void Reset(Point point) {
+//        this.Reset(point.x, point.y);
+//    }
+//
+//    @Override
+//    public void Reset() {
+//        this.Reset(floatingStartPoint);
+//    }
+//
+//    @Override
+//    public void Reset(int x, int y) {
+//        Point p = isBendingPointClicked(x, y);
+//        floatingStartPoint.setLocation(p == null ? x : p.x, p == null ? y : p.y);
+//        floatingMidPoint.setLocation(p == null ? x : p.x, p == null ? y : p.y);
+//        floatingEndPoint.setLocation(p == null ? x : p.x, p == null ? y : p.y);
+//    }
 
-        points.remove(points.get(points.size() - 1));
+//    @Override
+//    public boolean isFloating() {
+//        return (!(floatingStartPoint.equals(floatingEndPoint) && floatingStartPoint.equals(floatingMidPoint)));
+//    }
 
-        //***reset floating start point
-        if (points.size() > 0)
-            floatingStartPoint.setLocation(points.get(points.size() - 1));
-    }
+//    @Override
+//    public void setSelected(boolean selection) {
+//        super.setSelected(selection);
+//        if (!selection) {
+//            resizingPoint = null;
+//        }
+//    }
 
-    @Override
-    public void addPoint(Point point) {
-        points.add(point);
-    }
-
-    @Override
-    public void add(int x, int y) {
-        points.add(new Point(x, y));
-    }
-
-    @Override
-    public Point isBendingPointClicked(int x, int y) {
-        FlyweightProvider rectProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-        Rectangle2D rect = (Rectangle2D) rectProvider.getShape();
-        rect.setFrame(x - (thickness / 2), y - (thickness / 2), thickness, thickness);
-
-        Point point = null;
-
-        for (Point wirePoint : points) {
-            if (rect.contains(wirePoint)) {
-                point = wirePoint;
-                break;
-            }
-        }
-        rectProvider.reset();
-        return point;
-    }
-
-    public Point isControlRectClicked(int x, int y) {
-        FlyweightProvider rectProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-        Rectangle2D rect = (Rectangle2D) rectProvider.getShape();
-        rect.setFrame(x - (thickness / 2), y - (thickness / 2), thickness, thickness);
-
-        Point point = null;
-        Point click = new Point(x, y);
-        int distance = Integer.MAX_VALUE;
-
-        for (Point wirePoint : points) {
-            if (rect.contains(wirePoint)) {
-                int min = (int) click.distance(wirePoint);
-                if (distance > min) {
-                    distance = min;
-                    point = wirePoint;
-                }
-            }
-        }
-
-        rectProvider.reset();
-        return point;
-    }
-
-    @Override
-    public Point getResizingPoint() {
-        return resizingPoint;
-    }
-
-    @Override
-    public void setResizingPoint(Point point) {
-        this.resizingPoint = point;
-    }
-
-    @Override
-    public void Resize(int xOffset, int yOffset, Point clickedPoint) {
-        clickedPoint.setLocation(clickedPoint.x + xOffset, clickedPoint.y + yOffset);
-    }
-
-    @Override
-    public Point getFloatingStartPoint() {
-        return floatingStartPoint;
-    }
-
-    @Override
-    public Point getFloatingMidPoint() {
-        return floatingMidPoint;
-    }
-
-    @Override
-    public Point getFloatingEndPoint() {
-        return floatingEndPoint;
-    }
-
-    @Override
-    public void shiftFloatingPoints() {
-
-    }
-
-    @Override
-    public void Reset(Point point) {
-        this.Reset(point.x, point.y);
-    }
-
-    @Override
-    public void Reset() {
-        this.Reset(floatingStartPoint);
-    }
-
-    @Override
-    public void Reset(int x, int y) {
-        Point p = isBendingPointClicked(x, y);
-        floatingStartPoint.setLocation(p == null ? x : p.x, p == null ? y : p.y);
-        floatingMidPoint.setLocation(p == null ? x : p.x, p == null ? y : p.y);
-        floatingEndPoint.setLocation(p == null ? x : p.x, p == null ? y : p.y);
-    }
-
-    @Override
-    public boolean isFloating() {
-        return (!(floatingStartPoint.equals(floatingEndPoint) && floatingStartPoint.equals(floatingMidPoint)));
-    }
-
-    @Override
-    public void setSelected(boolean selection) {
-        super.setSelected(selection);
-        if (!selection) {
-            resizingPoint = null;
-        }
-    }
-
-    @Override
-    public void Clear() {
-        points.clear();
-    }
+//    @Override
+//    public void Clear() {
+//        points.clear();
+//    }
 
 
     @Override
@@ -271,46 +262,46 @@ public class Line extends Shape implements Trackable<Point>, Resizeable, Externa
         return 2;
     }
 
-    @Override
-    public void Move(int xoffset, int yoffset) {
-        for (Point wirePoint : points) {
-            wirePoint.setLocation(wirePoint.x + xoffset, wirePoint.y + yoffset);
-        }
-    }
+//    @Override
+//    public void Move(int xoffset, int yoffset) {
+//        for (Point wirePoint : points) {
+//            wirePoint.setLocation(wirePoint.x + xoffset, wirePoint.y + yoffset);
+//        }
+//    }
 
-    @Override
-    public void Mirror(Point A,Point B) {
-        for (Point wirePoint : points) {
-            wirePoint.setLocation(Utilities.mirrorPoint(A,B, wirePoint));
-        }
-    }
+//    @Override
+//    public void Mirror(Point A,Point B) {
+//        for (Point wirePoint : points) {
+//            wirePoint.setLocation(Utilities.mirrorPoint(A,B, wirePoint));
+//        }
+//    }
 
-    @Override
-    public void Translate(AffineTransform translate) {
-        for (Point wirePoint : points) {
-            translate.transform(wirePoint, wirePoint);
-        }
-    }
+//    @Override
+//    public void Translate(AffineTransform translate) {
+//        for (Point wirePoint : points) {
+//            translate.transform(wirePoint, wirePoint);
+//        }
+//    }
 
-    @Override
-    public void Rotate(AffineTransform rotation) {
-        for (Point wirePoint : points) {
-            rotation.transform(wirePoint, wirePoint);
-        }
-    }
+//    @Override
+//    public void Rotate(AffineTransform rotation) {
+//        for (Point wirePoint : points) {
+//            rotation.transform(wirePoint, wirePoint);
+//        }
+//    }
 
-    @Override
-    public void setLocation(int x, int y) {
-    }
+//    @Override
+//    public void setLocation(int x, int y) {
+//    }
 
-    @Override
-    public boolean isInRect(Rectangle r) {
-        for (Point wirePoint : points) {
-            if (!r.contains(wirePoint))
-                return false;
-        }
-        return true;
-    }
+//    @Override
+//    public boolean isInRect(Rectangle r) {
+//        for (Point wirePoint : points) {
+//            if (!r.contains(wirePoint))
+//                return false;
+//        }
+//        return true;
+//    }
 
     @Override
     public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
@@ -367,107 +358,107 @@ public class Line extends Shape implements Trackable<Point>, Resizeable, Externa
         }
     }
 
-    @Override
-    public void Print(Graphics2D g2,PrintContext printContext, int layermask) {
-        GeneralPath line = null;
-        line = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.size());
-        line.moveTo((float) points.get(0).getX(), (float) points.get(0).getY());
-        for (int i = 1; i < points.size(); i++) {
-            line.lineTo((float) points.get(i).getX(), (float) points.get(i).getY());
-        }
+//    @Override
+//    public void Print(Graphics2D g2,PrintContext printContext, int layermask) {
+//        GeneralPath line = null;
+//        line = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.size());
+//        line.moveTo((float) points.get(0).getX(), (float) points.get(0).getY());
+//        for (int i = 1; i < points.size(); i++) {
+//            line.lineTo((float) points.get(i).getX(), (float) points.get(i).getY());
+//        }
+//
+//        g2.setStroke(new BasicStroke(thickness, JoinType.JOIN_ROUND.ordinal(), EndType.CAP_ROUND.ordinal()));
+//        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:this.copper.getColor());  
+//        g2.draw(line);
+//
+//    }
 
-        g2.setStroke(new BasicStroke(thickness, JoinType.JOIN_ROUND.ordinal(), EndType.CAP_ROUND.ordinal()));
-        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:this.copper.getColor());  
-        g2.draw(line);
+//    @Override
+//    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+//        Utilities.drawCrosshair(g2, viewportWindow, scale, points, resizingPoint, selectionRectWidth);
+//    }
 
-    }
+//    @Override
+//    public boolean isClicked(int x, int y) {
+//        boolean result = false;
+//        //build testing rect
+//        FlyweightProvider rectProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+//        Rectangle2D rect = (Rectangle2D) rectProvider.getShape();
+//        rect.setFrame(x - (thickness / 2), y - (thickness / 2), thickness, thickness);
+//        //inspect line by line
+//        FlyweightProvider lineProvider = ShapeFlyweightFactory.getProvider(Line2D.class);
+//        Line2D line = (Line2D) lineProvider.getShape();
+//
+//        //***make lines and iterate one by one
+//        Point prevPoint = points.iterator().next();
+//        Iterator<Point> i = points.iterator();
+//        while (i.hasNext()) {
+//            Point nextPoint = i.next();
+//            line.setLine(prevPoint, nextPoint);
+//            if (line.intersects(rect)) {
+//                result = true;
+//                break;
+//            }
+//            prevPoint = nextPoint;
+//        }
+//
+//        lineProvider.reset();
+//        rectProvider.reset();
+//        return result;
+//    }
 
-    @Override
-    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-        Utilities.drawCrosshair(g2, viewportWindow, scale, points, resizingPoint, selectionRectWidth);
-    }
+//    @Override
+//    public Rectangle calculateShape() {
+//        int x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+//
+//        for (Point point : points) {
+//            x1 = Math.min(x1, point.x);
+//            y1 = Math.min(y1, point.y);
+//            x2 = Math.max(x2, point.x);
+//            y2 = Math.max(y2, point.y);
+//        }
+//        //add bending points
+//
+//        return new Rectangle(x1, y1, (x2 - x1) == 0 ? 1 : x2 - x1, y2 - y1 == 0 ? 1 : y2 - y1);
+//    }
 
-    @Override
-    public boolean isClicked(int x, int y) {
-        boolean result = false;
-        //build testing rect
-        FlyweightProvider rectProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-        Rectangle2D rect = (Rectangle2D) rectProvider.getShape();
-        rect.setFrame(x - (thickness / 2), y - (thickness / 2), thickness, thickness);
-        //inspect line by line
-        FlyweightProvider lineProvider = ShapeFlyweightFactory.getProvider(Line2D.class);
-        Line2D line = (Line2D) lineProvider.getShape();
+//    @Override
+//    public void Reverse(int x, int y) {
+//        Point p = isBendingPointClicked(x, y);
+//        if (points.get(0).x == p.x && points.get(0).y == p.y) {
+//            Collections.reverse(points);
+//        }
+//    }
+//
+//    @Override
+//    public void removePoint(int x, int y) {
+//        Point point = isBendingPointClicked(x, y);
+//        if (point != null) {
+//            points.remove(point);
+//            point = null;
+//        }
+//    }
 
-        //***make lines and iterate one by one
-        Point prevPoint = points.iterator().next();
-        Iterator<Point> i = points.iterator();
-        while (i.hasNext()) {
-            Point nextPoint = i.next();
-            line.setLine(prevPoint, nextPoint);
-            if (line.intersects(rect)) {
-                result = true;
-                break;
-            }
-            prevPoint = nextPoint;
-        }
-
-        lineProvider.reset();
-        rectProvider.reset();
-        return result;
-    }
-
-    @Override
-    public Rectangle calculateShape() {
-        int x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
-
-        for (Point point : points) {
-            x1 = Math.min(x1, point.x);
-            y1 = Math.min(y1, point.y);
-            x2 = Math.max(x2, point.x);
-            y2 = Math.max(y2, point.y);
-        }
-        //add bending points
-
-        return new Rectangle(x1, y1, (x2 - x1) == 0 ? 1 : x2 - x1, y2 - y1 == 0 ? 1 : y2 - y1);
-    }
-
-    @Override
-    public void Reverse(int x, int y) {
-        Point p = isBendingPointClicked(x, y);
-        if (points.get(0).x == p.x && points.get(0).y == p.y) {
-            Collections.reverse(points);
-        }
-    }
-
-    @Override
-    public void removePoint(int x, int y) {
-        Point point = isBendingPointClicked(x, y);
-        if (point != null) {
-            points.remove(point);
-            point = null;
-        }
-    }
-
-    @Override
-    public boolean isEndPoint(int x, int y) {
-        if (points.size() < 2) {
-            return false;
-        }
-
-        Point point = isBendingPointClicked(x, y);
-        if (point == null) {
-            return false;
-        }
-        //***head point
-        if (points.get(0).x == point.x && points.get(0).y == point.y) {
-            return true;
-        }
-        //***tail point
-        if ((points.get(points.size() - 1)).x == point.x && (points.get(points.size() - 1)).y == point.y) {
-            return true;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean isEndPoint(int x, int y) {
+//        if (points.size() < 2) {
+//            return false;
+//        }
+//
+//        Point point = isBendingPointClicked(x, y);
+//        if (point == null) {
+//            return false;
+//        }
+//        //***head point
+//        if (points.get(0).x == point.x && points.get(0).y == point.y) {
+//            return true;
+//        }
+//        //***tail point
+//        if ((points.get(points.size() - 1)).x == point.x && (points.get(points.size() - 1)).y == point.y) {
+//            return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public String toXML() {
@@ -492,18 +483,6 @@ public class Line extends Shape implements Trackable<Point>, Resizeable, Externa
         while (st.hasMoreTokens()) {
             this.addPoint(new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
         }
-    }
-
-    public Line clone() throws CloneNotSupportedException {
-        Line copy = (Line) super.clone();
-        copy.floatingStartPoint = new Point();
-        copy.floatingMidPoint = new Point();
-        copy.floatingEndPoint = new Point();
-        copy.points = new LinkedList<Point>();
-        for (Point point : points) {
-            copy.points.add(new Point(point.x, point.y));
-        }
-        return copy;
     }
 
     @Override

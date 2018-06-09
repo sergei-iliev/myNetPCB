@@ -11,6 +11,9 @@ import com.mynetpcb.core.capi.Pinaware;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
+import com.mynetpcb.core.capi.gui.filter.ImpexFileFilter;
+import com.mynetpcb.core.capi.impex.XMLImportTask;
+import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -18,10 +21,12 @@ import com.mynetpcb.pad.unit.FootprintMgr;
 
 import java.awt.event.ActionEvent;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 

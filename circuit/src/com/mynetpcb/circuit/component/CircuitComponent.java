@@ -22,15 +22,19 @@ import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Resizeable;
+import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.config.Configuration;
+import com.mynetpcb.core.capi.container.UnitContainer;
 import com.mynetpcb.core.capi.container.UnitContainerProducer;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
+import com.mynetpcb.core.capi.impex.XMLImportTask;
 import com.mynetpcb.core.capi.io.Command;
 import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.io.FutureCommand;
 import com.mynetpcb.core.capi.io.ReadUnitLocal;
 import com.mynetpcb.core.capi.io.remote.ReadConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
@@ -55,6 +59,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 
 import java.util.Collection;
+
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JOptionPane;
 
@@ -396,6 +402,17 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape,CircuitContai
         }
     }
     
+    @Override
+    public  void Import(String targetFile){
+        UnitContainerProducer unitContainerProducer=new UnitContainerProducer().withFactory("circuits", new CircuitContainerFactory());
+        CommandExecutor.INSTANCE.addTask("import",
+                                         new XMLImportTask(this,
+                                                           unitContainerProducer,
+                                                           targetFile, XMLImportTask.class));
+        
+        
+    }
+    @Override
     public void Reload(){
  
         if(getModel().getFileName()==null||getModel().getLibraryName()==null){
@@ -437,6 +454,29 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape,CircuitContai
 
     public void OnFinish(Class<?> receiver) {
         DisabledGlassPane.unblock(this.getDialogFrame().getRootPane());      
+        if (receiver == XMLImportTask.class) {
+            FutureCommand task = CommandExecutor.INSTANCE.getTaskByName("import");
+            try{
+                CircuitContainer source = (CircuitContainer) task.get();
+                    this.setMode(CircuitComponent.COMPONENT_MODE);
+                    this.getDialogFrame().setButtonGroup(CircuitComponent.COMPONENT_MODE);
+
+                    for (Circuit circuit : source.getUnits()) {
+                        try {
+                            Circuit copy = circuit.clone();
+                            copy.getScalableTransformation().Reset(1.2, 2, 0, ScalableTransformation.DEFAULT_MAX_SCALE_FACTOR);
+                            this.getModel().Add(copy);
+                            copy.notifyListeners(ShapeEvent.ADD_SHAPE);
+                        } catch (CloneNotSupportedException f) {
+                            f.printStackTrace(System.out);
+                        }
+                    }
+                    source.Clear();
+                
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace(System.out);
+            }
+        }
     }
 
     public void OnError(String error) {

@@ -8,6 +8,7 @@ import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
+import com.mynetpcb.core.capi.gui.filter.ImpexFileFilter;
 import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -269,8 +271,10 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         //***separator
         unitMenu.put("Separator2",null);
 
-        item=new JMenuItem("Load");item.setActionCommand("LoadUnit");   
-                                              
+        item=new JMenuItem("Import to Project");item.setActionCommand("ImportUnit");                                                 
+        unitMenu.put("ImportUnit",item);
+
+        item=new JMenuItem("Load");item.setActionCommand("LoadUnit");                                                 
         unitMenu.put("LoadUnit",item);
         
         item=new JMenuItem("Reload");item.setActionCommand("Reload");
@@ -504,6 +508,22 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }
         if(e.getActionCommand().equalsIgnoreCase("reload")){
             getUnitComponent().Reload();
+        }
+        if (e.getActionCommand().equalsIgnoreCase("ImportUnit")) {
+            JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+            fc.setDialogTitle("Import to Project");
+            fc.setAcceptAllFileFilterUsed(false);
+            fc.addChoosableFileFilter(new ImpexFileFilter(".xml"));
+            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+                    if (fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml")) {
+                        getUnitComponent().Import(fc.getSelectedFile().getAbsolutePath());                        
+                    } else {
+                        getUnitComponent().Import( fc.getSelectedFile().getAbsolutePath() + ".xml");                        
+                    }
+                  
+            }          
+          return;
         }
         if(e.getActionCommand().equalsIgnoreCase("topbottom")||e.getActionCommand().equalsIgnoreCase("leftright")){   
             Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);

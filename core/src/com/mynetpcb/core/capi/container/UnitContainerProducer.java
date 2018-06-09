@@ -10,8 +10,12 @@ private final Map<String,UnitContainerFactory> map=new HashMap<String,UnitContai
       return map.get(name).createUnitContainer();        
     }
     
-    public void addFactory(String name,UnitContainerFactory factory){
+    public boolean extsts(String name){
+        return map.containsKey(name);
+    }
+    public UnitContainerProducer withFactory(String name,UnitContainerFactory factory){
       map.put(name, factory);   
+      return this;
     }
 
 }

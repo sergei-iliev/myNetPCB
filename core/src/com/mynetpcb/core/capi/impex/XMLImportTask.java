@@ -22,37 +22,37 @@ import javax.swing.SwingUtilities;
 public class XMLImportTask extends CommandResult<UnitContainer> {
 
     private final UnitContainerProducer producer;
-    private final Map<String, ?> context;
+    private final String targetFile;
 
 
-    public XMLImportTask(CommandListener monitor, UnitContainerProducer producer, Map<String, ?> context,Class receiver) {
+    public XMLImportTask(CommandListener monitor, UnitContainerProducer producer, String targetFile,Class receiver) {
         super(monitor, receiver);
         this.producer = producer;
-        this.context = context;
+        this.targetFile = targetFile;
     }
 
 
     @Override
     public UnitContainer execute() {
-        File file = new File((String)context.get("target.file"));
+        File file = new File(targetFile);
         XMLRootTagVerifier verifier = new XMLRootTagVerifier(file, "modules");
         UnitContainer container = null;
         try {
             monitor.OnStart(this.receiver);  
 
-            if (verifier.check()) {
+            if (verifier.check()&&producer.extsts("modules")) {
                 container = producer.createUnitContainerByName("modules");
-            } else {
+            }else{
                 verifier = new XMLRootTagVerifier(file, "circuits");
-                if (verifier.check()) {
+                if (verifier.check()&&producer.extsts("circuits")) {
                     container = producer.createUnitContainerByName("circuits");
                 } else {
                     verifier = new XMLRootTagVerifier(file, "footprints");
-                    if (verifier.check()) {
+                    if (verifier.check()&&producer.extsts("footprints")) {
                         container = producer.createUnitContainerByName("footprints");
                     } else {
                         verifier = new XMLRootTagVerifier(file, "boards");
-                        if(verifier.check()){
+                        if(verifier.check()&&producer.extsts("boards")){
                             container=producer.createUnitContainerByName("boards");
                         }else
                           throw new IllegalStateException("Unknown tag. Unable to import.");

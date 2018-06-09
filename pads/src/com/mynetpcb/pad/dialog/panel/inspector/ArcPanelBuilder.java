@@ -7,7 +7,6 @@ import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.shape.Arc;
 
 import java.awt.BorderLayout;
@@ -28,7 +27,7 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
   private JTextField startAngField,extAngField; 
         
     public ArcPanelBuilder(UnitComponent component) {
-        super(component,new GridLayout(7,1));
+        super(component,new GridLayout(8,1));
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -51,10 +50,10 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
                 thicknessField=new JTextField("0"); thicknessField.addKeyListener(this); panel.add(thicknessField,BorderLayout.CENTER);
                 layoutPanel.add(panel); 
         //***Fill
-//                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-//                label=new JLabel("Fill"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-//                fillCombo=new JComboBox(fillValues);fillCombo.addActionListener(this);  panel.add(fillCombo,BorderLayout.CENTER);
-//                layoutPanel.add(panel);        
+                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+                label=new JLabel("Fill"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                fillCombo=new JComboBox(fillValues);fillCombo.addActionListener(this);  panel.add(fillCombo,BorderLayout.CENTER);
+                layoutPanel.add(panel);        
         //****Width
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Radius"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -84,6 +83,7 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
         widthField.setText(String.valueOf(Grid.COORD_TO_MM(arc.getWidth())));
         
         setSelectedItem(layerCombo, (getTarget()).getCopper());
+        setSelectedIndex(fillCombo,(getTarget().getFill()==Shape.Fill.EMPTY?0:1)); 
         
         extAngField.setText(String.valueOf(arc.getExtendAngle()));
         startAngField.setText(String.valueOf(arc.getStartAngle())); 
@@ -93,6 +93,9 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
     public void actionPerformed(ActionEvent e) { 
         if(e.getSource()==layerCombo){
             getTarget().setCopper((Layer.Copper)layerCombo.getSelectedItem());
+        }
+        if(e.getSource()==fillCombo){
+           getTarget().setFill(Shape.Fill.values()[fillCombo.getSelectedIndex()]);
         }
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint();         
