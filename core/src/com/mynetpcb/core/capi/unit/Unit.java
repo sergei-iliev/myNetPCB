@@ -112,7 +112,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
     }
     public Object clone() throws CloneNotSupportedException { 
       Unit copy=(Unit)super.clone();
-      copy.frame=new UnitFrame(copy.width,copy.height);
+      copy.frame=new UnitFrame(this.width,this.height);
       copy.frame.setOffset(this.frame.getOffset());
       copy.frame.setFillColor(this.frame.getFillColor());
       copy.uuid=UUID.randomUUID();

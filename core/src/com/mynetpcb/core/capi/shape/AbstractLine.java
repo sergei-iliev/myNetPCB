@@ -5,11 +5,8 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.line.LinePoint;
-import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable;
 
-import com.mynetpcb.core.capi.line.Trackable.EndType;
-import com.mynetpcb.core.capi.line.Trackable.JoinType;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.utils.Utilities;
 
@@ -31,7 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractLine extends Shape implements Trackable<LinePoint>, Resizeable,Sublineable{
+public abstract class AbstractLine extends Shape implements Trackable<LinePoint>, Resizeable{
     protected Point floatingStartPoint; //***the last wire point
 
     protected Point floatingMidPoint; //***mid 90 degree forming
@@ -48,7 +45,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         this.floatingStartPoint = new Point();
         this.floatingMidPoint = new Point();
         this.floatingEndPoint = new Point();
-        this.selectionRectWidth = 3000;
+        this.selectionRectWidth = 3000; 
     }
     @Override
     public void Clear() {
@@ -197,29 +194,52 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         return isControlRectClicked(x, y);
     }
 
-    public Point isControlRectClicked(int x, int y) {                
-        FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-        Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
-        rect.setFrame(x-(thickness/2), y-(thickness/2),thickness, thickness);
-        
-        Point point=null;
-        Point click=new Point(x,y);
-        int distance=Integer.MAX_VALUE;
-        
-        for (Point wirePoint : points) {
-            if(rect.contains(wirePoint)){ 
-                int min=(int)click.distance(wirePoint);
-                if(distance>min){
-                    distance=min;  
-                    point= wirePoint;                
-                }
-            }
+//    public Point isControlRectClicked(int x, int y) {                
+//        FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+//        Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
+//        rect.setFrame(x-(thickness/2), y-(thickness/2),thickness, thickness);
+//        
+//        Point point=null;
+//        Point click=new Point(x,y);
+//        int distance=Integer.MAX_VALUE;
+//        
+//        for (Point wirePoint : points) {
+//            if(rect.contains(wirePoint)){ 
+//                int min=(int)click.distance(wirePoint);
+//                if(distance>min){
+//                    distance=min;  
+//                    point= wirePoint;                
+//                }
+//            }
+//        }
+//        
+//        rectProvider.reset();
+//        return point;
+//    } 
+    @Override
+    public Point isControlRectClicked(int x, int y) {
+            FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+            Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
+            rect.setFrame(x-(selectionRectWidth/2), y-(selectionRectWidth/2),selectionRectWidth, selectionRectWidth);
+            
+            Point point=null;
+            Point click=new Point(x,y);
+            int distance=Integer.MAX_VALUE;
+                    
+            for (Point wirePoint : points) {
+                if(rect.contains(wirePoint)){ 
+                    int min=(int)click.distance(wirePoint);
+                        if(distance>min){
+                                distance=min;  
+                                point= wirePoint;                
+                            }
+                        }
+            }            
+            
+            rectProvider.reset();
+            return point;
         }
-        
-        rectProvider.reset();
-        return point;
-    } 
-
+    
     @Override
     public void Reset(Point point) {
         this.Reset(point.x, point.y);
@@ -278,9 +298,6 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     }
     @Override
     public void drawControlShape(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){   
-        if((!this.isSelected())&&(!this.isSublineSelected())){
-          return;
-        }
         Utilities.drawCrosshair(g2, viewportWindow, scale, points, resizingPoint, selectionRectWidth);
     }
     @Override
@@ -340,51 +357,9 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
             wirePoint.setLocation(Utilities.mirrorPoint(A,B, wirePoint));
         }
     }
-    @Override
-    public boolean isSublineInRect(Rectangle r){
-        for (LinePoint point : points) {
-            if (r.contains(point)) {
-                return true;
-            }
-        }
-        return false;        
-    }
-    
-    @Override
-    public boolean isSublineSelected() {
-        if (points.size() == 0) {
-            return false; //wire is being constructed
-        }
-        boolean p = points.get(0).isSelected();
-        for (LinePoint point : points) {
-            if (p != point.isSelected()) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
-    public void setSublineSelected(Rectangle r, boolean selected) {
-        for (LinePoint point : points) {
-            if (r.contains(point)) {
-                point.setSelected(selected);
-            }
-        }
+    public String getDisplayName(){
+        return "Line";
     }
-
-    @Override
-    public Set<LinePoint> getSublinePoints() {
-        Set<LinePoint> subWirePoints = new HashSet<LinePoint>();
-        if (this.isSelected()) {
-            return null;
-        }
-        for (LinePoint point : points) {
-            if (point.isSelected()) {
-                subWirePoints.add(point);
-            }
-        }
-        return subWirePoints;
-    }
-
 }

@@ -1,14 +1,13 @@
 package com.mynetpcb.core.capi.io;
 
 
-import com.mynetpcb.core.utils.concurrent.OwnThreadPoolExecutor;
+
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 
 public enum CommandExecutor{
@@ -19,9 +18,7 @@ public enum CommandExecutor{
     private final Map<String,FutureCommand> commands;
     
     private CommandExecutor(){
-        executor=  new OwnThreadPoolExecutor(1,1,
-                                      0L, TimeUnit.MILLISECONDS,
-                                      new LinkedBlockingQueue<Runnable>());        
+        executor=  Executors.newFixedThreadPool(1);      
         commands=new HashMap<String,FutureCommand>(3); 
     }
     

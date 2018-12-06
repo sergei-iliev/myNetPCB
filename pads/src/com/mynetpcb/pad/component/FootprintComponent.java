@@ -5,13 +5,17 @@ import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.config.Configuration;
+import com.mynetpcb.core.capi.container.UnitContainerProducer;
 import com.mynetpcb.core.capi.event.LineEventHandle;
 import com.mynetpcb.core.capi.event.MeasureEventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
+import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
+import com.mynetpcb.core.capi.impex.XMLImportTask;
 import com.mynetpcb.core.capi.io.Command;
 import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.io.FutureCommand;
 import com.mynetpcb.core.capi.io.ReadUnitLocal;
 import com.mynetpcb.core.capi.io.remote.ReadConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
@@ -24,6 +28,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.container.FootprintContainer;
+import com.mynetpcb.pad.container.FootprintContainerFactory;
 import com.mynetpcb.pad.dialog.FootprintLoadDialog;
 import com.mynetpcb.pad.event.FootprintEventMgr;
 import com.mynetpcb.pad.popup.FootprintPopupMenu;
@@ -46,6 +51,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
 import java.util.Collection;
+
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JOptionPane;
 
@@ -317,8 +324,12 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         return false;
     }
     @Override
-    public void Import(String string) {
-        // TODO Implement this method
+    public void Import(String targetFile) {
+        UnitContainerProducer unitContainerProducer=new UnitContainerProducer().withFactory("footprints", new FootprintContainerFactory());
+        CommandExecutor.INSTANCE.addTask("import",
+                                         new XMLImportTask(this,
+                                                           unitContainerProducer,
+                                                           targetFile, XMLImportTask.class));
     }
     @Override
     public void Reload() {
@@ -340,7 +351,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
     }
     
     public void OnStart(Class<?> reciever) {
-        DisabledGlassPane.block( this.getDialogFrame().getRootPane(),"Reloading...");     
+        DisabledGlassPane.block( this.getDialogFrame().getRootPane(),"Loading...");     
     }
 
     public void OnRecive(String result,  Class reciever) {
@@ -361,6 +372,25 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
 
     public void OnFinish(Class<?> receiver) {
         DisabledGlassPane.unblock(this.getDialogFrame().getRootPane());       
+        if (receiver == XMLImportTask.class) {
+            FutureCommand task = CommandExecutor.INSTANCE.getTaskByName("import");
+            try{
+                FootprintContainer source = (FootprintContainer) task.get();
+                    for (Footprint footprint : source.getUnits()) {
+                        try {
+                            Footprint copy = footprint.clone();
+                            this.getModel().Add(copy);
+                            copy.notifyListeners(ShapeEvent.ADD_SHAPE);
+                        } catch (CloneNotSupportedException f) {
+                            f.printStackTrace(System.out);
+                        }
+                    }
+                    source.Clear();
+                
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace(System.out);
+            }
+        }    
     }
 
     public void OnError(String error) {

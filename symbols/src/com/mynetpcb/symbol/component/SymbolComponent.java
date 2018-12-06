@@ -5,11 +5,15 @@ import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Reshapeable;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.config.Configuration;
+import com.mynetpcb.core.capi.container.UnitContainerProducer;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
+import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
+import com.mynetpcb.core.capi.impex.XMLImportTask;
 import com.mynetpcb.core.capi.io.Command;
 import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.io.FutureCommand;
 import com.mynetpcb.core.capi.io.ReadUnitLocal;
 import com.mynetpcb.core.capi.io.remote.ReadConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
@@ -20,7 +24,10 @@ import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.pad.container.FootprintContainer;
+import com.mynetpcb.pad.unit.Footprint;
 import com.mynetpcb.symbol.container.SymbolContainer;
+import com.mynetpcb.symbol.container.SymbolContainerFactory;
 import com.mynetpcb.symbol.dialog.SymbolLoadDialog;
 import com.mynetpcb.symbol.event.LineEventHandle;
 import com.mynetpcb.symbol.event.SymbolEventMgr;
@@ -48,6 +55,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 
 import java.util.Collection;
+
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JOptionPane;
 
@@ -349,8 +358,12 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
     }
     
     @Override
-    public void Import(String string) {
-        // TODO Implement this method
+    public void Import(String targetFile) {
+        UnitContainerProducer unitContainerProducer=new UnitContainerProducer().withFactory("modules", new SymbolContainerFactory());
+        CommandExecutor.INSTANCE.addTask("import",
+                                         new XMLImportTask(this,
+                                                           unitContainerProducer,
+                                                           targetFile, XMLImportTask.class));        
     }
     @Override
     public void Reload() {
@@ -372,7 +385,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
     }
     
     public void OnStart(Class<?> reciever) {
-        DisabledGlassPane.block( this.getDialogFrame().getRootPane(),"Reloading...");     
+        DisabledGlassPane.block( this.getDialogFrame().getRootPane(),"Loading...");     
     }
 
     public void OnRecive(String result,  Class reciever) {
@@ -392,7 +405,26 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
     }
 
     public void OnFinish(Class<?> receiver) {
-        DisabledGlassPane.unblock(this.getDialogFrame().getRootPane());       
+        DisabledGlassPane.unblock(this.getDialogFrame().getRootPane());  
+        if (receiver == XMLImportTask.class) {
+            FutureCommand task = CommandExecutor.INSTANCE.getTaskByName("import");
+            try{
+                SymbolContainer source = (SymbolContainer) task.get();                
+                    for (Symbol symbol : source.getUnits()) {
+                        try {
+                            Symbol copy = symbol.clone();
+                            this.getModel().Add(copy);
+                            copy.notifyListeners(ShapeEvent.ADD_SHAPE);
+                        } catch (CloneNotSupportedException f) {
+                            f.printStackTrace(System.out);
+                        }
+                    }
+                    source.Clear();
+                
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace(System.out);
+            }
+        }         
     }
 
     public void OnError(String error) {

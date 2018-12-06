@@ -486,11 +486,6 @@ public class Line extends AbstractLine implements Externalizable {
     }
 
     @Override
-    public String getDisplayName() {
-        return "Line";
-    }
-
-    @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);

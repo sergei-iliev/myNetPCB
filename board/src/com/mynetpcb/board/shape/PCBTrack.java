@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.line.LinePoint;
+import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable.EndType;
 import com.mynetpcb.core.capi.line.Trackable.JoinType;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -44,7 +45,7 @@ import java.util.StringTokenizer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class PCBTrack extends TrackShape implements PCBShape{
+public class PCBTrack extends TrackShape implements PCBShape,Sublineable{
     
     
     private int clearance;
@@ -177,39 +178,16 @@ public class PCBTrack extends TrackShape implements PCBShape{
         g2.setClip(null);
         
         provider.reset();
-
-//          g2.setStroke(new BasicStroke((float)lineThickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal())); 
-//          g2.setColor(Color.BLACK);        
-//
-//        
-//          g2.setClip(source.getClippingRegion(viewportWindow,scale));
-//        
-//          FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);            
-//          GeneralPath temporal=(GeneralPath)provider.getShape();
-//        
-//          java.awt.Shape  copperArea=shape.getBoundingShape();
-//          AffineTransform translate= AffineTransform.getTranslateInstance(-viewportWindow.x,-viewportWindow.y);
-//        
-//          Point first=points.get(0);
-//          temporal.moveTo(points.get(0).getX(),points.get(0).getY());
-//          for(int i=1;i<points.size();i++){            
-//              temporal.reset();
-//              temporal.moveTo(first.getX(),first.getY());
-//              temporal.lineTo(points.get(i).getX(),points.get(i).getY());
-//              first=points.get(i);
-//              if(!copperArea.intersects(temporal.getBounds())){
-//                 continue; 
-//              }
-//              
-//              temporal.transform(scale);
-//              temporal.transform(translate); 
-//              g2.draw(temporal); 
-//          }
-//          
-//          g2.setClip(null);
-//          provider.reset();
         
     }
+    @Override
+    public void drawControlShape(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){   
+        if((!this.isSelected())&&(!this.isSublineSelected())){
+          return;
+        }
+        super.drawControlShape(g2, viewportWindow, scale);
+    }
+    
     @Override
     public String getDisplayName() {
         return "Track";
@@ -540,52 +518,52 @@ public class PCBTrack extends TrackShape implements PCBShape{
 //        }
 //    }
     
-//    @Override
-//    public boolean isSublineInRect(Rectangle r){
-//        for (LinePoint point : points) {
-//            if (r.contains(point)) {
-//                return true;
-//            }
-//        }
-//        return false;        
-//    }
-//    
-//    @Override
-//    public boolean isSublineSelected() {
-//        if (points.size() == 0) {
-//            return false; //wire is being constructed
-//        }
-//        boolean p = points.get(0).isSelected();
-//        for (LinePoint point : points) {
-//            if (p != point.isSelected()) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    @Override
-//    public void setSublineSelected(Rectangle r, boolean selected) {
-//        for (LinePoint point : points) {
-//            if (r.contains(point)) {
-//                point.setSelected(selected);
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public Set<LinePoint> getSublinePoints() {
-//        Set<LinePoint> subWirePoints = new HashSet<LinePoint>();
-//        if (this.isSelected()) {
-//            return null;
-//        }
-//        for (LinePoint point : points) {
-//            if (point.isSelected()) {
-//                subWirePoints.add(point);
-//            }
-//        }
-//        return subWirePoints;
-//    }
+    @Override
+    public boolean isSublineInRect(Rectangle r){
+        for (LinePoint point : points) {
+            if (r.contains(point)) {
+                return true;
+            }
+        }
+        return false;        
+    }
+    
+    @Override
+    public boolean isSublineSelected() {
+        if (points.size() == 0) {
+            return false; //wire is being constructed
+        }
+        boolean p = points.get(0).isSelected();
+        for (LinePoint point : points) {
+            if (p != point.isSelected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void setSublineSelected(Rectangle r, boolean selected) {
+        for (LinePoint point : points) {
+            if (r.contains(point)) {
+                point.setSelected(selected);
+            }
+        }
+    }
+
+    @Override
+    public Set<LinePoint> getSublinePoints() {
+        Set<LinePoint> subWirePoints = new HashSet<LinePoint>();
+        if (this.isSelected()) {
+            return null;
+        }
+        for (LinePoint point : points) {
+            if (point.isSelected()) {
+                subWirePoints.add(point);
+            }
+        }
+        return subWirePoints;
+    }
     
 
 

@@ -6,7 +6,6 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.CompositeTextMetrics;
 import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Texture;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.Color;
@@ -70,6 +69,7 @@ public class FontTexture implements Texture {
         FontTexture copy=(FontTexture)super.clone();
         copy.anchorPoint=(Point)anchorPoint.clone();
         copy.compositeTextMetrics=new CompositeTextMetrics();
+        copy.fillColor=new Color(this.fillColor.getRGB());
         return copy;
     }
     public void copy(Texture _copy){
@@ -81,7 +81,7 @@ public class FontTexture implements Texture {
         this.style=copy.style;
         this.alignment=copy.alignment;
         this.size=copy.size;
-        this.fillColor=copy.fillColor;
+        this.fillColor=new Color(_copy.getFillColor().getRGB());
         this.selectionRectWidth=copy.selectionRectWidth;           
         compositeTextMetrics.updateMetrics();
     }

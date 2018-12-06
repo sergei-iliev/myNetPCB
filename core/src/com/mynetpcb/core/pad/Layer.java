@@ -385,6 +385,7 @@ public class Layer {
     public final static int LAYER_COUNT = 32;
 
     // Masks to identify a layer by a bit map
+    public final static int LAYER_NONE = 0;
     public final static int LAYER_BACK = (1 << LAYER_N_BACK); ///< bit mask for copper layer
     public final static int LAYER_2 = (1 << LAYER_N_2); ///< bit mask for layer 2
     public final static int LAYER_3 = (1 << LAYER_N_3); ///< bit mask for layer 3

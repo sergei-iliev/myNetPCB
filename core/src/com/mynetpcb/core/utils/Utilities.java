@@ -466,6 +466,8 @@ public final class Utilities {
     }
 
     public static void setUILookAndFeel() {
+        //UIManager.put("nimbusBase", Color.GREEN);
+        UIManager.put("control",new Color(212, 226, 247));
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {

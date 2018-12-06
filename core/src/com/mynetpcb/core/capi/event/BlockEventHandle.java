@@ -31,6 +31,7 @@ public class BlockEventHandle <U extends UnitComponent,S extends Shape> extends 
     public void Attach(){
         super.Attach();
         selectedSymbols = getComponent().getModel().getUnit().getSelectedShapes(false);
+        //used in Do/Undo
         selectedWires = UnitMgr.getInstance().getSublineWires(getComponent().getModel().getUnit());
         selectedWirePoints =UnitMgr.getInstance().getSublinePoints(getComponent().getModel().getUnit());    
         

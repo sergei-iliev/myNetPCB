@@ -433,7 +433,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape,CircuitContai
     }
 
     public void OnStart(Class<?> reciever) {
-        DisabledGlassPane.block( this.getDialogFrame().getRootPane(),"Reloading...");    
+        DisabledGlassPane.block( this.getDialogFrame().getRootPane(),"Loading...");    
     }
 
     public void OnRecive(String result,   Class reciever) {
@@ -457,14 +457,10 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape,CircuitContai
         if (receiver == XMLImportTask.class) {
             FutureCommand task = CommandExecutor.INSTANCE.getTaskByName("import");
             try{
-                CircuitContainer source = (CircuitContainer) task.get();
-                    this.setMode(CircuitComponent.COMPONENT_MODE);
-                    this.getDialogFrame().setButtonGroup(CircuitComponent.COMPONENT_MODE);
-
+                    CircuitContainer source = (CircuitContainer) task.get();
                     for (Circuit circuit : source.getUnits()) {
                         try {
-                            Circuit copy = circuit.clone();
-                            copy.getScalableTransformation().Reset(1.2, 2, 0, ScalableTransformation.DEFAULT_MAX_SCALE_FACTOR);
+                            Circuit copy = circuit.clone();                            
                             this.getModel().Add(copy);
                             copy.notifyListeners(ShapeEvent.ADD_SHAPE);
                         } catch (CloneNotSupportedException f) {

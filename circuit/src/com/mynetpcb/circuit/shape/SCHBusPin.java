@@ -133,19 +133,19 @@ public class SCHBusPin extends SCHWire implements Textable{
 //            Mirror(new Point(getLinePoints().get(0).x,getLinePoints().get(0).y-10),new Point(getLinePoints().get(0).x,getLinePoints().get(0).y+10));             
 //        }
 //    }
-    
-    public LinePoint isControlRectClicked(int x, int y) {
-        LinePoint point=super.isControlRectClicked(x, y);
+    @Override
+    public Point isControlRectClicked(int x, int y) {
+        Point point=super.isControlRectClicked(x, y);
         if(getLinePoints().get(0).equals(point)){
            return null; 
         }else{
            return point;
         }
     }
-    @Override
-    public void drawControlShape(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){ 
-        Utilities.drawCrosshair(g2, viewportWindow, scale, getResizingPoint(), selectionRectWidth,getLinePoints().get(1));
-    }
+//    @Override
+//    public void drawControlShape(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){ 
+//        Utilities.drawCrosshair(g2, viewportWindow, scale, getResizingPoint(), selectionRectWidth,getLinePoints().get(1));
+//    }
     
     @Override
     public void Print(Graphics2D g2,PrintContext printContext,int layermask){
