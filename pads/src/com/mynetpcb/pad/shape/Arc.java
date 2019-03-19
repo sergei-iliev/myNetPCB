@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.gerber.ArcGerberable;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -19,8 +20,10 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -30,11 +33,11 @@ import org.w3c.dom.Node;
 /*
  * Arc is described by center, radius, start and end angle
  */
-public class Arc  extends Circle implements ArcGerberable, Resizeable,Externalizable {
+public class Arc  extends Shape implements ArcGerberable, Resizeable,Externalizable {
     private double startAngle,extendAngle;
     
     public Arc(int x,int y,int r,int thickness,int layermaskid) {
-        super(x, y, r,thickness,layermaskid);  
+        super(x, y, r,r,thickness,layermaskid);  
         this.startAngle=90;
         this.extendAngle=-230;
         this.selectionRectWidth=3000;
@@ -51,13 +54,27 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
     }
     
     @Override
+    public Point alignToGrid(boolean isRequired) {
+        if(isRequired){
+          return super.alignToGrid(isRequired);
+        }else{
+            return null;
+        }
+    }
+    
+    @Override
+    public void alignResizingPointToGrid(Point point) {          
+        width=getOwningUnit().getGrid().positionOnGrid(width);                
+    }
+    
+    @Override
     public String getDisplayName(){
         return "Arc";
     }
-//    @Override
-//    public java.awt.Shape calculateShape() {    
-//      return new Arc2D.Double(getX()-getWidth(),getY()-getWidth(),2*getWidth(),2*getWidth(),startAngle,extendAngle,Arc2D.OPEN);
-//    }
+    @Override
+    public java.awt.Shape calculateShape() {    
+      return new Rectangle(getX()-getWidth(),getY()-getWidth(),2*getWidth(),2*getWidth());
+    }
     @Override
     public boolean isClicked(int x, int y) {
         FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
@@ -74,36 +91,54 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
             rectProvider.reset();
         }
     }
+   
     @Override
-    public Point isControlRectClicked(int x, int y) {
-        
-        Point result= super.isControlRectClicked(x, y);
-        if(result==null){
-            FlyweightProvider rectFlyweightProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-            Rectangle2D rect = (Rectangle2D)rectFlyweightProvider.getShape();
+    public Point isControlRectClicked(int xx, int yy) {
+    
+        FlyweightProvider rectFlyweightProvider = ShapeFlyweightFactory.getProvider(Rectangle2D.class);
+        Rectangle2D rect = (Rectangle2D)rectFlyweightProvider.getShape();
 
-            
-            try{
-                Point2D p=getStartPoint();
-                rect.setRect((p.getX()) - selectionRectWidth / 2, (p.getY()) - selectionRectWidth / 2,
+        
+        try{
+            rect.setRect((x-width) - selectionRectWidth / 2, (y-width) - selectionRectWidth / 2,
+                         selectionRectWidth, selectionRectWidth);
+            if (rect.contains(xx,yy)) {
+                return new Point((x-width),(y-width));
+            }
+            rect.setRect((x+width) - selectionRectWidth / 2, (y-width) - selectionRectWidth / 2,
+                         selectionRectWidth, selectionRectWidth);
+            if (rect.contains(xx,yy)){
+                return new Point((x+width),(y-width));
+            }
+            rect.setRect((x-width) - selectionRectWidth / 2, (y+width) - selectionRectWidth / 2,
+                         selectionRectWidth, selectionRectWidth);
+            if (rect.contains(xx,yy)){
+                return new Point((x-width),(y+width));
+            }
+
+            rect.setRect((x+width) - selectionRectWidth / 2, (y+width) - selectionRectWidth / 2,
+                         selectionRectWidth, selectionRectWidth);
+            if (rect.contains(xx,yy)){
+                return new Point((x+width),(y+width));
+            }
+
+             Point2D p=getStartPoint();
+             rect.setRect((p.getX()) - selectionRectWidth / 2, (p.getY()) - selectionRectWidth / 2,
                              selectionRectWidth, selectionRectWidth);
-                if (rect.contains(x,y)) {
+             if (rect.contains(xx,yy)) {
                     return new Point((int)p.getX(),(int)p.getY());
-                }
-                p=getEndPoint();
-                rect.setRect((p.getX()) - selectionRectWidth / 2, (p.getY()) - selectionRectWidth / 2,
+             }
+             p=getEndPoint();
+             rect.setRect((p.getX()) - selectionRectWidth / 2, (p.getY()) - selectionRectWidth / 2,
                              selectionRectWidth, selectionRectWidth);
-                if (rect.contains(x,y)) {
-                    return new Point((int)p.getX(),(int)p.getY());
-                }
+             if (rect.contains(xx,yy)) {
+                   return new Point((int)p.getX(),(int)p.getY());
+             }
                 
             }finally{
                 rectFlyweightProvider.reset();
             }
             return null;       
-        }else{
-            return result;
-        }
     }
     
     public boolean isStartAnglePointClicked(int x,int y){
@@ -196,7 +231,42 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
             }             
         } 
     }
-    
+    @Override
+    public void Resize(int xoffset, int yoffset, Point point) {    
+        Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation(point,x,y);
+        switch(quadrant){
+        case FIRST:case FORTH: 
+            //uright
+             if(xoffset<0){
+               //grows             
+                width+=Math.abs(xoffset);
+             }else{
+               //shrinks
+                width-=Math.abs(xoffset);
+             }             
+            break;
+        case SECOND:case THIRD:
+            //uleft
+             if(xoffset<0){
+               //shrinks             
+                width-=Math.abs(xoffset);
+             }else{
+               //grows
+                width+=Math.abs(xoffset);
+             }             
+            break;        
+        }
+
+    }  
+    @Override
+    public Point getResizingPoint() {
+        return null;
+    }
+
+    @Override
+    public void setResizingPoint(Point point) {
+        //this.resizingPoint = point;
+    }    
     @Override
     public String toXML() {
        return "<arc copper=\""+getCopper().getName()+"\" type=\"0\" x=\""+(x-width)+"\" y=\""+(y-width)+"\" width=\""+(2*width)+"\"  thickness=\""+this.getThickness()+"\" start=\""+this.startAngle+"\" extend=\""+this.extendAngle+"\" fill=\""+this.getFill().ordinal()+"\" />\r\n";
@@ -265,7 +335,48 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
         
         
     }
-    
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
+        Line2D line = (Line2D) provider.getShape();
+
+        g2.setStroke(new BasicStroke(1));
+
+        g2.setColor(Color.BLUE);
+        
+        //top
+            line.setLine((getX()-getWidth()) - selectionRectWidth, getY()-getWidth(), (getX()-getWidth()) + selectionRectWidth, getY()-getWidth());
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+
+            line.setLine((getX()-getWidth()), getY()-getWidth() - selectionRectWidth, (getX()-getWidth()), getY()-getWidth() + selectionRectWidth);
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+        
+            line.setLine((getX()+getWidth()) - selectionRectWidth, getY()-getWidth(), (getX()+getWidth()) + selectionRectWidth, getY()-getWidth());
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+
+            line.setLine((getX()+getWidth()), getY()-getWidth() - selectionRectWidth, (getX()+getWidth()), getY()-getWidth() + selectionRectWidth);
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+        //bottom
+            line.setLine((getX()-getWidth()) - selectionRectWidth, getY()+getWidth(), (getX()-getWidth()) + selectionRectWidth, getY()+getWidth());
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+
+            line.setLine((getX()-getWidth()), getY()+getWidth() - selectionRectWidth, (getX()-getWidth()), getY()+getWidth() + selectionRectWidth);
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+        
+            line.setLine((getX()+getWidth()) - selectionRectWidth, getY()+getWidth(), (getX()+getWidth()) + selectionRectWidth, getY()+getWidth());
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+
+            line.setLine((getX()+getWidth()), getY()+getWidth() - selectionRectWidth, (getX()+getWidth()), getY()+getWidth() + selectionRectWidth);
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+      
+    //center
+            line.setLine((getX()) - selectionRectWidth, getY(), (getX()) + selectionRectWidth, getY());
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+
+            line.setLine((getX()), getY() - selectionRectWidth, getX(), getY() + selectionRectWidth);
+            Utilities.drawLine(line, g2, viewportWindow, scale);
+
+        provider.reset();
+    }    
     @Override
     public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
         Rectangle2D rect = getBoundingShape().getBounds(); 
@@ -372,26 +483,34 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
         memento.loadStateTo(this);  
     }
     
-    public static class Memento extends Circle.Memento{
+    public static class Memento extends AbstractMemento<Unit,Arc>{
         private double startAngle;        
         private double extendAngle;
-
+        private int x;
+        private int radios;
+        private int y;
         
         
         public Memento(MementoType mementoType) {
            super(mementoType);            
         }
         @Override
-        public void saveStateFrom(Circle shape) {
+        public void saveStateFrom(Arc shape) {
             super.saveStateFrom(shape);         
             this.startAngle=((Arc)shape).startAngle;
             this.extendAngle=((Arc)shape).extendAngle;
+            this.x=shape.getX();
+            this.y=shape.getY();
+            this.radios=shape.getWidth();
         }
         @Override
-        public void loadStateTo(Circle shape) {
+        public void loadStateTo(Arc shape) {
            super.loadStateTo(shape);
            ((Arc)shape).setStartAngle(startAngle);
            ((Arc)shape).setExtendAngle(extendAngle); 
+            shape.setX(x);
+            shape.setY(y);
+            shape.setWidth(radios);
         }
         
         @Override
@@ -403,22 +522,34 @@ public class Arc  extends Circle implements ArcGerberable, Resizeable,Externaliz
               return false;  
             }         
             Memento other=(Memento)obj;
-            return  (super.equals(obj)&&
-                      Double.compare(this.startAngle,other.startAngle)==0&&Double.compare(this.extendAngle,other.extendAngle)==0
+            return (other.getMementoType().equals(this.getMementoType())&&
+                    other.getUUID().equals(this.getUUID())&&
+                    other.thickness==this.thickness&&
+                    other.fill==this.fill&&
+                    other.layerindex==this.layerindex&&
+                    x==other.x&&
+                    y==other.y&&radios==other.radios&&
+                    Double.compare(this.startAngle,other.startAngle)==0&&Double.compare(this.extendAngle,other.extendAngle)==0
                    );
             
           
         }
         
         @Override
-        public int hashCode(){
-            return super.hashCode()+new Double(startAngle).hashCode()+new Double(extendAngle).hashCode();             
+        public int hashCode(){            
+           int hash=31+getUUID().hashCode()+this.getMementoType().hashCode()+this.fill+this.thickness+this.layerindex;
+           hash+=x;
+           hash+=y;
+           hash+=radios+new Double(startAngle).hashCode()+new Double(extendAngle).hashCode();             
+           return hash;
         }
         
         @Override
         public boolean isSameState(Unit unit) {
             Arc other=(Arc)unit.getShape(getUUID());              
-            return super.isSameState(unit)&&Double.compare(this.extendAngle,other.getExtendAngle())==0&&Double.compare(this.startAngle,other.getStartAngle())==0;                    
+            return (other.getThickness()==this.thickness&&other.getFill().ordinal()==this.fill&&other.copper.ordinal()==this.layerindex&&
+                    (other.getX()==this.x)&&(other.getY()==this.y)&&
+                    (other.getWidth()==this.radios)&&Double.compare(this.extendAngle,other.getExtendAngle())==0&&Double.compare(this.startAngle,other.getStartAngle())==0);                    
         }
     }
     

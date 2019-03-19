@@ -110,6 +110,7 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
 
     public void Add(T unit) {
         unitsMap.put(unit.getUUID(), unit);
+        statesMap.put(unit.getUUID(),unit.getState(MementoType.MEMENTO));
         attachShapeListeners(unit);
         this.fireUnitEvent(new UnitEvent(unit, UnitEvent.ADD_UNIT));
         //set to default if first one
@@ -130,6 +131,7 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         }
         _unit = null;
         unitsMap.remove(uuid);
+        statesMap.remove(uuid);
     }
 
     public void Clear() {
@@ -185,7 +187,24 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         return index;
     }
 
-        public boolean isChanged(){
+    /*
+     * Check if unit state has changed
+     */
+    public boolean isChanged(UUID uuid){
+       for(T unit:getUnits()){
+           if(unit.getUUID().equals(uuid)){
+               AbstractMemento initMemento=statesMap.get(unit.getUUID());
+               AbstractMemento currentMemento=unit.getState(MementoType.MEMENTO);
+               //2.is unit changed
+               if(!initMemento.equals(currentMemento)){
+                   return true;
+               }                 
+           }
+        }
+        
+        return false;        
+    }
+    public boolean isChanged(){
            //1.is unit deleted
     
             if(!unitsMap.keySet().equals(statesMap.keySet())){
@@ -202,22 +221,22 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
             }
     
            return false;
-        }
+     }
 
-        public void registerInitialState(){
+      public void registerInitialState(){
             statesMap.clear();
             for(T unit:getUnits()) {
               statesMap.put(unit.getUUID(),unit.getState(MementoType.MEMENTO));
             }
-        }
+       }
 
-        public void registerInitialState(UUID uuid){
+       public void registerInitialState(UUID uuid){
            T unit=unitsMap.get(uuid);
            if(unit==null){
               throw new IllegalArgumentException("uuid is unknown");
            }
            statesMap.put(uuid,unit.getState(MementoType.MEMENTO));
-        }
+       }
 
 
     public void fireUnitEvent(UnitEvent e) {

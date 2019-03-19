@@ -8,14 +8,19 @@ import java.util.LinkedList;
 
 public class SortedList<S extends Shape> extends LinkedList<S> {
 
-    private static class DEFAULT<S extends Shape> implements Comparator<S> {
+//    private static class DEFAULT<S extends Shape> implements Comparator<S> {
+//        @Override
+//        public int compare(S s1, S s2) {
+//            return s1.getDrawingOrder() - s2.getDrawingOrder();
+//        }
+//    }
+
+    private final Comparator<S> comparator = new Comparator<S>() {
         @Override
         public int compare(S s1, S s2) {
             return s1.getDrawingOrder() - s2.getDrawingOrder();
         }
-    }
-
-    private final DEFAULT comparator = new DEFAULT();
+    };
 
     /**
      *Add shape at the right drawing place in list

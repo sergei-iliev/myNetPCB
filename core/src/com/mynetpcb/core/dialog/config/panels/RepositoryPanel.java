@@ -47,8 +47,8 @@ public class RepositoryPanel extends AbstractPreferencePanel{
         ).addGap(5);
         
         hGroup.addGroup(layout.createParallelGroup().
-                     addComponent(workspaceField,250,250,250).
-                     addComponent(libraryField,250,250,250).addComponent(applyButton)    
+                     addComponent(libraryField,250,250,250).
+                     addComponent(workspaceField,250,250,250).addComponent(applyButton)    
                         
         );
         
@@ -61,13 +61,15 @@ public class RepositoryPanel extends AbstractPreferencePanel{
         layout.setHorizontalGroup(hGroup);
         
         GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
+
+        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).
+                        addComponent(label2).addComponent(libraryField).addComponent(chooseFolder2,20,20,20)).addGap(5);
+
+
         vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).
                       addComponent(label1).addComponent(workspaceField).addComponent(chooseFolder1,20,20,20)     
                       );
-        
-        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).
-                        addComponent(label2).addComponent(libraryField).addComponent(chooseFolder2,20,20,20)).addGap(5);
-             
+                     
         
         vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).
                           addComponent(applyButton)); 

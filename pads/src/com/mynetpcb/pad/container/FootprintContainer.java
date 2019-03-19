@@ -79,7 +79,7 @@ public class FootprintContainer extends UnitContainer<Footprint,Shape>{
            Footprint footprint=new Footprint(1,1);
            footprint.Parse(node); 
            Add(footprint); //attach listeners
-           footprint.notifyListeners(ShapeEvent.ADD_SHAPE); 
+           //footprint.notifyListeners(ShapeEvent.ADD_SHAPE); 
         }  
     }
 

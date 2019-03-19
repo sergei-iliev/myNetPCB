@@ -19,6 +19,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -92,7 +93,7 @@ public class Arrow extends Shape implements Resizeable,Externalizable {
         copy.A1 = new Point();
         copy.A2 = new Point();
         copy.A3 = new Point();
-        copy.setHeadSize(3);
+        copy.setHeadSize(this.headSize);
         copy.left=new Point(this.left.x,this.left.y);
         copy.right=new Point(this.right.x,this.right.y);
         return copy;
@@ -162,6 +163,8 @@ public class Arrow extends Shape implements Resizeable,Externalizable {
         
         double lineThickness=thickness*scale.getScaleX();
         g2.setStroke(new BasicStroke((float)lineThickness,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER));  
+       
+       
         g2.setColor(isSelected()?Color.GRAY:fillColor);
         g2.draw(line);
         
@@ -174,7 +177,6 @@ public class Arrow extends Shape implements Resizeable,Externalizable {
         scale.transform(A1, a1);
         scale.transform(A2, a2);
         scale.transform(A3, a3);
-        
         arrowHead.reset(); 
         arrowHead.addPoint((int)a1.getX(), (int)a1.getY());
         arrowHead.addPoint((int)a2.getX(), (int)a2.getY());
@@ -216,6 +218,7 @@ public class Arrow extends Shape implements Resizeable,Externalizable {
         
 
         g2.setStroke(new BasicStroke(thickness,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER));  
+        
         g2.setColor(Color.BLACK);
         g2.draw(line);
         
@@ -288,7 +291,7 @@ public class Arrow extends Shape implements Resizeable,Externalizable {
     
     @Override
     public String getDisplayName(){
-        return "Line";
+        return "Arrow";
     }
 
     @Override

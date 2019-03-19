@@ -16,6 +16,7 @@ import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.aperture.type.ObroundAperture;
 import com.mynetpcb.gerber.aperture.type.RectangleAperture;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
+import com.mynetpcb.gerber.capi.GraphicsStateContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.gerber.capi.StringBufferEx;
 import com.mynetpcb.gerber.command.AbstractCommand;
@@ -32,7 +33,6 @@ import com.mynetpcb.gerber.processor.command.CommandRectProcessor;
 import com.mynetpcb.gerber.processor.command.CommandRegionProcessor;
 import com.mynetpcb.gerber.processor.command.CommandTrackProcessor;
 import com.mynetpcb.gerber.processor.command.CommandViaProcessor;
-import com.mynetpcb.gerber.processor.command.GraphicsStateContext;
 import com.mynetpcb.pad.shape.Pad;
 
 import com.mynetpcb.pad.shape.RoundRect;
@@ -72,14 +72,14 @@ public class ProcessorTest {
         
         int width=via.getWidth()+2*copperArea.getClearance();
         
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         Assert.assertTrue(dictionary.findCircle(width)!=null);
         
         //position outside
         dictionary.Reset();
         
         via.setX(Grid.MM_TO_COORD(150));    
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         //no match
         Assert.assertTrue(dictionary.findCircle(width)==null);
         
@@ -103,7 +103,7 @@ public class ProcessorTest {
         
         Board board =Mockito.mock(Board.class);
         Mockito.when(board.getShapes(PCBFootprint.class, Layer.LAYER_FRONT)).thenReturn(footprints);
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         
         Assert.assertNotNull(dictionary.findCircle(AbstractAttribute.Type.SMDPad,pad.getWidth()));
             
@@ -133,7 +133,7 @@ public class ProcessorTest {
         
         Board board =Mockito.mock(Board.class);
         Mockito.when(board.getShapes(PCBFootprint.class, Layer.LAYER_FRONT)).thenReturn(footprints);
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         
         Assert.assertNotNull(dictionary.findCircle(AbstractAttribute.Type.SMDPad,pad.getWidth()));
         Assert.assertNotNull(dictionary.findCircle(hole.getDrill().getWidth()));    
@@ -160,7 +160,7 @@ public class ProcessorTest {
         Board board =Mockito.mock(Board.class);
         Mockito.when(board.getShapes(PCBLine.class, Layer.BOARD_EDGE_CUTS)).thenReturn(lines);
         
-        processor.process(board, Layer.BOARD_EDGE_CUTS);
+        //processor.process(board, Layer.BOARD_EDGE_CUTS);
         
         Assert.assertNotNull(dictionary.findCircle(AbstractAttribute.Type.CutOut,outline.getThickness()));
        
@@ -169,7 +169,7 @@ public class ProcessorTest {
         lines.add(arc);
         Mockito.reset(board);
         Mockito.when(board.getShapes(PCBArc.class, Layer.BOARD_EDGE_CUTS)).thenReturn(lines); 
-        processor.process(board, Layer.BOARD_EDGE_CUTS);
+        //processor.process(board, Layer.BOARD_EDGE_CUTS);
         
         Assert.assertNotNull(dictionary.findCircle(AbstractAttribute.Type.CutOut,arc.getThickness()));
     
@@ -178,7 +178,7 @@ public class ProcessorTest {
         lines.add(rect);
         Mockito.reset(board);
         Mockito.when(board.getShapes(PCBRoundRect.class, Layer.BOARD_EDGE_CUTS)).thenReturn(lines); 
-        processor.process(board, Layer.BOARD_EDGE_CUTS);
+        //processor.process(board, Layer.BOARD_EDGE_CUTS);
         
         Assert.assertNotNull(dictionary.findCircle(AbstractAttribute.Type.CutOut,rect.getThickness()));
     
@@ -187,7 +187,7 @@ public class ProcessorTest {
         lines.add(circle);
         Mockito.reset(board);
         Mockito.when(board.getShapes(PCBCircle.class, Layer.BOARD_EDGE_CUTS)).thenReturn(lines); 
-        processor.process(board, Layer.BOARD_EDGE_CUTS);
+        //processor.process(board, Layer.BOARD_EDGE_CUTS);
         
         Assert.assertNotNull(dictionary.findCircle(AbstractAttribute.Type.CutOut,circle.getThickness()));
 
@@ -210,7 +210,7 @@ public class ProcessorTest {
         
         Board board =Mockito.mock(Board.class);
         Mockito.when(board.getShapes(PCBFootprint.class, Layer.LAYER_FRONT)).thenReturn(footprints);
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         
         Assert.assertNotNull(dictionary.findRectangle(AbstractAttribute.Type.SMDPad,pad.getWidth(),pad.getHeight()));
             
@@ -245,7 +245,7 @@ public class ProcessorTest {
         
         Board board =Mockito.mock(Board.class);
         Mockito.when(board.getShapes(PCBFootprint.class, Layer.LAYER_FRONT)).thenReturn(footprints);
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         
         Assert.assertNotNull(dictionary.findRectangle(AbstractAttribute.Type.SMDPad,rect.getWidth(),rect.getHeight()));
         Assert.assertNotNull(dictionary.findCircle(AbstractAttribute.Type.SMDPad,circle.getWidth()));            
@@ -285,7 +285,7 @@ public class ProcessorTest {
         
         CommandRegionProcessor processor=new CommandRegionProcessor(context);
         
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         System.out.println(context.getOutput());
         
     }    
@@ -313,7 +313,7 @@ public class ProcessorTest {
         
         CommandTrackProcessor processor=new CommandTrackProcessor(context);
         
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         System.out.println(context.getOutput());
         
     }
@@ -337,7 +337,7 @@ public class ProcessorTest {
         GraphicsStateContext context=new GraphicsStateContext(apertureDictionary, commandDictionary, new StringBufferEx());
         
         CommandCircleProcessor processor=new CommandCircleProcessor(context);
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         System.out.println(context.getOutput());
         
     }
@@ -368,7 +368,7 @@ public class ProcessorTest {
         GraphicsStateContext context=new GraphicsStateContext(apertureDictionary, commandDictionary, new StringBufferEx());
         
         CommandRectProcessor processor=new CommandRectProcessor(context);
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         System.out.println(context.getOutput());
         
     }
@@ -396,7 +396,7 @@ public class ProcessorTest {
         GraphicsStateContext context=new GraphicsStateContext(apertureDictionary, commandDictionary, new StringBufferEx());
         
         CommandArcProcessor processor=new CommandArcProcessor(context);
-        processor.process(board, Layer.LAYER_FRONT);
+        //processor.process(board, Layer.LAYER_FRONT);
         System.out.println(context.getOutput());
         
     }
@@ -448,7 +448,7 @@ public class ProcessorTest {
         
         CommandPadProcessor processor=new CommandPadProcessor(context);
 
-       processor.process(board, Layer.LAYER_FRONT);
+       //processor.process(board, Layer.LAYER_FRONT);
         System.out.println(context.getOutput());
     }
         
@@ -485,7 +485,7 @@ public class ProcessorTest {
         GraphicsStateContext context=new GraphicsStateContext(apertureDictionary, commandDictionary, new StringBufferEx());
         CommandViaProcessor processor=new CommandViaProcessor(context);
 
-        processor.process(board, Layer.LAYER_BACK);
+        //processor.process(board, Layer.LAYER_BACK);
         System.out.println(context.getOutput());
     }
 }

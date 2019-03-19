@@ -176,6 +176,11 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
         menuItem.setActionCommand("load");
         menuItem.addActionListener(this);
         filemenu.add(menuItem);
+        
+        menuItem = new JMenuItem("Close");
+        menuItem.setActionCommand("deletecontainer");
+        menuItem.addActionListener(this);
+        filemenu.add(menuItem);        
         //***separator
         filemenu.addSeparator();
         menuItem = new JMenuItem("New Circuit");
@@ -786,6 +791,11 @@ public class myNetPCBPanel extends JPanel implements DialogFrame, CommandListene
             circuitComponent.Repaint();              
         }
         if(e.getActionCommand().equals("deletecontainer")){
+            if(circuitComponent.getModel().isChanged()){                        
+                if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(circuitComponent.getDialogFrame().getParentFrame(), "There are unsaved changes. Do you want to continue?", "Close", JOptionPane.YES_NO_OPTION)) {                                       
+                    return;
+                }                      
+            }                        
             circuitComponent.Clear();
             circuitComponent.fireContainerEvent(new ContainerEvent(null, ContainerEvent.DELETE_CONTAINER));            
             circuitComponent.componentResized(null);

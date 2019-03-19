@@ -13,6 +13,9 @@ public class GerberServiceContext {
     
     public GerberServiceContext() {
         parameters = new HashMap<Integer, Object>(5);
+        parameters.put(GerberServiceContext.FOOTPRINT_REFERENCE_ON_SILKSCREEN,false);
+        parameters.put(GerberServiceContext.FOOTPRINT_VALUE_ON_SILKSCREEN,false);
+        parameters.put(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN,false);        
     }
     
     public <T> T getParameter(Integer key, Class<T> clazz) {

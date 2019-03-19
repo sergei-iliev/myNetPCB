@@ -37,6 +37,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
@@ -555,6 +556,11 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().Repaint();
         }
         if(e.getActionCommand().equalsIgnoreCase("deleteunit")){  
+            if(getUnitComponent().getModel().isChanged(getUnitComponent().getModel().getUnit().getUUID())){                        
+                if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(getUnitComponent().getDialogFrame().getParentFrame(), "There are unsaved changes. Do you want to continue?", "Delete", JOptionPane.YES_NO_OPTION)) {                                       
+                    return;
+                }                      
+            }
             getUnitComponent().getModel().Delete(getUnitComponent().getModel().getUnit().getUUID());
             if (getUnitComponent().getModel().getUnits().size() > 0) {
                 getUnitComponent().getModel().setActiveUnit(0);
