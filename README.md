@@ -9,6 +9,7 @@ https://sourceforge.net/projects/mynetpcb/
 SVN Repository clone
 https://sourceforge.net/projects/mynetpcb/
 
+![myNetPCB](/screenshots/mynetpcb.png)
 ![Circuit](/screenshots/circuit-c.png)
 ![Board](/screenshots/board-c.png)
 
