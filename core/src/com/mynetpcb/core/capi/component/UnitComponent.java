@@ -212,7 +212,6 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
     
     public void resumeLine(Trackable line,String handleKey, int x, int y) {
-        getLineBendingProcessor().Initialize(line);
         line.Reset(x,y);
         //***do we need to reorder
         line.Reverse(x,y);

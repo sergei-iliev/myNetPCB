@@ -13,6 +13,7 @@ import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
 import com.mynetpcb.core.capi.shape.Shape;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 
 import java.util.LinkedHashMap;
@@ -91,7 +92,8 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
        chipMenu.put("Edit Footprint",item);        
        super.createChipMenuItems();     
        chipMenu.remove("EditSymbol");
-       chipMenu.remove("SelectPackege");
+       chipMenu.remove("Mirror");
+       chipMenu.remove("SelectPackage");
        chipMenu.remove("Separator");
        chipMenu.remove("ChildConnectors");
     }
@@ -118,10 +120,11 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
     
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Resume")) {
-            if(getTarget() instanceof PCBTrack){
+            if(getTarget() instanceof PCBTrack){                
+                        Point lastPoint=((PCBTrack)getTarget()).getEndPoint(x,y);
                         getUnitComponent().getDialogFrame().setButtonGroup(BoardComponent.TRACK_MODE);
                         getUnitComponent().setMode(BoardComponent.TRACK_MODE);
-                        getUnitComponent().resumeLine((Trackable)getTarget(),"track", x, y);
+                        getUnitComponent().resumeLine((Trackable)getTarget(),"track", lastPoint.x, lastPoint.y);
                         
             }else if(getTarget() instanceof PCBLine){
                 getUnitComponent().getDialogFrame().setButtonGroup(BoardComponent.LINE_MODE);

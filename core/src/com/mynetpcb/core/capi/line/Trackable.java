@@ -99,6 +99,12 @@ public interface Trackable<LinePoint> extends Drawable,Unitable<Unit>{
       * is this point overlaps with end wire point ->first or last 
       */   
     public boolean isEndPoint(int x,int y);
+    /*
+     * get end point in regard to first or last point of the wire
+     */
+    public default Point getEndPoint(int x,int y){
+        return null;
+    }
 /**
      *Verify that the line is being drawn
      * @return 

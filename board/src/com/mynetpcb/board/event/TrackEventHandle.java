@@ -25,13 +25,17 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
     }
 
     @Override
+    public void Attach() {        
+        super.Attach();
+        getComponent().getLineBendingProcessor().Initialize((Trackable)getTarget());
+    }
+    @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
         if(SwingUtilities.isRightMouseButton(e)){           
             getComponent().getPopupMenu().registerTrackPopup(e,getTarget());  
             return;
         }
         
-        getComponent().getLineBendingProcessor().Initialize((Trackable)getTarget());
         getComponent().getModel().getUnit().setSelected(false);
         getTarget().setSelected(true); 
         

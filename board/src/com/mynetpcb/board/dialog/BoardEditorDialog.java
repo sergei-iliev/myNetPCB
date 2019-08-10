@@ -263,7 +263,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         AddBoardButton.setToolTipText("Add board");
         AddBoardButton.setPreferredSize(new Dimension(35, 35));
         AddBoardButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
-        AddBoardButton.addMenu("Create new boards project","Create").addMenu("Add board to project","Add").addRootMenu("Export", "export")
+        AddBoardButton.addMenu("Create new boards project","Create").addMenu("Add board to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
             .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Gerber RS-274X/X2", "export.gerber").addSeparator().addMenu("Exit","exit");
  
         PrintButton.addActionListener(this);
@@ -273,6 +273,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         
         
         SaveButton.addActionListener(this);
+        SaveButton.setActionCommand("Save");
         SaveButton.setToolTipText("Save Module");
         SaveButton.setPreferredSize(new Dimension(35, 35));
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
@@ -505,17 +506,24 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             //***notify undo manager
             boardComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
             boardComponent.Repaint();
-        }        
-        if (e.getSource()==SaveButton) {
+        }   
+
+        if (e.getActionCommand().equals("Save")||e.getActionCommand().equals("SaveAs")) {
             if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
                 User.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
                 return;
             }
             //could be a freshly imported circuit with no library/project name
-            if (boardComponent.getModel().getLibraryName() == null||boardComponent.getModel().getLibraryName().length()==0) {
+            if(e.getActionCommand().equals("Save")){
+              if (boardComponent.getModel().getLibraryName() == null||boardComponent.getModel().getLibraryName().length()==0) {
+                 (new BoardSaveDialog(this, boardComponent,Configuration.get().isIsOnline())).build();
+                  return;
+              }
+            }else{
                 (new BoardSaveDialog(this, boardComponent,Configuration.get().isIsOnline())).build();
-                return;
+                return;                
             }
+            
             //save the file
             if (!Configuration.get().isIsApplet()) {
 

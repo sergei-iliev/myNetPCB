@@ -1,4 +1,4 @@
-package com.mynetpcb.board;
+package com.mynetpcb.board.line;
 
 import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
 import com.mynetpcb.core.capi.line.DefaultLineBendingProcessor;
@@ -10,10 +10,7 @@ public class BoardBendingProcessorFactory extends AbstractBendingProcessorFactor
 
     @Override
     public LineBendingProcessor resolve(String name, LineBendingProcessor current) {
-        if(current==null){            
-            return new  DefaultLineBendingProcessor();
-        } 
-        
+
         LineBendingProcessor next=null;
         
         if(name.equals("defaultbend")){            
@@ -24,9 +21,9 @@ public class BoardBendingProcessorFactory extends AbstractBendingProcessorFactor
                 next=new  LineSlopeBendingProcessor();                
         }else
                 throw new IllegalStateException("Unknown Symbol line processor name-> "+name);               
-        
-        next.Initialize(current.getLine());
-
+        if(current!=null){
+          next.Initialize(current.getLine());
+        }
         
         return next;
     }

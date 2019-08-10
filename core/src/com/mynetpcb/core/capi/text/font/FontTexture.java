@@ -192,7 +192,9 @@ public class FontTexture implements Texture {
         if(this.isEmpty()){
            return; 
         }
-        
+        if(size*scale.getScaleX()<7){
+           return;
+        }
         if (this.isSelected())
             g2.setColor(Color.GRAY);
         else

@@ -117,6 +117,26 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
          
     }
     @Override
+    public Point getEndPoint(int x, int y) {        
+        if (points.size() ==0) {
+            return null;
+        }
+        Point point=isBendingPointClicked(x, y);
+        if(point==null){
+            return null;
+        }
+        //***head point
+        if (points.get(0).x==point.x&&points.get(0).y==point.y) {
+            return points.get(0);
+        }
+        //***tail point
+        if ((points.get(points.size() - 1)).x==point.x&& (points.get(points.size() - 1)).y==point.y) {
+            return (points.get(points.size() - 1));
+        }
+        
+        return null;
+    }
+    @Override
     public boolean isEndPoint(int x, int y) {
         if (points.size() < 2) {
             return false;

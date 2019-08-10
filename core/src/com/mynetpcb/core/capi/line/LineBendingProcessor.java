@@ -13,25 +13,27 @@ import java.lang.ref.WeakReference;
  * @author Sergey Iliev
  */
 public abstract class LineBendingProcessor {   
-    public enum StartLineType{
-        START_SLOPE,
-        START_LINE;
-    }
     
     //***class does not own line   
     private WeakReference<Trackable> weakLineRef;
     
     protected boolean isGridAlignable;
     
+    protected boolean isNew;
     public void setGridAlignable(boolean isGridAlignable){
        this.isGridAlignable=isGridAlignable; 
     }
     
     public void Initialize(Trackable line){
+        
       if(this.weakLineRef!=null){
-            this.weakLineRef.clear();  
+          if(line==this.weakLineRef.get()){
+             return;
+          }
+          this.weakLineRef.clear();  
       }
       this.weakLineRef=new WeakReference<Trackable>(line);  
+      this.isNew=true; 
     }
     
     /*
@@ -47,7 +49,7 @@ public abstract class LineBendingProcessor {
      *Used for popup UI check box selected/uselected
      * @return
      */
-    public abstract String getActionCommand();
+    //public abstract String getActionCommand();
     
     public void Release(){
         //***end the line by puting floating into one point   
@@ -65,9 +67,9 @@ public abstract class LineBendingProcessor {
     /*
      * Wiring rule-> discard point if overlaps with last line point
      */
-    public boolean isOverlappedPoint(Trackable line,Point pointToAdd){
-        if(line.getLinePoints().size()>0){
-          Point lastPoint=(Point)line.getLinePoints().get(line.getLinePoints().size()-1); 
+    public boolean isOverlappedPoint(Point pointToAdd){
+        if(getLine().getLinePoints().size()>0){
+          Point lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1); 
             //***is this the same point as last one?   
           if(pointToAdd.equals(lastPoint))
             return true;    
@@ -78,13 +80,13 @@ public abstract class LineBendingProcessor {
      * Wiring rule -> if the point is on a line with previous,shift the previous the the new one,
      *                 without adding the point
      */
-    public boolean isPointOnLine(Trackable line,Point pointToAdd){
-         if(line.getLinePoints().size()>=2){
-              Point lastPoint=(Point)line.getLinePoints().get(line.getLinePoints().size()-1);  
-              Point lastlastPoint=(Point)line.getLinePoints().get(line.getLinePoints().size()-2); 
+    public boolean isPointOnLine(Point pointToAdd){
+         if(getLine().getLinePoints().size()>=2){
+              Point lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1);  
+              Point lastlastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-2); 
             //***check if point to add overlaps last last point
             if(lastlastPoint.equals(pointToAdd)){
-              line.deleteLastPoint();
+              getLine().deleteLastPoint();
               lastPoint.setLocation(pointToAdd);  
               return true;
             }

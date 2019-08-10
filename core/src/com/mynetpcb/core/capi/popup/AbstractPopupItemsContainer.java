@@ -83,14 +83,6 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
     public void registerLinePopup(MouseScaledEvent e, Shape target) {
         initializePopupMenu(e, target, lineMenu);
         Map<String,JMenuItem> submenu=(Map<String,JMenuItem>)lineMenu.get("Bending");
-        if(submenu!=null){
-            for(String key:submenu.keySet()){
-                JMenuItem item=submenu.get(key);
-                if(item!=null){
-                  item.setSelected(key.equals(getUnitComponent().getLineBendingProcessor().getActionCommand()));   
-                }                
-            }
-        }
         this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
     }
 
@@ -157,7 +149,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         item=new JMenuItem("Delete");item.setActionCommand("Delete");
         chipMenu.put("Delete",item);       
         item=new JMenuItem("Assign Package"); item.setActionCommand("AssignPackage");
-        chipMenu.put("SelectPackege",item);      
+        chipMenu.put("SelectPackage",item);      
         //***separator
         chipMenu.put("Separator",null); 
         //connectors

@@ -265,7 +265,8 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         if(this.fill==Fill.FILLED){
         //draw clearence background
          Collection<ClearanceTarget> targets=getOwningUnit().getShapes(ClearanceTarget.class);
-         for(ClearanceTarget target:targets){
+         this.prepareClippingRegion(viewportWindow, scale);
+         for(ClearanceTarget target:targets){              
               target.drawClearence(g2, viewportWindow, scale, this);
          }
         }
@@ -458,15 +459,23 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     public int getClearance() {
         return clearance;
     }
-    
+    /*
+     * Local cache
+     */
+    private Polygon clip=new Polygon();
+
     @Override
-    public Polygon getClippingRegion(ViewportWindow viewportWindow,AffineTransform scale) {
-        Polygon clip=new Polygon();
+    public void prepareClippingRegion(ViewportWindow viewportWindow,AffineTransform scale){
+        clip.reset();
         for(Point point:polygon.getLinePoints()){
             Point position=new Point();            
             scale.transform(point,position);            
             clip.addPoint(position.x-viewportWindow.x,position.y-viewportWindow.y);
         }
+    }
+    
+    @Override
+    public Polygon getClippingRegion() {
         return clip;
     }
     

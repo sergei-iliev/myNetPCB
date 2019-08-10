@@ -17,8 +17,10 @@ public interface ClearanceSource extends Clearanceaware,Net{
    /*
     * Clipping region to isolate clearance drawing into
     */
-   public Polygon getClippingRegion(ViewportWindow viewportWindow,AffineTransform scale);
+   public Polygon getClippingRegion();
 
+   public void prepareClippingRegion(ViewportWindow viewportWindow,AffineTransform scale);
+    
    public PadShape.PadConnection getPadConnection(); 
    
    public boolean isSelected();

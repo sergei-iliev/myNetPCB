@@ -28,7 +28,11 @@ public class LineEventHandle extends EventHandle<CircuitComponent,Shape>{
     @Override
     protected void Clear() {   
     }
-
+    @Override
+    public void Attach() {        
+        super.Attach();
+        getComponent().getLineBendingProcessor().Initialize((Trackable)getTarget());
+    }
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
         if(SwingUtilities.isRightMouseButton(e)){           
@@ -36,7 +40,6 @@ public class LineEventHandle extends EventHandle<CircuitComponent,Shape>{
             return;
         }
 
-        getComponent().getLineBendingProcessor().Initialize((Trackable)getTarget());
         getComponent().getModel().getUnit().setSelected(false);
         getTarget().setSelected(true); 
         

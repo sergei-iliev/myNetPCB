@@ -318,7 +318,7 @@ public class Pad extends PadShape {
     private boolean validateClearance(ClearanceSource source){
         //is different layer and SMD -> no clearance
         if ((source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {
-            if(this.getType()==PadShape.Type.SMD)
+            //if(this.getType()==PadShape.Type.SMD)
                return false; //not on the same layer
         }
         //2. is same net 

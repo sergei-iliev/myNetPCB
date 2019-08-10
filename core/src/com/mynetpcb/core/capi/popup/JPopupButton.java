@@ -41,9 +41,9 @@ public class JPopupButton extends JButton{
     public JPopupButton addSubMenu(String root,String subname,String subcommand){
         JMenu rootItem=null;
         for(int i=0;i<this.popup.getComponentCount();i++){
-//            if(this.popup.getComponent(i) instanceof JPopupMenu.Separator){
-//                continue;
-//            }
+            if(this.popup.getComponent(i) instanceof JPopupMenu.Separator){
+                continue;
+            }
             JMenuItem item=(JMenuItem)this.popup.getComponent(i);
             if(item.getActionCommand().equals(root)){
               rootItem=(JMenu)item;  

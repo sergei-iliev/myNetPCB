@@ -33,6 +33,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -103,6 +104,10 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.setResizable(true);
         Init();
+        //set size
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setPreferredSize(new Dimension((int)(2*screenSize.getWidth()/3),(int)(2*screenSize.getHeight()/3)));
+        
         LoadFootprints(footprintContainer); 
     }
     private void Init() {
@@ -204,7 +209,7 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         AddFootprintButton.setToolTipText("Add footprint");
         AddFootprintButton.setPreferredSize(new Dimension(35, 35));
         AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
-        AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Exit","exit"); 
+        AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addMenu("Exit","exit"); 
         
         PrintButton.addActionListener(this);
         PrintButton.setToolTipText("Print footprint");
@@ -408,12 +413,23 @@ exit();
             return;
         }
 
-        if (e.getSource()==SaveButton) {
+        if (e.getActionCommand().equals("Save")||e.getActionCommand().equals("SaveAs")) {
             if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
                User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
                return;
             }
-             new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline()).build();
+            //could be a freshly imported circuit with no library/project name
+            if(e.getActionCommand().equals("Save")){
+              if (footprintComponent.getModel().getLibraryName() == null||footprintComponent.getModel().getLibraryName().length()==0) {
+                  new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline()).build();
+                  return;
+              }
+            }else{
+                new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline()).build();
+                return;                
+            }            
+            
+             
         }
         if (e.getSource()==ScaleIn) {
             footprintComponent.ZoomOut(new Point((int)footprintComponent.getVisibleRect().getCenterX(),

@@ -16,8 +16,8 @@ public class TopLineBendingProcessor extends LineBendingProcessor{
             getLine().Reset(point);
        }
        boolean result=false;
-       if(!isOverlappedPoint(getLine(),point)){
-           if(!isPointOnLine(getLine(),point)) {
+       if(!isOverlappedPoint(point)){
+           if(!isPointOnLine(point)) {
                Point midP,endP;
               
                if(this.isGridAlignable){
@@ -28,10 +28,10 @@ public class TopLineBendingProcessor extends LineBendingProcessor{
                  endP=new Point(getLine().getFloatingEndPoint().x,getLine().getFloatingEndPoint().y);
                  
                }
-               if(isOverlappedPoint(getLine(), midP)){
+               if(isOverlappedPoint( midP)){
                  getLine().addPoint(endP);
                  result=true;  
-               }else if(!isPointOnLine(getLine(),midP)){
+               }else if(!isPointOnLine(midP)){
                  getLine().addPoint(midP);
                  result=true;
                } 

@@ -7,8 +7,8 @@ public class DefaultLineBendingProcessor extends LineBendingProcessor {
     @Override    
     public boolean addLinePoint(Point point) {      
        boolean result=false;
-       if(!isOverlappedPoint(getLine(),point)){
-           if(!isPointOnLine(getLine(),point)){
+       if(!isOverlappedPoint(point)){
+           if(!isPointOnLine(point)){
                getLine().addPoint(point);   
                result=true;
            }               
@@ -22,9 +22,5 @@ public class DefaultLineBendingProcessor extends LineBendingProcessor {
       getLine().getFloatingMidPoint().setLocation(x,y);
     }
 
-    @Override
-    public String getActionCommand() {
-        return "defaultbend";
-    }
 }
 

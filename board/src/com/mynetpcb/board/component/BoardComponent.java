@@ -1,6 +1,6 @@
 package com.mynetpcb.board.component;
 
-import com.mynetpcb.board.BoardBendingProcessorFactory;
+import com.mynetpcb.board.line.BoardBendingProcessorFactory;
 import com.mynetpcb.board.container.BoardContainer;
 import com.mynetpcb.board.container.BoardContainerFactory;
 import com.mynetpcb.board.dialog.BoardLoadDialog;
@@ -217,7 +217,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                 } else if ((shape =
                             getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true)) !=
                            null) {
-                    if (BoardMgr.getInstance().isBlockSelected(getModel().getUnit()) && shape.isSelected()) {
+                    if ((BoardMgr.getInstance().isBlockSelected(getModel().getUnit()) && shape.isSelected())|| (event.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
                         getEventMgr().setEventHandle("block", shape);
                     } else if (!(shape instanceof PCBLabel) && (shape instanceof Textable) &&
                                (((Textable) shape).getChipText().getClickedTexture(scaledEvent.getX(),

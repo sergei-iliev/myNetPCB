@@ -173,7 +173,7 @@ public class PCBTrack extends TrackShape implements PCBShape,Sublineable{
         g2.setStroke(new BasicStroke((float)lineThickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal())); 
         g2.setColor(Color.BLACK);        
          
-        g2.setClip(source.getClippingRegion(viewportWindow,scale));
+        g2.setClip(source.getClippingRegion());
         g2.draw(temporal);         
         g2.setClip(null);
         

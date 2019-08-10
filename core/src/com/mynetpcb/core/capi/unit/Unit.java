@@ -398,29 +398,6 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
 
     public abstract void Parse(Node node) throws XPathExpressionException, ParserConfigurationException;
 
-
-    protected List<ClickableOrderItem> buildClickableOrderItem(int x, int y, boolean isTextIncluded) {
-        List<ClickableOrderItem> orderElements = new ArrayList<ClickableOrderItem>();
-        int index = 0;
-        for (Shape shape : getShapes()) {
-            if (isTextIncluded && shape instanceof Textable) {                   
-                if(((Textable)shape).getChipText().isClicked(x, y)){ 
-                  orderElements.add(new ClickableOrderItem(index, 0,shape.getCopper().getLayerMaskID()));
-                }
-            }
-            if(!shape.isClicked(x, y)){
-               index++;
-               continue; 
-            }
-            //***give selected a higher priority
-            orderElements.add(new ClickableOrderItem(index,
-                                                     (shape.isSelected() && shape.getOrderWeight() > 1 ? 2 : shape.getOrderWeight()),shape.getCopper().getLayerMaskID()));
-
-            index++;
-        }
-
-        return orderElements;
-    }
     /*
      * is junshion click
      */
@@ -434,57 +411,151 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             return Optional.empty();
         }                
     }
-    public S getClickedShape(int x, int y, boolean isTextIncluded) {
-        List<ClickableOrderItem> orderedElements = buildClickableOrderItem(x,y,isTextIncluded);
-        Collections.sort(orderedElements, new Comparator<ClickableOrderItem>() {
-                public int compare(ClickableOrderItem o1, ClickableOrderItem o2) {
-                    if(Unit.this instanceof CompositeLayerable){
-                       //both on same side
-                        Layer.Side s1=Layer.Side.resolve(o1.getLayerMaskID());
-                        Layer.Side s2=Layer.Side.resolve(o2.getLayerMaskID());
-                        Layer.Side active=((CompositeLayerable)Unit.this).getActiveSide();
-                        //active layer has presedense
-                        if(s1!=s2){
-                            if(s1==active){
-                               return -1;
-                            }else{
-                               return 1;
-                            }
+    protected List<Shape> buildClickedShapesList(int x, int y, boolean isTextIncluded) {
+        List<Shape> orderElements = new ArrayList<>();
+                for (Shape shape : this.<Shape>getShapes()) {
+                    if (isTextIncluded && shape instanceof Textable) {                   
+                        if(((Textable)shape).getChipText().isClicked(x, y)){ 
+                          orderElements.add(0,shape);
+                          continue;
                         }
                     }
+                    if(shape.isClicked(x, y)){
+                       orderElements.add(shape);
+                       continue; 
+                    }                    
                     
+                }        
+                return orderElements;
+        
+    }
+    
+    private Comparator<Shape> clickedShapesComparator=new Comparator<Shape>(){
+        @Override
+        public int compare(Shape o1, Shape o2) {
+                    if(o1.getOwningUnit() instanceof CompositeLayerable){
+                         //both on same side
+                          Layer.Side s1=Layer.Side.resolve(o1.getCopper().getLayerMaskID());
+                          Layer.Side s2=Layer.Side.resolve(o2.getCopper().getLayerMaskID());
+                          Layer.Side active=((CompositeLayerable)o1.getOwningUnit()).getActiveSide();
+                          //active layer has presedense
+                          if(s1!=s2){
+                             if(s1==active){
+                                  return -1;
+                              }else{
+                                  return 1;
+                              }
+                           }
+                    }
+                                
                     if ((o1.getOrderWeight() - o2.getOrderWeight()) == 0)
                         return 0;
                     if ((o1.getOrderWeight() - o2.getOrderWeight()) > 0)
                         return 1;
                     else
                         return -1;
-                }
-            });
-
-        for (ClickableOrderItem orderedElement : orderedElements) {
-            S shape = shapes.get(orderedElement.getElementIndex());
-            if(!isShapeVisibleOnLayers(shape)){             
-                continue;              
-            }
-            //***could be textable
-            if ((shape instanceof Textable) && (orderedElement.getOrderWeight() == 0)) {
-                Texture texture = ((Textable)shape).getChipText().getClickedTexture(x, y);
-                if (texture != null) {
-                    return shape;
-                }
-            } else {
-                /*
-                buildClickableOrderItem garantees that shape is clicked
-                */
-                //if (shape.isClicked(x, y)) {
-                    return shape;
-                //}
+        }
+    };
+    
+    public S getClickedShape(int x, int y, boolean isTextIncluded) {
+        List<Shape> clickedShapes = buildClickedShapesList(x,y,isTextIncluded);
+        if(clickedShapes.size()==0){
+            return null;
+        }
+        //Text?
+        if (clickedShapes.get(0) instanceof Textable) {   
+            if(isShapeVisibleOnLayers(clickedShapes.get(0))){ 
+             //if(((Textable)clickedShapes.get(0)).getChipText().isClicked(x, y)){              
+              return (S)clickedShapes.get(0);
+             //}
             }
         }
 
-        return null;
+        Collections.sort(clickedShapes,clickedShapesComparator);
+        for(Shape shape:clickedShapes){
+            if(!isShapeVisibleOnLayers(shape)){             
+               continue;              
+            }
+            
+            return (S)shape;
+        }
+        return null;  
     }
+//    protected List<ClickableOrderItem> buildClickableOrderItem(int x, int y, boolean isTextIncluded) {
+//        List<ClickableOrderItem> orderElements = new ArrayList<ClickableOrderItem>();
+//        int index = 0;
+//        for (Shape shape : getShapes()) {
+//            if (isTextIncluded && shape instanceof Textable) {                   
+//                if(((Textable)shape).getChipText().isClicked(x, y)){ 
+//                  orderElements.add(new ClickableOrderItem(index, 0,shape.getCopper().getLayerMaskID()));
+//                }
+//            }
+//            if(!shape.isClicked(x, y)){
+//               index++;
+//               continue; 
+//            }
+//            //***give selected a higher priority
+//            orderElements.add(new ClickableOrderItem(index,
+//                                                     (shape.isSelected() && shape.getOrderWeight() > 1 ? 2 : shape.getOrderWeight()),shape.getCopper().getLayerMaskID()));
+//
+//            index++;
+//        }
+//
+//        return orderElements;
+//    }
+      
+    
+//    public S getClickedShape(int x, int y, boolean isTextIncluded) {
+//        List<ClickableOrderItem> orderedElements = buildClickableOrderItem(x,y,isTextIncluded);
+//        Collections.sort(orderedElements, new Comparator<ClickableOrderItem>() {
+//                public int compare(ClickableOrderItem o1, ClickableOrderItem o2) {
+//                    if(Unit.this instanceof CompositeLayerable){
+//                       //both on same side
+//                        Layer.Side s1=Layer.Side.resolve(o1.getLayerMaskID());
+//                        Layer.Side s2=Layer.Side.resolve(o2.getLayerMaskID());
+//                        Layer.Side active=((CompositeLayerable)Unit.this).getActiveSide();
+//                        //active layer has presedense
+//                        if(s1!=s2){
+//                            if(s1==active){
+//                               return -1;
+//                            }else{
+//                               return 1;
+//                            }
+//                        }
+//                    }
+//                    
+//                    if ((o1.getOrderWeight() - o2.getOrderWeight()) == 0)
+//                        return 0;
+//                    if ((o1.getOrderWeight() - o2.getOrderWeight()) > 0)
+//                        return 1;
+//                    else
+//                        return -1;
+//                }
+//            });
+//
+//        for (ClickableOrderItem orderedElement : orderedElements) {
+//            S shape = shapes.get(orderedElement.getElementIndex());
+//            if(!isShapeVisibleOnLayers(shape)){             
+//                continue;              
+//            }
+//            //***could be textable
+//            if ((shape instanceof Textable) && (orderedElement.getOrderWeight() == 0)) {
+//                Texture texture = ((Textable)shape).getChipText().getClickedTexture(x, y);
+//                if (texture != null) {
+//                    return shape;
+//                }
+//            } else {
+//                /*
+//                buildClickableOrderItem garantees that shape is clicked
+//                */
+//                //if (shape.isClicked(x, y)) {
+//                    return shape;
+//                //}
+//            }
+//        }
+//
+//        return null;
+//    }
 
     public int getWidth() {
         return width;

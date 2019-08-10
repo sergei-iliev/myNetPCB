@@ -12,8 +12,8 @@ public class RightLineBendingProcessor extends LineBendingProcessor {
              getLine().Reset(point);
         }     
         boolean result=false;
-        if(!isOverlappedPoint(getLine(),point)){
-            if(!isPointOnLine(getLine(),point)) {
+        if(!isOverlappedPoint(point)){
+            if(!isPointOnLine(point)) {
                 Point midP,endP;
                 
                 if(this.isGridAlignable){
@@ -25,10 +25,10 @@ public class RightLineBendingProcessor extends LineBendingProcessor {
                   
                 }
 
-                if(isOverlappedPoint(getLine(), midP)){
+                if(isOverlappedPoint(midP)){
                   getLine().addPoint(endP);
                   result=true;  
-                }else if(!isPointOnLine(getLine(),midP)){
+                }else if(!isPointOnLine(midP)){
                   getLine().addPoint(midP);
                   result=true;
                 } 
@@ -54,8 +54,5 @@ public class RightLineBendingProcessor extends LineBendingProcessor {
                     }                                         
     }
 
-    @Override
-    public String getActionCommand() {
-        return "rightbend";
-    }
+
 }
