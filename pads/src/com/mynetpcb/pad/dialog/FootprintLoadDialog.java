@@ -167,7 +167,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
                     CommandExecutor.INSTANCE.addTask("ReadRepositoryLocal", reader);
                 } else {
                     Command reader =
-                        new ReadConnector(FootprintLoadDialog.this, new RestParameterMap.ParameterBuilder("/footprints").build(),
+                        new ReadConnector(FootprintLoadDialog.this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").build(),
                                           JComboBox.class);
                     CommandExecutor.INSTANCE.addTask("ReadProjects", reader);
                 }
@@ -194,7 +194,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
                 CommandExecutor.INSTANCE.addTask("ReadCategoriesLocal", reader);
             } else {
                 Command reader =
-                    new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI((String)libraryCombo.getSelectedItem()).build(),
+                    new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI((String)libraryCombo.getSelectedItem()).addURI("categories").build(),
                                       footprintTree.getClass());
                 CommandExecutor.INSTANCE.addTask("ReadFootprints", reader);
             }
@@ -224,7 +224,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
                     CommandExecutor.INSTANCE.addTask("ReadUnitLocal", reader);
                 } else {                
                     Command reader =
-                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI(attachedItem.getLibrary()).addURI((node.getLevel()==1?"null":attachedItem.getCategory())).addURI(attachedItem.getFileName()).build(),
+                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI(attachedItem.getLibrary()).addURI("categories").addURI((node.getLevel()==1?"null":attachedItem.getCategory())).addURI(attachedItem.getFileName()).build(),
                                           Footprint.class);
                     CommandExecutor.INSTANCE.addTask("ReadFootprint", reader);
                 }
@@ -416,7 +416,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
                
                 CommandExecutor.INSTANCE.addTask("ReadUnitsLocal", reader);
             } else {   
-                Command reader =new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI(((AttachedItem)categoryNode.getUserObject()).getLibrary()).addURI(((AttachedItem)categoryNode.getUserObject()).getCategory()).build(),
+                Command reader =new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI(((AttachedItem)categoryNode.getUserObject()).getLibrary()).addURI("categories").addURI(((AttachedItem)categoryNode.getUserObject()).getCategory()).build(),
                                 ReadUnitsLocal.class);
                 CommandExecutor.INSTANCE.addTask("ReadFootprints", reader);
             }          

@@ -6,7 +6,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
+import com.mynetpcb.core.capi.text.glyph.GlyphTextureExt;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
@@ -24,11 +24,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class GlyphLabel extends Shape implements Label,Externalizable{
-    protected GlyphTexture texture;
+    protected GlyphTextureExt texture;
     
     public GlyphLabel(String text,int thickness,int layermaskId) {
         super(0, 0, 0, 0, thickness, layermaskId);
-        texture=new GlyphTexture(text,"",0,0,thickness);
+        texture=new GlyphTextureExt(text,"",0,0,thickness);
         texture.setSize(Grid.MM_TO_COORD(2));
     }
     
@@ -50,16 +50,16 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
      return texture.getBoundingShape();
     }
     @Override
-    public GlyphTexture getTexture(){
+    public GlyphTextureExt getTexture(){
        return texture;    
     }
     @Override
     public void Mirror(Point A,Point B) {
-        texture.Mirror(A,B);
+        //texture.mirror(A,B);
     }
     @Override
     public void Rotate(AffineTransform rotation) {
-      texture.Rotate(rotation);
+      //texture.Rotate(rotation);
     }
     @Override
     public void Move(int xoffset, int yoffset) {
@@ -99,6 +99,14 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     public void setSelected(boolean selected) {
         this.texture.setSelected(selected);
     }
+    public void setCopper(Layer.Copper copper){
+        Layer.Side side=Layer.Side.resolve(copper.getLayerMaskID());
+        if(side==Layer.Side.BOTTOM){
+           //mirror            
+            texture.Mirror(texture.getAnchorPoint(), new Point(texture.getAnchorPoint().x,texture.getAnchorPoint().y+10));
+        }
+        this.copper=copper;
+    }
     @Override
     public boolean isSelected() {
         return this.texture.isSelected();
@@ -133,11 +141,11 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     }
 
     public static class Memento extends AbstractMemento<Footprint,GlyphLabel>{
-        GlyphTexture.Memento memento;
+        GlyphTextureExt.Memento memento;
         
         public Memento(MementoType mementoType){
           super(mementoType);  
-          memento=new GlyphTexture.Memento();
+          memento=new GlyphTextureExt.Memento();
         }
         @Override
         public void loadStateTo(GlyphLabel shape) {
