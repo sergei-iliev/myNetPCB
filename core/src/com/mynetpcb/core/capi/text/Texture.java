@@ -53,9 +53,9 @@ public interface Texture extends Drawable,Printaware,Cloneable{
     
     public void setSize(int size);
     
-    public boolean isTextLayoutVisible() ;
+    public default boolean isTextLayoutVisible(){ return false;};
 
-    public void setTextLayoutVisible(boolean visible);
+    public default void setTextLayoutVisible(boolean visible){};
     
     public Texture clone() throws CloneNotSupportedException;
     

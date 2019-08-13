@@ -61,7 +61,7 @@ public class Glyph implements Externalizable,Cloneable{
         this.resize();
     }
     //protected void 
-    private void resize(){
+    public void resize(){
         minx=Integer.MAX_VALUE;
         miny=Integer.MAX_VALUE;
         maxx=Integer.MIN_VALUE;
@@ -98,31 +98,40 @@ public class Glyph implements Externalizable,Cloneable{
         return character;
     }
     
-    public int getGlyphWidth(){
+    public int getWidth(){
        return maxx-minx; 
     }
     
-    public int getGlyphHeight(){
+    public int getHeight(){
         return maxy-miny;  
     }
 
     public void setSize(double size){
           this.resetGlyph(size); 
     }
-    public void Rotate(AffineTransform rotation) {
+    public void rotate(AffineTransform rotation) {
         for(int i=0;i<points.length;i++){
             rotation.transform(points[i], points[i]); 
         }
         this.resize();
     }
+    
+    
     /*
      * True mirroring - like viewing bottom from above
      */
-    public void Invert(Point A,Point B){
+    public void mirror(Point A,Point B){
         for(int i=0;i<points.length;i++){
             points[i].setLocation(Utilities.mirrorPoint(A,B, points[i]));
         }
         this.resize();        
+    }
+    public void move(int xoffset,int yoffset){
+        for(int i=0;i<points.length;i++){
+            points[i].x+=xoffset;
+            points[i].y+=yoffset;
+        }                    
+        this.resize();
     }
     private void resetGlyph(double size){
       Glyph glyph = GlyphManager.INSTANCE.getGlyph(this.character);    

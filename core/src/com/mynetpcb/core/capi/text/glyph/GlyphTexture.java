@@ -115,14 +115,14 @@ public class GlyphTexture implements Texture {
         switch(alignment.getOrientation()){
         case HORIZONTAL:
             for (Glyph glyph : glyphs) {
-                this.width += glyph.getGlyphWidth() + glyph.getDelta();
-                this.height = Math.max(glyph.getGlyphHeight() + glyph.miny, this.height);
+                this.width += glyph.getWidth() + glyph.getDelta();
+                this.height = Math.max(glyph.getHeight() + glyph.miny, this.height);
             }        
             break;
         case VERTICAL:
             for (Glyph glyph : glyphs) {
-                this.height += glyph.getGlyphHeight() + glyph.getDelta();
-                this.width = Math.max(glyph.getGlyphWidth()+glyph.minx, this.width);
+                this.height += glyph.getHeight() + glyph.getDelta();
+                this.width = Math.max(glyph.getWidth()+glyph.minx, this.width);
             }            
             break;
         }
@@ -146,7 +146,7 @@ public class GlyphTexture implements Texture {
         if(this.alignment.getOrientation() == Text.Orientation.VERTICAL){
             AffineTransform rotation = AffineTransform.getRotateInstance(-Math.PI / 2, 0, 0);
             for (Glyph glyph : glyphs) {
-                glyph.Rotate(rotation);
+                glyph.rotate(rotation);
             }
         }
         //reset box
@@ -164,7 +164,7 @@ public class GlyphTexture implements Texture {
         if(this.alignment.getOrientation() == Text.Orientation.VERTICAL){
             AffineTransform rotation = AffineTransform.getRotateInstance(-Math.PI / 2, 0, 0);
             for (Glyph glyph : glyphs) {
-                glyph.Rotate(rotation);
+                glyph.rotate(rotation);
             }
         }
         //reset box
@@ -277,7 +277,7 @@ public class GlyphTexture implements Texture {
             //rotate
             AffineTransform rotate = AffineTransform.getRotateInstance(-Math.PI / 2, 0, 0);
                  for (Glyph glyph : glyphs) {
-                        glyph.Rotate(rotate);
+                        glyph.rotate(rotate);
                  }
               break;
         case TOP:
@@ -290,7 +290,7 @@ public class GlyphTexture implements Texture {
             //rotate
             rotate = AffineTransform.getRotateInstance(-Math.PI / 2, 0, 0);
             for (Glyph glyph : glyphs) {
-                   glyph.Rotate(rotate);
+                   glyph.rotate(rotate);
             }            
             break;
         }
@@ -375,7 +375,7 @@ public class GlyphTexture implements Texture {
                                     glyph.points[j + 1].y + anchorPoint.y - r.height);
                     }
                 }
-                xoffset += glyph.getGlyphWidth() + glyph.getDelta();
+                xoffset += glyph.getWidth() + glyph.getDelta();
             }    
             
              
@@ -412,7 +412,7 @@ public class GlyphTexture implements Texture {
                                     glyph.points[j + 1].y + anchorPoint.y - r.height);
                     }
                 }
-                xoffset += glyph.getGlyphWidth() + glyph.getDelta();
+                xoffset += glyph.getWidth() + glyph.getDelta();
             }    
         
              break;
@@ -448,7 +448,7 @@ public class GlyphTexture implements Texture {
                                     glyph.points[j + 1].y + anchorPoint.y-yoffset);
                     }
                 }
-                yoffset += glyph.getGlyphHeight() + glyph.getDelta();
+                yoffset += glyph.getHeight() + glyph.getDelta();
             }
             break;
         case TOP:
@@ -483,7 +483,7 @@ public class GlyphTexture implements Texture {
                                     glyph.points[j + 1].y + anchorPoint.y-yoffset+r.height);
                    }
                 }
-                yoffset += glyph.getGlyphHeight() + glyph.getDelta();
+                yoffset += glyph.getHeight() + glyph.getDelta();
             }            
             break;
         }
@@ -536,7 +536,7 @@ public class GlyphTexture implements Texture {
                                     glyph.points[j + 1].y + anchorPoint.y - r.height);
                     
                 }
-                xoffset += glyph.getGlyphWidth() + glyph.getDelta();
+                xoffset += glyph.getWidth() + glyph.getDelta();
             }    
             
              
@@ -557,7 +557,7 @@ public class GlyphTexture implements Texture {
                                     glyph.points[j + 1].y + anchorPoint.y - r.height);
                     
                 }
-                xoffset += glyph.getGlyphWidth() + glyph.getDelta();
+                xoffset += glyph.getWidth() + glyph.getDelta();
             }    
         
              break;
@@ -577,7 +577,7 @@ public class GlyphTexture implements Texture {
                                     glyph.points[j + 1].y + anchorPoint.y-yoffset);
                     
                 }
-                yoffset += glyph.getGlyphHeight() + glyph.getDelta();
+                yoffset += glyph.getHeight() + glyph.getDelta();
             }
             break;
         case TOP:
@@ -596,7 +596,7 @@ public class GlyphTexture implements Texture {
                                     glyph.points[j + 1].y + anchorPoint.y-yoffset+r.height);
                    }
                 
-                yoffset += glyph.getGlyphHeight() + glyph.getDelta();
+                yoffset += glyph.getHeight() + glyph.getDelta();
             }            
             break;
         }
