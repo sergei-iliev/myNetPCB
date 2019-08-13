@@ -11,7 +11,7 @@ import com.mynetpcb.core.capi.Ownerable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
+import com.mynetpcb.core.capi.text.glyph.GlyphTextureExt;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.Layer;
@@ -182,12 +182,12 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget,Own
     }
 
     public static class Memento extends AbstractMemento<Board,PCBLabel>{
-        GlyphTexture.Memento memento;
+        GlyphTextureExt.Memento memento;
         private int clearance;
         
         public Memento(MementoType mementoType){
           super(mementoType);  
-            memento=new GlyphTexture.Memento();
+            memento=new GlyphTextureExt.Memento();
         }
         @Override
         public void loadStateTo(PCBLabel shape) {

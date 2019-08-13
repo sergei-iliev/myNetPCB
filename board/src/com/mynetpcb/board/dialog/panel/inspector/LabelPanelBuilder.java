@@ -69,15 +69,15 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
                 clearanceField=new JTextField(); clearanceField.addKeyListener(this); panel.add(clearanceField,BorderLayout.CENTER);
                 layoutPanel.add(panel);  
                 
-                panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("Orientation"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                textOrientationCombo=new JComboBox(Text.Orientation.values());textOrientationCombo.addActionListener(this);  panel.add(textOrientationCombo,BorderLayout.CENTER);
-                layoutPanel.add(panel);
-                
-                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Text Alignment"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                textAlignmentCombo=new JComboBox();textAlignmentCombo.addActionListener(this);  panel.add(textAlignmentCombo,BorderLayout.CENTER);
-                layoutPanel.add(panel);
+//                panel=new JPanel(); panel.setLayout(new BorderLayout());
+//                label=new JLabel("Orientation"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+//                textOrientationCombo=new JComboBox(Text.Orientation.values());textOrientationCombo.addActionListener(this);  panel.add(textOrientationCombo,BorderLayout.CENTER);
+//                layoutPanel.add(panel);
+//                
+//                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+//                label=new JLabel("Text Alignment"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+//                textAlignmentCombo=new JComboBox();textAlignmentCombo.addActionListener(this);  panel.add(textAlignmentCombo,BorderLayout.CENTER);
+//                layoutPanel.add(panel);
                 
         //****Owner        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
@@ -90,14 +90,14 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void updateUI() {                   
         PCBLabel label=(PCBLabel)getTarget();        
-        setSelectedIndex(textOrientationCombo,(label.getTexture().getAlignment().getOrientation().ordinal()));    
+        //setSelectedIndex(textOrientationCombo,(label.getTexture().getAlignment().getOrientation().ordinal()));    
         textField.setText(label.getTexture().getText());
         leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x ));
         topField.setText(toUnitY(label.getTexture().getAnchorPoint().y));
         heightField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getSize())));
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getThickness())));
         clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(label.getClearance())));
-        validateAlignmentComboText(textAlignmentCombo,label.getTexture());            
+        //validateAlignmentComboText(textAlignmentCombo,label.getTexture());            
         setSelectedItem(layerCombo, label.getCopper());
         this.fillParentCombo(PCBShape.class);
     }
@@ -105,13 +105,13 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void actionPerformed(ActionEvent e) {
         GlyphLabel label=(GlyphLabel)getTarget(); 
-        if(e.getSource()==textOrientationCombo){ 
-            label.getTexture().setOrientation((Text.Orientation)textOrientationCombo.getSelectedItem());
-            validateAlignmentComboText(textAlignmentCombo,label.getTexture());
-        } 
-        if(e.getSource()==textAlignmentCombo){;  
-            label.getTexture().setAlignment(Text.Alignment.valueOf((String)textAlignmentCombo.getSelectedItem()));
-        }
+//        if(e.getSource()==textOrientationCombo){ 
+//            label.getTexture().setOrientation((Text.Orientation)textOrientationCombo.getSelectedItem());
+//            validateAlignmentComboText(textAlignmentCombo,label.getTexture());
+//        } 
+//        if(e.getSource()==textAlignmentCombo){;  
+//            label.getTexture().setAlignment(Text.Alignment.valueOf((String)textAlignmentCombo.getSelectedItem()));
+//        }
         if(e.getSource()==layerCombo){
            getTarget().setCopper((Layer.Copper)layerCombo.getSelectedItem());
         }
