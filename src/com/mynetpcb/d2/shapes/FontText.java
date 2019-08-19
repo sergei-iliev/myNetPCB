@@ -2,6 +2,7 @@ package com.mynetpcb.d2.shapes;
 
 import com.mynetpcb.d2.Utilities;
 
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -13,7 +14,7 @@ import java.awt.image.BufferedImage;
 
 import org.w3c.dom.css.Rect;
 
-public class FontText extends Shape{
+public class FontText extends Shape {
     private Point anchorPoint;
     private String text;
     private int fontSize;
@@ -28,7 +29,7 @@ public class FontText extends Shape{
         this.metrics.calculateMetrics(text, fontSize,rotation);
     }
 
-    public void rotate(double angle,Point center){
+    public void rotate(double angle, Point center){
             this.anchorPoint.rotate((angle-this.rotation),center==null?this.anchorPoint:center);
             this.rotation=angle;
             this.metrics.calculateMetrics(this.text,this.fontSize,this.rotation);
@@ -76,7 +77,12 @@ public class FontText extends Shape{
         g2.draw(r);        
         g2.setTransform(saved);
     }
-    
+
+    @Override
+    public void rotate(double angle) {
+        
+    }
+
     private static class TextMetrics{
          boolean updated;
          //int fontSize;

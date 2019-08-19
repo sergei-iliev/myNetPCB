@@ -9,4 +9,6 @@ public abstract class Shape{
    public abstract  void paint(Graphics2D g2); 
    
    public abstract void rotate(double angle,Point center);
+   
+   public abstract void rotate(double angle);
 }

@@ -17,7 +17,15 @@ public class Point extends Shape{
     public Point clone() {
         return new Point(x,y);           
     }
+//    public void translate(vec) {       
+//           this.x += vec.x;
+//           this.y += vec.y;
+//        }
     
+    public void scale(double alpha){
+           this.x *=alpha;
+           this.y *=alpha;                          
+    }
     public void rotate(double angle,Point center){
         double a=-1*Utilities.radians(angle);                       
         
@@ -26,6 +34,21 @@ public class Point extends Shape{
         
         this.x=x_rot;
         this.y=y_rot;        
+    }
+
+    public void rotate(double angle){
+        double a=-1*Utilities.radians(angle);                       
+        
+        double x_rot = (this.x ) * Math.cos(a) - (this.y ) * Math.sin(a);
+        double y_rot = (this.x ) * Math.sin(a) + (this.y ) * Math.cos(a);
+        
+        this.x=x_rot;
+        this.y=y_rot;        
+    }
+    
+    public void set(double x,double y){
+        this.x=x;
+        this.y=y;
     }
     public void setX(double x) {
         this.x = x;
@@ -42,7 +65,20 @@ public class Point extends Shape{
     public double getY() {
         return y;
     }
-
+    public double distanceTo(Shape shape) {
+        if (shape instanceof Point) {
+                double dx = ((Point)shape).x - this.x;
+                double dy = ((Point)shape).y - this.y;
+                return Math.sqrt(dx*dx + dy*dy);
+        }       
+        if (shape instanceof Circle) {
+                double dx = ((Circle)shape).getCenter().x - this.x;
+                double dy = ((Circle)shape).getCenter().y - this.y;
+                return Math.sqrt(dx*dx + dy*dy);                   
+        }
+        throw new IllegalStateException("Unknown shape type - "+shape.getClass());
+    }
+    
     @Override
     public void paint(Graphics2D g2) {
         Utilities.drawCrosshair(g2,10,this); 
