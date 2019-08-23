@@ -1,7 +1,5 @@
 package com.mynetpcb.d2.shapes;
 
-import com.mynetpcb.d2.Utilities;
-
 
 import java.awt.Color;
 import java.awt.Font;
@@ -46,22 +44,22 @@ public class FontText extends Shape {
     
     
     public Rectangle2D  getBoundingRect(){
-        return new Rectangle2D.Double(this.anchorPoint.getX()-(this.metrics.width/2), this.anchorPoint.getY()-(this.metrics.height/2),this.metrics.width,this.metrics.height);
+        return new Rectangle2D.Double(this.anchorPoint.x-(this.metrics.width/2), this.anchorPoint.y-(this.metrics.height/2),this.metrics.width,this.metrics.height);
     }
     
     @Override
-    public void paint(Graphics2D g2) {
+    public void paint(Graphics2D g2,boolean fill) {
         g2.setColor(Color.BLACK);
         Font font = new Font(Font.MONOSPACED,Font.BOLD,fontSize);
         g2.setFont(font); 
         Rectangle2D r=this.getBoundingRect();
         
         
-        this.anchorPoint.paint(g2);
+        this.anchorPoint.paint(g2,fill);
         
         AffineTransform saved = g2.getTransform();
         AffineTransform rotate =
-            AffineTransform.getRotateInstance(Utilities.radians(360-this.rotation), this.anchorPoint.getX(),this.anchorPoint.getY());
+            AffineTransform.getRotateInstance(Utils.radians(360-this.rotation), this.anchorPoint.x,this.anchorPoint.y);
         g2.transform(rotate);
  
         // Determine the X coordinate for the text
@@ -99,7 +97,7 @@ public class FontText extends Shape {
          public void calculateMetrics(String text,int fontSize,double rotation){
                  AffineTransform saved = g2.getTransform();
                  AffineTransform rotate =
-                           AffineTransform.getRotateInstance(Utilities.radians(360-rotation), 0,0);
+                           AffineTransform.getRotateInstance(Utils.radians(360-rotation), 0,0);
                  
                  g2.transform(rotate);
              

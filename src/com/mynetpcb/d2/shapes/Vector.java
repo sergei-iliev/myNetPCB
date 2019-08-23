@@ -1,10 +1,9 @@
 package com.mynetpcb.d2.shapes;
 
-import com.mynetpcb.d2.Utilities;
 
 public class Vector{
-    private double x;
-    private double y;
+    public double x;
+    public double y;
     
     public Vector(double x,double y) {
        this.x=x;
@@ -12,7 +11,7 @@ public class Vector{
     }
     
     public Vector(Point a1,Point a2) {
-       this((a2.getX() - a1.getX()),(a2.getY() - a1.getY()));       
+       this((a2.x - a1.x),(a2.y - a1.y));       
     }
     
     public Vector clone() {
@@ -46,7 +45,7 @@ public class Vector{
         double angle = Math.atan2(this.y, this.x);
         if (angle<0) angle = 2*Math.PI + angle;
         
-        return Utilities.degrees(angle);
+        return Utils.degrees(angle);
     }
     
     public void invert() {
@@ -67,8 +66,8 @@ public class Vector{
     public void rotate(double angle) {
         Point point = new Point(this.x, this.y);
         point.rotate(angle);
-        this.x=point.getX();
-        this.y=point.getY();
+        this.x=point.x;
+        this.y=point.y;
     }        
     /**
      *rotate 90 degrees counter clockwise         
