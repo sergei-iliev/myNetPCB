@@ -3,7 +3,9 @@ package com.mynetpcb.d2;
 import com.mynetpcb.d2.shapes.Arc;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.FontText;
+import com.mynetpcb.d2.shapes.Hexagon;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Shape;
 
 import java.awt.BorderLayout;
@@ -16,6 +18,11 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 
 import java.awt.Graphics2D;
+
+import java.awt.MouseInfo;
+
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,6 +92,25 @@ public class d2 extends  JFrame {
            Arc arc1=arc.clone();
            arc1.rotate(10);
            d2Component.add(arc1);
+           
+           Polygon polygon=new Polygon();
+           polygon.points.add(new Point(200,100));
+           polygon.points.add(new Point(250,100));
+           polygon.points.add(new Point(250,50));           
+           d2Component.add(polygon);
+           
+           Polygon polygon1=polygon.clone();
+           polygon1.rotate(10);
+           d2Component.add(polygon1);
+           
+           Hexagon hexagon=new Hexagon(new Point(300,100),70);
+           hexagon.rotate(30,hexagon.center);
+           d2Component.add(hexagon);
+           Hexagon hexagon1=hexagon.clone();
+           hexagon1.rotate(10);
+           d2Component.add(hexagon1);
+           
+           
        }
        public static void main(String[] args) {
           d2 ex = new d2();
@@ -95,7 +121,37 @@ public class d2 extends  JFrame {
            Collection<Shape> shapes=new ArrayList<>();
            
            D2Component(){
-            
+               addMouseListener(new MouseListener(){
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    shapes.forEach(s->{
+                        if(s.contains(new Point(e.getPoint().x,e.getPoint().y)))
+                        System.out.println(s);        
+                    });
+                
+                }
+
+                @Override
+                public void mousePressed(MouseEvent mouseEvent) {
+                    // TODO Implement this method
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent mouseEvent) {
+                    // TODO Implement this method
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent mouseEvent) {
+                    // TODO Implement this method
+                }
+
+                @Override
+                public void mouseExited(MouseEvent mouseEvent) {
+                    // TODO Implement this method
+                }
+            });
            }
            void add(Shape shape){
                shapes.add(shape);
