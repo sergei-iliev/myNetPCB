@@ -1,5 +1,7 @@
 package com.mynetpcb.d2;
 
+import com.mynetpcb.d2.shapes.Arc;
+import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.FontText;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Shape;
@@ -64,11 +66,25 @@ public class d2 extends  JFrame {
            angle.addChangeListener((e) -> {t1.rotate(angle.getValue(),null);
                                               d2Component.repaint(); }); 
            
-           Point p1=new Point(100,100);                    
-           d2Component.add(p1);
-           Point p2=p1.clone();
-           p2.rotate(90, new Point(10,100));
-           d2Component.add(p2);
+           //Point p1=new Point(100,100);                    
+           //d2Component.add(p1);
+           //Point p2=p1.clone();
+           //p2.rotate(90, new Point(10,100));
+           //d2Component.add(p2);
+           
+           Circle circle=new Circle(new Point(100,100),20);
+           d2Component.add(circle);
+           
+           Circle copy=circle.clone();
+           copy.rotate(10,new Point(0,0));
+           d2Component.add(copy);
+           
+           Arc arc=new Arc(new Point(150,100),20,0,80);
+           d2Component.add(arc);
+           
+           Arc arc1=arc.clone();
+           arc1.rotate(10);
+           d2Component.add(arc1);
        }
        public static void main(String[] args) {
           d2 ex = new d2();
@@ -92,13 +108,10 @@ public class d2 extends  JFrame {
             g2.fillRect(0, 0, this.getWidth(), this.getHeight());
  
             for(Shape shape:shapes){
-                shape.paint(g2);
+                shape.paint(g2,false);
             }
             
         }
-//           @Override
-//           public Dimension getPreferredSize( ) {
-//               return new Dimension(100, 100);
-//             }           
+          
        }
 }
