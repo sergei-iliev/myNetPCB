@@ -4,6 +4,8 @@ import com.mynetpcb.d2.shapes.Arc;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.FontText;
 import com.mynetpcb.d2.shapes.Hexagon;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Shape;
@@ -21,6 +23,7 @@ import java.awt.Graphics2D;
 
 import java.awt.MouseInfo;
 
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -110,7 +113,17 @@ public class d2 extends  JFrame {
            hexagon1.rotate(10);
            d2Component.add(hexagon1);
            
+           Line line=new Line(new Point(380,100),new Point(430,100));        
+           d2Component.add(line);
+           Line line1=line.clone();
+           line1.rotate(2);
+           d2Component.add(line1);
            
+           Obround obround=new Obround(new Point(500,100),50,20);        
+           d2Component.add(obround);
+           Obround obround1=obround.clone();
+           obround1.rotate(10,new Point(0,0));
+           d2Component.add(obround1);
        }
        public static void main(String[] args) {
           d2 ex = new d2();
@@ -159,7 +172,9 @@ public class d2 extends  JFrame {
            @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2=(Graphics2D)g;
-                        
+            
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
             g2.setColor(Color.WHITE);
             g2.fillRect(0, 0, this.getWidth(), this.getHeight());
  
