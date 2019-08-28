@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<font name="default">
+    <symbol char=" " delta="18">
+        <line>0,0,0,0</line>
+    </symbol>
+    <symbol char="!" delta="12">
+        <line>0,35,0,40</line>
+        <line>0,0,0,25</line>
+    </symbol>
+    <symbol char='"' delta="12">
+        <line>0,0,0,10</line>
+        <line>10,0,10,10</line>
+    </symbol>
+    <symbol char="#" delta="12">
+        <line>0,25,20,25</line>
+        <line>0,15,20,15</line>
+        <line>15,10,15,30</line>
+        <line>5,10,5,30</line>
+    </symbol>
+    <symbol char="$" delta="12">
+        <line>15,5,20,10</line>
+        <line>5,5,15,5</line>
+        <line>0,10,5,5</line>
+        <line>0,10,0,15</line>
+        <line>0,15,5,20</line>
+        <line>5,20,15,20</line>
+        <line>15,20,20,25</line>
+        <line>20,25,20,30</line>
+        <line>15,35,20,30</line>
+        <line>5,35,15,35</line>
+        <line>0,30,5,35</line>
+        <line>10,0,10,40</line>
+    </symbol>
+    <symbol char="%" delta="12">
+        <line>0,5,0,10</line>
+        <line>0,5,5,0</line>
+        <line>5,0,10,0</line>
+        <line>10,0,15,5</line>
+        <line>15,5,15,10</line>
+        <line>10,15,15,10</line>
+        <line>5,15,10,15</line>
+        <line>0,10,5,15</line>
+        <line>0,40,40,0</line>
+        <line>35,40,40,35</line>
+        <line>40,30,40,35</line>
+        <line>35,25,40,30</line>
+        <line>30,25,35,25</line>
+        <line>25,30,30,25</line>
+        <line>25,30,25,35</line>
+        <line>25,35,30,40</line>
+        <line>30,40,35,40</line>
+    </symbol>
+    <symbol char="&amp;" delta="12">
+        <line>0,35,5,40</line>
+        <line>0,5,0,15</line>
+        <line>0,5,5,0</line>
+        <line>0,25,15,10</line>
+        <line>5,40,10,40</line>
+        <line>10,40,20,30</line>
+        <line>0,15,25,40</line>
+        <line>5,0,10,0</line>
+        <line>10,0,15,5</line>
+        <line>15,5,15,10</line>
+        <line>0,25,0,35</line>
+    </symbol>
+    <symbol char="'" delta="12">
+        <line>0,10,10,0</line>
+    </symbol>
+    <symbol char="(" delta="12">
+        <line>0,35,5,40</line>
+        <line>0,5,5,0</line>
+        <line>0,5,0,35</line>
+    </symbol>
+    <symbol char=")" delta="12">
+        <line>0,0,5,5</line>
+        <line>5,5,5,35</line>
+        <line>0,40,5,35</line>
+    </symbol>
+    <symbol char="*" delta="12">
+        <line>0,10,20,30</line>
+        <line>0,30,20,10</line>
+        <line>0,20,20,20</line>
+        <line>10,10,10,30</line>
+    </symbol>
+    <symbol char="+" delta="12">
+        <line>0,20,20,20</line>
+        <line>10,10,10,30</line>
+    </symbol>
+    <symbol char="," delta="12">
+        <line>0,50,10,40</line>
+    </symbol>
+    <symbol char="-" delta="12">
+        <line>0,20,20,20</line>
+    </symbol>
+    <symbol char="." delta="12">
+        <line>0,40,5,40</line>
+    </symbol>
+    <symbol char="/" delta="12">
+        <line>0,35,30,5</line>
+    </symbol>
+    <symbol char="0" delta="12">
+        <line>0,35,5,40</line>
+        <line>0,5,0,35</line>
+        <line>0,5,5,0</line>
+        <line>5,0,15,0</line>
+        <line>15,0,20,5</line>
+        <line>20,5,20,35</line>
+        <line>15,40,20,35</line>
+        <line>5,40,15,40</line>
+        <line>0,30,20,10</line>
+    </symbol>
+    <symbol char="1" delta="12">
+        <line>5,40,15,40</line>
+        <line>10,0,10,40</line>
+        <line>0,10,10,0</line>
+    </symbol>
+    <symbol char="2" delta="12">
+        <line>0,5,5,0</line>
+        <line>5,0,20,0</line>
+        <line>20,0,25,5</line>
+        <line>25,5,25,15</line>
+        <line>0,40,25,15</line>
+        <line>0,40,25,40</line>
+    </symbol>
+    <symbol char="3" delta="12">
+        <line>0,5,5,0</line>        
+        <line>5,0,15,0</line>
+        <line>15,0,20,5</line>
+        <line>20,5,20,15</line> 
+        <line>15,20,20,15</line>
+        <line>15,20,20,25</line> 
+        <line>20,25,20,35</line> 
+        <line>15,40,20,35</line>
+        <line>5,40,15,40</line>
+        <line>0,35,5,40</line>        
+        <line>5,20,15,20</line> 
+    </symbol>
+    <symbol char="4" delta="12">
+        <line>0,20,20,0</line>
+        <line>0,20,25,20</line>
+        <line>20,0,20,40</line>
+    </symbol>
+    <symbol char="5" delta="12">
+        <line>0,0,20,0</line>
+        <line>0,0,0,20</line>
+        <line>0,20,5,15</line>
+        <line>5,15,15,15</line>
+        <line>15,15,20,20</line>
+        <line>20,20,20,35</line>
+        <line>15,40,20,35</line>
+        <line>5,40,15,40</line>
+        <line>0,35,5,40</line>
+    </symbol>
+     <symbol char="6" delta="12">
+	<line>15,0,20,5</line>
+	<line>5,0,15,0</line>
+	<line>0,5,5,0</line>
+	<line>0,5,0,35</line>
+	<line>0,35,5,40</line>
+	<line>15,20,20,25</line>
+	<line>0,20,15,20</line>
+	<line>5,40,15,40</line>
+	<line>15,40,20,35</line>
+	<line>20,25,20,35</line>
+</symbol>
+     <symbol char="7" delta="12">
+	<line>0,40,25,15</line>
+	<line>25,0,25,15</line>
+	<line>0,0,25,0</line>
+    </symbol>
+     <symbol char="8" delta="12">
+	<line>0,35,5,40</line>
+	<line>0,25,0,35</line>
+	<line>0,25,5,20</line>
+	<line>5,20,15,20</line>
+	<line>15,20,20,25</line>
+	<line>20,25,20,35</line>
+	<line>15,40,20,35</line>
+	<line>5,40,15,40</line>
+	<line>0,15,5,20</line>
+	<line>0,5,0,15</line>
+	<line>0,5,5,0</line>
+	<line>5,0,15,0</line>
+	<line>15,0,20,5</line>
+	<line>20,5,20,15</line>
+	<line>15,20,20,15</line>
+</symbol>
+<symbol char="9" delta="12">
+	<line>0,40,20,20</line>
+	<line>20,5,20,20</line>
+	<line>15,0,20,5</line>
+	<line>5,0,15,0</line>
+	<line>0,5,5,0</line>
+	<line>0,5,0,15</line>
+	<line>0,15,5,20</line>
+	<line>5,20,20,20</line>
+</symbol>
+<symbol char=":" delta="12">
+	<line>0,15,5,15</line>
+	<line>0,25,5,25</line>
+</symbol>
+<symbol char=";" delta="12">
+	<line>0,40,10,30</line>
+	<line>10,15,10,20</line>
+</symbol>
+<symbol char="&lt;" delta="12">
+	<line>0,20,10,10</line>
+	<line>0,20,10,30</line>
+</symbol>
+<symbol char="=" delta="12">
+	<line>0,15,20,15</line>
+	<line>0,25,20,25</line>
+</symbol>
+<symbol char="&gt;" delta="12">
+	<line>0,10,10,20</line>
+	<line>0,30,10,20</line>
+</symbol>
+
+<symbol char="?" delta="12">
+	<line>10,20,10,25</line>
+	<line>10,35,10,40</line>
+	<line>0,5,0,10</line>
+	<line>0,5,5,0</line>
+	<line>5,0,15,0</line>
+	<line>15,0,20,5</line>
+	<line>20,5,20,10</line>
+	<line>10,20,20,10</line>
+</symbol>
+<symbol char="A" delta="12">
+	<line>0,5,0,40</line>
+	<line>0,5,5,0</line>
+	<line>5,0,20,0</line>
+	<line>20,0,25,5</line>
+	<line>25,5,25,40</line>
+	<line>0,20,25,20</line>
+</symbol>
+<symbol char="B" delta="12">
+	<line>0,40,20,40</line>
+	<line>20,40,25,35</line>
+	<line>25,25,25,35</line>
+	<line>20,20,25,25</line>
+	<line>5,20,20,20</line>
+	<line>5,0,5,40</line>
+	<line>0,0,20,0</line>
+	<line>20,0,25,5</line>
+	<line>25,5,25,15</line>
+	<line>20,20,25,15</line>
+</symbol>
+<symbol char="C" delta="12">
+	<line>5,40,20,40</line>
+	<line>0,35,5,40</line>
+	<line>0,5,0,35</line>
+	<line>0,5,5,0</line>
+	<line>5,0,20,0</line>
+</symbol>
+<symbol char="D" delta="12">
+	<line>5,0,5,40</line>
+	<line>20,0,25,5</line>
+	<line>25,5,25,35</line>
+	<line>20,40,25,35</line>
+	<line>0,40,20,40</line>
+	<line>0,0,20,0</line>
+</symbol>
+<symbol char="E" delta="12">
+	<line>0,20,15,20</line>
+	<line>0,40,20,40</line>
+	<line>0,0,0,40</line>
+	<line>0,0,20,0</line>
+</symbol>
+<symbol char="F" delta="12">
+	<line>0,0,0,40</line>
+	<line>0,0,20,0</line>
+	<line>0,20,15,20</line>
+</symbol>
+<symbol char="G" delta="12">
+	<line>20,0,25,5</line>
+	<line>5,0,20,0</line>
+	<line>0,5,5,0</line>
+	<line>0,5,0,35</line>
+	<line>0,35,5,40</line>
+	<line>5,40,20,40</line>
+	<line>20,40,25,35</line>
+	<line>25,25,25,35</line>
+	<line>20,20,25,25</line>
+	<line>10,20,20,20</line>
+</symbol>
+<symbol char="H" delta="12">
+	<line>0,0,0,40</line>
+	<line>25,0,25,40</line>
+	<line>0,20,25,20</line>
+</symbol>
+<symbol char="I" delta="12">
+	<line>0,0,10,0</line>
+	<line>5,0,5,40</line>
+	<line>0,40,10,40</line>
+</symbol>
+<symbol char="J" delta="12">
+	<line>0,0,15,0</line>
+	<line>15,0,15,35</line>
+	<line>10,40,15,35</line>
+	<line>5,40,10,40</line>
+	<line>0,35,5,40</line>
+</symbol>
+<symbol char="K" delta="12">
+	<line>0,0,0,40</line>
+	<line>0,20,20,0</line>
+	<line>0,20,20,40</line>
+</symbol>
+<symbol char="L" delta="12">
+	<line>0,0,0,40</line>
+	<line>0,40,20,40</line>
+</symbol>
+<symbol char="M" delta="12">
+	<line>0,0,0,40</line>
+	<line>0,0,15,15</line>
+	<line>15,15,30,0</line>
+	<line>30,0,30,40</line>
+</symbol>
+<symbol char="N" delta="12">
+	<line>0,0,0,40</line>
+	<line>0,0,0,5</line>
+	<line>0,5,25,30</line>
+	<line>25,0,25,40</line>
+</symbol>        
+<symbol char="O" delta="12">
+	<line>0,5,0,35</line>
+	<line>0,5,5,0</line>
+	<line>5,0,15,0</line>
+	<line>15,0,20,5</line>
+	<line>20,5,20,35</line>
+	<line>15,40,20,35</line>
+	<line>5,40,15,40</line>
+	<line>0,35,5,40</line>
+</symbol>
+<symbol char="P" delta="12">
+	<line>5,0,5,40</line>
+	<line>0,0,20,0</line>
+	<line>20,0,25,5</line>
+	<line>25,5,25,15</line>
+	<line>20,20,25,15</line>
+	<line>5,20,20,20</line>
+</symbol>
+<symbol char="Q" delta="12">
+	<line>0,5,0,35</line>
+	<line>0,5,5,0</line>
+	<line>5,0,15,0</line>
+	<line>15,0,20,5</line>
+	<line>20,5,20,35</line>
+	<line>15,40,20,35</line>
+	<line>5,40,15,40</line>
+	<line>0,35,5,40</line>
+	<line>10,30,20,40</line>
+</symbol>
+<symbol char="R" delta="12">
+	<line>0,0,20,0</line>
+	<line>20,0,25,5</line>
+	<line>25,5,25,15</line>
+	<line>20,20,25,15</line>
+	<line>5,20,20,20</line>
+	<line>5,0,5,40</line>
+	<line>5,20,25,40</line>
+</symbol>
+<symbol char="S" delta="12">
+	<line>20,0,25,5</line>
+	<line>5,0,20,0</line>
+	<line>0,5,5,0</line>
+	<line>0,5,0,15</line>
+	<line>0,15,5,20</line>
+	<line>5,20,20,20</line>
+	<line>20,20,25,25</line>
+	<line>25,25,25,35</line>
+	<line>20,40,25,35</line>
+	<line>5,40,20,40</line>
+	<line>0,35,5,40</line>
+</symbol>
+<symbol char="T" delta="12">
+	<line>0,0,20,0</line>
+	<line>10,0,10,40</line>
+</symbol>
+<symbol char="U" delta="12">
+	<line>0,0,0,35</line>
+	<line>0,35,5,40</line>
+	<line>5,40,15,40</line>
+	<line>15,40,20,35</line>
+	<line>20,0,20,35</line>
+</symbol>
+<symbol char="V" delta="12">
+	<line>0,0,0,30</line>
+	<line>0,30,10,40</line>
+	<line>10,40,20,30</line>
+	<line>20,0,20,30</line>
+</symbol>
+<symbol char="W" delta="12">
+	<line>0,0,0,40</line>
+	<line>0,40,15,25</line>
+	<line>15,25,30,40</line>
+	<line>30,0,30,40</line>
+</symbol>
+<symbol char="X" delta="12">
+	<line>0,0,0,5</line>
+	<line>0,5,25,30</line>
+	<line>25,30,25,40</line>
+	<line>0,30,0,40</line>
+	<line>0,30,25,5</line>
+	<line>25,0,25,5</line>
+</symbol>
+<symbol char="Y" delta="12">
+	<line>0,0,0,5</line>
+	<line>0,5,10,15</line>
+	<line>10,15,20,5</line>
+	<line>20,0,20,5</line>
+	<line>10,15,10,40</line>
+</symbol>
+<symbol char="Z" delta="12">
+	<line>0,0,25,0</line>
+	<line>25,0,25,5</line>
+	<line>0,30,25,5</line>
+	<line>0,30,0,40</line>
+	<line>0,40,25,40</line>
+</symbol>
+<symbol char="[" delta="12">
+	<line>0,0,5,0</line>
+	<line>0,0,0,40</line>
+	<line>0,40,5,40</line>
+</symbol>
+<symbol char="\" delta="12">
+	<line>0,5,30,35</line>
+</symbol>
+<symbol char="]" delta="12">
+	<line>0,0,5,0</line>
+	<line>5,0,5,40</line>
+	<line>0,40,5,40</line>
+</symbol>
+<symbol char="^" delta="12">
+	<line>0,5,5,0</line>
+	<line>5,0,10,5</line>
+</symbol>
+<symbol char="_" delta="12">
+	<line>0,40,20,40</line>
+</symbol>
+<symbol char="a" delta="12">
+	<line>15,20,20,25</line>
+	<line>5,20,15,20</line>
+	<line>0,25,5,20</line>
+	<line>0,25,0,35</line>
+	<line>0,35,5,40</line>
+	<line>20,20,20,35</line>
+	<line>20,35,25,40</line>
+	<line>5,40,15,40</line>
+	<line>15,40,20,35</line>
+</symbol>
+<symbol char="b" delta="12">
+	<line>0,0,0,40</line>
+	<line>0,35,5,40</line>
+	<line>5,40,15,40</line>
+	<line>15,40,20,35</line>
+	<line>20,25,20,35</line>
+	<line>15,20,20,25</line>
+	<line>5,20,15,20</line>
+	<line>0,25,5,20</line>
+</symbol>
+<symbol char="c" delta="12">
+	<line>5,20,20,20</line>
+	<line>0,25,5,20</line>
+	<line>0,25,0,35</line>
+	<line>0,35,5,40</line>
+	<line>5,40,20,40</line>
+</symbol>
+<symbol char="d" delta="12">
+	<line>20,0,20,40</line>
+	<line>15,40,20,35</line>
+	<line>5,40,15,40</line>
+	<line>0,35,5,40</line>
+	<line>0,25,0,35</line>
+	<line>0,25,5,20</line>
+	<line>5,20,15,20</line>
+	<line>15,20,20,25</line>
+</symbol>
+<symbol char="e" delta="12">
+	<line>5,40,20,40</line>
+	<line>0,35,5,40</line>
+	<line>0,25,0,35</line>
+	<line>0,25,5,20</line>
+	<line>5,20,15,20</line>
+	<line>15,20,20,25</line>
+	<line>0,30,20,30</line>
+	<line>20,30,20,25</line>
+</symbol>
+<symbol char="f" delta="12">
+	<line>5,5,5,40</line>
+	<line>5,5,10,0</line>
+	<line>10,0,15,0</line>
+	<line>0,20,10,20</line>
+</symbol>
+<symbol char="g" delta="12">
+	<line>15,20,20,25</line>
+	<line>5,20,15,20</line>
+	<line>0,25,5,20</line>
+	<line>0,25,0,35</line>
+	<line>0,35,5,40</line>
+	<line>5,40,15,40</line>
+	<line>15,40,20,35</line>
+	<line>0,50,5,55</line>
+	<line>5,55,15,55</line>
+	<line>15,55,20,50</line>
+	<line>20,20,20,50</line>
+</symbol>
+<symbol char="h" delta="12">
+	<line>0,0,0,40</line>
+	<line>0,25,5,20</line>
+	<line>5,20,15,20</line>
+	<line>15,20,20,25</line>
+	<line>20,25,20,40</line>
+</symbol>
+<symbol char="i" delta="12">
+	<line>0,10,0,15</line>
+	<line>0,25,0,40</line>
+</symbol>
+<symbol char="j" delta="12">
+	<line>5,10,5,15</line>
+	<line>5,25,5,50</line>
+	<line>0,55,5,50</line>
+</symbol>
+<symbol char="k" delta="12">
+	<line>0,0,0,40</line>
+	<line>0,25,15,40</line>
+	<line>0,25,10,15</line>
+</symbol>
+<symbol char="l" delta="12">
+	<line>0,0,0,35</line>
+	<line>0,35,5,40</line>
+</symbol>
+<symbol char="m" delta="12">
+	<line>5,25,5,40</line>
+	<line>5,25,10,20</line>
+	<line>10,20,15,20</line>
+	<line>15,20,20,25</line>
+	<line>20,25,20,40</line>
+	<line>20,25,25,20</line>
+	<line>25,20,30,20</line>
+	<line>30,20,35,25</line>
+	<line>35,25,35,40</line>
+	<line>0,20,5,25</line>
+</symbol>
+<symbol char="n" delta="12">
+	<line>5,25,5,40</line>
+	<line>5,25,10,20</line>
+	<line>10,20,15,20</line>
+	<line>15,20,20,25</line>
+	<line>20,25,20,40</line>
+	<line>0,20,5,25</line>
+</symbol>
+<symbol char="o" delta="12">
+	<line>0,25,0,35</line>
+	<line>0,25,5,20</line>
+	<line>5,20,15,20</line>
+	<line>15,20,20,25</line>
+	<line>20,25,20,35</line>
+	<line>15,40,20,35</line>
+	<line>5,40,15,40</line>
+	<line>0,35,5,40</line>
+</symbol>
+<symbol char="p" delta="12">
+	<line>5,25,5,55</line>
+	<line>0,20,5,25</line>
+	<line>5,25,10,20</line>
+	<line>10,20,20,20</line>
+	<line>20,20,25,25</line>
+	<line>25,25,25,35</line>
+	<line>20,40,25,35</line>
+	<line>10,40,20,40</line>
+	<line>5,35,10,40</line>
+</symbol>
+<symbol char="q" delta="12">
+	<line>20,25,20,55</line>
+	<line>15,20,20,25</line>
+	<line>5,20,15,20</line>
+	<line>0,25,5,20</line>
+	<line>0,25,0,35</line>
+	<line>0,35,5,40</line>
+	<line>5,40,15,40</line>
+	<line>15,40,20,35</line>
+</symbol>
+<symbol char="r" delta="12">
+	<line>5,25,5,40</line>
+	<line>5,25,10,20</line>
+	<line>10,20,20,20</line>
+	<line>0,20,5,25</line>
+</symbol>
+<symbol char="s" delta="12">
+	<line>5,40,20,40</line>
+	<line>20,40,25,35</line>
+	<line>20,30,25,35</line>
+	<line>5,30,20,30</line>
+	<line>0,25,5,30</line>
+	<line>0,25,5,20</line>
+	<line>5,20,20,20</line>
+	<line>20,20,25,25</line>
+	<line>0,35,5,40</line>
+</symbol>
+<symbol char="t" delta="12">
+	<line>5,0,5,35</line>
+	<line>5,35,10,40</line>
+	<line>0,15,10,15</line>
+</symbol>
+<symbol char="u" delta="12">
+	<line>0,20,0,35</line>
+	<line>0,35,5,40</line>
+	<line>5,40,15,40</line>
+	<line>15,40,20,35</line>
+	<line>20,20,20,35</line>
+</symbol>
+<symbol char="v" delta="12">
+	<line>0,20,0,30</line>
+	<line>0,30,10,40</line>
+	<line>10,40,20,30</line>
+	<line>20,20,20,30</line>
+</symbol>
+<symbol char="w" delta="12">
+	<line>0,20,0,35</line>
+	<line>0,35,5,40</line>
+	<line>5,40,10,40</line>
+	<line>10,40,15,35</line>
+	<line>15,20,15,35</line>
+	<line>15,35,20,40</line>
+	<line>20,40,25,40</line>
+	<line>25,40,30,35</line>
+	<line>30,20,30,35</line>
+</symbol>
+<symbol char="x" delta="12">
+	<line>0,20,20,40</line>
+	<line>0,40,20,20</line>
+</symbol>
+<symbol char="y" delta="12">
+	<line>0,20,0,35</line>
+	<line>0,35,5,40</line>
+	<line>20,20,20,50</line>
+	<line>15,55,20,50</line>
+	<line>5,55,15,55</line>
+	<line>0,50,5,55</line>
+	<line>5,40,15,40</line>
+	<line>15,40,20,35</line>
+</symbol>
+<symbol char="z" delta="12">
+	<line>0,20,20,20</line>
+	<line>0,40,20,20</line>
+	<line>0,40,20,40</line>
+</symbol>
+<symbol char="{" delta="12">
+	<line>5,5,10,0</line>
+	<line>5,5,5,15</line>
+	<line>0,20,5,15</line>
+	<line>0,20,5,25</line>
+	<line>5,25,5,35</line>
+	<line>5,35,10,40</line>
+</symbol>
+<symbol char="|" delta="12">
+	<line>0,0,0,40</line>
+</symbol>
+<symbol char="}" delta="12">
+	<line>0,0,5,5</line>
+	<line>5,5,5,15</line>
+	<line>5,15,10,20</line>
+	<line>5,25,10,20</line>
+	<line>5,25,5,35</line>
+	<line>0,40,5,35</line>
+</symbol>
+<symbol char="~" delta="12">
+	<line>0,25,5,20</line>
+	<line>5,20,10,20</line>
+	<line>10,20,15,25</line>
+	<line>15,25,20,25</line>
+	<line>20,25,25,20</line>
+</symbol>
+<symbol char="@" delta="12">
+	<line>0,0,0,30</line>
+	<line>0,30,10,40</line>
+	<line>10,40,40,40</line>
+	<line>50,25,50,0</line>
+	<line>50,0,40,-10</line>
+	<line>40,-10,10,-10</line>
+	<line>10,-10,0,0</line>
+	<line>15,10,15,20</line>
+	<line>15,20,20,25</line>
+	<line>20,25,30,25</line>
+	<line>30,25,35,20</line>
+	<line>35,20,40,25</line>
+	<line>35,20,35,5</line>
+	<line>35,10,30,5</line>
+	<line>20,5,30,5</line>
+	<line>20,5,15,10</line>
+	<line>40,25,50,25</line>
+</symbol>
+</font>
