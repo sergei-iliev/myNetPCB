@@ -56,23 +56,23 @@ public class Arc  extends Shape{
     public Point[] getVertices() {
         return new Point[]{getStart(),getCenter(),getMiddle()};
     }
-//    public boolean contains(Point pt){
-//            //is outside of the circle
-//            if (Utils.GE(this.pc.distanceTo(pt), this.r)){
-//             return false;
-//            }    
-//            let l=new d2.Line(this.pc,this.middle);
-//            let projectionPoint=l.projectionPoint(pt);
-//            
-//            let middle=this.middle;
-//            let mid=new d2.Point((this.start.x+this.end.x)/2,(this.start.y+this.end.y)/2);  
-//            
-//            let dist1=this.middle.distanceTo(mid);
-//            let dist2=this.middle.distanceTo(projectionPoint);
-//            
-//            return d2.utils.GE(dist1,dist2);
-//
-//    }
+    public boolean contains(Point pt){
+            //is outside of the circle
+            if (Utils.GE(this.pc.distanceTo(pt), this.r)){
+             return false;
+            }    
+            Line l=new Line(this.pc,this.getMiddle());
+            Point projectionPoint=l.projectionPoint(pt);
+            
+       
+            Point mid=new Point((this.getStart().x+this.getEnd().x)/2,(this.getStart().y+this.getEnd().y)/2);  
+            
+            double dist1=this.getMiddle().distanceTo(mid);
+            double dist2=this.getMiddle().distanceTo(projectionPoint);
+            
+            return Utils.GE(dist1,dist2);
+
+    }
     public void move(double offsetX,double offsetY){
       this.pc.move(offsetX,offsetY);        
     }
