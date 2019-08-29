@@ -23,6 +23,8 @@ public class Rectangle extends Polygon {
         });  
         return copy;
     }
+
+
     public void reset(double width,double height){
 //            let pc=this.box.center;                 
 //            this.points=[];

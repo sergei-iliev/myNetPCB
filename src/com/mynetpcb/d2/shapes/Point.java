@@ -49,7 +49,10 @@ public class Point extends Shape{
         this.x=x;
         this.y=y;
     }
-    
+    public void set(Point pt){
+        this.x=pt.x;
+        this.y=pt.y;
+    }    
     public void move(double offsetX,double offsetY){
         this.x+=offsetX;
         this.y+=offsetY;        

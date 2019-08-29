@@ -23,15 +23,16 @@ public class Polygon extends Shape{
         return copy;
     }
     
-    
-    public boolean contains(Point pt){
-      double x=0;
-      double y=0;
 
-      
-       x=pt.x;
-       y=pt.y;
-           
+    public boolean contains(Point pt){    
+       return this.contains(pt.x,pt.y);                     
+    }
+    
+    public boolean contains(double xx,double yy){
+      double x=xx;
+      double y=yy;
+
+          
       boolean inside = false;
       // use some raycasting to test hits
       // https://github.com/substack/point-in-polygon/blob/master/index.js
