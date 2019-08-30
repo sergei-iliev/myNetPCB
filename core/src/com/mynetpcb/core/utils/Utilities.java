@@ -1,7 +1,6 @@
 package com.mynetpcb.core.utils;
 
 
-import com.mynetpcb.core.board.ClearanceSource;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
@@ -441,12 +440,12 @@ public final class Utilities {
             }
         }
     }
-    public static boolean isSameNet(ClearanceSource source,Net target){
-        if(Objects.equals(source.getNetName(), target.getNetName())&&(!("".equals(target.getNetName())))&&(!(null==(target.getNetName())))){
-            return true;
-        }
-        return false;
-    }
+//    public static boolean isSameNet(ClearanceSource source,Net target){
+//        if(Objects.equals(source.getNetName(), target.getNetName())&&(!("".equals(target.getNetName())))&&(!(null==(target.getNetName())))){
+//            return true;
+//        }
+//        return false;
+//    }
     public static String trimCRLF(String value) {
         if (value == null || value.length() < 3)
             return value;

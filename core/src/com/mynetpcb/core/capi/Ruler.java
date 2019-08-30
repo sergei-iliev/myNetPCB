@@ -15,7 +15,7 @@ import java.awt.geom.Point2D;
 public class Ruler extends Shape implements Resizeable{
     
     private Point resizingPoint;
-    //private ChipText text;
+
     private FontTexture text;
     
     public Ruler() {

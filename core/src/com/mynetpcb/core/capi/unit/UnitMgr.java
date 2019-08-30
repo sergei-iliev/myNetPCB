@@ -1,7 +1,6 @@
 package com.mynetpcb.core.capi.unit;
 
 
-import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.Moveable;
 import com.mynetpcb.core.capi.Ownerable;

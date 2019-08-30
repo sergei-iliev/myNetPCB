@@ -1,4 +1,4 @@
-package com.mynetpcb.core.board;
+package com.mynetpcb.core.capi.layer;
 
 import com.mynetpcb.core.pad.Layer;
 

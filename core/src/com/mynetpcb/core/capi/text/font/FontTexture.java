@@ -8,11 +8,12 @@ import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.utils.Utilities;
 
+import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
+
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -50,7 +51,7 @@ public class FontTexture implements Texture {
     
     private int selectionRectWidth;
     
-    public FontTexture(String tag, String text, int x, int y,
+    public FontTexture(String tag, String text, double x, double y,
                    Text.Alignment alignment,int size) {
         anchorPoint = new Point(x, y);
         this.id=-1; 

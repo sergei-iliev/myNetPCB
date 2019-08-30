@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.unit;
 
-import java.awt.Point;
+import com.mynetpcb.d2.shapes.Point;
+
 
 /**
  * Shape belongs to a unit.

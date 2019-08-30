@@ -1,9 +1,9 @@
 package com.mynetpcb.core.capi;
 
+import com.mynetpcb.d2.shapes.Rectangle;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
 /**
@@ -40,7 +40,7 @@ public interface Drawable {
      * Represents outline shape of the figure as drawn by the rendering engine.
      * @return shape's bounding rectangle. Must be the same as cacheable rectangle 
      */
-    public Shape getBoundingShape();
+    public Rectangle getBoundingShape();
     
     /**
      *

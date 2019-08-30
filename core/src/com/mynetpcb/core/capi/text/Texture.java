@@ -3,8 +3,11 @@ package com.mynetpcb.core.capi.text;
 import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.print.Printaware;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+
+import com.mynetpcb.d2.shapes.Point;
+
+import com.mynetpcb.d2.shapes.Rectangle;
+
 import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Node;

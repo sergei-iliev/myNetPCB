@@ -7,10 +7,12 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 
+import com.mynetpcb.d2.shapes.Point;
+
+import com.mynetpcb.d2.shapes.Rectangle;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 
@@ -23,10 +25,11 @@ import java.awt.geom.Line2D;
  */
 public class CoordinateSystem extends Shape {
 
-    //private final Point origin;
+    private final Point origin;
 
     public CoordinateSystem(Unit owningUnit) {
-        super(0,0,0,0,0,0);
+        super(0,0);
+        this.origin=new Point(0,0);
         setOwningUnit(owningUnit);
     }
     
@@ -39,11 +42,11 @@ public class CoordinateSystem extends Shape {
         }
     }
 
-    @Override
-    public Rectangle calculateShape() {
-      return new Rectangle(getX()-this.selectionRectWidth/2,getY()-this.selectionRectWidth/2,this.selectionRectWidth,this.selectionRectWidth);
-      //return new Rectangle(getX(), getY(), this.selectionRectWidth, this.selectionRectWidth);
-    }
+//    @Override
+//    public Rectangle calculateShape() {
+//      return new Rectangle(origin.x-this.selectionRectWidth/2,origin.y-this.selectionRectWidth/2,this.selectionRectWidth,this.selectionRectWidth);
+//      
+//    }
     
     @Override
     public void Clear() {
@@ -59,11 +62,10 @@ public class CoordinateSystem extends Shape {
         return "Coordinate Origin";
     }
 
-//    @Override
-//    public void Move(int xoffset, int yoffset) {
-//        setX(getX() +xoffset);
-//        setY(getY() +yoffset);
-//    }
+    @Override
+    public void move(int xoffset, int yoffset) {
+        origin.move(xoffset, yoffset);
+    }
 
     /*
      * Reset origin to a new position
@@ -81,14 +83,13 @@ public class CoordinateSystem extends Shape {
         } else if (y > getOwningUnit().getWidth()) {
             y = getOwningUnit().getWidth();
         }
-        setX(x);
-        setY(y);
+        origin.set(x,y);
     }
 
 
     @Override
     public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
-        if (getX() == 0 && getY() == 0) {
+        if (origin.x == 0 && origin.y == 0) {
             return;
         }
         FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);

@@ -1,8 +1,8 @@
 package com.mynetpcb.core.capi.shape;
 
 
-import com.mynetpcb.core.board.Layerable;
 import com.mynetpcb.core.capi.Moveable;
+import com.mynetpcb.core.capi.layer.Layerable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.print.Printaware;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -11,12 +11,14 @@ import com.mynetpcb.core.capi.undo.Stateable;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.Unitable;
 import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.core.utils.Utilities;
+
+import com.mynetpcb.d2.shapes.Point;
+
+import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
+
 import java.awt.geom.AffineTransform;
 
 import java.lang.reflect.Method;
@@ -53,10 +55,6 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     
     private boolean selected;
     
-    protected int x,y;
-    
-    protected int width,height;
-    
     protected int thickness;
     
     protected Fill fill;
@@ -67,12 +65,9 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     
     protected Layer.Copper copper;
     
-    public Shape(int x,int y,int width,int height,int thickness,int layermask) {
+    public Shape(int thickness,int layermask) {
       this.uuid = UUID.randomUUID(); 
-      this.x=x;
-      this.y=y;
-      this.width=width;
-      this.height=height;
+
       this.thickness=thickness;
       this.fill=Fill.EMPTY;
       this.copper=Layer.Copper.resolve(layermask);
@@ -97,9 +92,6 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     }
     @Override
     public Point alignToGrid(boolean isRequired) {
-        Point point=getOwningUnit().getGrid().positionOnGrid(getX(), getY());
-        setX(point.x);
-        setY(point.y);      
         return null;
     }
     public void Clear() {
@@ -137,123 +129,58 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
         return "noname";
     }
 
-
-    public int getX() {
-        return x;
-    }
-    public void setX(int x){
-      this.x=x;  
-    }
-
-    public int getY() {
-        return y;
-    }
-    public void setY(int y){
-      this.y=y;  
-    }
-    
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-    public void setWidth(int width) {
-       this.width=width;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-//    public int getCenterX(){
-//        return x;
-//    }
-//    
-//    public int getCenterY(){
-//        return y;
-//    }
-    
     public Point getCenter(){
-        return new Point(x,y);
+        return null;
     }
     
     @Override
-    public void Move(int xoffset, int yoffset) {
-        setX(getX() + xoffset);
-        setY(getY() + yoffset);    
+    public void move(int xoffset, int yoffset) {
+        
     }
 
     @Override
-    public void Mirror(Point A,Point B) {
-        Point point = new Point(getX(), getY());
-        Utilities.mirrorPoint(A,B, point);
-        setX(point.x);
-        setY(point.y);
+    public void mirror(Point A,Point B) {
+
     }
     
     @Override
-    public void Rotate(AffineTransform rotation) {
-        Point point = new Point(getX(), getY());
-        rotation.transform(point, point);
-        setX(point.x);
-        setY(point.y);
+    public void rotate(AffineTransform rotation) {
+
     }
     
-//    public void Mirror(Moveable.Mirror type) {
-//        Rectangle r=getBoundingShape().getBounds();
-//        Point p=new Point((int)r.getCenterX(),(int)r.getCenterY()); 
-//        switch(type){
-//         case HORIZONTAL:
-//            Mirror(new Point(p.x-10,p.y),new Point(p.x+10,p.y));
-//        break;
-//         case VERTICAL:
-//            Mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
-//        }
-//    }
+
     @Override
-    public void Translate(AffineTransform translate) {
+    public void translate(AffineTransform translate) {
     
     }
 
-    
-//    public void Rotate(Moveable.Rotate type) {
-//        switch(type){
-//        case LEFT:
-//            Rotate(AffineTransform.getRotateInstance(Math.PI/2,getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()));          
-//            break;
-//        case RIGHT:
-//            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()));         
-//        }
-//    }
 
     @Override
     public void setLocation(int x, int y) {
-       this.x=x;
-       this.y=y;
+
     }
 
     @Override
     public long getOrderWeight(){
-       return ((long)getWidth()*(long)getHeight()); 
+       return 1;
     }
 
     @Override
     public boolean isClicked(int x, int y) {
-        return this.getBoundingShape().contains(x, y);         
+        return this.getBoundingShape().contains(x,y);         
     }
 
     @Override
     public boolean isInRect(Rectangle r) {
-        if(r.contains(getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()))
-         return true;
-        else
+//        if(r.contains(getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()))
+//         return true;
+//        else
          return false; 
     }
 
     @Override
-    public java.awt.Shape getBoundingShape() {
-          return calculateShape();
+    public Rectangle getBoundingShape() {
+          return null;
     }
 
     @Override
@@ -264,10 +191,6 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     @Override
     public boolean isSelected() {
         return selected;
-    }
-
-    public java.awt.Shape calculateShape(){
-     throw new RuntimeException("Shape does not implement cacheing");
     }
 
     @Override

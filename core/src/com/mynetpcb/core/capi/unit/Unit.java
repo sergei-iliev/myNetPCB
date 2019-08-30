@@ -1,8 +1,6 @@
 package com.mynetpcb.core.capi.unit;
 
 
-import com.mynetpcb.core.board.CompositeLayerable;
-import com.mynetpcb.core.capi.ClickableOrderItem;
 import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.Frameable;
