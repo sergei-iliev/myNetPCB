@@ -1,8 +1,10 @@
 package com.mynetpcb.d2.shapes;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 public class Box extends Shape {
+    private Rectangle rect;
     public Point min,max;
     public Box(double x1,double y1,double x2,double y2) {
         this.min = new Point(x1,y1);
@@ -14,7 +16,10 @@ public class Box extends Shape {
                   
                   return box;
     }
-    
+    public void setRect(double x,double y,double width,double height){
+        min.set(x,y);
+        max.set(x+width,y+height);
+    }
     @Override
     public Box clone() {
         return new Box(this.min.x,this.min.y,this.max.x,this.max.y);
@@ -70,8 +75,8 @@ public class Box extends Shape {
     
     @Override
     public void paint(Graphics2D g2, boolean fill) {
-        // TODO Implement this method
-
+       rect.setRect(getX(),getY(), getWidth(), getHeight());
+       g2.draw(rect);
     }
 
     @Override
