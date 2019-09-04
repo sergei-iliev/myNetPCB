@@ -17,6 +17,7 @@ import com.mynetpcb.core.capi.event.Event;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeEventDispatcher;
 import com.mynetpcb.core.capi.event.ShapeListener;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.print.PrintCallable;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -35,9 +36,11 @@ import com.mynetpcb.core.capi.undo.UndoProvider;
 import com.mynetpcb.core.capi.undo.Undoable;
 import com.mynetpcb.core.pad.Layer;
 
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Rectangle;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -203,7 +206,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
                 if (shape instanceof Ownerable) {
                     ((Ownerable)shape).setOwner(null);
                 }
-                shape.Clear();
+                shape.clear();
                 shape = null;
                 return;
             }
@@ -342,13 +345,13 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
     * The Bounding rectangle based on all elements in the Unit
     */
 
-    public Rectangle getBoundingRect() {
+    public Box getBoundingRect() {
         return getShapesRect(this.shapes);
     }
 
-    public Rectangle getShapesRect(Collection<S> shapes) {
-        Rectangle r = new Rectangle();
-        int x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+    public Box getShapesRect(Collection<S> shapes) {
+        Box r = new Box();
+        double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
 
         //***empty schematic,element,package
         if (shapes.size() == 0) {
@@ -356,13 +359,13 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         }
 
         for (Shape shape : shapes) {
-            Rectangle tmp = shape.getBoundingShape().getBounds();
+            Box tmp = shape.getBoundingShape();
             
             if (tmp != null) {
-                x1 = Math.min(x1, tmp.x);
-                y1 = Math.min(y1, tmp.y);
-                x2 = Math.max(x2, tmp.x + tmp.width);
-                y2 = Math.max(y2, tmp.y + tmp.height);
+                x1 = Math.min(x1, tmp.min.x);
+                y1 = Math.min(y1, tmp.min.y);
+                x2 = Math.max(x2, tmp.max.x );
+                y2 = Math.max(y2, tmp.max.y);
             }
 
             //isolate simple pin text/SIMPLE_TEXT
@@ -370,16 +373,16 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
                  continue;
             }
            
-            if (shape instanceof Textable) {
-                tmp = ((Textable)shape).getChipText().getBoundingShape();
-                
-                if (tmp != null) {
-                    x1 = Math.min(x1, tmp.x);
-                    y1 = Math.min(y1, tmp.y);
-                    x2 = Math.max(x2, tmp.x+ tmp.width);
-                    y2 = Math.max(y2, tmp.y+tmp.height);
-                }
-            }
+//            if (shape instanceof Textable) {
+//                tmp = ((Textable)shape).getChipText().getBoundingShape();
+//                
+//                if (tmp != null) {
+//                    x1 = Math.min(x1, tmp.x);
+//                    y1 = Math.min(y1, tmp.y);
+//                    x2 = Math.max(x2, tmp.x+ tmp.width);
+//                    y2 = Math.max(y2, tmp.y+tmp.height);
+//                }
+//            }
 
 
         }
@@ -608,7 +611,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         g2.fillRect(0, 0, width, height);
         ViewportWindow vw = new ViewportWindow(0, 0, width, height);
         for (S shape : shapes) {
-            shape.Paint(g2, vw, transformation,-1);
+            shape.paint(g2, vw, transformation,-1);
         }
         try{
         bi =bi.getSubimage((Double.compare(clipRect.getX(),0) < 0 ? 0 : (int)clipRect.getX()), 
@@ -651,15 +654,15 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
     public void Paint(Graphics2D g2, ViewportWindow viewportWindow) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for (S shape : shapes) {
-            shape.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+            shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
         }
         grid.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation());
         //coordinate system
-        coordinateSystem.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
         //ruler
-        ruler.Paint(g2, viewportWindow,  scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        ruler.paint(g2, viewportWindow,  scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
         //frame
-        frame.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
                 
     }
 

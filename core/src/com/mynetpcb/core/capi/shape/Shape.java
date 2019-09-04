@@ -12,6 +12,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.Unitable;
 import com.mynetpcb.core.pad.Layer;
 
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 
 import com.mynetpcb.d2.shapes.Rectangle;
@@ -90,11 +91,11 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     public int getThickness() {
         return thickness;
     }
-    @Override
+
     public Point alignToGrid(boolean isRequired) {
         return null;
     }
-    public void Clear() {
+    public void clear() {
         owningUnit=null;
     }
     
@@ -128,7 +129,7 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     public String getDisplayName() {
         return "noname";
     }
-
+    @Override
     public Point getCenter(){
         return null;
     }
@@ -179,7 +180,7 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     }
 
     @Override
-    public Rectangle getBoundingShape() {
+    public Box getBoundingShape() {
           return null;
     }
 
@@ -232,7 +233,7 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     }
     
     @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
+    public void print(Graphics2D g2,PrintContext printContext,int layermask) {
     }
     public boolean isVisibleOnLayers(int layermasks){
         if((copper.getLayerMaskID()&layermasks)!=0){

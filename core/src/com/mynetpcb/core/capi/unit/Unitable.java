@@ -20,10 +20,5 @@ public interface Unitable<U extends Unit> {
      */
     public void setOwningUnit(U unit);    
     
-    /**
-    * align symbol to grid
-    * @return difference between fixed and aligned point
-    */
-     public Point alignToGrid(boolean isRequired) ;
 }
 

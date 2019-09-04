@@ -4,9 +4,9 @@ import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.print.Printaware;
 
 
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 
-import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.geom.AffineTransform;
 
@@ -40,17 +40,17 @@ public interface Texture extends Drawable,Printaware,Cloneable{
     
     public void setText(String text);
     
-    public void Move(int xoffset,int yoffset);
+    public void move(int xoffset,int yoffset);
     
-    public void Rotate(AffineTransform rotation);
+    public void rotate(AffineTransform rotation);
     
-    public void Mirror(Point A,Point B);
+    public void mirror(Point A,Point B);
     
-    public void Translate(AffineTransform transform);
+    public void translate(AffineTransform transform);
     
-    public Rectangle getBoundingShape();
+    public Box getBoundingShape();
     
-    public void Clear(); 
+    public void clear(); 
     
     public int getSize();
     

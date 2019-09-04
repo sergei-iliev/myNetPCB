@@ -19,8 +19,8 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
     @Override
     public void Attach() {
         super.Attach();
-        mx=getTarget().getCenter().x;
-        my=getTarget().getCenter().y;
+        mx=(int)getTarget().getCenter().x;
+        my=(int)getTarget().getCenter().y;
     } 
     @Override
     protected void Clear() {
@@ -70,7 +70,7 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
         int new_mx = e.getX();
         int new_my = e.getY();
 
-        getTarget().Move((new_mx - mx), (new_my - my));
+        getTarget().move((new_mx - mx), (new_my - my));
         
         // update our data
         mx = new_mx;
@@ -94,9 +94,9 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
                        
                         Point p=new Point(mx,my);
                         if(e.getKeyCode()==KeyEvent.VK_Q){ //left                                                                                    
-                            getTarget().Rotate(AffineTransform.getRotateInstance(Math.PI/2,p.x,p.y));     
+                            getTarget().rotate(AffineTransform.getRotateInstance(Math.PI/2,p.x,p.y));     
                         }else{  //right
-                            getTarget().Rotate(AffineTransform.getRotateInstance(-Math.PI/2,p.x,p.y));     
+                            getTarget().rotate(AffineTransform.getRotateInstance(-Math.PI/2,p.x,p.y));     
                         }           
                         unitMgr.normalizePinText(getTarget());
                         getComponent().Repaint(); 
@@ -110,9 +110,9 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
                     if(e.getKeyCode()==KeyEvent.VK_Q||e.getKeyCode()==KeyEvent.VK_A){                        
                         Point p=new Point(mx,my);
                         if(e.getKeyCode()==KeyEvent.VK_Q){
-                            getTarget().Mirror(new Point(p.x-10,p.y),new Point(p.x+10,p.y)); 
+                            //getTarget().mirror(new Point(p.x-10,p.y),new Point(p.x+10,p.y)); 
                         }else{
-                            getTarget().Mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
+                            //getTarget().mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
                         }                        
                         unitMgr.normalizePinText(getTarget());  
                         getComponent().Repaint();  

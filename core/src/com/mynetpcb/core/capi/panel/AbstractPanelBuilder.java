@@ -153,7 +153,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      */
     protected String toUnitX(int value){        
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getX()));      
+        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().x));      
     }
     /**
      *Convert internal unit values in pixel to user unit,taking care of coordinate shift
@@ -162,7 +162,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      */
     protected String toUnitY(int value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getY()));
+        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().y));
     }
     /**
      *Convert from unit coordinate to internal one,taking care of coordinate shift
@@ -171,7 +171,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      */
     protected int fromUnitX(String value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getX();  
+        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().x;  
     }
     /**
      *Convert from unit coordinate to internal one,taking care of coordinate shift
@@ -180,7 +180,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      */    
     protected int fromUnitY(String value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getY();         
+        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().y;         
     }
     public abstract void updateUI();
     

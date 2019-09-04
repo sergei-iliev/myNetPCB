@@ -61,8 +61,8 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
         my = e.getY();         
         getComponent().getModel().getUnit().setSelected(false);               
         getTarget().setSelected(true); 
-
-         texture= new WeakReference<Texture>(((Textable)getTarget()).getChipText().getClickedTexture(e.getX(),e.getY()));  
+texture=null;
+         //texture= new WeakReference<Texture>(((Textable)getTarget()).getChipText().getClickedTexture(e.getX(),e.getY()));  
          getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
          
          getComponent().Repaint();
@@ -78,7 +78,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
         int new_my = e.getY();        
         
         
-        texture.get().Move(new_mx - mx, new_my - my);
+        texture.get().move(new_mx - mx, new_my - my);
         getTarget().getOwningUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
             
         // update our data

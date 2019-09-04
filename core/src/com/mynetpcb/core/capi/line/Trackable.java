@@ -5,7 +5,8 @@ import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.Unitable;
 
-import java.awt.Point;
+
+import com.mynetpcb.d2.shapes.Point;
 
 import java.util.List;
 

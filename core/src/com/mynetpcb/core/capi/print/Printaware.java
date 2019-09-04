@@ -12,5 +12,5 @@ public interface Printaware {
      * @param g2 the printer graphics object
      * @param layermask current layer to print
      */
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask);
+    public void print(Graphics2D g2,PrintContext printContext,int layermask);
 }

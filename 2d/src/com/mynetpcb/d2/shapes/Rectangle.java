@@ -23,6 +23,12 @@ public class Rectangle extends Polygon {
         });  
         return copy;
     }
+    public void setRect(double x,double y,double width,double height){                                                
+              this.points.get(0).set(x,y);                        
+              this.points.get(1).set(x+width,y);
+              this.points.get(2).set(x+width,y+height);
+              this.points.get(3).set(x,y+height);                                                                       
+    }
     public void reset(double width,double height){
 //            let pc=this.box.center;                 
 //            this.points=[];
@@ -45,8 +51,7 @@ public class Rectangle extends Polygon {
     
     @Override
     public void paint(Graphics2D g2, boolean fill) {
-        // TODO Implement this method
-
+        super.paint(g2, fill);
     }
 
 }

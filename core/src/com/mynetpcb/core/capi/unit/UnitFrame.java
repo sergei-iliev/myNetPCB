@@ -7,24 +7,26 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.print.Printaware;
 import com.mynetpcb.core.utils.Utilities;
 
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Rectangle;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 public class UnitFrame implements Frameable,Printaware{
     
-    private Rectangle rectangle;
+    private Box box;
     
     private Color fillColor;
     
     private int width,height,offset;
     
     public UnitFrame(int width,int height) {
-        rectangle=new Rectangle();
+        box=new Box(0,0,0,0);
         setSize(width,height);
         this.fillColor=Color.BLACK;
     }
@@ -33,18 +35,18 @@ public class UnitFrame implements Frameable,Printaware{
     public void setSize(int width, int height) {
        this.width=width;
        this.height=height;
-       rectangle.setRect(offset,offset,width-(2*offset),height-(2*offset));
+       box.setRect(offset,offset,width-(2*offset),height-(2*offset));
     }
 
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
-          Rectangle2D scaledRect = Utilities.getScaleRect(rectangle ,scale); 
-          if(scaledRect.contains(viewportWindow)){
-              return;
-          }
-          g2.setColor(fillColor); 
-          scaledRect.setRect(scaledRect.getX()-viewportWindow.x ,scaledRect.getY()-viewportWindow.y,scaledRect.getWidth(),scaledRect.getHeight());   
-          g2.draw(scaledRect);
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
+         Box box=this.box.clone();        
+         box.scale(scale.getScaleX());
+
+
+         g2.setColor(fillColor); 
+         box.setRect(box.getX()-viewportWindow.x ,box.getY()-viewportWindow.y,box.getWidth(),box.getHeight());   
+         box.paint(g2, false);
     }
 
     @Override
@@ -58,8 +60,8 @@ public class UnitFrame implements Frameable,Printaware{
     }
 
     @Override
-    public Shape getBoundingShape() {
-        return rectangle;
+    public Box getBoundingShape() {
+        return box;
     }
 
     @Override
@@ -82,7 +84,7 @@ public class UnitFrame implements Frameable,Printaware{
     @Override
     public void setOffset(int offset) {
        this.offset=offset;
-       rectangle.setRect(offset,offset,width-(2*offset),height-(2*offset));
+       box.setRect(offset,offset,width-(2*offset),height-(2*offset));
     }
     
     @Override
@@ -91,10 +93,10 @@ public class UnitFrame implements Frameable,Printaware{
     }
 
     @Override
-    public void Print(Graphics2D g2,PrintContext printContext, int layermask) {
+    public void print(Graphics2D g2,PrintContext printContext, int layermask) {
         g2.setStroke(new BasicStroke());
         g2.setColor(Color.BLACK);
-        g2.draw(rectangle);       
+        box.paint(g2, false);
 
     }
 }

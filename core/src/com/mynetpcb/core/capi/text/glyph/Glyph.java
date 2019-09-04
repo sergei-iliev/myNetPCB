@@ -120,7 +120,7 @@ public class Glyph implements Externalizable,Cloneable{
      */
     public void Invert(Point A,Point B){
         for(int i=0;i<points.length;i++){
-            points[i].setLocation(Utilities.mirrorPoint(A,B, points[i]));
+            //points[i].setLocation(Utilities.mirrorPoint(A,B, points[i]));
         }
         this.resize();        
     }

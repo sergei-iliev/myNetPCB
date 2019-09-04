@@ -8,11 +8,13 @@ import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.tree.AttachedItem;
 import com.mynetpcb.core.pad.Net;
 
+import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Point;
+
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
@@ -141,48 +143,48 @@ public final class Utilities {
      * Mirrors symetricaly a point according to a line origine
      * returns the mirrorred point.
      */
-    public static Point mirrorPoint(Point A, Point B, Point sourcePoint) {
-        int x = sourcePoint.x, y = sourcePoint.y;
-        //***is this right-left mirroring
-        if (A.x == B.x) {
-            //***which place in regard to x origine
-            if ((x - A.x) < 0)
-                x = A.x + (A.x - x);
-            else
-                x = A.x - (x - A.x);
-        } else { //***top-botom mirroring
-            //***which place in regard to y origine
-            if ((y - A.y) < 0)
-                y = A.y + (A.y - y);
-            else
-                y = A.y - (y - A.y);
-        }
+//    public static Point mirrorPoint(Point A, Point B, Point sourcePoint) {
+//        int x = sourcePoint.x, y = sourcePoint.y;
+//        //***is this right-left mirroring
+//        if (A.x == B.x) {
+//            //***which place in regard to x origine
+//            if ((x - A.x) < 0)
+//                x = A.x + (A.x - x);
+//            else
+//                x = A.x - (x - A.x);
+//        } else { //***top-botom mirroring
+//            //***which place in regard to y origine
+//            if ((y - A.y) < 0)
+//                y = A.y + (A.y - y);
+//            else
+//                y = A.y - (y - A.y);
+//        }
+//
+//        sourcePoint.setLocation(x, y);
+//        return sourcePoint;
+//    }
 
-        sourcePoint.setLocation(x, y);
-        return sourcePoint;
-    }
-
-    @Deprecated
-    public static Point2D mirrorPoint(Line2D line, Point2D sourcePoint) {
-        double x = sourcePoint.getX(), y = sourcePoint.getY();
-        //***is this right-left mirroring
-        if (line.getP1().getX() == line.getP2().getX()) {
-            //***which place in regard to x origine
-            if ((x - line.getP1().getX()) < 0)
-                x = line.getP1().getX() + line.ptLineDist(x, y);
-            else
-                x = line.getP1().getX() - line.ptLineDist(x, y);
-        } else { //***top-botom mirroring
-            //***which place in regard to y origine
-            if ((y - line.getP1().getY()) < 0)
-                y = line.getP1().getY() + line.ptLineDist(x, y);
-            else
-                y = line.getP1().getY() - line.ptLineDist(x, y);
-        }
-
-        sourcePoint.setLocation(x, y);
-        return sourcePoint;
-    }
+//    @Deprecated
+//    public static Point2D mirrorPoint(Line2D line, Point2D sourcePoint) {
+//        double x = sourcePoint.getX(), y = sourcePoint.getY();
+//        //***is this right-left mirroring
+//        if (line.getP1().getX() == line.getP2().getX()) {
+//            //***which place in regard to x origine
+//            if ((x - line.getP1().getX()) < 0)
+//                x = line.getP1().getX() + line.ptLineDist(x, y);
+//            else
+//                x = line.getP1().getX() - line.ptLineDist(x, y);
+//        } else { //***top-botom mirroring
+//            //***which place in regard to y origine
+//            if ((y - line.getP1().getY()) < 0)
+//                y = line.getP1().getY() + line.ptLineDist(x, y);
+//            else
+//                y = line.getP1().getY() - line.ptLineDist(x, y);
+//        }
+//
+//        sourcePoint.setLocation(x, y);
+//        return sourcePoint;
+//    }
 
     /*
      * Find out in which quadrant is a point B, in regard to a point origine A
@@ -199,26 +201,26 @@ public final class Utilities {
         FORTH
     }
     
-    public static QUADRANT getQuadrantLocation(Point origin,int x,int y) {
-        if (x >= origin.getX() && y <= origin.getY())
-            return QUADRANT.FIRST;
-        else if (x <= origin.getX() && y <= origin.getY())
-            return QUADRANT.SECOND;
-        else if (x <= origin.getX() && y >= origin.getY())
-            return QUADRANT.THIRD;
-        else
-            return QUADRANT.FORTH;
-    }
-    public static QUADRANT getQuadrantLocation(Point origin, Point B) {
-        if (B.getX() >= origin.getX() && B.getY() <= origin.getY())
-            return QUADRANT.FIRST;
-        else if (B.getX() <= origin.getX() && B.getY() <= origin.getY())
-            return QUADRANT.SECOND;
-        else if (B.getX() <= origin.getX() && B.getY() >= origin.getY())
-            return QUADRANT.THIRD;
-        else
-            return QUADRANT.FORTH;
-    }
+//    public static QUADRANT getQuadrantLocation(Point origin,int x,int y) {
+//        if (x >= origin.getX() && y <= origin.getY())
+//            return QUADRANT.FIRST;
+//        else if (x <= origin.getX() && y <= origin.getY())
+//            return QUADRANT.SECOND;
+//        else if (x <= origin.getX() && y >= origin.getY())
+//            return QUADRANT.THIRD;
+//        else
+//            return QUADRANT.FORTH;
+//    }
+//    public static QUADRANT getQuadrantLocation(Point origin, Point B) {
+//        if (B.getX() >= origin.getX() && B.getY() <= origin.getY())
+//            return QUADRANT.FIRST;
+//        else if (B.getX() <= origin.getX() && B.getY() <= origin.getY())
+//            return QUADRANT.SECOND;
+//        else if (B.getX() <= origin.getX() && B.getY() >= origin.getY())
+//            return QUADRANT.THIRD;
+//        else
+//            return QUADRANT.FORTH;
+//    }
 
     public static Document buildDocument(String xml) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();

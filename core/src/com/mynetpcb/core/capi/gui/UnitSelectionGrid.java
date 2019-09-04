@@ -106,7 +106,7 @@ public class UnitSelectionGrid {
                 continue;
             renderElement.selected = false;
         }  
-        this.Draw();
+        this.draw();
         return true;
     }
     public void Clear() {
@@ -149,73 +149,73 @@ public class UnitSelectionGrid {
             map.put(unit.getUUID(), element);        
             height+=h; 
         }
-        this.Draw();
+        this.draw();
     }
     /**
      * Draw the grid on internal buffer canvas
      */
-    private void Draw(){
-        if(bufferedImage==null||bufferedImage.getWidth()!=this.getWidth()||bufferedImage.getHeight()!=this.getHeight()){
-            bufferedImage=new BufferedImage(this.getWidth(),this.getHeight(), BufferedImage.TYPE_BYTE_INDEXED);
-        } 
-        ImageIcon icon;
-        Graphics2D g2=(Graphics2D)bufferedImage.getGraphics();
-
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-                                RenderingHints.VALUE_ANTIALIAS_ON);  
-      
-        g2.setPaint(backgroundColor);
-        g2.fillRect(0, 0, this.getWidth(), this.getHeight());
-        
-        for (Unit unit : (Collection<Unit>)getModel().getUnits()) {
-              unit.setSelected(false);           
-              UnitSelectionCell element = map.get(unit.getUUID());
-              g2.setFont(textFont);
-              g2.setPaint(textColor);
-              g2.drawString(unit.getUnitName(),
-                          element.nameRect.x,
-                          element.nameRect.y +
-                          element.nameRect.height);
-          
-
-            if (unit.getShapes().isEmpty()) {
-                continue;
-            }
-            
-            Rectangle2D rect = Utilities.getScaleRect(unit.getBoundingRect(), unit.getScalableTransformation().getCurrentTransformation());
-            Utilities.IncrementRect(rect, UnitSelectionCell.OFFSET_X, UnitSelectionCell.OFFSET_Y);
-
-            BufferedImage image = unit.getImage(rect,unit.getScalableTransformation().getCurrentTransformation(),backgroundColor);
-            g2.drawImage(image, null, element.unitRect.x,
-                         element.unitRect.y);
-
-            if (this.enabled) {
-             icon=(element.selected == true ? Utilities.loadImageIcon(this,
-                                                                  "/com/mynetpcb/core/images/checkbox_checked.png") : Utilities.loadImageIcon(this,
-                               "/com/mynetpcb/core/images/checkbox_unchecked.png"));
-            if (element.selected) {  
-               RoundRectangle2D selectionRect= new RoundRectangle2D.Double(element.unitRect.x,
-                                                                    element.unitRect.y,
-                                                                    element.unitRect.getWidth(),
-                                                                    element.unitRect.getHeight(),
-                                                                    8, 8);
-                AlphaComposite composite =
-                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
-                Composite originalComposite = g2.getComposite();
-                g2.setPaint(Color.GRAY);
-                g2.setComposite(composite);
-                g2.fill(selectionRect);
-                g2.setComposite(originalComposite);
-                g2.setStroke(new BasicStroke(1));
-                g2.draw(selectionRect);
-            }
-        }else {
-            icon = Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/checkbox_checked_dis.png");
-        }
-        g2.drawImage(icon.getImage(),
-                    element.checkboxRect.x,
-                    (element.checkboxRect.y + element.checkboxRect.height - icon.getIconHeight()), null);
-        }
+    private void draw(){
+//        if(bufferedImage==null||bufferedImage.getWidth()!=this.getWidth()||bufferedImage.getHeight()!=this.getHeight()){
+//            bufferedImage=new BufferedImage(this.getWidth(),this.getHeight(), BufferedImage.TYPE_BYTE_INDEXED);
+//        } 
+//        ImageIcon icon;
+//        Graphics2D g2=(Graphics2D)bufferedImage.getGraphics();
+//
+//        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+//                                RenderingHints.VALUE_ANTIALIAS_ON);  
+//      
+//        g2.setPaint(backgroundColor);
+//        g2.fillRect(0, 0, this.getWidth(), this.getHeight());
+//        
+//        for (Unit unit : (Collection<Unit>)getModel().getUnits()) {
+//              unit.setSelected(false);           
+//              UnitSelectionCell element = map.get(unit.getUUID());
+//              g2.setFont(textFont);
+//              g2.setPaint(textColor);
+//              g2.drawString(unit.getUnitName(),
+//                          element.nameRect.x,
+//                          element.nameRect.y +
+//                          element.nameRect.height);
+//          
+//
+//            if (unit.getShapes().isEmpty()) {
+//                continue;
+//            }
+//            
+//            Rectangle2D rect = Utilities.getScaleRect(unit.getBoundingRect(), unit.getScalableTransformation().getCurrentTransformation());
+//            Utilities.IncrementRect(rect, UnitSelectionCell.OFFSET_X, UnitSelectionCell.OFFSET_Y);
+//
+//            BufferedImage image = unit.getImage(rect,unit.getScalableTransformation().getCurrentTransformation(),backgroundColor);
+//            g2.drawImage(image, null, element.unitRect.x,
+//                         element.unitRect.y);
+//
+//            if (this.enabled) {
+//             icon=(element.selected == true ? Utilities.loadImageIcon(this,
+//                                                                  "/com/mynetpcb/core/images/checkbox_checked.png") : Utilities.loadImageIcon(this,
+//                               "/com/mynetpcb/core/images/checkbox_unchecked.png"));
+//            if (element.selected) {  
+//               RoundRectangle2D selectionRect= new RoundRectangle2D.Double(element.unitRect.x,
+//                                                                    element.unitRect.y,
+//                                                                    element.unitRect.getWidth(),
+//                                                                    element.unitRect.getHeight(),
+//                                                                    8, 8);
+//                AlphaComposite composite =
+//                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
+//                Composite originalComposite = g2.getComposite();
+//                g2.setPaint(Color.GRAY);
+//                g2.setComposite(composite);
+//                g2.fill(selectionRect);
+//                g2.setComposite(originalComposite);
+//                g2.setStroke(new BasicStroke(1));
+//                g2.draw(selectionRect);
+//            }
+//        }else {
+//            icon = Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/checkbox_checked_dis.png");
+//        }
+//        g2.drawImage(icon.getImage(),
+//                    element.checkboxRect.x,
+//                    (element.checkboxRect.y + element.checkboxRect.height - icon.getIconHeight()), null);
+//        }
     }
 
     public void setBackgroundColor(Color backgroundColor) {

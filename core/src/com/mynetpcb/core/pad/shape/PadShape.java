@@ -27,8 +27,8 @@ public abstract class PadShape extends Shape implements Pinable, Net, Textable, 
        THERMAL
     }
     
-    public PadShape(int x, int y, int width, int height) {
-        super(x, y, width, height, -1, Layer.LAYER_BACK);
+    public PadShape() {
+        super(-1, Layer.LAYER_BACK);
     }
     
     public abstract PadShape.Shape getShape();

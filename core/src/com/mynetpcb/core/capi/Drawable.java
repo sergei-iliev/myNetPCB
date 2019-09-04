@@ -1,5 +1,6 @@
 package com.mynetpcb.core.capi;
 
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.Color;
@@ -19,7 +20,7 @@ public interface Drawable {
      * @param scale current zoom.
      * @param everything is drawn over a layer
      */
-    public void Paint(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale,int layermask);
+    public void paint(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale,int layermask);
     
     /**
      *
@@ -40,7 +41,7 @@ public interface Drawable {
      * Represents outline shape of the figure as drawn by the rendering engine.
      * @return shape's bounding rectangle. Must be the same as cacheable rectangle 
      */
-    public Rectangle getBoundingShape();
+    public Box getBoundingShape();
     
     /**
      *

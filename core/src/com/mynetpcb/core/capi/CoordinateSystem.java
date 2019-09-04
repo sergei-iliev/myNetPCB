@@ -25,11 +25,11 @@ import java.awt.geom.Line2D;
  */
 public class CoordinateSystem extends Shape {
 
-    private final Point origin;
+    private final java.awt.Point origin;
 
     public CoordinateSystem(Unit owningUnit) {
         super(0,0);
-        this.origin=new Point(0,0);
+        this.origin=new java.awt.Point();
         setOwningUnit(owningUnit);
     }
     
@@ -42,14 +42,12 @@ public class CoordinateSystem extends Shape {
         }
     }
 
-//    @Override
-//    public Rectangle calculateShape() {
-//      return new Rectangle(origin.x-this.selectionRectWidth/2,origin.y-this.selectionRectWidth/2,this.selectionRectWidth,this.selectionRectWidth);
-//      
-//    }
+    public java.awt.Point getOrigin(){
+        return origin;
+    }
     
     @Override
-    public void Clear() {
+    public void clear() {
     }
 
     @Override
@@ -72,7 +70,7 @@ public class CoordinateSystem extends Shape {
      * Validate input
      */
 
-    public void Reset(int x, int y) {
+    public void reset(int x, int y) {
         if (x < 0) {
             x = 0;
         } else if (x > getOwningUnit().getWidth()) {
@@ -83,12 +81,13 @@ public class CoordinateSystem extends Shape {
         } else if (y > getOwningUnit().getWidth()) {
             y = getOwningUnit().getWidth();
         }
-        origin.set(x,y);
+        origin.x=x;
+        origin.y=y;
     }
 
 
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
         if (origin.x == 0 && origin.y == 0) {
             return;
         }
@@ -99,10 +98,10 @@ public class CoordinateSystem extends Shape {
         g2.setColor(Color.BLUE);
         
         //horizontal
-        horizontalLine.setLine(0, getY(), getOwningUnit().getWidth(), getY());
+        horizontalLine.setLine(0, origin.x, getOwningUnit().getWidth(), origin.y);
         Utilities.setScaleLine(horizontalLine, horizontalLine, scale);
         //vertical
-        verticalLine.setLine(getX(), 0, getX(), getOwningUnit().getHeight());
+        verticalLine.setLine(origin.x, 0, origin.x, getOwningUnit().getHeight());
         Utilities.setScaleLine(verticalLine, verticalLine, scale);
         
         if ((!horizontalLine.intersects(viewportWindow))&&(!verticalLine.intersects(viewportWindow))) {

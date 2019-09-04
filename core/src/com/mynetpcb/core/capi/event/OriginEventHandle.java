@@ -21,14 +21,14 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
     public void mouseScaledPressed(MouseScaledEvent e) {
         if(SwingUtilities.isRightMouseButton(e)){ 
             //escape
-            getComponent().getModel().getUnit().getCoordinateSystem().Reset(0,0);    
+            getComponent().getModel().getUnit().getCoordinateSystem().reset(0,0);    
             getComponent().getModel().fireUnitEvent(new UnitEvent(null, UnitEvent.PROPERTY_CHANGE));
             getComponent().getDialogFrame().setButtonGroup(getComponent().COMPONENT_MODE);
             getComponent().setMode(getComponent().COMPONENT_MODE);
             getComponent().Repaint();
             return;
         }else{
-            getComponent().getModel().getUnit().getCoordinateSystem().Reset(e.getX(),e.getY()); 
+            getComponent().getModel().getUnit().getCoordinateSystem().reset(e.getX(),e.getY()); 
         }
 
         mx = e.getX();
@@ -59,7 +59,7 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
         int new_mx = e.getX();
         int new_my = e.getY();
         
-        getComponent().getModel().getUnit().getCoordinateSystem().Move((new_mx - mx), (new_my - my));
+        getComponent().getModel().getUnit().getCoordinateSystem().move((new_mx - mx), (new_my - my));
         getComponent().getModel().fireUnitEvent(new UnitEvent(null, UnitEvent.PROPERTY_CHANGE));
         // update our data
         mx = new_mx;
@@ -74,12 +74,12 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
 
     @Override
     public boolean forwardKeyPress(KeyEvent e){
-      getComponent().getModel().getUnit().getCoordinateSystem().Reset(0,0); 
+      getComponent().getModel().getUnit().getCoordinateSystem().reset(0,0); 
       return false;  
     }
     public void Attach() {
         super.Attach();
-        getComponent().getModel().getUnit().getCoordinateSystem().Reset(0,0);   
+        getComponent().getModel().getUnit().getCoordinateSystem().reset(0,0);   
     }
 
 

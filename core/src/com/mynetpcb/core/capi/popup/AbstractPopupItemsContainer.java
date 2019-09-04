@@ -9,7 +9,7 @@ import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.gui.filter.ImpexFileFilter;
-import com.mynetpcb.core.capi.line.LineBendingProcessor;
+//import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
@@ -463,8 +463,8 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
     public void actionPerformed(ActionEvent e) {
         
         if (e.getActionCommand().endsWith("bend")){            
-            LineBendingProcessor lineBendingProcessor=getUnitComponent().getBendingProcessorFactory().resolve(e.getActionCommand(), getUnitComponent().getLineBendingProcessor());
-            getUnitComponent().setLineBendingProcessor(lineBendingProcessor);
+            //LineBendingProcessor lineBendingProcessor=getUnitComponent().getBendingProcessorFactory().resolve(e.getActionCommand(), getUnitComponent().getLineBendingProcessor());
+            //getUnitComponent().setLineBendingProcessor(lineBendingProcessor);
             return;
         }
         if (e.getActionCommand().equalsIgnoreCase("deleteline")) {
@@ -476,12 +476,12 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         
         if (e.getActionCommand().equalsIgnoreCase("cancelwiring")) {
             //****empty circuit space could be right clicked without a wire beneath
-            getUnitComponent().getLineBendingProcessor().Release();  
-            getTarget().setSelected(false);
-            getUnitComponent().getEventMgr().resetEventHandle();
-            getUnitComponent().getDialogFrame().setButtonGroup(0x00);
-            getUnitComponent().setMode(0x00);
-            getUnitComponent().Repaint(); 
+//            getUnitComponent().getLineBendingProcessor().Release();  
+//            getTarget().setSelected(false);
+//            getUnitComponent().getEventMgr().resetEventHandle();
+//            getUnitComponent().getDialogFrame().setButtonGroup(0x00);
+//            getUnitComponent().setMode(0x00);
+//            getUnitComponent().Repaint(); 
 
         }
         if (e.getActionCommand().equalsIgnoreCase("deletelastpoint")) {
@@ -519,33 +519,33 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
           return;
         }
         if(e.getActionCommand().equalsIgnoreCase("topbottom")||e.getActionCommand().equalsIgnoreCase("leftright")){   
-            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
-            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-            Point p=getUnitComponent().getModel().getUnit().getGrid().positionOnGrid((int)r.getCenterX(),(int)r.getCenterY());      
-            UnitMgr unitMgr = new UnitMgr();
-            if(e.getActionCommand().equalsIgnoreCase("topbottom")){
-                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Point(p.x-10,p.y),new Point(p.x+10,p.y));
-            }else{
-                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Point(p.x,p.y-10),new Point(p.x,p.y+10));
-            }
-            
-            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);
-            unitMgr.normalizePinText(shapes);
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento( MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-            getUnitComponent().Repaint();
+//            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
+//            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
+//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+//            Point p=getUnitComponent().getModel().getUnit().getGrid().positionOnGrid((int)r.getCenterX(),(int)r.getCenterY());      
+//            UnitMgr unitMgr = new UnitMgr();
+//            if(e.getActionCommand().equalsIgnoreCase("topbottom")){
+//                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Point(p.x-10,p.y),new Point(p.x+10,p.y));
+//            }else{
+//                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Point(p.x,p.y-10),new Point(p.x,p.y+10));
+//            }
+//            
+//            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);
+//            unitMgr.normalizePinText(shapes);
+//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento( MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+//            getUnitComponent().Repaint();
         } 
         if(e.getActionCommand().equalsIgnoreCase("rotateleft")||e.getActionCommand().equalsIgnoreCase("rotateright")){ 
-            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);  
-            UnitMgr unitMgr = new UnitMgr();
-            unitMgr.rotateBlock(shapes,AffineTransform.getRotateInstance((e.getActionCommand().equalsIgnoreCase("rotateleft")?-1:1)*Math.PI/2,r.getCenterX(),r.getCenterY()));   
-            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);  
-            //skip if single pin
-            unitMgr.normalizePinText(shapes);
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-            getUnitComponent().Repaint();
+//            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
+//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+//            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);  
+//            UnitMgr unitMgr = new UnitMgr();
+//            unitMgr.rotateBlock(shapes,AffineTransform.getRotateInstance((e.getActionCommand().equalsIgnoreCase("rotateleft")?-1:1)*Math.PI/2,r.getCenterX(),r.getCenterY()));   
+//            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);  
+//            //skip if single pin
+//            unitMgr.normalizePinText(shapes);
+//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+//            getUnitComponent().Repaint();
         }
         if(e.getActionCommand().equalsIgnoreCase("deleteunit")){  
             if(getUnitComponent().getModel().isChanged(getUnitComponent().getModel().getUnit().getUUID())){                        
@@ -595,22 +595,22 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }        
         
         if(e.getActionCommand().equalsIgnoreCase("clone")){  
-            UnitMgr unitMgr = new UnitMgr();
-            unitMgr.cloneBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(true));
-            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false); 
-            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
-            unitMgr.moveBlock(shapes,
-                                 r.width,r.height);
-            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),
-                                  shapes);
-            
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.CREATE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.CREATE_MEMENTO));                                            
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                                                                  
-            getUnitComponent().Repaint();
-            //***emit property event change
-            if (shapes.size() == 1) {
-               getUnitComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(shapes.iterator().next(), ShapeEvent.SELECT_SHAPE));
-            }             
+//            UnitMgr unitMgr = new UnitMgr();
+//            unitMgr.cloneBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(true));
+//            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false); 
+//            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
+//            unitMgr.moveBlock(shapes,
+//                                 r.width,r.height);
+//            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),
+//                                  shapes);
+//            
+//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.CREATE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.CREATE_MEMENTO));                                            
+//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                                                                  
+//            getUnitComponent().Repaint();
+//            //***emit property event change
+//            if (shapes.size() == 1) {
+//               getUnitComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(shapes.iterator().next(), ShapeEvent.SELECT_SHAPE));
+//            }             
             return;              
         }
         
@@ -630,17 +630,17 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().Repaint();            
         } 
         if(e.getActionCommand().equals("positiontocenter")){
-            Unit unit=getUnitComponent().getModel().getUnit();
-            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(unit.getShapes()));  
-            int x=(int)unit.getBoundingRect().getCenterX();
-            int y=(int)unit.getBoundingRect().getCenterY();
-            UnitMgr unitMgr=new UnitMgr();
-            unitMgr.moveBlock(unit.getShapes(), (unit.getWidth()/2)-x, (unit.getHeight()/2)-y);
-            unitMgr.alignBlock(unit.getGrid(),unit.getShapes());
-            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(unit.getShapes())); 
-            //scroll to center
-            getUnitComponent().setScrollPosition((unit.getWidth()/2), (unit.getHeight()/2));
-            getUnitComponent().Repaint();
+//            Unit unit=getUnitComponent().getModel().getUnit();
+//            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(unit.getShapes()));  
+//            int x=(int)unit.getBoundingRect().getCenterX();
+//            int y=(int)unit.getBoundingRect().getCenterY();
+//            UnitMgr unitMgr=new UnitMgr();
+//            unitMgr.moveBlock(unit.getShapes(), (unit.getWidth()/2)-x, (unit.getHeight()/2)-y);
+//            unitMgr.alignBlock(unit.getGrid(),unit.getShapes());
+//            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(unit.getShapes())); 
+//            //scroll to center
+//            getUnitComponent().setScrollPosition((unit.getWidth()/2), (unit.getHeight()/2));
+//            getUnitComponent().Repaint();
         } 
         
         if (e.getActionCommand().equalsIgnoreCase("DeleteBendingPoint")) {
@@ -666,42 +666,42 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }
         
         if (e.getActionCommand().equalsIgnoreCase("LoadUnit")) {
-            AbstractLoadDialog.Builder builder=getUnitComponent().getLoadDialogBuilder();
-            AbstractLoadDialog loadDialog =builder.setWindow(getUnitComponent().getDialogFrame().getParentFrame()).setCaption("Load "+getUnitComponent().getModel().getUnit().toString()).setEnabled(true).build();
-            
-            loadDialog.pack();
-            loadDialog.setLocationRelativeTo(null); //centers on screen
-            loadDialog.setVisible(true);
-
-            if(loadDialog.getSelectedModel()==null||loadDialog.getSelectedModel().getUnit()==null){
-                loadDialog.dispose();
-                loadDialog=null;
-                return;
-            }
-            UnitMgr unitMgr=new UnitMgr();
-            try {
-                unitMgr.Load(getUnitComponent().getModel().getUnit(),loadDialog.getSelectedModel().getUnit());
-            } catch (CloneNotSupportedException f) {
-                            f.printStackTrace(System.out);
-                        }
-                        
-            loadDialog.dispose();
-            loadDialog=null;
-                        
-            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.RENAME_UNIT));
-            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.SELECT_UNIT));
-            getUnitComponent().getModel().setActiveUnit(getUnitComponent().getModel().getUnit().getUUID());
-                        
-                        //***refresh scrollbars
-            getUnitComponent().componentResized(null);             
-            getUnitComponent().Repaint();
-            
-                        //position on center
-            Rectangle r=getUnitComponent().getModel().getUnit().getBoundingRect();
-            getUnitComponent().setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
-            
-            getUnitComponent().requestFocusInWindow(); //***for the cancel button  
-            return;                        
+//            AbstractLoadDialog.Builder builder=getUnitComponent().getLoadDialogBuilder();
+//            AbstractLoadDialog loadDialog =builder.setWindow(getUnitComponent().getDialogFrame().getParentFrame()).setCaption("Load "+getUnitComponent().getModel().getUnit().toString()).setEnabled(true).build();
+//            
+//            loadDialog.pack();
+//            loadDialog.setLocationRelativeTo(null); //centers on screen
+//            loadDialog.setVisible(true);
+//
+//            if(loadDialog.getSelectedModel()==null||loadDialog.getSelectedModel().getUnit()==null){
+//                loadDialog.dispose();
+//                loadDialog=null;
+//                return;
+//            }
+//            UnitMgr unitMgr=new UnitMgr();
+//            try {
+//                unitMgr.Load(getUnitComponent().getModel().getUnit(),loadDialog.getSelectedModel().getUnit());
+//            } catch (CloneNotSupportedException f) {
+//                            f.printStackTrace(System.out);
+//                        }
+//                        
+//            loadDialog.dispose();
+//            loadDialog=null;
+//                        
+//            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.RENAME_UNIT));
+//            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.SELECT_UNIT));
+//            getUnitComponent().getModel().setActiveUnit(getUnitComponent().getModel().getUnit().getUUID());
+//                        
+//                        //***refresh scrollbars
+//            getUnitComponent().componentResized(null);             
+//            getUnitComponent().Repaint();
+//            
+//                        //position on center
+//            Rectangle r=getUnitComponent().getModel().getUnit().getBoundingRect();
+//            getUnitComponent().setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
+//            
+//            getUnitComponent().requestFocusInWindow(); //***for the cancel button  
+//            return;                        
         }           
         
     }

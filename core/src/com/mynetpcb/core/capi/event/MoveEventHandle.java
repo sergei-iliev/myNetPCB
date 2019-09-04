@@ -56,7 +56,7 @@ public class MoveEventHandle <U extends UnitComponent,S extends Shape> extends E
         int new_my = e.getY();
 
 
-        getTarget().Move(new_mx - mx, new_my - my);
+        getTarget().move(new_mx - mx, new_my - my);
 
         //***update PropertiesPanel           
         getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));

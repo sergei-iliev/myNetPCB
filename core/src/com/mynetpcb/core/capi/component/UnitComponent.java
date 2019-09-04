@@ -13,8 +13,8 @@ import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerEventDispatcher;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.EventMgr;
-import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
-import com.mynetpcb.core.capi.line.LineBendingProcessor;
+//import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
+//import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -26,6 +26,8 @@ import com.mynetpcb.core.capi.unit.UnitMgr;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
+
+import com.mynetpcb.d2.shapes.Box;
 
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -116,9 +118,9 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     private EventListenerList containerListeners;
 
     //***keep current processor for wiring event
-    private LineBendingProcessor lineBendingProcessor;
+    //private LineBendingProcessor lineBendingProcessor;
 
-    protected AbstractBendingProcessorFactory bendingProcessorFactory;
+    //protected AbstractBendingProcessorFactory bendingProcessorFactory;
     
     //parameter bag
     private final Map<String, Object> parameters;
@@ -180,7 +182,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     public void setMode(int mode) {
         this.mode = mode;
         if (cursor != null) {
-            cursor.Clear();
+            cursor.clear();
             cursor = null;
         }
         eventMgr.resetEventHandle();
@@ -199,17 +201,17 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return this.cursor;
     }
 
-    public LineBendingProcessor getLineBendingProcessor() {
-        return lineBendingProcessor;
-    }
-    
-    public void setLineBendingProcessor(LineBendingProcessor lineBendingProcessor) {
-       this.lineBendingProcessor = lineBendingProcessor;
-    }
-    
-    public AbstractBendingProcessorFactory getBendingProcessorFactory(){
-        return bendingProcessorFactory;
-    }
+//    public LineBendingProcessor getLineBendingProcessor() {
+//        return lineBendingProcessor;
+//    }
+//    
+//    public void setLineBendingProcessor(LineBendingProcessor lineBendingProcessor) {
+//       this.lineBendingProcessor = lineBendingProcessor;
+//    }
+//    
+//    public AbstractBendingProcessorFactory getBendingProcessorFactory(){
+//        return bendingProcessorFactory;
+//    }
     
     public void resumeLine(Trackable line,String handleKey, int x, int y) {
         line.Reset(x,y);
@@ -259,7 +261,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             g2.fillRect(0, 0, getWidth(), getHeight());
             model.getUnit().Paint(g2, viewportWindow);
             if (cursor != null) {
-                cursor.Paint(g2, viewportWindow,
+                cursor.paint(g2, viewportWindow,
                              getModel().getUnit().getScalableTransformation().getCurrentTransformation(),Layer.Copper.All.getLayerMaskID());
 
             }
@@ -736,12 +738,12 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                     }
                     //***copy
                     if (e.getKeyCode() == KeyEvent.VK_C) {
-                        Copy();
+                        copy();
                         return true;
                     }
                     //***paste
                     if (e.getKeyCode() == KeyEvent.VK_V) {
-                        Paste();
+                        paste();
                         return true;
                     }
                 }
@@ -773,7 +775,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return false;
     }
 
-    public void Copy(){
+    public void copy(){
         try {
             ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.LOCAL,
                                                            getModel().getUnit().createClipboardContent());
@@ -784,7 +786,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         }
     }
     
-    public void Paste(){
+    public void paste(){
         try {
             getModel().getUnit().setSelected(false);
             getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.LOCAL ));
@@ -796,9 +798,9 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                                                                                                                    getHeight()/2));
             UnitMgr unitMgr = new UnitMgr();
             Collection<Shape> shapes=this.getModel().getUnit().getSelectedShapes(false);
-            Rectangle r=this.getModel().getUnit().getShapesRect(shapes);                                                      
+            Box r=this.getModel().getUnit().getShapesRect(shapes);                                                      
             //move to screen center
-            unitMgr.moveBlock(shapes,point.x-r.x,point.y-r.y);
+            unitMgr.moveBlock(shapes,point.x-(int)r.min.x,point.y-(int)r.min.y);
 
             //register with Do/Undo Mgr
             getModel().getUnit().registerMemento(new CompositeMemento(MementoType.CREATE_MEMENTO).Add(getModel().getUnit().getSelectedShapes(false)));

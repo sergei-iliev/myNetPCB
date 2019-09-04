@@ -36,7 +36,7 @@ public class UnitEventHandle <U extends UnitComponent,S extends Shape> extends E
 
     @Override
     public void mouseScaledReleased(MouseScaledEvent e) {
-        getComponent().getModel().getUnit().setSelected(getComponent().getModel().getUnit().getScalableTransformation().getInverseRect(new Rectangle(getComponent().getViewportWindow().x+selectionRect.x,getComponent().getViewportWindow().y+selectionRect.y,selectionRect.width,selectionRect.height)));
+        //getComponent().getModel().getUnit().setSelected(getComponent().getModel().getUnit().getScalableTransformation().getInverseRect(new Rectangle(getComponent().getViewportWindow().x+selectionRect.x,getComponent().getViewportWindow().y+selectionRect.y,selectionRect.width,selectionRect.height)));
         getComponent().Repaint();    
     }
 

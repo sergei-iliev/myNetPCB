@@ -1,25 +1,23 @@
 package com.mynetpcb.core.capi.line;
 
-import java.awt.Point;
+import com.mynetpcb.d2.shapes.Point;
 
-public class LinePoint extends Point{
-    
+public class LinePoint extends Point {
     private boolean selection;
 
-    public LinePoint(int x,int y){
-        super(x,y);
-    }
-    
-    public LinePoint(Point point){
-        super(point.x,point.y);
-    }
-    
-    public void setSelected(boolean selection) {
-       this.selection=selection;
-    }
+     public LinePoint(double x,double y){
+         super(x,y);
+     }
+     
+     public LinePoint(Point point){
+         super(point.x,point.y);
+     }
+     
+     public void setSelected(boolean selection) {
+        this.selection=selection;
+     }
 
-    public boolean isSelected() {
-       return selection;
-    }
-    
+     public boolean isSelected() {
+        return selection;
+     }
 }
