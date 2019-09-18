@@ -57,7 +57,15 @@ public class Point extends Shape{
         this.x+=offsetX;
         this.y+=offsetY;        
     } 
-
+    
+    public void mirror(Line line){
+      Point prj=line.projectionPoint(this);
+      Vector v=new Vector(this,prj);
+      prj.translate(v); 
+      this.x=prj.x;
+      this.y=prj.y;  
+    }
+    
     public double distanceTo(Shape shape) {
         if (shape instanceof Point) {
                 double dx = ((Point)shape).x - this.x;
