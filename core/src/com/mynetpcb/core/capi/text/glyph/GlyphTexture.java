@@ -72,12 +72,13 @@ public class GlyphTexture implements Texture {
         this.text = text;
         this.height=0;
         this.width=0;
-        this.setSize(size);
         
         this.layermaskId=Layer.SILKSCREEN_LAYER_FRONT;
         this.isSelected=false;
         this.rotate=0;
         this.mirrored=false;        
+        
+        this.setSize(size);
     }
     public void copy(Texture _copy){
         GlyphTexture copy=(GlyphTexture)_copy;
@@ -406,13 +407,13 @@ public class GlyphTexture implements Texture {
                 for(int i=0;i<glyph.segments.length;i++){    
                      if(glyph.character==' '){
                          continue;
-                     }                    
+                     }             
                      temporal.moveTo(glyph.segments[i].ps.x,glyph.segments[i].ps.y);
                      temporal.lineTo(glyph.segments[i].pe.x,glyph.segments[i].pe.y);                     
                 }
         });
         AffineTransform translate = AffineTransform.getTranslateInstance(-viewportWindow.getX(), -viewportWindow.getY());
-        
+       
         temporal.transform(scale);
         temporal.transform(translate);
         g2.draw(temporal);
@@ -567,39 +568,6 @@ public class GlyphTexture implements Texture {
 
     public int getThickness() {
         return thickness;
-    }
-    
-    public void setAlignment(Text.Alignment alignment) {
-//        if(this.alignment.getOrientation()==alignment.getOrientation()){
-//            if (alignment == Text.Alignment.LEFT)
-//                  anchorPoint.setLocation(anchorPoint.x - this.width,anchorPoint.y);
-//            else if(alignment == Text.Alignment.RIGHT){
-//                            anchorPoint.setLocation(anchorPoint.x + this.width,
-//                                                    anchorPoint.y);
-//            }else if (alignment == Text.Alignment.TOP){
-//                anchorPoint.setLocation(anchorPoint.x,
-//                                        anchorPoint.y - this.height);
-//            }else{
-//                anchorPoint.setLocation(anchorPoint.x,
-//                                         anchorPoint.y + this.height);
-//            }
-//            this.alignment = alignment; 
-//        }                
-        
-    }
-    
-    public void setOrientation(Text.Orientation orientation) {        
-//      if(orientation==this.alignment.getOrientation()){
-//            return;
-//      }
-//      Rectangle r=getBoundingShape();
-//      AffineTransform rotation;
-//      if(orientation==Text.Orientation.VERTICAL){ //from horizontal to vertical
-//        rotation = AffineTransform.getRotateInstance(-Math.PI / 2, r.getCenterX(), r.getCenterY());        
-//      }else{
-//        rotation = AffineTransform.getRotateInstance(Math.PI / 2, r.getCenterX(), r.getCenterY());                       
-//      }
-//      this.Rotate(rotation); 
     }
     
     

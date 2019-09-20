@@ -83,28 +83,15 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         if((this.getCopper().getLayerMaskID()&layermask)==0){
             return;
         }
-//        
-//      
-//        Box rect = this.texture.getBoundingShape();
-//            rect.scale(scale.getScaleX());
-//            if (!rect.intersects(viewportWindow)) {
-//                 return;
-//            }
-//
-//                  if (this.selection) {
-//                          this.texture.fillColor = "gray";
-//                  } else {
-//                          this.texture.fillColor = this.copper.getColor();
-//                  }
-//                  this.texture.paint(g2, viewportWindow, scale,this.copper.getLayerMaskID());
-//        
-//        
-//        Rectangle2D scaledRect = Utilities.getScaleRect(texture.getBoundingShape(),scale);
-//        if(!scaledRect.intersects(viewportWindow)){
-//          return;   
-//        }
-//        texture.setFillColor((isSelected()?Color.GRAY:this.copper.getColor()));
-//        texture.paint(g2, viewportWindow, scale,copper.getLayerMaskID());
+        
+      
+        Box rect = this.texture.getBoundingShape();
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+            return;
+        }
+        texture.setFillColor((isSelected()?Color.GRAY:this.copper.getColor()));
+        texture.paint(g2, viewportWindow, scale,copper.getLayerMaskID());        
     }
     @Override
     public void print(Graphics2D g2,PrintContext printContext,int layermask) {        

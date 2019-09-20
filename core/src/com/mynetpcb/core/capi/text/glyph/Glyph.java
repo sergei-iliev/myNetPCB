@@ -59,7 +59,7 @@ public class Glyph implements Cloneable{
         double ratio=20*((size*10));
         for(int i=0;i<this.segments.length;i++){
          this.segments[i].scale(ratio);
-        }             
+        }       
         this.delta*=ratio;
         this.resize();
         
@@ -135,6 +135,10 @@ public class Glyph implements Cloneable{
           this.segments[i].ps.set(glyph.segments[i].ps);
           this.segments[i].pe.set(glyph.segments[i].pe);
         }
+//        System.out.println(size);
+//        if(size==2.0){
+//            System.out.println(1);
+//        }
         this.scale(size);              
     }
 
@@ -144,12 +148,13 @@ public class Glyph implements Cloneable{
         character=e.getAttribute("char").charAt(0);
         delta=Integer.parseInt(e.getAttribute("delta"));
         NodeList lines=e.getElementsByTagName("line");
+        segments=new Segment[lines.getLength()];
         
         for(int i=0;i<lines.getLength();i++){
             Node n=lines.item(i);
             String line=n.getTextContent();
             String[] array=line.split(",");
-            this.segments[i]=new Segment(new Point(Double.parseDouble(array[0]),Double.parseDouble(array[1])), new Point(Double.parseDouble(array[0]),Double.parseDouble(array[1])));                           
+            this.segments[i]=new Segment(new Point(Double.parseDouble(array[0]),Double.parseDouble(array[1])), new Point(Double.parseDouble(array[2]),Double.parseDouble(array[3])));                           
         }
     }
     
