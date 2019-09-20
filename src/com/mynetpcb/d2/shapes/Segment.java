@@ -40,9 +40,13 @@ public class Segment extends Shape {
             this.ps.scale(alpha);
             this.pe.scale(alpha);           
     }    
+    public void mirror(Line line){
+            this.ps.mirror(line);
+            this.pe.mirror(line);
+    }    
     @Override
     public void paint(Graphics2D g2, boolean fill) {
-        // TODO Implement this method
+       
 
     }
 

@@ -23,7 +23,9 @@ public class Polygon extends Shape{
         return copy;
     }
     
-
+    public Box box(){
+      return new Box(this.points);       
+    }
     public boolean contains(Point pt){    
        return this.contains(pt.x,pt.y);                     
     }
