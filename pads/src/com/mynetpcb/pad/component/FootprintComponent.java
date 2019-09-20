@@ -331,7 +331,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                                                            targetFile, XMLImportTask.class));
     }
     @Override
-    public void Reload() {
+    public void reload() {
         if(getModel().getFileName()==null){
           return;   
         }

@@ -370,7 +370,7 @@ exit();
                     return;
                 }                      
             }
-            footprintComponent.Clear();                              
+            footprintComponent.clear();                              
         }
         
         if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {  
@@ -432,11 +432,11 @@ exit();
              
         }
         if (e.getSource()==ScaleIn) {
-            footprintComponent.ZoomOut(new Point((int)footprintComponent.getVisibleRect().getCenterX(),
+            footprintComponent.zoomOut(new Point((int)footprintComponent.getVisibleRect().getCenterX(),
                                                 (int)footprintComponent.getVisibleRect().getCenterY()));
         }
         if (e.getSource()==ScaleOut) {
-            footprintComponent.ZoomIn(new Point((int)footprintComponent.getVisibleRect().getCenterX(),
+            footprintComponent.zoomIn(new Point((int)footprintComponent.getVisibleRect().getCenterX(),
                                                  (int)footprintComponent.getVisibleRect().getCenterY()));
         }
         if (e.getSource()==RotateLeft || e.getSource()==RotateRight) {        
@@ -492,7 +492,7 @@ exit();
             printContext.setIsMirrored(false);
             printContext.setLayermaskId(Layer.LAYER_ALL);
             printContext.setTag("pads");
-            footprintComponent.Print(printContext);
+            footprintComponent.print(printContext);
         }
         
         if (e.getSource()==DragHeand) {
@@ -517,7 +517,7 @@ exit();
      * @param source 
      */
     private void LoadFootprints(FootprintContainer source) {
-        footprintComponent.Clear();
+        footprintComponent.clear();
         footprintComponent.setMode(FootprintComponent.COMPONENT_MODE);
         if(source==null){
             Footprint footprint=new Footprint(Grid.MM_TO_COORD(50),Grid.MM_TO_COORD(50)); 
@@ -570,7 +570,7 @@ exit();
                 return;
             }
         }
-        footprintComponent.Release();
+        footprintComponent.release();
         FootprintEditorDialog.this.dispose();
     }
     public static void main(String[] args) {

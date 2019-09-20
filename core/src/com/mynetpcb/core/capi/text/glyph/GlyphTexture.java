@@ -270,6 +270,9 @@ public class GlyphTexture implements Texture {
                 glyph.move(xoffset,yoffset);
             });              
     }
+    public double getRotation(){
+        return this.rotate;
+    }
     public void setRotation(double rotate,Point pt){
             double alpha=rotate-this.rotate;
             this.anchorPoint.rotate(alpha,pt);

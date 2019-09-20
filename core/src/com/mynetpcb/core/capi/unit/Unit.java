@@ -173,7 +173,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         this.fireShapeEvent(new ShapeEvent(shape, Event.ADD_SHAPE));
     }
 
-    public void Clear() {
+    public void clear() {
         //***go through all lists and delete them
         for (; shapes.size() > 0; ) {
             this.delete(shapes.get(0).getUUID());
@@ -182,8 +182,8 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         //undoProvider.Clear();
     }
 
-    public void Release() {
-        this.Clear();
+    public void release() {
+        this.clear();
         //***clear listeners list
         for (int i = 0; i < shapeListeners.getListenerList().length; i++) {
             shapeListeners.getListenerList()[i] = null;
@@ -395,9 +395,9 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         this.frame.setSize(width, height);
     }
 
-    public abstract StringBuffer Format();
+    public abstract StringBuffer format();
 
-    public abstract void Parse(Node node) throws XPathExpressionException, ParserConfigurationException;
+    public abstract void parse(Node node) throws XPathExpressionException, ParserConfigurationException;
 
     /*
      * is junshion click
@@ -651,7 +651,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
           }
         }
     }
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow) {
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for (S shape : shapes) {
             shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
@@ -718,7 +718,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         }
     }
     
-    protected abstract StringBuffer Format(Collection<S> shapes);
+    protected abstract StringBuffer format(Collection<S> shapes);
     
     public Transferable createClipboardContent() {         
             StringBuffer xml=new StringBuffer();        
@@ -726,7 +726,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             Collection<S> list=this.getSelectedShapes(false);
             if(list.size()>0){
                xml.append("<clipboard>");
-               xml.append(Format(list));
+               xml.append(format(list));
                 xml.append("</clipboard>");
                return new StringSelection(xml.toString());
             }else{
@@ -741,7 +741,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         undoProvider.registerMemento(memento);
     }
     @Override
-    public boolean Undo(UndoCallback undocallback) {
+    public boolean undo(UndoCallback undocallback) {
         AbstractMemento memento=null;
         //***skip duplicates
         while(true){
@@ -817,7 +817,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
     }
     
     //Is resizing required
-    public boolean Redo() {
+    public boolean redo() {
         AbstractMemento memento=null;
         //***skip duplicates
         while(true){

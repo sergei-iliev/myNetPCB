@@ -160,7 +160,7 @@ public abstract class PrintDialog extends JDialog implements ActionListener {
         }
         if (e.getActionCommand().equals("PRINT")) {
             
-            unitComponent.get().Print(createContext());
+            unitComponent.get().print(createContext());
         }
 
         if (e.getActionCommand().equals("CANCEL")) {

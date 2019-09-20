@@ -94,7 +94,7 @@ public class Footprint extends Unit<Shape> {
         context = null;
     }
 
-    public StringBuffer Format() {
+    public StringBuffer format() {
         StringBuffer xml = new StringBuffer();
         xml.append("<footprint width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\">\r\n");
         xml.append("<name>" + this.unitName + "</name>\r\n");
@@ -128,12 +128,12 @@ public class Footprint extends Unit<Shape> {
             }
         }).collect(Collectors.toList());
         
-        xml.append(Format(shapes));
+        xml.append(format(shapes));
         xml.append("</footprint>");
         return xml;
     }
 
-    protected StringBuffer Format(Collection<Shape> shapes) {
+    protected StringBuffer format(Collection<Shape> shapes) {
         StringBuffer xml = new StringBuffer();
 
         xml.append("<shapes>\r\n");
@@ -147,7 +147,7 @@ public class Footprint extends Unit<Shape> {
     }
 
 
-    public void Parse(Node node) throws XPathExpressionException, ParserConfigurationException {
+    public void parse(Node node) throws XPathExpressionException, ParserConfigurationException {
         Element e = (Element) node;
         this.setSize(e.hasAttribute("width") ?
                      (Integer.parseInt(e.getAttribute("width")) != 1 ? Integer.parseInt(e.getAttribute("width")) :

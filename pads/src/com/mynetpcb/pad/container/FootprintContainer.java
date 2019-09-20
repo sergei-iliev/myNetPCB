@@ -36,7 +36,7 @@ public class FootprintContainer extends UnitContainer<Footprint,Shape>{
         xml.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n"); 
         xml.append("<footprints identity=\"Footprint\" version=\"1.0\">\r\n");
         for(Footprint footprint:getUnits()){
-          xml.append(footprint.Format());
+          xml.append(footprint.format());
           xml.append("\r\n");
         }
         xml.append("</footprints>");
@@ -77,7 +77,7 @@ public class FootprintContainer extends UnitContainer<Footprint,Shape>{
                continue;                        
             }  
            Footprint footprint=new Footprint(1,1);
-           footprint.Parse(node); 
+           footprint.parse(node); 
            Add(footprint); //attach listeners
            //footprint.notifyListeners(ShapeEvent.ADD_SHAPE); 
         }  
@@ -102,7 +102,7 @@ public class FootprintContainer extends UnitContainer<Footprint,Shape>{
                continue;                        
             }  
             if(_index==index){
-               getUnit().Parse(node);
+               getUnit().parse(node);
             }
             _index++;
         }    

@@ -114,6 +114,19 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     public void setSelected(boolean selected) {
         this.texture.setSelected(selected);
     }
+//    public void setRotation(double rotate){     
+//            if(center==undefined){
+//                      this.texture.setRotation(rotate,this.getCenter());
+//            }else{
+//                      this.texture.setRotation(rotate,center);      
+//            }
+//    }
+    
+    @Override
+    public boolean isClicked(int x, int y) {        
+        return this.texture.isClicked(x,y);
+    }
+
     @Override
     public boolean isSelected() {
         return this.texture.isSelected();

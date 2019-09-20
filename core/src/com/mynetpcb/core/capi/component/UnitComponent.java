@@ -225,7 +225,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return viewportWindow;
     }
 
-    public void Clear() {
+    public void clear() {
         setSize(1, 1);
         revalidate();
         eventMgr.resetEventHandle();
@@ -236,8 +236,8 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
 
     //***Remove resources
 
-    public void Release() {
-        this.Clear();
+    public void release() {
+        this.clear();
         parameters.clear();
         model.Release();
 
@@ -259,7 +259,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             Graphics2D g2 = (Graphics2D)canvas.getGraphics();
             g2.setColor(getBackground());
             g2.fillRect(0, 0, getWidth(), getHeight());
-            model.getUnit().Paint(g2, viewportWindow);
+            model.getUnit().paint(g2, viewportWindow);
             if (cursor != null) {
                 cursor.paint(g2, viewportWindow,
                              getModel().getUnit().getScalableTransformation().getCurrentTransformation(),Layer.Copper.All.getLayerMaskID());
@@ -268,7 +268,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             g2.dispose();
         }
         
-        repaint();
+        super.repaint();
     }
 
     public void Export(String fileName,PrintContext context){
@@ -281,7 +281,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         //finish callback
         this.model.getUnit().finish();
     }
-    public void Print(PrintContext context) {
+    public void print(PrintContext context) {
         PrinterJob printJob = PrinterJob.getPrinterJob();
 
         PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
@@ -330,12 +330,12 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
 
     @Override
-    public void ScrollX(int x) {
+    public void scrollX(int x) {
         viewportWindow.setX(x);
     }
 
     @Override
-    public void ScrollY(int y) {
+    public void scrollY(int y) {
         viewportWindow.setY(y);
     }
 
@@ -351,7 +351,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
 
     @Override
-    public void Rotate(int rotationType, Point p) {
+    public void rotate(int rotationType, Point p) {
         Point tmp = new Point();
         if (Utilities.ROTATION_RIGHT == rotationType) {
 
@@ -384,7 +384,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
 
     @Override
-    public boolean ZoomOut(Point windowPoint) {
+    public boolean zoomOut(Point windowPoint) {
         if (model.getUnit().getScalableTransformation().ScaleOut()) {
             this.getViewportWindow().scaleout(windowPoint.x, windowPoint.y,
                                               this.model.getUnit().getScalableTransformation());
@@ -421,7 +421,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
 
     @Override
-    public boolean ZoomIn(Point windowPoint) {
+    public boolean zoomIn(Point windowPoint) {
         if (model.getUnit().getScalableTransformation().ScaleIn()) {
             this.getViewportWindow().scalein(windowPoint.x, windowPoint.y,
                                              this.model.getUnit().getScalableTransformation());
@@ -460,11 +460,11 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     @Override
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() == dialogFrame.get().getHorizontalScrollBar().getModel()) {
-            this.ScrollX(dialogFrame.get().getHorizontalScrollBar().getValue());
+            this.scrollX(dialogFrame.get().getHorizontalScrollBar().getValue());
         }
 
         if (e.getSource() == dialogFrame.get().getVerticalScrollBar().getModel()) {
-            this.ScrollY(dialogFrame.get().getVerticalScrollBar().getValue());
+            this.scrollY(dialogFrame.get().getVerticalScrollBar().getValue());
         }
         
         this.Repaint();
@@ -515,7 +515,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return dialogFrame.get();
     }
     
-    public abstract void Reload();
+    public abstract void reload();
     /*
      * Import external asset to current project
      */
@@ -587,9 +587,9 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             return;
         }
         if (e.getWheelRotation() > 0) {
-            ZoomIn(e.getPoint());
+            zoomIn(e.getPoint());
         } else {
-            ZoomOut(e.getPoint());
+            zoomOut(e.getPoint());
         }
     }
 
@@ -714,7 +714,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                 if (getModel().getUnit() != null) {
                     if (e.getModifiersEx() != 0 && (e.getModifiers() == ActionEvent.CTRL_MASK)) {
                         if (e.getKeyCode() == KeyEvent.VK_Z) {
-                            if (getModel().getUnit().Undo(getEventMgr().getTargetEventHandle())) {
+                            if (getModel().getUnit().undo(getEventMgr().getTargetEventHandle())) {
                                 Repaint();
                                 revalidate();
                             } else {
@@ -723,7 +723,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                             return true;
                         }
                         if (e.getKeyCode() == KeyEvent.VK_Y) {
-                            if (getModel().getUnit().Redo()) {
+                            if (getModel().getUnit().redo()) {
                                 Repaint();
                                 revalidate();
                             } else {

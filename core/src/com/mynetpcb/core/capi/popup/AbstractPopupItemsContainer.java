@@ -500,7 +500,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().Repaint();
         }
         if(e.getActionCommand().equalsIgnoreCase("reload")){
-            getUnitComponent().Reload();
+            getUnitComponent().reload();
         }
         if (e.getActionCommand().equalsIgnoreCase("ImportUnit")) {
             JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
@@ -559,7 +559,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
                 getUnitComponent().revalidate();
                 getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.SELECT_UNIT));
             }else{
-                getUnitComponent().Clear();
+                getUnitComponent().clear();
                 getUnitComponent().fireContainerEvent(new ContainerEvent(null, ContainerEvent.DELETE_CONTAINER));
             }
             getUnitComponent().componentResized(null);
@@ -574,14 +574,14 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }
         
         if(e.getActionCommand().equals("Undo")){
-         getUnitComponent().getModel().getUnit().Undo(null);
+         getUnitComponent().getModel().getUnit().undo(null);
          getUnitComponent().Repaint();
          getUnitComponent().revalidate();
          return;
         }
         
         if(e.getActionCommand().equals("Redo")){
-         getUnitComponent().getModel().getUnit().Redo();
+         getUnitComponent().getModel().getUnit().redo();
          getUnitComponent().Repaint();
          getUnitComponent().revalidate();        
          return;

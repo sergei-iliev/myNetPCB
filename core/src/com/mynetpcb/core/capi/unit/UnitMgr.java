@@ -44,7 +44,7 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 
     public void Load(U to, U from) throws CloneNotSupportedException {
         //1.Clear old symbols with notification
-        to.Clear();
+        to.clear();
 
         //2 equalize grid
         to.getGrid().setGridUnits(from.getGrid().getGridValue(), from.getGrid().getGridUnits());

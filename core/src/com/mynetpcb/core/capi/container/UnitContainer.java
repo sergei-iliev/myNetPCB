@@ -124,7 +124,7 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         if (_unit == null) {
             return;
         }
-        _unit.Release();
+        _unit.release();
         this.fireUnitEvent(new UnitEvent(unitsMap.get(uuid), UnitEvent.DELETE_UNIT));
         if (_unit == unit) {
             unit = null;
