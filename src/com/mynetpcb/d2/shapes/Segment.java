@@ -12,7 +12,7 @@ public class Segment extends Shape {
     
     @Override
     public Segment clone() {
-        return new Segment(this.ps, this.pe);
+        return new Segment(new Point(this.ps.x,this.ps.y),new Point(this.pe.x,this.pe.y));
     }
     public void set(double x1,double y1,double x2,double y2){
             this.ps.set(x1,y1);

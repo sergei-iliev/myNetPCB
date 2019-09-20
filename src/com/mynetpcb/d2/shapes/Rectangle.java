@@ -5,12 +5,12 @@ import com.mynetpcb.d2.shapes.Polygon;
 
 
 public class Rectangle extends Polygon {
-    private double x,y,width,height;
+
     public Rectangle(double x,double y,double width,double height) {
-      this.x=x;
-      this.y=y;
-      this.width=width;
-      this.height=height;
+        this.points.add(new Point(x,y));                        
+        this.points.add(new Point(x+width,y));
+        this.points.add(new Point(x+width,y+height));
+        this.points.add(new Point(x,y+height));      
     }
     
 
