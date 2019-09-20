@@ -81,7 +81,7 @@ public class Grid implements Cloneable{
       }            
     }
     
-    public double COORD_TO_UNIT(int coord){
+    public double COORD_TO_UNIT(double coord){
       switch(this.units){ 
         case MM:
             return COORD_TO_MM(coord);
@@ -113,7 +113,7 @@ public class Grid implements Cloneable{
         
              //scale out the visible static rectangle to the real schema size to see which point fall in to be rendered.
              //scale back to origine
-         Box r=Box.fromRect((viewportWindow.x/scale.getScaleX()),(viewportWindow.y/scale.getScaleX()),(viewportWindow.getWidth()/scale.getScaleX()),(viewportWindow.getHeight()/scale.getScaleX()));
+         Box r=Box.fromRect((viewportWindow.getX()/scale.getScaleX()),(viewportWindow.getY()/scale.getScaleX()),(viewportWindow.getWidth()/scale.getScaleX()),(viewportWindow.getHeight()/scale.getScaleX()));
          
          Point position=this.positionOnGrid(r.min.x,r.min.y);
              
@@ -132,7 +132,7 @@ public class Grid implements Cloneable{
                       
                       point.scale(scale.getScaleX());
                               
-                      point.set(point.x-viewportWindow.x,point.y-viewportWindow.y);
+                      point.set(point.x-viewportWindow.getX(),point.y-viewportWindow.getY());
                          
                       if(point.x>viewportWindow.getWidth()||point.y>viewportWindow.getHeight()){                   
                               continue;  
@@ -219,8 +219,8 @@ public class Grid implements Cloneable{
       return (int)Math.floor(mm*10000);
     }
  
-    public static double COORD_TO_MM(int coord){
-      return ((double)coord/10000);    
+    public static double COORD_TO_MM(double coord){
+      return (coord/10000);    
     }
     
     public Object clone() throws CloneNotSupportedException { 

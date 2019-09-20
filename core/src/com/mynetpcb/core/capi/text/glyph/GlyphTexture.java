@@ -13,9 +13,12 @@ import com.mynetpcb.core.utils.Utilities;
 
 import com.mynetpcb.d2.shapes.Box;
 
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
 import com.mynetpcb.d2.shapes.Rectangle;
+
+import com.mynetpcb.d2.shapes.Segment;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -38,11 +42,9 @@ public class GlyphTexture implements Texture {
 
     private int id,layermaskId;
     
-    private Point anchorPoint; //***baseline!
+    private Point anchorPoint;
 
     private List<Glyph> glyphs;
-
-    private Text.Alignment alignment;
 
     private int width,height;
 
@@ -56,26 +58,37 @@ public class GlyphTexture implements Texture {
     
     private boolean isSelected;
     
+    private double rotate;
+    private boolean mirrored;
+    
     public GlyphTexture(String text,String tag, int x, int y, int size) {
+        this.tag=tag;
+        this.id=1;
         this.anchorPoint = new Point(x, y);
         this.glyphs = new ArrayList<>();
         this.thickness = Grid.MM_TO_COORD(0.2);
-        this.alignment = Text.Alignment.LEFT;
-        this.selectionRectWidth=4000;        
-        this.text = this.resetGlyphText(text);
-        this.tag=tag;
-        this.size=size;
+        
+        this.selectionRectWidth=3000;
+        this.text = text;
+        this.height=0;
+        this.width=0;
+        this.setSize(size);
+        
         this.layermaskId=Layer.SILKSCREEN_LAYER_FRONT;
+        this.isSelected=false;
+        this.rotate=0;
+        this.mirrored=false;        
     }
     public void copy(Texture _copy){
         GlyphTexture copy=(GlyphTexture)_copy;
         this.anchorPoint.set(copy.anchorPoint.x,copy.anchorPoint.y); 
         this.text = copy.text;
-        this.tag = copy.tag;   
+        this.tag = copy.tag; 
+        this.rotate=copy.rotate;
+        this.mirrored=copy.mirrored;        
         this.fillColor=copy.fillColor;
-        this.alignment=copy.alignment;
         this.thickness=copy.thickness;
-        setSize(copy.size);                
+        setSize(copy.size);         
     }
     
     public GlyphTexture clone() throws CloneNotSupportedException {
@@ -106,7 +119,7 @@ public class GlyphTexture implements Texture {
             }
         }
 
-        return result.toString();
+        return result.toString();       
     }
 
     public void clear() {
@@ -115,65 +128,78 @@ public class GlyphTexture implements Texture {
         this.height=0;
     }
 
-
-    private void resetGlyphBox(){
-        switch(alignment.getOrientation()){
-        case HORIZONTAL:
-            for (Glyph glyph : glyphs) {
-                this.width += glyph.getGlyphWidth() + glyph.getDelta();
-                this.height = Math.max(glyph.getGlyphHeight() + glyph.miny, this.height);
+    public boolean isEmpty() {
+        return this.text == null || this.text.length() == 0;
+    }
+    private void resetGlyphsLine(){
+        int xoffset = 0,yoffset=0;
+        for(Glyph glyph:this.glyphs){
+            if(glyph.character==' '){
+                xoffset += glyph.delta;
+                this.width += glyph.delta;
+                return;
+            }
+            //calculate its width
+            glyph.resize();
+            yoffset=glyph.getHeight();
+            for (int i = 0; i < glyph.segments.length ; i++) {              
+                glyph.segments[i].move(this.anchorPoint.x + xoffset,this.anchorPoint.y);                                          
             }        
-            break;
-        case VERTICAL:
-            for (Glyph glyph : glyphs) {
-                this.height += glyph.getGlyphHeight() + glyph.getDelta();
-                this.width = Math.max(glyph.getGlyphWidth()+glyph.minx, this.width);
-            }            
-            break;
+            xoffset += glyph.getWidth() + glyph.delta;
+            this.height = Math.max(glyph.getHeight()+ (int)glyph.miny, this.height);
+            this.width += glyph.getWidth() + glyph.delta;
         }
+        
+        this.glyphs.forEach(glyph-> {
+            for (int i = 0; i < glyph.segments.length ; i++) {              
+                    glyph.segments[i].move(0,-this.height);                                           
+            }        
+        });
+        
+    }    
+    private void reset(){
+        if (this.text == null) {
+            return;
+        }
+        //reset original text
+        this.text = this.resetGlyphText(this.text);
+        //reset size
+        this.glyphs.forEach(glyph->{
+            glyph.setSize(Grid.COORD_TO_MM(this.size));
+        });        
+        
+        //arrange it according to anchor point
+        this.resetGlyphsLine();
+        
+        //rotate
+        this.glyphs.forEach(glyph->{
+            glyph.rotate(this.rotate,this.anchorPoint);                  
+        });
     }
     public int getSize() {
         return size;
     }
 
     public void setSize(int size) {
-        if (text == null) {
-            return;
-        }
+        
         this.size=size;
-        //reset original text
-        this.text = resetGlyphText(this.text);
-        //reset size
-        for (Glyph glyph : glyphs) {
-            glyph.setSize(Grid.COORD_TO_MM(this.size));
+        if(this.mirrored){
+           Line line=new Line(this.anchorPoint,new Point(this.anchorPoint.x,this.anchorPoint.y+100));
+           this.mirror(true,line);
+        }else{
+           this.reset();
         }        
-        //reset orientation
-        if(this.alignment.getOrientation() == Text.Orientation.VERTICAL){
-            AffineTransform rotation = AffineTransform.getRotateInstance(-Math.PI / 2, 0, 0);
-            for (Glyph glyph : glyphs) {
-                glyph.Rotate(rotation);
-            }
-        }
-        //reset box
-        resetGlyphBox();
     }
     
     public void setText(String text) {
         //read original text
-        this.text = resetGlyphText(text);
-        //reset size
-        for (Glyph glyph : glyphs) {
-            glyph.setSize(Grid.COORD_TO_MM(this.size));
+        this.text = text;
+        if(this.mirrored){
+          Line line=new Line(this.anchorPoint,new Point(this.anchorPoint.x,this.anchorPoint.y+100));
+          this.mirror(true,line);
+        }else{
+          this.reset();
         }
-        //reset orientation
-        if(this.alignment.getOrientation() == Text.Orientation.VERTICAL){
-            AffineTransform rotation = AffineTransform.getRotateInstance(-Math.PI / 2, 0, 0);
-            for (Glyph glyph : glyphs) {
-                glyph.Rotate(rotation);
-            }
-        }
-        //reset box
-        resetGlyphBox();
         
     }
 
@@ -187,48 +213,89 @@ public class GlyphTexture implements Texture {
     public long getOrderWeight() {
         return 0;
     }
-
-
-    public boolean isEmpty() {
-        return text == null || text.length() == 0;
+    public void mirror(boolean mirrored,Line line){
+            this.mirrored=mirrored;
+            
+        //reset original text
+        this.text = this.resetGlyphText(this.text);
+        //reset size
+        this.glyphs.forEach(glyph->{
+            glyph.setSize(Grid.COORD_TO_MM(this.size));
+        });        
+        
+        //arrange it according to anchor point
+        this.resetGlyphsLine();
+        
+        this.anchorPoint.mirror(line);
+        this.glyphs.forEach(glyph->{
+           if(this.mirrored){
+            glyph.mirror(line);             
+           } 
+           glyph.rotate(this.rotate,this.anchorPoint);
+            
+        });
+            
     }
 
     @Override
     public Box getBoundingShape() {
-//        if (text == null || text.length() == 0) {
-//            return null;
-//        }
-//        
-//        Rectangle r = new Rectangle();
-//        switch (this.alignment) {
-//        case LEFT:
-//            //left bottom
-//            r.setRect(anchorPoint.x, anchorPoint.y - height, width, height);
-//            break;
-//        case RIGHT:
-//            //right bottom
-//            r.setRect(anchorPoint.x-width, anchorPoint.y - height, width, height);                        
-//            break;
-//        case BOTTOM:
-//            r.setRect(anchorPoint.x-width, anchorPoint.y-height, width, height);
-//            break;
-//        case TOP:
-//            r.setRect(anchorPoint.x-width, anchorPoint.y, width, height);            
-//            break;
-//        }
-//        return r;
-        return null;
+       if (this.text == null || this.text.length() == 0) {
+         return null;
+       }
+         return this.getBoundingRect().box();
     }
+    
+    public Rectangle getBoundingRect(){
+        if(this.mirrored){
+            Rectangle rect= new Rectangle(this.anchorPoint.x-this.width,this.anchorPoint.y-this.height,this.width,this.height);
+            rect.rotate(this.rotate,this.anchorPoint);
+            return rect;
+         }else{     
+            Rectangle rect= new Rectangle(this.anchorPoint.x,this.anchorPoint.y-this.height,this.width,this.height);
+            rect.rotate(this.rotate,this.anchorPoint);
+            return rect;
+         }  
+    }    
+    
     @Override
     public Point getAnchorPoint() {
         return anchorPoint;
     }
 
-    //@Override
-    public void move(int xoffset, int yoffset) {
-        //anchorPoint.setLocation(anchorPoint.x + xoffset, anchorPoint.y + yoffset);
+    @Override
+    public void move(int xoffset, int yoffset) {        
+            this.anchorPoint.move(xoffset,yoffset);
+            this.glyphs.forEach(glyph->{
+                glyph.move(xoffset,yoffset);
+            });              
     }
-
+    public void setRotation(double rotate,Point pt){
+            double alpha=rotate-this.rotate;
+            this.anchorPoint.rotate(alpha,pt);
+            this.glyphs.forEach(glyph->{
+               glyph.rotate(alpha,pt);   
+            });  
+            this.rotate=rotate;     
+    }
+    
+    public void rotate(double rotate,Point pt){
+            //fix angle
+            double alpha=this.rotate+rotate;
+            if(alpha>=360){
+                    alpha-=360;
+            }
+            if(alpha<0){
+             alpha+=360; 
+            }       
+            this.rotate=alpha;
+            //rotate anchor point
+            this.anchorPoint.rotate(rotate,pt);
+            //rotate glyphs
+            this.glyphs.forEach(glyph->{
+               glyph.rotate(rotate,pt);   
+            });  
+                    
+    }
     //@Override
     public void mirror(Point A, Point B) {
 //        Utilities.mirrorPoint(A,B, anchorPoint);
@@ -319,192 +386,38 @@ public class GlyphTexture implements Texture {
 
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
-//        if (this.isEmpty()) {
-//            return;
-//        }
-//        
-//        Layer.Side side= (Layer.Side.resolve(layermask));
-//        
-//        if (this.isSelected)
-//            g2.setColor(Color.GRAY);
-//        else
-//            g2.setColor(fillColor);
-//
-//        double lineThickness = thickness * scale.getScaleX();
-//
-//        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(GeneralPath.class);
-//        GeneralPath temporal = (GeneralPath) provider.getShape();
-//
-//
-//        Rectangle r = getBoundingShape();
-//        //Rectangle2D scaledRect = Utilities.getScaleRect(r, scale);
-//        //scaledRect.setRect(scaledRect.getX() - viewportWindow.x, scaledRect.getY() - viewportWindow.y,
-//        //                   scaledRect.getWidth(), scaledRect.getHeight());
-//        //g2.setStroke(new BasicStroke());
-//        //g2.draw(scaledRect);
-//        g2.setStroke(new BasicStroke((float) lineThickness, Trackable.JoinType
-//                                                                     .JOIN_ROUND
-//                                                                     .ordinal(), Trackable.EndType
-//                                                                                          .CAP_ROUND
-//                                                                                          .ordinal()));
-//
-//        switch (this.alignment) {
-//        case LEFT:
-//            int xoffset = 0;
-//            for (Glyph glyph : glyphs) {
-//                if(glyph.getChar()==' '){
-//                    xoffset += glyph.getDelta();
-//                    continue;
-//                }
-//                Point A=new Point(r.x,r.y);
-//                Point B=new Point(r.x,r.y+r.height);
-//                int j = 0;
-//                for (int i = 0; i < glyph.getLinesNumber(); i++, j = (j + 2)) {
-//                    if(side==Layer.Side.BOTTOM){
-//                     Point source=new Point(glyph.points[j].x + anchorPoint.x + xoffset,
-//                                    glyph.points[j].y + anchorPoint.y - r.height);
-//                    
-//                    
-//                     Utilities.mirrorPoint(A, B, source);
-//                     temporal.moveTo(source.getX()+r.width, source.getY());
-//                    
-//                     source=new Point(glyph.points[j + 1].x + anchorPoint.x + xoffset,
-//                                    glyph.points[j + 1].y + anchorPoint.y - r.height);
-//                    
-//                    
-//                     Utilities.mirrorPoint(A, B, source);
-//                     temporal.lineTo(source.getX()+r.width, source.getY());
-//                    }else{
-//                    temporal.moveTo(glyph.points[j].x + anchorPoint.x + xoffset,
-//                                    glyph.points[j].y + anchorPoint.y - r.height);
-//                    temporal.lineTo(glyph.points[j + 1].x + anchorPoint.x + xoffset,
-//                                    glyph.points[j + 1].y + anchorPoint.y - r.height);
-//                    }
-//                }
-//                xoffset += glyph.getGlyphWidth() + glyph.getDelta();
-//            }    
-//            
-//             
-//             break;
-//        case RIGHT:
-//            xoffset = 0;
-//            for (Glyph glyph : glyphs) {
-//                if(glyph.getChar()==' '){
-//                    xoffset += glyph.getDelta();
-//                    continue;
-//                }
-//                Point A=new Point(r.x+r.width,r.y);
-//                Point B=new Point(r.x+r.width,r.y+r.height);
-//                int j = 0;
-//                for (int i = 0; i < glyph.getLinesNumber(); i++, j = (j + 2)) {
-//                    if(side==Layer.Side.BOTTOM){
-//                     Point source=new Point(glyph.points[j].x + anchorPoint.x + xoffset - r.width,
-//                                    glyph.points[j].y + anchorPoint.y - r.height);
-//                    
-//                    
-//                     Utilities.mirrorPoint(A, B, source);
-//                     temporal.moveTo(source.getX()-r.width, source.getY());
-//                    
-//                     source=new Point(glyph.points[j + 1].x + anchorPoint.x + xoffset -r.width,
-//                                    glyph.points[j + 1].y + anchorPoint.y - r.height);
-//                    
-//                    
-//                     Utilities.mirrorPoint(A, B, source);
-//                     temporal.lineTo(source.getX()-r.width, source.getY());
-//                    }else{
-//                    temporal.moveTo(glyph.points[j].x + anchorPoint.x + xoffset - r.width,
-//                                    glyph.points[j].y + anchorPoint.y - r.height);
-//                    temporal.lineTo(glyph.points[j + 1].x + anchorPoint.x + xoffset -r.width,
-//                                    glyph.points[j + 1].y + anchorPoint.y - r.height);
-//                    }
-//                }
-//                xoffset += glyph.getGlyphWidth() + glyph.getDelta();
-//            }    
-//        
-//             break;
-//        case BOTTOM:
-//            int yoffset = 0;
-//            for (Glyph glyph : glyphs) {
-//                if(glyph.getChar()==' '){
-//                    yoffset += glyph.getDelta();
-//                    continue;
-//                }
-//                Point A=new Point(r.x,r.y+r.height);
-//                Point B=new Point(r.x+r.width,r.y+r.height);
-//                int j = 0;
-//                for (int i = 0; i < glyph.getLinesNumber(); i++, j = (j + 2)) {
-//                    if(side==Layer.Side.BOTTOM){
-//                     Point source=new Point(glyph.points[j].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j].y + anchorPoint.y-yoffset);
-//                    
-//                    
-//                     Utilities.mirrorPoint(A, B, source);
-//                     temporal.moveTo(source.getX(), source.getY()-r.height);
-//                    
-//                     source=new Point(glyph.points[j + 1].x + anchorPoint.x  -r.width,
-//                                    glyph.points[j + 1].y + anchorPoint.y-yoffset);
-//                    
-//                    
-//                     Utilities.mirrorPoint(A, B, source);
-//                     temporal.lineTo(source.getX(), source.getY()-r.height);
-//                    }else{
-//                    temporal.moveTo(glyph.points[j].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j].y + anchorPoint.y-yoffset);
-//                    temporal.lineTo(glyph.points[j + 1].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j + 1].y + anchorPoint.y-yoffset);
-//                    }
-//                }
-//                yoffset += glyph.getGlyphHeight() + glyph.getDelta();
-//            }
-//            break;
-//        case TOP:
-//            yoffset = 0;
-//            for (Glyph glyph : glyphs) {
-//                if(glyph.getChar()==' '){
-//                    yoffset += glyph.getDelta();
-//                    continue;
-//                }
-//                Point A=new Point(r.x,r.y);
-//                Point B=new Point(r.x+r.width,r.y);
-//                int j = 0;
-//                for (int i = 0; i < glyph.getLinesNumber(); i++, j = (j + 2)) {
-//                   if(side==Layer.Side.BOTTOM){
-//                    Point source=new Point(glyph.points[j].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j].y + anchorPoint.y-yoffset+r.height);
-//                    
-//                    
-//                    Utilities.mirrorPoint(A, B, source);
-//                    temporal.moveTo(source.getX(), source.getY()+r.height);
-//                    
-//                    source=new Point(glyph.points[j + 1].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j + 1].y + anchorPoint.y-yoffset+r.height);
-//                    
-//                    
-//                    Utilities.mirrorPoint(A, B, source);
-//                    temporal.lineTo(source.getX(), source.getY()+r.height);                    
-//                   }else{ 
-//                    temporal.moveTo(glyph.points[j].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j].y + anchorPoint.y-yoffset+r.height);
-//                    temporal.lineTo(glyph.points[j + 1].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j + 1].y + anchorPoint.y-yoffset+r.height);
-//                   }
-//                }
-//                yoffset += glyph.getGlyphHeight() + glyph.getDelta();
-//            }            
-//            break;
-//        }
-//
-//        AffineTransform translate = AffineTransform.getTranslateInstance(-viewportWindow.x, -viewportWindow.y);
-//
-//        temporal.transform(scale);
-//        temporal.transform(translate);
-//        g2.draw(temporal);
-//        
-//        provider.reset();
-//        
-//        if (this.isSelected){
-//            this.drawControlShape(g2,viewportWindow,scale);
-//        }
+        if (this.isEmpty()) {
+             return;
+        }
+        if (this.isSelected)
+            g2.setColor(Color.GRAY);
+        else
+            g2.setColor(fillColor);
+
+        double lineThickness = thickness * scale.getScaleX();
+        g2.setStroke(new BasicStroke((float) lineThickness, Trackable.JoinType
+                                                                             .JOIN_ROUND
+                                                                             .ordinal(), Trackable.EndType
+                                                                                                  .CAP_ROUND
+                                                                                                  .ordinal()));
+        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(GeneralPath.class);
+        GeneralPath temporal = (GeneralPath) provider.getShape();
+        this.glyphs.forEach(glyph->{
+                for(int i=0;i<glyph.segments.length;i++){    
+                     if(glyph.character==' '){
+                         continue;
+                     }                    
+                     temporal.moveTo(glyph.segments[i].ps.x,glyph.segments[i].ps.y);
+                     temporal.lineTo(glyph.segments[i].pe.x,glyph.segments[i].pe.y);                     
+                }
+        });
+        AffineTransform translate = AffineTransform.getTranslateInstance(-viewportWindow.getX(), -viewportWindow.getY());
+        
+        temporal.transform(scale);
+        temporal.transform(translate);
+        g2.draw(temporal);
+        
+        provider.reset();
     }
     public void print(Graphics2D g2,PrintContext printContext,int layermask){
 //        if (this.isEmpty()) {
@@ -615,12 +528,11 @@ public class GlyphTexture implements Texture {
     }
     @Override
     public boolean isClicked(int x, int y) {
-//        Rectangle r=getBoundingShape();
-//        if ((r != null) && (r.contains(x, y)))
-//            return true;
-//        else
-//            return false;
-    return true;
+        if (this.text == null || this.text.length() == 0){
+            return false;
+        } 
+        return this.getBoundingRect().contains(x,y);   
+
     }
 
     @Override
@@ -690,14 +602,11 @@ public class GlyphTexture implements Texture {
 //      this.Rotate(rotation); 
     }
     
-    public Text.Alignment getAlignment() {
-        return this.alignment;
-    }
     
     public String toXML() {
         return (text.equals("") ? "" :
                 text + "," + anchorPoint.x + "," + anchorPoint.y +
-                "," + this.alignment+","+this.thickness+","+this.size);
+                ",,"+this.thickness+","+this.size);
     }
     public void fromXML(Node node) {
 //        if (node == null || node.getTextContent().length()==0) {
@@ -781,7 +690,7 @@ public class GlyphTexture implements Texture {
         
         private List<Glyph> glyphs;
 
-        private Text.Alignment alignment;
+        //private Text.Alignment alignment;
 
         private int size,width,height;
 
@@ -792,7 +701,7 @@ public class GlyphTexture implements Texture {
             symbol.anchorPoint.set(Ax, Ay);
             symbol.id=this.id;
             symbol.text = this.text;
-            symbol.alignment = this.alignment;
+            //symbol.alignment = this.alignment;
             symbol.size = this.size;
             symbol.width=this.width;
             symbol.height=this.height;
@@ -813,7 +722,7 @@ public class GlyphTexture implements Texture {
             Ay = symbol.anchorPoint.y;
             this.id=symbol.id;
             this.text = symbol.text;
-            this.alignment = symbol.alignment;
+            //this.alignment = symbol.alignment;
             this.size = symbol.size;
             this.thickness = symbol.thickness;
             this.width=symbol.width;
@@ -846,7 +755,7 @@ public class GlyphTexture implements Texture {
                 return false;
             }
             GlyphTexture.Memento other = (GlyphTexture.Memento) obj;
-            return (other.id==this.id&&other.size == this.size &&other.width == this.width&&other.height == this.height&& other.alignment == this.alignment &&
+            return (other.id==this.id&&other.size == this.size &&other.width == this.width&&other.height == this.height &&
                     other.thickness == this.thickness && other.text.equals(this.text) && other.Ax == this.Ax &&
                     other.Ay == this.Ay) && other.glyphs.equals(this.glyphs);
         }
@@ -854,7 +763,7 @@ public class GlyphTexture implements Texture {
         @Override
         public int hashCode() {
             int hash =
-                31 +this.id+ this.size +this.width+this.height+ this.alignment.hashCode() + this.thickness + this.text.hashCode() + Double.hashCode(Ax) + Double.hashCode(Ay) +
+                31 +this.id+ this.size +this.width+this.height + this.thickness + this.text.hashCode() + Double.hashCode(Ax) + Double.hashCode(Ay) +
                 this.glyphs.hashCode();
 
             return hash;

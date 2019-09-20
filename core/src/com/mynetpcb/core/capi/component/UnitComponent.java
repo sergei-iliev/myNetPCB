@@ -331,12 +331,12 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
 
     @Override
     public void ScrollX(int x) {
-        viewportWindow.x = x;
+        viewportWindow.setX(x);
     }
 
     @Override
     public void ScrollY(int y) {
-        viewportWindow.y = y;
+        viewportWindow.setY(y);
     }
 
     public void setScrollPosition(int x, int y) {
@@ -411,10 +411,10 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         //set visible amount
         hbar.setVisibleAmount(this.getWidth());
         vbar.setVisibleAmount(this.getHeight());
-        //set new initial value
-        hbar.setValue(this.getViewportWindow().x);
-        vbar.setValue(this.getViewportWindow().y);
-
+        //set new initial value        
+        hbar.setValue((int)this.getViewportWindow().getX());
+        vbar.setValue((int)this.getViewportWindow().getY());
+        
         hbar.getModel().addChangeListener(this);
         vbar.getModel().addChangeListener(this);
         return true;
@@ -449,8 +449,8 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         hbar.setVisibleAmount(this.getWidth());
         vbar.setVisibleAmount(this.getHeight());
         //set new initial value
-        hbar.setValue(this.getViewportWindow().x);
-        vbar.setValue(this.getViewportWindow().y);
+        hbar.setValue((int)this.getViewportWindow().getX());
+        vbar.setValue((int)this.getViewportWindow().getY());
 
         hbar.getModel().addChangeListener(this);
         vbar.getModel().addChangeListener(this);
@@ -792,10 +792,10 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.LOCAL ));
             
             //position onto screen center                            
-            Point point=getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getViewportWindow().x +
-                                                                                                                   getWidth()/2,
-                                                                                                                   getViewportWindow().y +
-                                                                                                                   getHeight()/2));
+            Point point=getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getViewportWindow().getX() +
+                                                                                                                   getWidth()/2),
+                                                                                                                   (int)(getViewportWindow().getY() +
+                                                                                                                   getHeight()/2)));
             UnitMgr unitMgr = new UnitMgr();
             Collection<Shape> shapes=this.getModel().getUnit().getSelectedShapes(false);
             Box r=this.getModel().getUnit().getShapesRect(shapes);                                                      

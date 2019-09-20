@@ -15,6 +15,8 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import java.awt.geom.Point2D;
+
 import java.lang.ref.WeakReference;
 
 import javax.swing.SwingUtilities;
@@ -42,40 +44,40 @@ public abstract class EventHandle<C extends UnitComponent,S extends Shape> imple
     }
 
     public void mousePressed(MouseEvent e) {         
-        mouseScaledPressed(new  MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));                                                
+        mouseScaledPressed(new  MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                
     }
 
     public void mouseReleased(MouseEvent e) {
        if((!SwingUtilities.isRightMouseButton(e))&&(!this.ctrlButtonPress)){                       
-         mouseScaledReleased(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));             
+         mouseScaledReleased(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                            
        } 
     }
 
     public void mouseDragged(MouseEvent e) {
         //****disallow dragging when CTRL is clicked
         if((!SwingUtilities.isRightMouseButton(e))&&(!this.ctrlButtonPress)){ 
-          mouseScaledDragged(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));             
+          mouseScaledDragged(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                           
         }
     }
 
     public void mouseMove(MouseEvent e) {
         if(!SwingUtilities.isRightMouseButton(e)&&(!this.ctrlButtonPress)){   
-          mouseScaledMove(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));           
+          mouseScaledMove(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                         
         }
     }
 
     public void doubleClick(MouseEvent e) {
-        doubleScaledClick(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));           
+        doubleScaledClick(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                         
 
     }
 
     public void mouseEntered(MouseEvent e) {
-        mouseScaledEntered(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));           
+        mouseScaledEntered(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                         
 
     }
 
     public void mouseExited(MouseEvent e) {
-        mouseScaledExited(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));           
+        mouseScaledExited(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                          
 
     }
 

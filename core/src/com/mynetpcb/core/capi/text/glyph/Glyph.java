@@ -3,8 +3,12 @@ package com.mynetpcb.core.capi.text.glyph;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.utils.Utilities;
 
-import java.awt.Point;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.geom.AffineTransform;
+import com.mynetpcb.d2.shapes.Segment;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -17,17 +21,17 @@ import org.w3c.dom.NodeList;
 /*
  * Represents pcb font symbol. Very basic representation of a font symbol that is drawn by straight lines
  */
-public class Glyph implements Externalizable,Cloneable{
+public class Glyph implements Cloneable{
     
-    private char character;
+    char character;
     //distance to next symbol
-    private int delta;
+    int delta=8;
 
-    public Point[] points;
+    Segment[] segments;
     
-    protected int minx,miny;
+    double minx,miny;
     
-    protected int maxx,maxy;
+    double maxx,maxy;
 
     public Glyph(){
 
@@ -35,13 +39,13 @@ public class Glyph implements Externalizable,Cloneable{
     
     @Override
     protected Glyph clone() throws CloneNotSupportedException {
-        
         Glyph copy=(Glyph)super.clone();
-        copy.points=new Point[points.length];
-        for(int i=0;i<points.length;i++){
-           copy.points[i]=new Point(points[i].x,points[i].y);           
+        copy.segments=new Segment[this.segments.length];
+        for(int i=0;i<this.segments.length;i++){
+           copy.segments[i]=this.segments[i].clone();           
         }        
         return copy;
+        
     }
     /*
      * Enlarge to real size
@@ -51,34 +55,36 @@ public class Glyph implements Externalizable,Cloneable{
     /*Height comes in mm!!!!!!!!!!!!!!!!!!!!
      * assume that the step is 0.1(20)
      */
-    protected void scale(double size){                        
-        int ratio=20*((int)(size*10));
-        for(int i=0;i<points.length;i++){
-          points[i].x=ratio*points[i].x;                
-          points[i].y=ratio*points[i].y;  
+    protected void scale(double size){  
+        double ratio=20*((size*10));
+        for(int i=0;i<this.segments.length;i++){
+         this.segments[i].scale(ratio);
         }             
-        delta*=ratio;
+        this.delta*=ratio;
         this.resize();
+        
     }
     //protected void 
-    private void resize(){
+    public void resize(){
         minx=Integer.MAX_VALUE;
         miny=Integer.MAX_VALUE;
         maxx=Integer.MIN_VALUE;
         maxy=Integer.MIN_VALUE;
         
-        for(int i=0;i<points.length;i++){
-            if(minx>points[i].x){
-                minx=points[i].x;
+        for(int i=0;i<this.segments.length;i++){
+            Box box=this.segments[i].box();               
+                
+            if(this.minx>box.min.x){
+                this.minx=box.min.x;
             }
-            if(miny>points[i].y){
-                miny=points[i].y;
+            if(this.miny>box.min.y){
+                this.miny=box.min.y;
             }
-            if(maxx<points[i].x){
-              maxx=points[i].x;
+            if(this.maxx<box.max.x){
+              this.maxx=box.max.x;
             }
-            if(maxy<points[i].y){
-              maxy=points[i].y;
+            if(this.maxy<box.max.y){
+              this.maxy=box.max.y;
             }            
         }
     }
@@ -90,79 +96,60 @@ public class Glyph implements Externalizable,Cloneable{
         return delta;
     }
 
-    public int getLinesNumber() {
-        return points.length/2;
-    }
-
     public char getChar(){
         return character;
     }
-    
-    public int getGlyphWidth(){
-       return maxx-minx; 
+    public void mirror(Line line){
+    for(int i=0;i<this.segments.length;i++){
+        this.segments[i].mirror(line);                                          
+    }
+    this.resize();
+    }    
+    public void move(double xoffset,double yoffset){
+        for(Segment segment:this.segments){            
+           segment.move(xoffset,yoffset);
+        };
+        this.resize();
     }
     
-    public int getGlyphHeight(){
-        return maxy-miny;  
+    public int getWidth(){
+       return (int)(maxx-minx); 
+    }
+    
+    public int getHeight(){
+        return (int)(maxy-miny);  
     }
 
     public void setSize(double size){
           this.resetGlyph(size); 
     }
-    public void Rotate(AffineTransform rotation) {
-        for(int i=0;i<points.length;i++){
-            rotation.transform(points[i], points[i]); 
+    public void rotate(double angle,Point pt) {
+        for(int i=0;i<this.segments.length;i++){
+                this.segments[i].rotate(angle,pt);                                              
         }
         this.resize();
     }
-    /*
-     * True mirroring - like viewing bottom from above
-     */
-    public void Invert(Point A,Point B){
-        for(int i=0;i<points.length;i++){
-            //points[i].setLocation(Utilities.mirrorPoint(A,B, points[i]));
-        }
-        this.resize();        
-    }
     private void resetGlyph(double size){
-      Glyph glyph = GlyphManager.INSTANCE.getGlyph(this.character);    
-        for(int i=0;i<points.length;i++){
-          points[i].x=glyph.points[i].x;
-          points[i].y=glyph.points[i].y;  
+        Glyph glyph = GlyphManager.INSTANCE.getGlyph(this.character);    
+        for(int i=0;i<this.segments.length;i++){
+          this.segments[i].ps.set(glyph.segments[i].ps);
+          this.segments[i].pe.set(glyph.segments[i].pe);
         }
-        scale(size);
-    }
-    
-    @Override
-    public String toXML() {
-        // TODO Implement this method
-        return null;
+        this.scale(size);              
     }
 
-    @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+                
         Element e = (Element) node;
         character=e.getAttribute("char").charAt(0);
         delta=Integer.parseInt(e.getAttribute("delta"));
         NodeList lines=e.getElementsByTagName("line");
-        GlyphParser parser=new GlyphParser();
-        points=new Point[lines.getLength()*2];
         
-        int pos=0;
-
         for(int i=0;i<lines.getLength();i++){
             Node n=lines.item(i);
-            parser.setLine(n.getTextContent());           
-            while(parser.more()) {
-                points[pos]=new Point();
-                points[pos].x=parser.eatInt();
-                parser.eatChar(',');
-                points[pos].y=parser.eatInt(); 
-                if(parser.more()){
-                  parser.eatChar(',');
-                }
-                pos++;
-            }               
+            String line=n.getTextContent();
+            String[] array=line.split(",");
+            this.segments[i]=new Segment(new Point(Double.parseDouble(array[0]),Double.parseDouble(array[1])), new Point(Double.parseDouble(array[0]),Double.parseDouble(array[1])));                           
         }
     }
     

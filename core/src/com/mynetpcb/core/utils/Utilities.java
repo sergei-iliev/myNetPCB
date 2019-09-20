@@ -357,8 +357,8 @@ public final class Utilities {
     //helper - avoid repetition
     public static void drawLine(Line2D line, Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
         Utilities.setScaleLine(line, line, scale);
-        line.setLine(line.getX1() - viewportWindow.x, line.getY1() - viewportWindow.y, line.getX2() - viewportWindow.x,
-                     line.getY2() - viewportWindow.y);
+        line.setLine(line.getX1() - viewportWindow.getX(), line.getY1() - viewportWindow.getY(), line.getX2() - viewportWindow.getX(),
+                     line.getY2() - viewportWindow.getY());
         g2.draw(line);
     }
 

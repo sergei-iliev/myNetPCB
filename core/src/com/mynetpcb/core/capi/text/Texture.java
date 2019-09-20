@@ -20,11 +20,11 @@ public interface Texture extends Drawable,Printaware,Cloneable{
     
     public boolean isEmpty();
 
-    public Text.Alignment getAlignment();
+    public default Text.Alignment getAlignment(){return null;}
     
-    public void setAlignment(Text.Alignment alignment);
+    public default void setAlignment(Text.Alignment alignment){}
     
-    public void setOrientation(Text.Orientation orientation);
+    public default void setOrientation(Text.Orientation orientation){}
     
     public Point getAnchorPoint();
     

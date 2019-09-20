@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 
 import com.mynetpcb.d2.shapes.Rectangle;
@@ -41,7 +42,10 @@ public class CoordinateSystem extends Shape {
             return null;
         }
     }
-
+    @Override
+    public Box getBoundingShape() {
+        return new Box(origin.x-this.selectionRectWidth/2,origin.y-this.selectionRectWidth/2,this.selectionRectWidth,this.selectionRectWidth);        
+    }
     public java.awt.Point getOrigin(){
         return origin;
     }
@@ -91,34 +95,34 @@ public class CoordinateSystem extends Shape {
         if (origin.x == 0 && origin.y == 0) {
             return;
         }
-        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
-        Line2D horizontalLine = (Line2D)provider.getShape();
-        Line2D verticalLine = (Line2D)provider.getShape();
-        
-        g2.setColor(Color.BLUE);
-        
-        //horizontal
-        horizontalLine.setLine(0, origin.x, getOwningUnit().getWidth(), origin.y);
-        Utilities.setScaleLine(horizontalLine, horizontalLine, scale);
-        //vertical
-        verticalLine.setLine(origin.x, 0, origin.x, getOwningUnit().getHeight());
-        Utilities.setScaleLine(verticalLine, verticalLine, scale);
-        
-        if ((!horizontalLine.intersects(viewportWindow))&&(!verticalLine.intersects(viewportWindow))) {
-            provider.reset();
-            return;
-        }
-        
-        horizontalLine.setLine(horizontalLine.getX1() - viewportWindow.x, horizontalLine.getY1() - viewportWindow.y,
-                       horizontalLine.getX2() - viewportWindow.x, horizontalLine.getY2() - viewportWindow.y);
-        g2.draw(horizontalLine);
-
-    
-        verticalLine.setLine(verticalLine.getX1() - viewportWindow.x, verticalLine.getY1() - viewportWindow.y,
-                       verticalLine.getX2() - viewportWindow.x, verticalLine.getY2() - viewportWindow.y);
-        g2.draw(verticalLine);
-
-        provider.reset();
+//        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
+//        Line2D horizontalLine = (Line2D)provider.getShape();
+//        Line2D verticalLine = (Line2D)provider.getShape();
+//        
+//        g2.setColor(Color.BLUE);
+//        
+//        //horizontal
+//        horizontalLine.setLine(0, origin.x, getOwningUnit().getWidth(), origin.y);
+//        Utilities.setScaleLine(horizontalLine, horizontalLine, scale);
+//        //vertical
+//        verticalLine.setLine(origin.x, 0, origin.x, getOwningUnit().getHeight());
+//        Utilities.setScaleLine(verticalLine, verticalLine, scale);
+//        
+//        if ((!horizontalLine.intersects(viewportWindow))&&(!verticalLine.intersects(viewportWindow))) {
+//            provider.reset();
+//            return;
+//        }
+//        
+//        horizontalLine.setLine(horizontalLine.getX1() - viewportWindow.x, horizontalLine.getY1() - viewportWindow.y,
+//                       horizontalLine.getX2() - viewportWindow.x, horizontalLine.getY2() - viewportWindow.y);
+//        g2.draw(horizontalLine);
+//
+//    
+//        verticalLine.setLine(verticalLine.getX1() - viewportWindow.x, verticalLine.getY1() - viewportWindow.y,
+//                       verticalLine.getX2() - viewportWindow.x, verticalLine.getY2() - viewportWindow.y);
+//        g2.draw(verticalLine);
+//
+//        provider.reset();
     }
 
 }

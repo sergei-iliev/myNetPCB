@@ -45,7 +45,7 @@ public class UnitFrame implements Frameable,Printaware{
 
 
          g2.setColor(fillColor); 
-         box.setRect(box.getX()-viewportWindow.x ,box.getY()-viewportWindow.y,box.getWidth(),box.getHeight());   
+         box.setRect(box.getX()-viewportWindow.getX() ,box.getY()-viewportWindow.getY(),box.getWidth(),box.getHeight());   
          box.paint(g2, false);
     }
 

@@ -49,8 +49,8 @@ public class DragingEventHandle <U extends UnitComponent,S extends Shape> extend
 
     @Override
     public void mouseScaledDragged(MouseScaledEvent e) {              
-        int newX =getComponent().getViewportWindow().x- (e.getWindowX() - mx);
-        int newY =getComponent().getViewportWindow().y- (e.getWindowY() - my);        
+        int newX =(int)getComponent().getViewportWindow().getX()- (e.getWindowX() - mx);
+        int newY =(int)getComponent().getViewportWindow().getY()- (e.getWindowY() - my);        
          
     
         getComponent().getViewportWindow().setLocation(newX, newY);

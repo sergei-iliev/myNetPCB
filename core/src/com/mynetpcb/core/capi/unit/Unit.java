@@ -416,7 +416,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         List<Shape> orderElements = new ArrayList<>();
                 for (Shape shape : this.<Shape>getShapes()) {
                     if (isTextIncluded && shape instanceof Textable) {                   
-                        if(((Textable)shape).getChipText().isClicked(x, y)){ 
+                        if(((Textable)shape).isClickedTexture(x, y)){ 
                           orderElements.add(0,shape);
                           continue;
                         }
