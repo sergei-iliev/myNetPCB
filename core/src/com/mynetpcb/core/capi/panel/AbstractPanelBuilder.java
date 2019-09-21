@@ -151,7 +151,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @param X value to convert
      * @return display value in user units
      */
-    protected String toUnitX(int value){        
+    protected String toUnitX(double value){        
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
         return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().x));      
     }
@@ -160,7 +160,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @param Y value to convert
      * @return display value in user units
      */
-    protected String toUnitY(int value){
+    protected String toUnitY(double value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
         return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().y));
     }
