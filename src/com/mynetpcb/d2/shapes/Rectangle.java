@@ -39,16 +39,6 @@ public class Rectangle extends Polygon {
 //            this.points.push(new d2.Point(pc.x-(width/2),pc.y+(height/2)));                                         
     }
     
-    @Override
-    public void rotate(double angle, Point center) {
-        // TODO Implement this method
-
-    }
-
-    @Override
-    public void rotate(double angle) {
-        // TODO Implement this method
-    }
     
     @Override
     public void paint(Graphics2D g2, boolean fill) {
