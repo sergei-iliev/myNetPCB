@@ -79,7 +79,17 @@ public class Point extends Shape{
         }
         throw new IllegalStateException("Unknown shape type - "+shape.getClass());
     }
-    
+    @Override
+    public boolean equals(Object obj) {
+        if(this==obj){
+          return true;  
+        }
+        if(!(obj instanceof Point)){
+          return false;  
+        }
+        Point pt=(Point)obj;
+        return Utils.EQ(this.x, pt.x) && Utils.EQ(this.y, pt.y);
+    }
     @Override
     public void paint(Graphics2D g2,boolean fill) {
         Utils.drawCrosshair(g2,10,this); 
