@@ -193,7 +193,7 @@ public class ChipText  implements Moveable{
 
 
     @Override
-    public void move(int xoffset, int yoffset) {
+    public void move(double xoffset, double yoffset) {
         // TODO Implement this method
 
     }
@@ -215,7 +215,7 @@ public class ChipText  implements Moveable{
     }
 
     @Override
-    public void setLocation(int x, int y) {
+    public void setLocation(double x, double y) {
         // TODO Implement this method
 
     }

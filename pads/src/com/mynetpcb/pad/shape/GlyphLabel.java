@@ -31,7 +31,7 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     public GlyphLabel(String text,int thickness,int layermaskId) {
         super(thickness, layermaskId);
         texture=new GlyphTexture(text,"",0,0,thickness);
-        texture.setSize(Grid.MM_TO_COORD(2));
+        texture.setSize((int)Grid.MM_TO_COORD(2));
     }
     
     public GlyphLabel(){
@@ -43,7 +43,10 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         copy.texture = this.texture.clone();        
         return copy;
     }
-    
+    @Override
+    public Box getBoundingShape() {
+          return this.texture.getBoundingShape();
+    }
     public void  setCopper(Layer.Copper copper){
             this.copper= copper;
             //mirror horizontally
@@ -74,7 +77,7 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     }
     
     @Override
-    public void move(int xoffset, int yoffset) {
+    public void move(double xoffset, double yoffset) {
         texture.move(xoffset, yoffset);
     }
     
@@ -114,13 +117,13 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     public void setSelected(boolean selected) {
         this.texture.setSelected(selected);
     }
-//    public void setRotation(double rotate){     
-//            if(center==undefined){
-//                      this.texture.setRotation(rotate,this.getCenter());
-//            }else{
-//                      this.texture.setRotation(rotate,center);      
-//            }
-//    }
+    public void setRotation(double rotate,Point center){     
+            if(center==null){
+                this.texture.setRotation(rotate,this.getCenter());
+            }else{
+                this.texture.setRotation(rotate,center);      
+            }
+    }
     
     @Override
     public boolean isClicked(int x, int y) {        

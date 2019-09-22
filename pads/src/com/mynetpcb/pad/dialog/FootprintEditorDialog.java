@@ -378,7 +378,7 @@ exit();
             if(footprintComponent.getModel().getUnit()!=null){
                 footprintComponent.getModel().getUnit().setScrollPositionValue((int)footprintComponent.getViewportWindow().getX(),(int)footprintComponent.getViewportWindow().getY());                      
             }
-            Footprint footprint = new Footprint(Grid.MM_TO_COORD(50), Grid.MM_TO_COORD(50));
+            Footprint footprint = new Footprint((int)Grid.MM_TO_COORD(50), (int)Grid.MM_TO_COORD(50));
             footprintComponent.getModel().Add(footprint);
             footprintComponent.getModel().setActiveUnit(footprint.getUUID());
             footprintComponent.componentResized(null);
@@ -520,7 +520,7 @@ exit();
         footprintComponent.clear();
         footprintComponent.setMode(FootprintComponent.COMPONENT_MODE);
         if(source==null){
-            Footprint footprint=new Footprint(Grid.MM_TO_COORD(50),Grid.MM_TO_COORD(50)); 
+            Footprint footprint=new Footprint((int)Grid.MM_TO_COORD(50),(int)Grid.MM_TO_COORD(50)); 
             footprintComponent.getModel().Add(footprint);
         }else{
         for (Footprint footprint : source.getUnits()) {

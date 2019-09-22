@@ -155,7 +155,7 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 
     }
 
-    public void moveBlock(Collection<T> shapes, int xoffset, int yoffset) {
+    public void moveBlock(Collection<T> shapes, double xoffset, double yoffset) {
         for (Shape shape : shapes) {
             shape.move(xoffset, yoffset);
         }

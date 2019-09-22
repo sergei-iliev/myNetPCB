@@ -59,7 +59,7 @@ public class Grid implements Cloneable{
         this.units=units;
         switch(units){
         case MM:
-            this.gridPointToPoint=Grid.MM_TO_COORD(value);
+            this.gridPointToPoint=(int)Grid.MM_TO_COORD(value);
             break;
         case INCH:
             throw new IllegalStateException("BG is in EU -> stick to mm for now.");
@@ -68,14 +68,14 @@ public class Grid implements Cloneable{
         }  
     }
     
-    public int UNIT_TO_COORD(double mm){
+    public double UNIT_TO_COORD(double mm){
       switch(this.units){ 
         case MM:
             return MM_TO_COORD(mm);
         case INCH:
             throw new IllegalStateException("BG is in EU -> stick to mm for now.");
         case PIXEL:
-            return (int)mm;
+            return mm;
       default:
           throw new IllegalStateException("Unknown unit.");
       }            
@@ -215,16 +215,17 @@ public class Grid implements Cloneable{
     } 
     
     //must be 10000 for printing
-    public static int MM_TO_COORD(double mm){
-      return (int)Math.floor(mm*10000);
+    public static double MM_TO_COORD(double mm){
+      return Math.floor(mm*10000);
     }
  
     public static double COORD_TO_MM(double coord){
       return (coord/10000);    
     }
-    
-    public Object clone() throws CloneNotSupportedException { 
-      return super.clone();
+    @Override
+    public Grid clone() throws CloneNotSupportedException {
+        
+        return (Grid)super.clone();
     }
 }
 

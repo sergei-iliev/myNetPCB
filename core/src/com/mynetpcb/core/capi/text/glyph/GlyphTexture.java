@@ -66,7 +66,7 @@ public class GlyphTexture implements Texture {
         this.id=1;
         this.anchorPoint = new Point(x, y);
         this.glyphs = new ArrayList<>();
-        this.thickness = Grid.MM_TO_COORD(0.2);
+        this.thickness = (int)Grid.MM_TO_COORD(0.2);
         
         this.selectionRectWidth=3000;
         this.text = text;
@@ -262,9 +262,13 @@ public class GlyphTexture implements Texture {
     public Point getAnchorPoint() {
         return anchorPoint;
     }
-
+    public void setLocation(double x,double y){
+            double xx=x-this.anchorPoint.x;
+            double yy=y-this.anchorPoint.y;
+            this.move(xx,yy);
+    }
     @Override
-    public void move(int xoffset, int yoffset) {        
+    public void move(double xoffset, double yoffset) {        
             this.anchorPoint.move(xoffset,yoffset);
             this.glyphs.forEach(glyph->{
                 glyph.move(xoffset,yoffset);
@@ -422,6 +426,10 @@ public class GlyphTexture implements Texture {
         g2.draw(temporal);
         
         provider.reset();
+        
+        if (this.isSelected){
+            this.drawControlShape(g2,viewportWindow,scale);
+        }  
     }
     public void print(Graphics2D g2,PrintContext printContext,int layermask){
 //        if (this.isEmpty()) {
@@ -528,7 +536,7 @@ public class GlyphTexture implements Texture {
     } 
     
     private void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
-        //Utilities.drawCrosshair(g2, viewportWindow, scale, null, selectionRectWidth, anchorPoint);
+        Utilities.drawCrosshair(g2, viewportWindow, scale, null, selectionRectWidth, anchorPoint);
     }
     @Override
     public boolean isClicked(int x, int y) {

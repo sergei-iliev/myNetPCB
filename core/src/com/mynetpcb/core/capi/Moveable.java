@@ -11,7 +11,7 @@ import java.awt.geom.AffineTransform;
  */
 public interface Moveable extends Drawable,Cloneable {
 
-    public void move(int xoffset, int yoffset);
+    public void move(double xoffset, double yoffset);
         
     public void mirror(Point A,Point B);
     
@@ -19,7 +19,7 @@ public interface Moveable extends Drawable,Cloneable {
 
     public void rotate(AffineTransform rotation) ;
       
-    public void setLocation(int x,int y);
+    public void setLocation(double x,double y);
 
     public Point getCenter();
     

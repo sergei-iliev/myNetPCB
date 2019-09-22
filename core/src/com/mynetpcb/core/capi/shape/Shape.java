@@ -135,7 +135,7 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     }
     
     @Override
-    public void move(int xoffset, int yoffset) {
+    public void move(double xoffset, double yoffset) {
         
     }
 
@@ -157,7 +157,7 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
 
 
     @Override
-    public void setLocation(int x, int y) {
+    public void setLocation(double x, double y) {
 
     }
 

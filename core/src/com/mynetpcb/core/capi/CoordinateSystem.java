@@ -26,11 +26,11 @@ import java.awt.geom.Line2D;
  */
 public class CoordinateSystem extends Shape {
 
-    private final java.awt.Point origin;
+    private final Point origin;
 
     public CoordinateSystem(Unit owningUnit) {
         super(0,0);
-        this.origin=new java.awt.Point();
+        this.origin=new Point(0,0);
         setOwningUnit(owningUnit);
     }
     
@@ -46,7 +46,7 @@ public class CoordinateSystem extends Shape {
     public Box getBoundingShape() {
         return new Box(origin.x-this.selectionRectWidth/2,origin.y-this.selectionRectWidth/2,this.selectionRectWidth,this.selectionRectWidth);        
     }
-    public java.awt.Point getOrigin(){
+    public Point getOrigin(){
         return origin;
     }
     
@@ -65,7 +65,7 @@ public class CoordinateSystem extends Shape {
     }
 
     @Override
-    public void move(int xoffset, int yoffset) {
+    public void move(double xoffset, double yoffset) {
         origin.move(xoffset, yoffset);
     }
 
@@ -74,7 +74,7 @@ public class CoordinateSystem extends Shape {
      * Validate input
      */
 
-    public void reset(int x, int y) {
+    public void reset(double x, double y) {
         if (x < 0) {
             x = 0;
         } else if (x > getOwningUnit().getWidth()) {

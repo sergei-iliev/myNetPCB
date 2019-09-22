@@ -18,6 +18,8 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.UnitMgr;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 
+import com.mynetpcb.d2.shapes.Box;
+
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -595,22 +597,22 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }        
         
         if(e.getActionCommand().equalsIgnoreCase("clone")){  
-//            UnitMgr unitMgr = new UnitMgr();
-//            unitMgr.cloneBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(true));
-//            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false); 
-//            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
-//            unitMgr.moveBlock(shapes,
-//                                 r.width,r.height);
-//            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),
-//                                  shapes);
-//            
-//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.CREATE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.CREATE_MEMENTO));                                            
-//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                                                                  
-//            getUnitComponent().Repaint();
-//            //***emit property event change
-//            if (shapes.size() == 1) {
-//               getUnitComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(shapes.iterator().next(), ShapeEvent.SELECT_SHAPE));
-//            }             
+            UnitMgr unitMgr = new UnitMgr();
+            unitMgr.cloneBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(true));
+            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false); 
+            Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
+            unitMgr.moveBlock(shapes,
+                                 r.getWidth(),r.getHeight());
+            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),
+                                  shapes);
+            
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.CREATE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.CREATE_MEMENTO));                                            
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                                                                  
+            getUnitComponent().Repaint();
+            //***emit property event change
+            if (shapes.size() == 1) {
+               getUnitComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(shapes.iterator().next(), ShapeEvent.SELECT_SHAPE));
+            }             
             return;              
         }
         

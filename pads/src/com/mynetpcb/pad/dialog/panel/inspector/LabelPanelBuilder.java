@@ -98,20 +98,17 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
             label.getTexture().setText(textField.getText());
         }
         if(e.getSource()==rotateField&&rotateField.getText().length()>0){
-            label.getTexture().setRotation(Double.parseDouble(rotateField.getText()),label.getCenter());
+            label.setRotation(Double.parseDouble(rotateField.getText()),null);
         }  
         if(e.getSource()==this.heightField){
-           label.getTexture().setSize(Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));  
+           label.getTexture().setSize((int)Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));  
         }
         if(e.getSource()==this.thicknessField){
-           label.getTexture().setThickness(Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
-        }
-        if(e.getSource()==this.leftField){           
-           label.getTexture().getAnchorPoint().x=fromUnitX(leftField.getText());
-        }
-        
-        if(e.getSource()==this.topField){
-           label.getTexture().getAnchorPoint().y=fromUnitY(topField.getText());
+           label.getTexture().setThickness((int)Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
+        }        
+        if((e.getSource()==this.topField)||(e.getSource()==this.leftField)){
+            
+           label.getTexture().setLocation(fromUnitX(leftField.getText()),fromUnitY(topField.getText()));
         }
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint();         

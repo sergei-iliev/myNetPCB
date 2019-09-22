@@ -40,7 +40,7 @@ public interface Texture extends Drawable,Printaware,Cloneable{
     
     public void setText(String text);
     
-    public void move(int xoffset,int yoffset);
+    public void move(double xoffset,double yoffset);
     
     public void rotate(AffineTransform rotation);
     

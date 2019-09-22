@@ -143,7 +143,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @param value
      * @return
      */
-    protected int fromUnit(String value){
+    protected double fromUnit(String value){
        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value)) ;     
     }    
     /**
@@ -169,7 +169,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @param x value
      * @return internal value
      */
-    protected int fromUnitX(String value){
+    protected double fromUnitX(String value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
         return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().x;  
     }
@@ -178,7 +178,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @param y value
      * @return internal value
      */    
-    protected int fromUnitY(String value){
+    protected double fromUnitY(String value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
         return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().y;         
     }

@@ -119,7 +119,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
       copy.uuid=UUID.randomUUID();
       copy.shapeListeners = new EventListenerList();
       copy.undoProvider = new UndoProvider();
-      copy.grid=(Grid)this.grid.clone();
+      copy.grid=this.grid.clone();
       copy.ruler=new Ruler();
       copy.coordinateSystem =new CoordinateSystem(copy);
       copy.shapes=new SortedList<S>();

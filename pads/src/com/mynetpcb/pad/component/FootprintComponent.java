@@ -111,7 +111,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
              getEventMgr().setEventHandle("cursor",shape);   
              break;             
             case LABEL_MODE:             
-             shape=new GlyphLabel("Label",Grid.MM_TO_COORD(0.3),Layer.SILKSCREEN_LAYER_FRONT);
+             shape=new GlyphLabel("Label",(int)Grid.MM_TO_COORD(0.3),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;
