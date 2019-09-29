@@ -762,8 +762,8 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                 }    
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                     UnitMgr unitMgr = new UnitMgr();
-                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(getModel().getUnit().getSelectedShapes(false)));
-                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).Add(getModel().getUnit().getSelectedShapes(false)));
+                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(getModel().getUnit().getSelectedShapes(false)));
+                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).add(getModel().getUnit().getSelectedShapes(false)));
                     //reset event handle
                     getEventMgr().resetEventHandle();
                     this.getPopupMenu().setVisible(false);
@@ -803,7 +803,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             unitMgr.moveBlock(shapes,point.x-(int)r.min.x,point.y-(int)r.min.y);
 
             //register with Do/Undo Mgr
-            getModel().getUnit().registerMemento(new CompositeMemento(MementoType.CREATE_MEMENTO).Add(getModel().getUnit().getSelectedShapes(false)));
+            getModel().getUnit().registerMemento(new CompositeMemento(MementoType.CREATE_MEMENTO).add(getModel().getUnit().getSelectedShapes(false)));
             
             Repaint();
             //***emit property event change

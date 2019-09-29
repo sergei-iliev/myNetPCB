@@ -72,12 +72,6 @@ public class Ruler extends Shape implements Resizeable{
     }
 
     @Override
-    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-        
-
-    }
-
-    @Override
     public void alignResizingPointToGrid(Point targetPoint) {
         
     }

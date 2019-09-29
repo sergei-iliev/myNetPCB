@@ -590,7 +590,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }   
         if (e.getActionCommand().equalsIgnoreCase("delete")) {
               UnitMgr unitMgr=new UnitMgr();
-              getUnitComponent().getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).Add(getUnitComponent().getModel().getUnit().getSelectedShapes(false)));
+              getUnitComponent().getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).add(getUnitComponent().getModel().getUnit().getSelectedShapes(false)));
               unitMgr.deleteBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(false));
               getUnitComponent().Repaint();            
        
@@ -606,8 +606,8 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),
                                   shapes);
             
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.CREATE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.CREATE_MEMENTO));                                            
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                                                                  
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.CREATE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.CREATE_MEMENTO));                                            
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                                                                  
             getUnitComponent().Repaint();
             //***emit property event change
             if (shapes.size() == 1) {

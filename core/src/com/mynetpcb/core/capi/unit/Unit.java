@@ -17,6 +17,7 @@ import com.mynetpcb.core.capi.event.Event;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeEventDispatcher;
 import com.mynetpcb.core.capi.event.ShapeListener;
+import com.mynetpcb.core.capi.layer.CompositeLayer;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Sublineable;
@@ -29,7 +30,6 @@ import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
-import com.mynetpcb.core.capi.undo.Memento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.undo.Stateable;
 import com.mynetpcb.core.capi.undo.UndoCallback;
@@ -70,7 +70,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 
-public abstract class Unit<S extends Shape> implements Container,ShapeEventDispatcher, PrintCallable,Undoable, Stateable, Cloneable,Clipboardable {
+public abstract class Unit<S extends Shape> implements Container,ShapeEventDispatcher, PrintCallable,Undoable, Cloneable,Clipboardable {
     private UUID uuid;
 
     private int width, height;
@@ -626,31 +626,34 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         return bi;
 
     }
+    /*
+    @Override
     public AbstractMemento getState(MementoType operationType){
-        switch(operationType){
-          case ROTATE_UNIT_MEMENTO:
-            Memento memento= new Memento(operationType); 
-            memento.saveStateFrom(this);
-            return memento; 
-        default:
-           return new CompositeMemento(operationType).Add(shapes);
-        }        
+//        switch(operationType){
+//          case ROTATE_UNIT_MEMENTO:
+//            Memento memento= new Memento(operationType); 
+//            memento.saveStateFrom(this);
+//            return memento; 
+//        default:
+           return new CompositeMemento(operationType).add(shapes);
+//        }        
     }
-    
+    @Override
     public void setState(AbstractMemento memento){        
-        switch(memento.getMementoType()){
-         case ROTATE_UNIT_MEMENTO:
-            ((Memento)memento).loadStateTo(this);       
-            break;
-        default:  
+//        switch(memento.getMementoType()){
+//         case ROTATE_UNIT_MEMENTO:
+//            ((Memento)memento).loadStateTo(this);       
+//            break;
+//        default:  
           CompositeMemento compositeMemento=(CompositeMemento)memento;
           List<AbstractMemento> list=compositeMemento.getMementoList();
           for(AbstractMemento amemento:list){
               Shape shape = this.getShape(amemento.getUUID());
               shape.setState(amemento);           
           }
-        }
+//        }
     }
+*/
     public void paint(Graphics2D g2, ViewportWindow viewportWindow) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for (S shape : shapes) {
@@ -799,12 +802,13 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             }   
             }
             break;
-        case  ROTATE_UNIT_MEMENTO:
-            this.setState(memento);             
-            return true;
+//        case  ROTATE_UNIT_MEMENTO:
+//            this.setState(memento);             
+//            return true;
         default:
             if(memento instanceof CompositeMemento){
-               this.setState(memento); 
+               //this.setState(memento); 
+                ((CompositeMemento)memento).loadStateTo(this);
             }else{
                Shape element = this.getShape(memento.getUUID());
                element.setState(memento);
@@ -871,12 +875,13 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             }
             }
             break;
-        case  ROTATE_UNIT_MEMENTO:
-            this.setState(memento); 
-            return true;
+//        case  ROTATE_UNIT_MEMENTO:
+//            this.setState(memento); 
+//            return true;
         default:            
             if(memento instanceof CompositeMemento){
-               this.setState(memento); 
+               //this.setState(memento); 
+               ((CompositeMemento)memento).loadStateTo(this);
             }else{
                 Shape element = this.getShape(memento.getUUID());
                 element.setState(memento);

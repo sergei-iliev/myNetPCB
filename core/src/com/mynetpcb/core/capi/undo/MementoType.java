@@ -7,7 +7,7 @@ public enum MementoType {
 
     MOVE_MEMENTO,
     
-    MEMENTO,
+    MEMENTO;
     
-    ROTATE_UNIT_MEMENTO ;
+    //ROTATE_UNIT_MEMENTO ;
 }

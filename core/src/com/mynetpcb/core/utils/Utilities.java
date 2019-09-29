@@ -109,7 +109,10 @@ public final class Utilities {
         return null;
     }
 
-
+    public static double roundDouble(double number){
+         return Math.round(number*10000)/10000 ;
+    }
+    
 //    public static Rectangle2D getScaleRect(Rectangle2D rect, AffineTransform scale) {
 //        Point2D P1 = new Point2D.Double(rect.getMinX(), rect.getMinY());
 //        Point2D P2 = new Point2D.Double(rect.getMaxX(), rect.getMaxY());

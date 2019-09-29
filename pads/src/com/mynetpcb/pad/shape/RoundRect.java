@@ -45,7 +45,7 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         this.resizingPoint = null;
         this.rotate=0;  
         this.roundRect=new RoundRectangle(x,y,width,height,arc);   
-        //this.roundRect.rotate(30, this.roundRect.box().getCenter());
+        this.roundRect.rotate(30, this.roundRect.box().getCenter());
     }
     public RoundRect() {
         this(0, 0, 0, 0, 0, 0, Layer.SILKSCREEN_LAYER_FRONT);
@@ -76,17 +76,18 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         return this.roundRect.box();              
     }
     
+    public void setRounding(int rounding){    
+      this.roundRect.setRounding(rounding);
+    }
+    public int getRounding(){    
+      return this.roundRect.rounding;
+    }
+    
     @Override
     public void resize(int x, int y, Point point) {
         this.roundRect.resize(x, y,point);
     }
-
-    @Override
-    public void drawControlShape(Graphics2D graphics2D, ViewportWindow viewportWindow,
-                                 AffineTransform affineTransform) {
-        // TODO Implement this method
-
-    }
+    
 
     @Override
     public void alignResizingPointToGrid(Point targetPoint) {
@@ -153,7 +154,13 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         Box box=this.roundRect.box();
         return box.getCenter();
     }
-    
+    @Override
+    public void setSelected(boolean selection) {
+        super.setSelected(selection);
+        if (!selection) {
+            resizingPoint = null;
+        }
+    }
     @Override
     public String toXML() {
         // TODO Implement this method

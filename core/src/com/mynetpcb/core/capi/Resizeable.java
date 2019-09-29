@@ -36,14 +36,6 @@ public interface Resizeable {
      */
    public void resize(int xOffset, int yOffset,Point clickedPoint);
   
-  /**
-     * Draw control resizing points
-     * @param g2
-     * @param viewportWindow
-     * @param scale
-     */
-   public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale);
-  
    /**
     * Align resizing point to grid raster
     */

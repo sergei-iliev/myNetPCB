@@ -265,7 +265,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                        return true; 
                     }   
                     //***notify undo manager                    
-                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
                     Box r=getModel().getUnit().getShapesRect(shapes);  
                     Point center=r.getCenter();
 
@@ -281,7 +281,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     FootprintMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);                     
 
                     //***notify undo manager
-                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
                     Repaint();
                     return true;         
                     
@@ -295,7 +295,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                        return true; 
                     } 
                     //***notify undo manager
-                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
                     Box r=getModel().getUnit().getShapesRect(shapes);
                     Point center=r.getCenter();
                     Point p=getModel().getUnit().getGrid().positionOnGrid((int)center.x,(int)center.y); 
@@ -312,7 +312,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     
                     FootprintMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);
                     //***notify undo manager
-                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
                     Repaint();
                     return true;                
                 }
