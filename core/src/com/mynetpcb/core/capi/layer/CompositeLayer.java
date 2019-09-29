@@ -1,6 +1,6 @@
 package com.mynetpcb.core.capi.layer;
 
-import com.mynetpcb.core.pad.Layer;
+
 
 /**
  * Describes the multilayering. Board consists of many layers which could be visible,drawable,eventable

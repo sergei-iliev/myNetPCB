@@ -1,10 +1,11 @@
 package com.mynetpcb.core.capi.undo;
 
 import com.mynetpcb.core.capi.Ownerable;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.pad.Layer;
+
 
 import java.util.UUID;
 
@@ -41,10 +42,8 @@ public abstract class AbstractMemento<U extends Unit,S extends Shape> {
     public UUID getParentUUID() {
         return parentUUID;
     }
-
-    public abstract boolean isSameState(U unit);
     
-    public void Clear(){
+    public void clear(){
        uuid=null;
        parentUUID=null;
     }
@@ -73,7 +72,36 @@ public abstract class AbstractMemento<U extends Unit,S extends Shape> {
 
     }
     
+    @Override
+    public boolean equals(Object obj){
+        if(this==obj){
+          return true;  
+        }
+        if(!(obj instanceof AbstractMemento)){
+          return false;  
+        }         
+        AbstractMemento other=(AbstractMemento)obj;
+        return (other.getMementoType().equals(this.getMementoType())&&
+                other.getUUID().equals(this.getUUID())&&
+                other.thickness==this.thickness&&
+                other.fill==this.fill&&
+                other.layerindex==this.layerindex
+               );
+        
+      
+    }
+    
+    @Override
+    public int hashCode(){            
+       int hash=31+getUUID().hashCode()+this.getMementoType().hashCode()+this.fill+this.thickness+this.layerindex;
+       return hash;
+    }
+    
 
+    public boolean isSameState(Unit unit) {
+        Shape other=unit.getShape(getUUID());              
+        return (other.getThickness()==this.thickness&&other.getFill().ordinal()==this.fill&&other.getCopper().ordinal()==this.layerindex);                                
+    }
 }
 
 

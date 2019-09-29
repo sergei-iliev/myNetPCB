@@ -1,6 +1,5 @@
 package com.mynetpcb.core.capi.layer;
 
-import com.mynetpcb.core.pad.Layer;
 
 
 public interface CompositeLayerable {

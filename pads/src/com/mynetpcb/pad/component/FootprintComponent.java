@@ -20,12 +20,16 @@ import com.mynetpcb.core.capi.io.ReadUnitLocal;
 import com.mynetpcb.core.capi.io.remote.ReadConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
+
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Arc;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.container.FootprintContainer;
 import com.mynetpcb.pad.container.FootprintContainerFactory;
 import com.mynetpcb.pad.dialog.FootprintLoadDialog;
@@ -34,13 +38,12 @@ import com.mynetpcb.pad.popup.FootprintPopupMenu;
 
 import com.mynetpcb.pad.shape.GlyphLabel;
 
+import com.mynetpcb.pad.shape.RoundRect;
 import com.mynetpcb.pad.unit.Footprint;
 import com.mynetpcb.pad.unit.FootprintMgr;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -48,10 +51,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
 import java.util.Collection;
-
 import java.util.concurrent.ExecutionException;
 
-import javax.sound.sampled.Line;
 
 import javax.swing.JOptionPane;
 
@@ -91,7 +92,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         this.requestFocusInWindow(); //***for the cancel button
         switch (getMode()){
             case RECT_MODE:
-             //shape=new RoundRect(0,0,Grid.MM_TO_COORD(7),Grid.MM_TO_COORD(7),Grid.MM_TO_COORD(0.8),Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
+             shape=new RoundRect(0,0,Grid.MM_TO_COORD(7),Grid.MM_TO_COORD(7),(int)Grid.MM_TO_COORD(0.8),(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;
@@ -119,13 +120,13 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
              getEventMgr().setEventHandle("origin",null);   
              break;      
         case DRAGHEAND_MODE:
-             Cursor cursor =
-                    getToolkit().getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame() ,
-                                                                                         "/com/mynetpcb/core/images/dragopen.png").getImage(),
-                                                                   new Point(16,
-                                                                             16),
-                                                                   "DragHeandOpen");
-            this.setCursor(cursor);
+//             Cursor cursor =
+//                    getToolkit().getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame() ,
+//                                                                                         "/com/mynetpcb/core/images/dragopen.png").getImage(),
+//                                                                   new Point(16,
+//                                                                             16),
+//                                                                   "DragHeandOpen");
+//            this.setCursor(cursor);
             break;
             default:
                 this.setCursor(Cursor.getDefaultCursor());
@@ -144,7 +145,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
             //}
             //System.out.println(event.getX()+"::"+event.getY());
             //transform event into a real footprint size one
-            MouseScaledEvent scaledEvent =new MouseScaledEvent(event,getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)getViewportWindow().getX()+event.getX(),(int)getViewportWindow().getY()+event.getY())));
+            MouseScaledEvent scaledEvent =new MouseScaledEvent(event,getModel().getUnit().getScalableTransformation().getInversePoint(new java.awt.Point((int)getViewportWindow().getX()+event.getX(),(int)getViewportWindow().getY()+event.getY())));
 
             //find the right handler to handle the event
             switch (getMode()){
@@ -173,7 +174,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
 //                          getEventMgr().setEventHandle("resize",shape);    
 //                        }
 //                    }else{
-//                      getEventMgr().setEventHandle("resize",shape);  
+                      getEventMgr().setEventHandle("resize",shape);  
 //                    }
                 }else if((shape = getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true))!=null){
                     //***block operation
@@ -251,75 +252,76 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
     }
     @Override
     protected boolean defaultKeyPress(KeyEvent e) {
-//        if (super.defaultKeyPress(e)) {
-//            return true;
-//        }
-//        if (e.getModifiersEx() != 0) {
-//            if (e.getModifiers() == ActionEvent.CTRL_MASK) {
-//                if (e.getKeyCode() == KeyEvent.VK_Q ||
-//                    e.getKeyCode() == KeyEvent.VK_A) {
-//                    
-//                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes(false);
-//                    if(shapes.size()==0){
-//                       return true; 
-//                    }   
-//                    //***notify undo manager                    
-//                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-//                    Rectangle r=getModel().getUnit().getShapesRect(shapes);  
-//                    
-//
-//                    FootprintMgr.getInstance().rotateBlock(shapes,
-//                                           AffineTransform.getRotateInstance(((e.getKeyCode() ==
-//                                                                               KeyEvent.VK_A) ?
-//                                                                              -1 :
-//                                                                              1) *
-//                                                                             Math.PI /
-//                                                                             2,
-//                                                                             r.getCenterX(),
-//                                                                             r.getCenterY())); 
-//                    FootprintMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);                     
-//
-//                    //***notify undo manager
-//                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
-//                    Repaint();
-//                    return true;         
-//                    
-//                }
-//            }
-//            if (e.getModifiers() == ActionEvent.SHIFT_MASK) {
-//                if (e.getKeyCode() == KeyEvent.VK_Q ||
-//                    e.getKeyCode() == KeyEvent.VK_A) {
-//                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes(false);
-//                    if(shapes.size()==0){
-//                       return true; 
-//                    } 
-//                    //***notify undo manager
-//                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-//                    Rectangle r=getModel().getUnit().getShapesRect(shapes);
-//                    Point p=getModel().getUnit().getGrid().positionOnGrid((int)r.getCenterX(),(int)r.getCenterY()); 
-//                    if(e.getKeyCode() == KeyEvent.VK_Q){
-//                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),                                        
-//                                            new Point(p.x - 10, p.y),
-//                                                              new Point(p.x + 10, p.y));
-//                                           
-//                    }else{
-//                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),
-//                                new Point(p.x, p.y - 10),
-//                                          new Point(p.x, p.y + 10));
-//                    }
-//                    
-//                    FootprintMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);
-//                    //***notify undo manager
-//                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
-//                    Repaint();
-//                    return true;                
-//                }
-//            }
-//        }
-//        //***single CTRL press for the mouse menu
-//        if (e.getModifiers() == ActionEvent.CTRL_MASK) {
-//            return true;
-//        }
+        if (super.defaultKeyPress(e)) {
+            return true;
+        }
+        if (e.getModifiersEx() != 0) {
+            if (e.getModifiers() == ActionEvent.CTRL_MASK) {
+                if (e.getKeyCode() == KeyEvent.VK_Q ||
+                    e.getKeyCode() == KeyEvent.VK_A) {
+                    
+                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes(false);
+                    if(shapes.size()==0){
+                       return true; 
+                    }   
+                    //***notify undo manager                    
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+                    Box r=getModel().getUnit().getShapesRect(shapes);  
+                    Point center=r.getCenter();
+
+                    FootprintMgr.getInstance().rotateBlock(shapes,
+                                           AffineTransform.getRotateInstance(((e.getKeyCode() ==
+                                                                               KeyEvent.VK_A) ?
+                                                                              -1 :
+                                                                              1) *
+                                                                             Math.PI /
+                                                                             2,
+                                                                             center.x,
+                                                                             center.y)); 
+                    FootprintMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);                     
+
+                    //***notify undo manager
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
+                    Repaint();
+                    return true;         
+                    
+                }
+            }
+            if (e.getModifiers() == ActionEvent.SHIFT_MASK) {
+                if (e.getKeyCode() == KeyEvent.VK_Q ||
+                    e.getKeyCode() == KeyEvent.VK_A) {
+                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes(false);
+                    if(shapes.size()==0){
+                       return true; 
+                    } 
+                    //***notify undo manager
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+                    Box r=getModel().getUnit().getShapesRect(shapes);
+                    Point center=r.getCenter();
+                    Point p=getModel().getUnit().getGrid().positionOnGrid((int)center.x,(int)center.y); 
+                    if(e.getKeyCode() == KeyEvent.VK_Q){
+                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),                                        
+                                            new Point(p.x - 10, p.y),
+                                                              new Point(p.x + 10, p.y));
+                                           
+                    }else{
+                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),
+                                new Point(p.x, p.y - 10),
+                                          new Point(p.x, p.y + 10));
+                    }
+                    
+                    FootprintMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);
+                    //***notify undo manager
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
+                    Repaint();
+                    return true;                
+                }
+            }
+        }
+        //***single CTRL press for the mouse menu
+        if (e.getModifiers() == ActionEvent.CTRL_MASK) {
+            return true;
+        }
         return false;
     }
     @Override
@@ -354,19 +356,20 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
     }
 
     public void OnRecive(String result,  Class reciever) {
-//        if(reciever==Footprint.class){         
-//                getModel().getUnit().Clear();             
-//             try{  
-//                getModel().Parse(result,getModel().getActiveUnitIndex());                             
-//                getModel().getUnit().setSelected(false); 
-//                getModel().registerInitialState(); 
-//             }catch(Exception ioe){ioe.printStackTrace(System.out);}                          
-//                this.componentResized(null);
-//                Rectangle r=this.getModel().getUnit().getBoundingRect();
-//                this.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
-//                this.Repaint();
-//                this.revalidate();     
-//        }
+        if(reciever==Footprint.class){         
+                getModel().getUnit().clear();             
+             try{  
+                getModel().Parse(result,getModel().getActiveUnitIndex());                             
+                getModel().getUnit().setSelected(false); 
+                getModel().registerInitialState(); 
+             }catch(Exception ioe){ioe.printStackTrace(System.out);}                          
+                this.componentResized(null);
+                Box r=this.getModel().getUnit().getBoundingRect();
+                Point center=r.getCenter();
+                this.setScrollPosition((int)center.x,(int)center.y);
+                this.Repaint();
+                this.revalidate();     
+        }
     }
 
     public void OnFinish(Class<?> receiver) {

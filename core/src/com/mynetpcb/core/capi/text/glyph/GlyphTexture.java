@@ -4,11 +4,11 @@ import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Texture;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
 
 import com.mynetpcb.d2.shapes.Box;

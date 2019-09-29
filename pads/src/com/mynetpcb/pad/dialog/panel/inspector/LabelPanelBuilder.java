@@ -2,11 +2,11 @@ package com.mynetpcb.pad.dialog.panel.inspector;
 
 
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.shape.GlyphLabel;
 
@@ -28,7 +28,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
     private JTextField textField,rotateField;
 
     public LabelPanelBuilder(FootprintComponent component) {
-         super(component,new GridLayout(8,1));
+         super(component,new GridLayout(7,1));
         //layer
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -106,8 +106,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
         if(e.getSource()==this.thicknessField){
            label.getTexture().setThickness((int)Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
         }        
-        if((e.getSource()==this.topField)||(e.getSource()==this.leftField)){
-            
+        if((e.getSource()==this.topField)||(e.getSource()==this.leftField)){            
            label.getTexture().setLocation(fromUnitX(leftField.getText()),fromUnitY(topField.getText()));
         }
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));

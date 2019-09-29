@@ -5,11 +5,11 @@ import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.Ownerable;
 import com.mynetpcb.core.capi.SortedList;
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.tree.AttachedItem;
-import com.mynetpcb.core.pad.Layer;
 
 import java.awt.Component;
 import java.awt.LayoutManager;

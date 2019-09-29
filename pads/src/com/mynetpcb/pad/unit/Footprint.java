@@ -8,6 +8,7 @@ import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 
+import com.mynetpcb.pad.shape.FootprintShapeFactory;
 import com.mynetpcb.pad.shape.GlyphLabel;
 
 import java.awt.Color;
@@ -43,7 +44,7 @@ public class Footprint extends Unit<Shape> {
 
     public Footprint(int width, int height) {
         super(width, height);
-        //this.shapeFactory = new FootprintShapeFactory();
+        this.shapeFactory = new FootprintShapeFactory();
         grid.setGridUnits(0.8, Grid.Units.MM);
         this.grid.setPointsColor(Color.WHITE);
         this.frame.setFillColor(Color.WHITE);

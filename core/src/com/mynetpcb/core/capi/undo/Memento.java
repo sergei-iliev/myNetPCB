@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Deprecated
 public class Memento<U extends Unit,S extends Shape> extends AbstractMemento<U,S> implements MementoUnit<U>{
 
         private final List<AbstractMemento> mementoList;
@@ -29,10 +30,10 @@ public class Memento<U extends Unit,S extends Shape> extends AbstractMemento<U,S
         }
         
         
-        public void Clear() {
-            super.Clear();
+        public void clear() {
+            super.clear();
             for(AbstractMemento memento:mementoList){
-              memento.Clear();  
+              memento.clear();  
             }
             mementoList.clear();
         }

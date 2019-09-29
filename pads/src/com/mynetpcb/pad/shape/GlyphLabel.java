@@ -3,13 +3,13 @@ package com.mynetpcb.pad.shape;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
@@ -182,8 +182,8 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         }
         
         @Override
-        public void Clear(){
-          super.Clear();
+        public void clear(){
+          super.clear();
           memento.Clear();
         }
         @Override

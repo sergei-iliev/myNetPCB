@@ -15,6 +15,7 @@ import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.EventMgr;
 //import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
 //import com.mynetpcb.core.capi.line.LineBendingProcessor;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -24,7 +25,6 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.UnitMgr;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
 
 import com.mynetpcb.d2.shapes.Box;

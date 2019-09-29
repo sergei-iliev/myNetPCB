@@ -308,7 +308,13 @@ public final class Utilities {
         transformer.transform(source, result);
         return result.getWriter().toString();
     }
-        public static void drawCrosshair(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
+    public static void drawLine(Line2D line, Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+        Utilities.setScaleLine(line, line, scale);
+        line.setLine(line.getX1() - viewportWindow.getX(), line.getY1() - viewportWindow.getY(), line.getX2() - viewportWindow.getX(),
+                     line.getY2() - viewportWindow.getY());
+        g2.draw(line);
+    }    
+    public static void drawCrosshair(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
                                          Point resizingPoint, int length, Point... points) {
                     FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
                     Line2D line = (Line2D) provider.getShape();
@@ -374,12 +380,7 @@ public final class Utilities {
 //        provider.reset();
 //    }
     //helper - avoid repetition
-    public static void drawLine(Line2D line, Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-        Utilities.setScaleLine(line, line, scale);
-        line.setLine(line.getX1() - viewportWindow.getX(), line.getY1() - viewportWindow.getY(), line.getX2() - viewportWindow.getX(),
-                     line.getY2() - viewportWindow.getY());
-        g2.draw(line);
-    }
+
 
     public static void selectTreeNode(JTree tree, AttachedItem attachedItem) {
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();

@@ -33,10 +33,10 @@ public  class CompositeMemento<U extends Unit,S extends Shape> extends AbstractM
       }
       
       @Override
-      public void Clear() {
-            super.Clear();
+      public void clear() {
+            super.clear();
             for(AbstractMemento memento:mementoList){
-              memento.Clear();  
+              memento.clear();  
             }
             mementoList.clear();            
       }
@@ -76,7 +76,9 @@ public  class CompositeMemento<U extends Unit,S extends Shape> extends AbstractM
             hash+=mementoList.hashCode();     
             return hash;  
       }        
-      public boolean isSameState(U unit) {
+
+      @Override
+      public boolean isSameState(Unit unit) {
             for(AbstractMemento memento:mementoList){
                 if(!memento.isSameState(unit)){
                   return false;  

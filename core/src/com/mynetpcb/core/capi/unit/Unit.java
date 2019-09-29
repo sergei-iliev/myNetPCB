@@ -18,6 +18,7 @@ import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeEventDispatcher;
 import com.mynetpcb.core.capi.event.ShapeListener;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.print.PrintCallable;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -34,7 +35,6 @@ import com.mynetpcb.core.capi.undo.Stateable;
 import com.mynetpcb.core.capi.undo.UndoCallback;
 import com.mynetpcb.core.capi.undo.UndoProvider;
 import com.mynetpcb.core.capi.undo.Undoable;
-import com.mynetpcb.core.pad.Layer;
 
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Rectangle;
@@ -793,7 +793,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             }
                 
             for(AbstractMemento state:mementos){
-                S element=(S)shapeFactory.createShape(this, state);
+                S element=(S)shapeFactory.createShape(state);
                 this.Add(element);                 
                 fireShapeEvent(new ShapeEvent(element, ShapeEvent.SELECT_SHAPE));
             }   
@@ -849,7 +849,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             }
                 
             for(AbstractMemento state:mementos){
-                S shape=(S)shapeFactory.createShape(this, state);
+                S shape=(S)shapeFactory.createShape(state);
                 this.Add(shape);                 
                 fireShapeEvent(new ShapeEvent(shape, ShapeEvent.SELECT_SHAPE));
             }   

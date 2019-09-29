@@ -2,6 +2,7 @@ package com.mynetpcb.core.capi.shape;
 
 
 import com.mynetpcb.core.capi.Moveable;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.layer.Layerable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.print.Printaware;
@@ -10,7 +11,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.undo.Stateable;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.Unitable;
-import com.mynetpcb.core.pad.Layer;
+
 
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
