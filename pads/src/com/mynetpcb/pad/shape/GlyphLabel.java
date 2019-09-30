@@ -197,8 +197,7 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
             
             Memento other=(Memento)obj;
 
-            return(this.getUUID().equals(other.getUUID()) &&
-                   getMementoType().equals(other.getMementoType())&&
+            return(super.equals(obj)&&
                    memento.equals(other.memento)
                 );            
           
@@ -206,11 +205,11 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         
         @Override
         public int hashCode(){
-          int hash=getUUID().hashCode();
-          hash+=getMementoType().hashCode();
+          int hash=super.hashCode();          
           hash+=memento.hashCode();
           return hash;
         }        
+        @Override
         public boolean isSameState(Footprint unit) {
             GlyphLabel label=(GlyphLabel)unit.getShape(getUUID());
             return (label.getState(getMementoType()).equals(this)); 

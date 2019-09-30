@@ -250,7 +250,7 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
             return hash;
         }
         @Override
-        public boolean isSameState(Unit unit) {
+        public boolean isSameState(Footprint unit) {
             boolean flag = super.isSameState(unit);
             RoundRect other = (RoundRect) unit.getShape(this.getUUID());
             return flag&&Utils.EQ(this.rotate, other.rotate)&&(this.rounding==other.roundRect.rounding)&&

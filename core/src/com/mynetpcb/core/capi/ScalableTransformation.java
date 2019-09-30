@@ -1,7 +1,9 @@
 package com.mynetpcb.core.capi;
 
+import com.mynetpcb.d2.shapes.Rectangle;
+
 import java.awt.Point;
-import java.awt.Rectangle;
+
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -102,7 +104,7 @@ public class ScalableTransformation implements Cloneable{
      }
 
      
-     public Rectangle getInverseRect(Rectangle scaledRect){
+     public Rectangle getInverseRect(int x,int y,int width,int height){
          AffineTransform unscaledTransformation=null;
          try {
              unscaledTransformation = currentTransformation.createInverse();
@@ -110,11 +112,11 @@ public class ScalableTransformation implements Cloneable{
             e.printStackTrace(System.out);
          }
          
-         Point P1=new Point(scaledRect.x,scaledRect.y);
-         Point P2=new Point(scaledRect.x+scaledRect.width,scaledRect.y+scaledRect.height);        
+         Point P1=new Point(x,y);
+         Point P2=new Point(x+width,y+height);        
          unscaledTransformation.transform(P1,P1);
          unscaledTransformation.transform(P2,P2);        
-         return new Rectangle((int) Math.floor(P1.getX()+0.5),(int) Math.floor(P1.getY()+0.5),(int) Math.floor((P2.getX()-P1.getX())+0.5),(int) Math.floor((P2.getY()-P1.getY())+0.5));
+         return new Rectangle(P1.getX(),P1.getY(),(P2.getX()-P1.getX()),(P2.getY()-P1.getY()));
      }
      
      private AffineTransform calculateTransformation(){

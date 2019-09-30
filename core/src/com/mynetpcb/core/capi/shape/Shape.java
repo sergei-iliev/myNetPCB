@@ -174,9 +174,9 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
 
     @Override
     public boolean isInRect(Rectangle r) {
-//        if(r.contains(getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()))
-//         return true;
-//        else
+        if(r.contains(getBoundingShape().getCenter().x,getBoundingShape().getCenter().y))
+         return true;
+        else
          return false; 
     }
 

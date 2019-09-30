@@ -20,6 +20,8 @@ import com.mynetpcb.d2.shapes.Rectangle;
 
 import com.mynetpcb.d2.shapes.Segment;
 
+import com.mynetpcb.d2.shapes.Utils;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -669,23 +671,28 @@ public class GlyphTexture implements Texture {
         
         private List<Glyph> glyphs;
 
-        //private Text.Alignment alignment;
-
         private int size,width,height;
 
         private int thickness;
+                
+        private double rotate;
+        
+        private boolean mirrored;
+        
         @Override
         public void loadStateTo(Texture _symbol) {
             GlyphTexture symbol=(GlyphTexture)_symbol;
             symbol.anchorPoint.set(Ax, Ay);
             symbol.id=this.id;
-            symbol.text = this.text;
-            //symbol.alignment = this.alignment;
+            symbol.text = this.text;           
             symbol.size = this.size;
             symbol.width=this.width;
             symbol.height=this.height;
             symbol.thickness = this.thickness;
             symbol.glyphs.clear();
+            symbol.rotate=this.rotate;
+            symbol.mirrored=this.mirrored;
+            
             for (Glyph glyph : this.glyphs) {
                 try {
                     symbol.glyphs.add(glyph.clone());
@@ -700,12 +707,14 @@ public class GlyphTexture implements Texture {
             Ax = symbol.anchorPoint.x;
             Ay = symbol.anchorPoint.y;
             this.id=symbol.id;
-            this.text = symbol.text;
-            //this.alignment = symbol.alignment;
+            this.text = symbol.text;        
             this.size = symbol.size;
             this.thickness = symbol.thickness;
             this.width=symbol.width;
             this.height=symbol.height;
+            this.rotate=symbol.rotate;
+            this.mirrored=symbol.mirrored;
+
             this.glyphs = new ArrayList<>(symbol.glyphs.size());
             for (Glyph glyph : symbol.glyphs) {
                 try {
@@ -735,14 +744,15 @@ public class GlyphTexture implements Texture {
             }
             GlyphTexture.Memento other = (GlyphTexture.Memento) obj;
             return (other.id==this.id&&other.size == this.size &&other.width == this.width&&other.height == this.height &&
-                    other.thickness == this.thickness && other.text.equals(this.text) && other.Ax == this.Ax &&
-                    other.Ay == this.Ay) && other.glyphs.equals(this.glyphs);
+                    other.thickness == this.thickness && other.text.equals(this.text) && Utils.EQ(other.Ax,this.Ax) &&
+                    Utils.EQ(other.Ay,this.Ay)&&Utils.EQ(other.rotate,this.rotate)&&this.mirrored==other.mirrored) && other.glyphs.equals(this.glyphs);
         }
 
         @Override
         public int hashCode() {
             int hash =
-                31 +this.id+ this.size +this.width+this.height + this.thickness + this.text.hashCode() + Double.hashCode(Ax) + Double.hashCode(Ay) +
+                31 +this.id+ this.size +this.width+this.height + this.thickness + this.text.hashCode() + Double.hashCode(Ax) + Double.hashCode(Ay) +Double.hashCode(rotate) +
+                Boolean.hashCode(this.mirrored)+
                 this.glyphs.hashCode();
 
             return hash;

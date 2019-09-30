@@ -273,16 +273,17 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         //default
         return true;
     }
-    public void setSelected(Rectangle r) {
+    public void setSelected(Rectangle rect) {
+
         for (S shape : shapes) {
             if(!isShapeVisibleOnLayers(shape)){
                 continue;
             }
-            if (shape.isInRect(r)) {
+            if (shape.isInRect(rect)) {
                 shape.setSelected(true);
             }else{
-                if(shape instanceof Sublineable&& ((Sublineable)shape).isSublineInRect(r)){
-                    ((Sublineable)shape).setSublineSelected(r, true);  
+                if(shape instanceof Sublineable&& ((Sublineable)shape).isSublineInRect(rect)){
+                    ((Sublineable)shape).setSublineSelected(rect, true);  
                 }
             }
         }

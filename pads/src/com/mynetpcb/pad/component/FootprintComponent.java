@@ -139,11 +139,6 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         if(getModel().getUnit()==null){
           getEventMgr().resetEventHandle();
         }else{
-            //if(getModel().getUnit().getShapes().size()>0){
-            //   Arc s=(Arc)getModel().getUnit().getShapes().get(0);
-            //   System.out.println(s.getStartPoint());
-            //}
-            //System.out.println(event.getX()+"::"+event.getY());
             //transform event into a real footprint size one
             MouseScaledEvent scaledEvent =new MouseScaledEvent(event,getModel().getUnit().getScalableTransformation().getInversePoint(new java.awt.Point((int)getViewportWindow().getX()+event.getX(),(int)getViewportWindow().getY()+event.getY())));
 

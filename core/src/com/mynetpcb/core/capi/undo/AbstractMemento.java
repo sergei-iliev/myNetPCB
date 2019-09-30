@@ -98,7 +98,7 @@ public abstract class AbstractMemento<U extends Unit,S extends Shape> {
     }
     
 
-    public boolean isSameState(Unit unit) {
+    public boolean isSameState(U unit) {
         Shape other=unit.getShape(getUUID());              
         return (other.getThickness()==this.thickness&&other.getFill().ordinal()==this.fill&&other.getCopper().ordinal()==this.layerindex);                                
     }
