@@ -69,24 +69,24 @@ public class Polygon extends Shape{
 
       return inside;           
     }
-    public void move(int offsetX,int offsetY){
+    public void move(double offsetX,double offsetY){
         this.points.forEach(point->{
             point.move(offsetX,offsetY);
         }); 
     }
-//    public void mirror(line){
-//            this.points.forEach(point=>{
-//            point.mirror(line);
-//        });         
-//    }
+    public void mirror(Line line){
+         this.points.forEach(point->{
+            point.mirror(line);
+         });         
+    }
     public void scale(double alpha){
         this.points.forEach(point->{
             point.scale(alpha);
         });         
     }
    
-    public Point[] getVertices() {
-        return this.points.stream().toArray(n->new Point[n]); 
+    public List<Point> vertices() {
+        return this.points;
     } 
     
     @Override

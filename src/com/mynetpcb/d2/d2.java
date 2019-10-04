@@ -8,6 +8,7 @@ import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
+import com.mynetpcb.d2.shapes.RoundRectangle;
 import com.mynetpcb.d2.shapes.Shape;
 
 import java.awt.BorderLayout;
@@ -124,6 +125,13 @@ public class d2 extends  JFrame {
            Obround obround1=obround.clone();
            obround1.rotate(10,new Point(0,0));
            d2Component.add(obround1);
+           
+           RoundRectangle roundRect=new RoundRectangle(600, 100, 80, 40, 9);                      
+           d2Component.add(roundRect);
+           
+           RoundRectangle roundRect1=roundRect.clone();
+           roundRect1.rotate(10);
+           d2Component.add(roundRect1);
        }
        public static void main(String[] args) {
           d2 ex = new d2();

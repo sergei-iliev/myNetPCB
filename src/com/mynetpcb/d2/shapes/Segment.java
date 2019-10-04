@@ -1,10 +1,15 @@
 package com.mynetpcb.d2.shapes;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 
 public class Segment extends Shape {
     public Point ps,pe;
+    private Line2D cache = new Line2D.Double();
     
+    public Segment(){
+      this(new Point(0,0),new Point(0,0));
+    }
     public Segment(Point ps,Point pe){
         this.ps = ps;
         this.pe = pe;
@@ -17,6 +22,10 @@ public class Segment extends Shape {
     public void set(double x1,double y1,double x2,double y2){
             this.ps.set(x1,y1);
             this.pe.set(x2,y2);
+    }
+    public void set(Point p1,Point p2){
+            this.ps.set(p1.x,p1.y);
+            this.pe.set(p2.x,p2.y);
     }
     public double length() {
         return this.ps.distanceTo(this.pe);
@@ -46,8 +55,8 @@ public class Segment extends Shape {
     }    
     @Override
     public void paint(Graphics2D g2, boolean fill) {
-       
-
+        cache.setLine(ps.x, ps.y, pe.x, pe.y);
+        g2.draw(cache);
     }
 
     @Override

@@ -11,6 +11,9 @@ public class Arc  extends Shape{
     public double endAngle; 
     private Arc2D cache=new Arc2D.Double();
     
+    public Arc(){
+        
+    }
     public Arc(Point pc,double  r,double startAngle,double endAngle) {
       this.pc = pc;
       this.r = r;
