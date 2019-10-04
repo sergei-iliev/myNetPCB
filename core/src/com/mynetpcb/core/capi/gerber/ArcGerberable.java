@@ -1,18 +1,16 @@
 package com.mynetpcb.core.capi.gerber;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
+import com.mynetpcb.d2.shapes.Point;
+
 
 /*
  * Gerber needs following arc capabilities
  */
 public interface ArcGerberable {
     
-    public Point2D getStartPoint();
+    public Point getStartPoint();
     
-    //public void setStartPoint(Point startPoint);
-    
-    public Point2D getEndPoint();
+    public Point getEndPoint();
     
     
     public Point getCenter();
@@ -20,11 +18,6 @@ public interface ArcGerberable {
     public int getI();
     
     public int getJ();
-    //public void setEndPoint(Point endPoint);
-
-    //public Point getResizingPoint();
-    
-    //public void setResizingPoint(Point resizingPoint);
     
     public boolean isSingleQuadrant();
 

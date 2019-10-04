@@ -14,6 +14,7 @@ import com.mynetpcb.core.capi.unit.Unitable;
 
 
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
 import com.mynetpcb.d2.shapes.Rectangle;
@@ -65,6 +66,8 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     
     protected int selectionRectWidth;
     
+    protected String displayName;
+    
     protected Layer.Copper copper;
     
     public Shape(int thickness,int layermask) {
@@ -76,7 +79,10 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
       this.selectionRectWidth=4;
     }
 
- 
+    public String getDisplayName() {
+        return displayName;
+    }
+    
     public UUID getUUID() {
         return uuid;
     }
@@ -127,9 +133,6 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
        this.fill=fill; 
     }
     
-    public String getDisplayName() {
-        return "noname";
-    }
     @Override
     public Point getCenter(){
         return null;
@@ -144,7 +147,10 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     public void mirror(Point A,Point B) {
 
     }
-    
+    @Override
+    public void mirror(Line line) {
+        
+    }
     @Override
     public void rotate(AffineTransform rotation) {
 

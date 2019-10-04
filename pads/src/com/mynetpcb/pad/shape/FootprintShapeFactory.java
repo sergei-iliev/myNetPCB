@@ -3,7 +3,7 @@ package com.mynetpcb.pad.shape;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
-import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.unit.Footprint;
 
 import org.w3c.dom.Element;
@@ -29,11 +29,11 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
                 roundRect.fromXML(node);
                 return roundRect;   
             }
-//            if(element.getTagName().equals("ellipse")){
-//                Circle circle = new Circle();
-//                circle.fromXML(node);
-//                return circle;   
-//            }
+            if(element.getTagName().equals("ellipse")){
+                Circle circle = new Circle(0,0,0,0,0);
+                circle.fromXML(node);
+                return circle;   
+            }
 //            if(element.getTagName().equals("arc")){
 //                Arc arc = new Arc();
 //                arc.fromXML(node);

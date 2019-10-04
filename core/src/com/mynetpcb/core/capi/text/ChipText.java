@@ -4,6 +4,8 @@ package com.mynetpcb.core.capi.text;
 import com.mynetpcb.core.capi.Moveable;
 import com.mynetpcb.core.capi.ViewportWindow;
 
+import com.mynetpcb.d2.shapes.Line;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -203,7 +205,10 @@ public class ChipText  implements Moveable{
         // TODO Implement this method
 
     }
-
+    @Override
+    public void mirror(Line line) {
+        
+    }
     @Override
     public void translate(AffineTransform translate) {
         // TODO Implement this method

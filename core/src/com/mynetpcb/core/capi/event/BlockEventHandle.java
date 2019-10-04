@@ -21,10 +21,10 @@ public class BlockEventHandle <U extends UnitComponent,S extends Shape> extends 
     //***owning wires to redraw-
     private Collection<Sublineable> selectedWires;
     
-    private final boolean verifyAlignable;
-    public BlockEventHandle(U component,boolean verifyAlignable) {
+    private final boolean isAlignable;
+    public BlockEventHandle(U component,boolean isAlignable) {
         super(component);
-        this.verifyAlignable=verifyAlignable;
+        this.isAlignable=isAlignable;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class BlockEventHandle <U extends UnitComponent,S extends Shape> extends 
 
     @Override
     public void mouseScaledReleased(MouseScaledEvent e) {
-        if(verifyAlignable){
+        if(isAlignable){
             if(getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)!=Boolean.TRUE){
               return;
             }

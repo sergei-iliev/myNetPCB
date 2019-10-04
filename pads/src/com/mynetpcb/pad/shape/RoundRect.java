@@ -11,6 +11,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
 import com.mynetpcb.d2.shapes.RoundRectangle;
@@ -41,6 +42,7 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
     
     public RoundRect(double x,double y,double width,double height,int arc,int thickness,int layermaskid) {
         super(thickness,layermaskid);
+        this.displayName="Rect";
         this.selectionRectWidth=3000;
         this.resizingPoint = null;
         this.rotate=0;  
@@ -99,6 +101,10 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         this.roundRect.move(xoffset,yoffset);
     }
     @Override
+    public void mirror(Line line) {        
+        this.roundRect.mirror(line);        
+    }
+    @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         if((this.getCopper().getLayerMaskID()&layermask)==0){
             return;
@@ -130,10 +136,7 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         }
     }
 
-    @Override
-    public String getDisplayName() {
-        return "Rect";
-    }
+
     @Override
     public boolean isClicked(int x, int y) {
             return this.roundRect.contains(new Point(x, y));

@@ -36,6 +36,7 @@ import com.mynetpcb.pad.dialog.FootprintLoadDialog;
 import com.mynetpcb.pad.event.FootprintEventMgr;
 import com.mynetpcb.pad.popup.FootprintPopupMenu;
 
+import com.mynetpcb.pad.shape.Circle;
 import com.mynetpcb.pad.shape.GlyphLabel;
 
 import com.mynetpcb.pad.shape.RoundRect;
@@ -107,7 +108,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
              getEventMgr().setEventHandle("cursor",shape);   
              break;                           
             case ELLIPSE_MODE:
-             //shape=new Circle(0,0,Grid.MM_TO_COORD(3.4),Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
+             shape=new Circle(0,0,Grid.MM_TO_COORD(3.4),(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;             
