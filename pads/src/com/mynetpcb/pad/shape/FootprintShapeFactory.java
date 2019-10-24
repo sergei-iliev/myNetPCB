@@ -19,11 +19,11 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
 //                pad.fromXML(node);
 //                return pad;   
 //            }
-//            if(element.getTagName().equals("line")){
-//                Line line = new Line();
-//                line.fromXML(node);
-//                return line;   
-//            }
+            if(element.getTagName().equals("line")){
+                Line line = new Line(0, 0);
+                line.fromXML(node);
+                return line;   
+            }
             if(element.getTagName().equals("rectangle")){
                 RoundRect roundRect = new RoundRect();
                 roundRect.fromXML(node);
@@ -34,11 +34,11 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
                 circle.fromXML(node);
                 return circle;   
             }
-//            if(element.getTagName().equals("arc")){
-//                Arc arc = new Arc();
-//                arc.fromXML(node);
-//                return arc;   
-//            }
+            if(element.getTagName().equals("arc")){
+                Arc arc = new Arc(0,0,0,0,0,0,0);
+                arc.fromXML(node);
+                return arc;   
+            }
             if(element.getTagName().equals("label")){
                 GlyphLabel label = new GlyphLabel();
                 label.fromXML(node);
@@ -49,26 +49,26 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
 
     @Override
     public Shape createShape(AbstractMemento memento) {   
-//            if(memento instanceof Arc.Memento){
-//                Arc arc=new Arc();  
-//                arc.setState(memento);
-//                return arc;
-//            }
-//            if(memento instanceof Circle.Memento){
-//                Circle circle=new Circle();  
-//                circle.setState(memento);
-//                return circle;   
-//            }
+            if(memento instanceof Arc.Memento){
+                Arc arc=new Arc(0,0,0,0,0,0,0);  
+                arc.setState(memento);
+                return arc;
+            }
+            if(memento instanceof Circle.Memento){
+                Circle circle=new Circle(0,0,0,0,0); 
+                circle.setState(memento);
+                return circle;   
+            }
             if(memento instanceof GlyphLabel.Memento){
                 GlyphLabel label=new GlyphLabel();  
                 label.setState(memento);
                 return label;             
             }
-//            if(memento instanceof Line.Memento){
-//                Line line=new Line();  
-//                line.setState(memento);
-//                return line;    
-//            }
+            if(memento instanceof Line.Memento){
+                Line line=new Line(0,0);  
+                line.setState(memento);
+                return line;    
+            }
 //            if(memento instanceof Pad.Memento){
 //                Pad pad=new Pad();  
 //                pad.setState(memento);

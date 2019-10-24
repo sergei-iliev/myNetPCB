@@ -5,7 +5,9 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.UnitMgr;
 
-import java.awt.Point;
+
+import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -94,9 +96,9 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
                        
                         Point p=new Point(mx,my);
                         if(e.getKeyCode()==KeyEvent.VK_Q){ //left                                                                                    
-                            getTarget().rotate(AffineTransform.getRotateInstance(Math.PI/2,p.x,p.y));     
+                            getTarget().rotate(90,p);     
                         }else{  //right
-                            getTarget().rotate(AffineTransform.getRotateInstance(-Math.PI/2,p.x,p.y));     
+                            getTarget().rotate(-90,p);     
                         }           
                         unitMgr.normalizePinText(getTarget());
                         getComponent().Repaint(); 

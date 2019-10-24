@@ -215,7 +215,7 @@ public class ChipText  implements Moveable{
     }
 
     @Override
-    public void rotate(AffineTransform rotation) {
+    public void rotate(double angle,com.mynetpcb.d2.shapes.Point origin) {
         // TODO Implement this method
     }
 

@@ -147,6 +147,20 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
             this.roundRect.rotate(alpha,center);                      
             this.rotate=rotate;
     }
+    @Override
+    public void rotate(double angle,Point origin) {        
+        //fix angle
+        double alpha=this.rotate+angle;
+        if(alpha>=360){
+                alpha-=360;
+        }
+        if(alpha<0){
+         alpha+=360; 
+        }       
+        this.rotate=alpha;              
+        this.roundRect.rotate(angle,origin);        
+        
+    }
     public void setResizingPoint(Point pt){
             this.resizingPoint=pt;
     }

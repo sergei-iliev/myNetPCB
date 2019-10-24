@@ -152,7 +152,7 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
         
     }
     @Override
-    public void rotate(AffineTransform rotation) {
+    public void rotate(double angle,Point origin) {
 
     }
     

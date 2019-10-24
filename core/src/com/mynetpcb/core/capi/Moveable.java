@@ -20,7 +20,7 @@ public interface Moveable extends Drawable,Cloneable {
     
     public void translate(AffineTransform translate);
 
-    public void rotate(AffineTransform rotation) ;
+    public void rotate(double angle,Point origin);
       
     public void setLocation(double x,double y);
 

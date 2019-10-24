@@ -42,8 +42,6 @@ public interface Texture extends Drawable,Printaware,Cloneable{
     
     public void move(double xoffset,double yoffset);
     
-    public void rotate(AffineTransform rotation);
-    
     public void mirror(Point A,Point B);
     
     public void translate(AffineTransform transform);

@@ -40,14 +40,14 @@ public interface Trackable<LinePoint> extends Drawable,Unitable<Unit>{
      */
      public void addPoint(Point point); 
 
-     public void add(int x,int y); 
+     public void add(double x,double y); 
 
 /**
      *Insert point
      * @param x
      * @param y
      */
-    public void insertPoint(int x,int y);
+    public void insertPoint(double x,double y);
 /**
      *Check if given coordinate overlaps with a bending track point
      * @param x
@@ -55,25 +55,25 @@ public interface Trackable<LinePoint> extends Drawable,Unitable<Unit>{
      * @return
      * Use isControlPointClicked instead
      */
-     public Point isBendingPointClicked(int x,int y);
+     public Point isBendingPointClicked(double x,double y);
      
     /**
      *Equalize the initial state of the drawing point of the subline
      * @param point to equalize to
      */
-    public void Reset(Point point);
+    public void reset(Point point);
     
     
     /**
      *Equalize the initial state of the drawing point of the subline
      * @param point to equalize to
      */
-    public void Reset(int x,int y);
+    public void reset(double x,double y);
     
     /**
      * Equalize the initial state of the drawing point of the subline by the end line point
      */
-    public void Reset();
+    public void reset();
     
     public Point getFloatingStartPoint();
     
@@ -91,19 +91,19 @@ public interface Trackable<LinePoint> extends Drawable,Unitable<Unit>{
      * if point is null -> reverse unconditionally
      * otherwise make this a last point
      */
-    public void Reverse(int x,int y);
+    public void reverse(double x,double y);
     /*
      * remove point
      */
-    public void removePoint(int x,int y);
+    public void removePoint(double x,double y);
      /*
       * is this point overlaps with end wire point ->first or last 
       */   
-    public boolean isEndPoint(int x,int y);
+    public boolean isEndPoint(double x,double y);
     /*
      * get end point in regard to first or last point of the wire
      */
-    public default Point getEndPoint(int x,int y){
+    public default Point getEndPoint(double x,double y){
         return null;
     }
 /**

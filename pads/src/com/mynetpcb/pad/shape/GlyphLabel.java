@@ -72,8 +72,8 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     }
     
     @Override
-    public void rotate(AffineTransform rotation) {
-      texture.rotate(rotation);
+    public void rotate(double angle,Point origin) {
+      texture.rotate(angle,origin);
     }
     
     @Override

@@ -53,8 +53,8 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
     @Override
     public Point alignToGrid(boolean isRequired) {
         if(isRequired){
-            Point point=getOwningUnit().getGrid().positionOnGrid(circle.getCenter().x, circle.getCenter().y);
-            circle.getCenter().set(point);            
+            Point point=getOwningUnit().getGrid().positionOnGrid(circle.pc.x, circle.pc.y);
+            circle.pc.set(point);            
             return null;                      
         }else{
           return null;
@@ -62,12 +62,27 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
     }
     
     public double getRadius(){
-       return circle.getRadius();    
+       return circle.r;    
     }
-    
+    @Override
+    public void rotate(double angle, Point origin) {        
+        //fix angle
+        double alpha=this.rotate+angle;
+        if(alpha>=360){
+                alpha-=360;
+        }
+        if(alpha<0){
+         alpha+=360; 
+        }       
+        this.rotate=alpha;
+        this.circle.rotate(angle,origin);
+    }
+    public void setRadius(double r){
+        circle.r=r;
+    }
     @Override
     public Point getCenter() {
-        return this.circle.getCenter();
+        return this.circle.pc;
     }
     @Override
     public Box getBoundingShape() {
@@ -149,8 +164,27 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
     }
 
     @Override
-    public void resize(int i, int i2, Point point) {
-        // TODO Implement this method
+    public void resize(int xoffset, int yoffset, Point point) {
+        
+        double radius=this.circle.r;
+
+        if(Utils.EQ(point.x,this.circle.pc.x)){
+          if(point.y>this.circle.pc.y){
+                  radius+=yoffset;
+          }else{
+                  radius-=yoffset;  
+          }     
+        }
+        if(Utils.EQ(point.y,this.circle.pc.y)){
+            if(point.x>this.circle.pc.x){
+                  radius+=xoffset;
+            }else{
+                  radius-=xoffset;  
+            }   
+        }
+        if(radius>0){ 
+          this.circle.r=radius;
+        }        
 
     }
 

@@ -21,13 +21,14 @@ import com.mynetpcb.core.capi.io.remote.ReadConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.line.DefaultBendingProcessorFactory;
+import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 
-import com.mynetpcb.core.utils.Utilities;
-import com.mynetpcb.d2.shapes.Arc;
+
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.container.FootprintContainer;
@@ -36,9 +37,11 @@ import com.mynetpcb.pad.dialog.FootprintLoadDialog;
 import com.mynetpcb.pad.event.FootprintEventMgr;
 import com.mynetpcb.pad.popup.FootprintPopupMenu;
 
+import com.mynetpcb.pad.shape.Arc;
 import com.mynetpcb.pad.shape.Circle;
 import com.mynetpcb.pad.shape.GlyphLabel;
 
+import com.mynetpcb.pad.shape.Line;
 import com.mynetpcb.pad.shape.RoundRect;
 import com.mynetpcb.pad.unit.Footprint;
 import com.mynetpcb.pad.unit.FootprintMgr;
@@ -82,8 +85,8 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         this.setBackground(Color.BLACK);
         this.loadDialogBuilder=new FootprintLoadDialog.Builder();
         this.popup=new FootprintPopupMenu(this);
-        //bendingProcessorFactory=new DefaultBendingProcessorFactory();
-        //setLineBendingProcessor(bendingProcessorFactory.resolve("defaultbend",null));
+        bendingProcessorFactory=new DefaultBendingProcessorFactory();
+        setLineBendingProcessor(bendingProcessorFactory.resolve("defaultbend",null));
     }
     
     public void setMode(int mode) {
@@ -93,7 +96,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         this.requestFocusInWindow(); //***for the cancel button
         switch (getMode()){
             case RECT_MODE:
-             shape=new RoundRect(0,0,Grid.MM_TO_COORD(7),Grid.MM_TO_COORD(7),(int)Grid.MM_TO_COORD(0.8),(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
+             shape=new RoundRect(0,0,Grid.MM_TO_COORD(10),Grid.MM_TO_COORD(7),(int)Grid.MM_TO_COORD(0.8),(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;
@@ -103,7 +106,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
              getEventMgr().setEventHandle("cursor",shape);   
              break;
             case ARC_MODE:
-             //shape=new Arc(0,0,Grid.MM_TO_COORD(3.4),Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
+             shape=new Arc(0,0,Grid.MM_TO_COORD(3.4),60,60,(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;                           
@@ -161,17 +164,19 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                 Shape shape=getModel().getUnit().isControlRectClicked(scaledEvent.getX() , scaledEvent.getY());
                 
                 if(shape!=null){
-//                    if(shape instanceof Arc){
-//                        if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
-//                          getEventMgr().setEventHandle("arc.start.angle",shape);                    
-//                        }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
-//                          getEventMgr().setEventHandle("arc.extend.angle",shape);                      
-//                        }else{
-//                          getEventMgr().setEventHandle("resize",shape);    
-//                        }
-//                    }else{
+                    if(shape instanceof Arc){
+                        if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
+                          getEventMgr().setEventHandle("arc.start.angle",shape);                    
+                        }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                          getEventMgr().setEventHandle("arc.extend.angle",shape);      
+                        }else if(((Arc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                          getEventMgr().setEventHandle("arc.mid.point",shape);
+                        }else{
+                          getEventMgr().setEventHandle("resize",shape);    
+                        }
+                    }else{
                       getEventMgr().setEventHandle("resize",shape);  
-//                    }
+                    }
                 }else if((shape = getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true))!=null){
                     //***block operation
                     if (FootprintMgr.getInstance().isBlockSelected(getModel().getUnit()) && shape.isSelected())
@@ -193,29 +198,29 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
                         return; //***right button click
                     }
-//                    shape =
-//                            getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
-//                                                  true);
-//                   
-//                    if ((shape == null) ||(!(shape instanceof Line))) {
-//                        shape = new Line(Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
-//                        getModel().getUnit().Add(shape);
-//                    }else {
-//                        /*Click on a line
-//                                    *1.Click at begin or end point - resume
-//                                    *2.Click in between - new Wire
-//                                    */
-//                        Trackable line = (Trackable)shape;
-//                        if (line.isEndPoint(scaledEvent.getX(),
-//                                            scaledEvent.getY())) {
-//                            this.resumeLine(line,"line", scaledEvent.getX(), scaledEvent.getY());
-//                            return;
-//                        } else {
-//                            shape = new Line(Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);                        
-//                            getModel().getUnit().Add(shape);
-//                        }
-//                    } 
-//                    getEventMgr().setEventHandle("line", shape);
+                    shape =
+                            getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
+                                                  true);
+                   
+                    if ((shape == null) ||(!(shape instanceof Line))) {
+                        shape = new Line((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
+                        getModel().getUnit().Add(shape);
+                    }else {
+                        /*Click on a line
+                                    *1.Click at begin or end point - resume
+                                    *2.Click in between - new Wire
+                                    */
+                        Trackable line = (Trackable)shape;
+                        if (line.isEndPoint(scaledEvent.getX(),
+                                            scaledEvent.getY())) {
+                            this.resumeLine(line,"line", scaledEvent.getX(), scaledEvent.getY());
+                            return;
+                        } else {
+                            shape = new Line((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);                        
+                            getModel().getUnit().Add(shape);
+                        }
+                    } 
+                    getEventMgr().setEventHandle("line", shape);
                 }
                 
                 break;
@@ -266,14 +271,11 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     Point center=r.getCenter();
 
                     FootprintMgr.getInstance().rotateBlock(shapes,
-                                           AffineTransform.getRotateInstance(((e.getKeyCode() ==
-                                                                               KeyEvent.VK_A) ?
+                                           ((e.getKeyCode() ==KeyEvent.VK_A) ?
                                                                               -1 :
                                                                               1) *
-                                                                             Math.PI /
-                                                                             2,
-                                                                             center.x,
-                                                                             center.y)); 
+                                                                             90,
+                                                                             center); 
                     FootprintMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);                     
 
                     //***notify undo manager

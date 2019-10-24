@@ -13,8 +13,8 @@ import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerEventDispatcher;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.EventMgr;
-//import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
-//import com.mynetpcb.core.capi.line.LineBendingProcessor;
+import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
+import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
@@ -118,9 +118,9 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     private EventListenerList containerListeners;
 
     //***keep current processor for wiring event
-    //private LineBendingProcessor lineBendingProcessor;
+    private LineBendingProcessor lineBendingProcessor;
 
-    //protected AbstractBendingProcessorFactory bendingProcessorFactory;
+    protected AbstractBendingProcessorFactory bendingProcessorFactory;
     
     //parameter bag
     private final Map<String, Object> parameters;
@@ -201,22 +201,22 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return this.cursor;
     }
 
-//    public LineBendingProcessor getLineBendingProcessor() {
-//        return lineBendingProcessor;
-//    }
-//    
-//    public void setLineBendingProcessor(LineBendingProcessor lineBendingProcessor) {
-//       this.lineBendingProcessor = lineBendingProcessor;
-//    }
-//    
-//    public AbstractBendingProcessorFactory getBendingProcessorFactory(){
-//        return bendingProcessorFactory;
-//    }
+    public LineBendingProcessor getLineBendingProcessor() {
+        return lineBendingProcessor;
+    }
+    
+    public void setLineBendingProcessor(LineBendingProcessor lineBendingProcessor) {
+       this.lineBendingProcessor = lineBendingProcessor;
+    }
+    
+    public AbstractBendingProcessorFactory getBendingProcessorFactory(){
+        return bendingProcessorFactory;
+    }
     
     public void resumeLine(Trackable line,String handleKey, int x, int y) {
-        line.Reset(x,y);
+        line.reset(x,y);
         //***do we need to reorder
-        line.Reverse(x,y);
+        line.reverse(x,y);
         line.setSelected(true);
         getEventMgr().setEventHandle(handleKey,(S)line);
     }

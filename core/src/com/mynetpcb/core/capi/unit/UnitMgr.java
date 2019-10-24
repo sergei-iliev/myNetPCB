@@ -128,9 +128,9 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         }
     }
 
-    public void rotateBlock(Collection<T> shapes, AffineTransform rotation) {
+    public void rotateBlock(Collection<T> shapes, double angle,Point origin) {
         for (T shape : shapes) {
-            shape.rotate(rotation);
+            shape.rotate(angle,origin);
         }
     }
 

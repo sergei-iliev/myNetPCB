@@ -662,8 +662,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }
         
         if (e.getActionCommand().equalsIgnoreCase("AddBendingPoint")) {
-             ((Trackable)getTarget()).insertPoint(x, y);
-             
+             ((Trackable)getTarget()).insertPoint(x, y);             
              getUnitComponent().Repaint();
         }
         

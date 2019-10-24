@@ -440,25 +440,24 @@ exit();
                                                  (int)footprintComponent.getVisibleRect().getCenterY()));
         }
         if (e.getSource()==RotateLeft || e.getSource()==RotateRight) {        
-//            Collection<Shape> shapes= footprintComponent.getModel().getUnit().getShapes();
-//            if(shapes.size()==0){
-//               return; 
-//            }   
-//            //***notify undo manager                    
-//            footprintComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-//            Rectangle r=footprintComponent.getModel().getUnit().getShapesRect(shapes);  
-//            
-//            FootprintMgr.getInstance().rotateBlock(shapes,
-//                                   AffineTransform.getRotateInstance((e.getActionCommand().equals("RotateLeft")?
-//                                                                      -1 :
-//                                                                      1) *(Math.PI /2),
-//                                                                     r.getCenterX(),
-//                                                                     r.getCenterY())); 
-//            FootprintMgr.getInstance().alignBlock(footprintComponent.getModel().getUnit().getGrid(),shapes);                     
-//
-//            //***notify undo manager
-//            footprintComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
-//            footprintComponent.Repaint();
+            Collection<Shape> shapes= footprintComponent.getModel().getUnit().getShapes();
+            if(shapes.size()==0){
+               return; 
+            }   
+            //***notify undo manager                    
+            footprintComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getShapesRect(shapes);  
+            
+            FootprintMgr.getInstance().rotateBlock(shapes,
+                                   ((e.getActionCommand().equals("RotateLeft")?
+                                                                      -1 :
+                                                                      1) *90),
+                                                                     r.getCenter()); 
+            FootprintMgr.getInstance().alignBlock(footprintComponent.getModel().getUnit().getGrid(),shapes);                     
+
+            //***notify undo manager
+            footprintComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
+            footprintComponent.Repaint();
         }
         
         if (e.getSource()==PositionToCenter) {
