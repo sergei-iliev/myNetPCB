@@ -30,11 +30,8 @@ public class Circle extends Shape{
             this.pc.y + this.r
         );
     }
-    public Point getCenter() {
-        return this.pc;
-    }
-    public double getRadius(){
-        return r;
+    public Point getCenter(){
+        return pc;
     }
     public Point[] vertices() {
         return new Point[]{new Point(this.pc.x-this.r,this.pc.y),new Point(this.pc.x,this.pc.y-this.r),new Point(this.pc.x+this.r,this.pc.y),new Point(this.pc.x,this.pc.y+this.r)};
