@@ -31,7 +31,7 @@ public class Arc  extends Shape{
     public Box box(){
       return new Box(Arrays.asList(this.getStart(),this.getEnd(),this.getMiddle()));         
     }
-    public double getArea(){
+    public double area(){
        return  ( Math.PI * this.r*this.r ) * ( this.getSweep() / 360 );   
     }
     public Point getCenter(){

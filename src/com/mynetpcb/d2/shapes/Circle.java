@@ -30,6 +30,9 @@ public class Circle extends Shape{
             this.pc.y + this.r
         );
     }
+    public double area(){
+        return ( Math.PI * this.r*this.r ); 
+    }
     public Point getCenter(){
         return pc;
     }

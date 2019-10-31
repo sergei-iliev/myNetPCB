@@ -127,7 +127,9 @@ public class Rectangle extends Polygon {
 //            this.points.push(new d2.Point(pc.x-(width/2),pc.y+(height/2)));                                         
     }
     
-    
+    public double area(){
+            return (this.points.get(0).distanceTo(this.points.get(1)))*(this.points.get(1).distanceTo(this.points.get(2)));
+    }
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         super.paint(g2, fill);

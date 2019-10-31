@@ -26,6 +26,22 @@ public class Polygon extends Shape{
     public Box box(){
       return new Box(this.points);       
     }
+    
+    public double area(){
+        
+          int l = points.size();
+          long det = 0;
+          List<Point> local=new ArrayList<>(points);
+          local.add(points.get(0));
+
+                    
+          for (int i = 0; i < l; i++){
+            det += local.get(i).x * local.get(i + 1).y
+              - local.get(i).y * local.get(i + 1).x;
+          }
+          return Math.abs(det/ 2);                
+    }
+    
     public boolean contains(Point pt){    
        return this.contains(pt.x,pt.y);                     
     }
