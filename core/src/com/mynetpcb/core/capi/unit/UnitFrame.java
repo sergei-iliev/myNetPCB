@@ -4,7 +4,7 @@ package com.mynetpcb.core.capi.unit;
 import com.mynetpcb.core.capi.Frameable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.print.Printaware;
+import com.mynetpcb.core.capi.print.Printable;
 import com.mynetpcb.core.utils.Utilities;
 
 import com.mynetpcb.d2.shapes.Box;
@@ -17,7 +17,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
-public class UnitFrame implements Frameable,Printaware{
+public class UnitFrame implements Frameable,Printable{
     
     private Box box;
     

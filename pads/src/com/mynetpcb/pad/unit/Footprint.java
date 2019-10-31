@@ -7,7 +7,6 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
-
 import com.mynetpcb.pad.shape.FootprintShapeFactory;
 import com.mynetpcb.pad.shape.GlyphLabel;
 
@@ -81,7 +80,7 @@ public class Footprint extends Unit<Shape> {
         AffineTransform oldTransform = g2d.getTransform();
         g2d.scale((72d / 254000d), (72d / 254000d));
         for (Shape shape : getShapes()) {
-            //shape.Print(g2d, context.get(), context.get().getLayermaskId());
+            shape.print(g2d, context.get(), context.get().getLayermaskId());
         }
 
         g2d.setTransform(oldTransform);

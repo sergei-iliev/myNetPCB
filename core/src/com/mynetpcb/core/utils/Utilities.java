@@ -1,27 +1,21 @@
 package com.mynetpcb.core.utils;
 
 
-import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
-import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.tree.AttachedItem;
-import com.mynetpcb.core.pad.Net;
-
 import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -32,9 +26,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.Objects;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -311,77 +303,54 @@ public final class Utilities {
         transformer.transform(source, result);
         return result.getWriter().toString();
     }
-    public static void drawLine(Line2D line, Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-        Utilities.setScaleLine(line, line, scale);
-        line.setLine(line.getX1() - viewportWindow.getX(), line.getY1() - viewportWindow.getY(), line.getX2() - viewportWindow.getX(),
-                     line.getY2() - viewportWindow.getY());
-        g2.draw(line);
-    }    
-    public static void drawCrosshair(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
-                                         Point resizingPoint, int length, Point... points) {
-                    FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
-                    Line2D line = (Line2D) provider.getShape();
-            
-                    g2.setStroke(new BasicStroke(1));
-            
-                    for (Point point : points) {
-                        if (resizingPoint != null && resizingPoint.equals(point))
-                            g2.setColor(Color.YELLOW);
-                        else
-                            g2.setColor(Color.BLUE);
-                        line.setLine(point.x - length, point.y, point.x + length, point.y);
-                        Utilities.drawLine(line, g2, viewportWindow, scale);
-            
-                        line.setLine(point.x, point.y - length, point.x, point.y + length);
-                        Utilities.drawLine(line, g2, viewportWindow, scale);
-                    }
-                    provider.reset();            
-        }
+//    public static void drawLine(Line2D line, Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+//        Utilities.setScaleLine(line, line, scale);
+//        line.setLine(line.getX1() - viewportWindow.getX(), line.getY1() - viewportWindow.getY(), line.getX2() - viewportWindow.getX(),
+//                     line.getY2() - viewportWindow.getY());
+//        g2.draw(line);
+//    }    
 //    public static void drawCrosshair(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
-//                                     Point resizingPoint, int length, Point2D... points) {
-//        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
-//        Line2D line = (Line2D) provider.getShape();
-//
-//        g2.setStroke(new BasicStroke(1));
-//
-//        for (Point2D point : points) {
-//            if (resizingPoint != null && resizingPoint.equals(point))
-//                g2.setColor(Color.YELLOW);
-//            else
-//                g2.setColor(Color.BLUE);
-//            line.setLine(point.getX() - length, point.getY(), point.getX() + length, point.getY());
-//            Utilities.drawLine(line, g2, viewportWindow, scale);
-//
-//            line.setLine(point.getX(), point.getY() - length, point.getX(), point.getY() + length);
-//            Utilities.drawLine(line, g2, viewportWindow, scale);
+//                                         Point resizingPoint, int length, Point... points) {
+//                    FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
+//                    Line2D line = (Line2D) provider.getShape();
+//            
+//                    g2.setStroke(new BasicStroke(1));
+//            
+//                    for (Point point : points) {
+//                        if (resizingPoint != null && resizingPoint.equals(point))
+//                            g2.setColor(Color.YELLOW);
+//                        else
+//                            g2.setColor(Color.BLUE);
+//                        line.setLine(point.x - length, point.y, point.x + length, point.y);
+//                        Utilities.drawLine(line, g2, viewportWindow, scale);
+//            
+//                        line.setLine(point.x, point.y - length, point.x, point.y + length);
+//                        Utilities.drawLine(line, g2, viewportWindow, scale);
+//                    }
+//                    provider.reset();            
 //        }
-//        provider.reset();
-//    }
-//
-//    public static <P extends Point> void drawCrosshair(Graphics2D g2, ViewportWindow viewportWindow,
-//                                                       AffineTransform scale, Collection<P> points, Point resizingPoint,
-//                                                       int length) {
-//        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
-//        Line2D line = (Line2D) provider.getShape();
-//
-//        g2.setStroke(new BasicStroke(1));
-//
-//        for (Point point : points) {
-//            if (resizingPoint != null && resizingPoint.equals(point)) {
-//                g2.setColor(Color.YELLOW);
-//            } else if (point instanceof LinePoint && ((LinePoint) point).isSelected()) {
-//                g2.setColor(Color.YELLOW); //subline selection
-//            } else
-//                g2.setColor(Color.BLUE);
-//
-//            line.setLine(point.x - length, point.y, point.x + length, point.y);
-//            Utilities.drawLine(line, g2, viewportWindow, scale);
-//
-//            line.setLine(point.x, point.y - length, point.x, point.y + length);
-//            Utilities.drawLine(line, g2, viewportWindow, scale);
-//        }
-//        provider.reset();
-//    }
+    
+    public static void drawCrosshair(Graphics2D g2,
+                                     Point resizingPoint, int length, Point... points) {
+        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
+        Line2D line = (Line2D) provider.getShape();
+
+        g2.setStroke(new BasicStroke(1));
+
+        for (Point point : points) {
+            if (resizingPoint != null && resizingPoint.equals(point))
+                g2.setColor(Color.YELLOW);
+            else
+                g2.setColor(Color.BLUE);
+            line.setLine(point.x- length, point.y, point.x + length, point.y);
+            g2.draw(line);
+
+            line.setLine(point.x, point.y - length, point.x, point.y + length);
+            g2.draw(line);
+        }
+        provider.reset();
+    }
+
     //helper - avoid repetition
 
 

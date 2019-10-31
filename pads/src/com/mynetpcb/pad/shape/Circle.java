@@ -4,29 +4,21 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.gerber.ArcGerberable;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-
 import com.mynetpcb.d2.shapes.Utils;
-
-import com.mynetpcb.pad.shape.RoundRect.Memento;
 import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Node;
 
@@ -236,11 +228,28 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
         }
                 
         if(this.isSelected()){            
-            Utilities.drawCrosshair(g2, viewportWindow, scale,resizingPoint,this.selectionRectWidth,this.circle.vertices());
+            Point[] points=c.vertices();
+            for(Point p:points){
+                Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p);
+            }            
         } 
 
     }
+    @Override
+    public void print(Graphics2D g2,PrintContext printContext,int layermask) {
+        if((this.getCopper().getLayerMaskID()&layermask)==0){
+            return;
+        }
+
+        g2.setStroke(new BasicStroke(thickness,1,1));    
+        g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());        
+        if(this.fill==Fill.EMPTY){
+          this.circle.paint(g2, false);      
+        }else{
+          this.circle.paint(g2, true);      
+        }
     
+    }
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);

@@ -5,7 +5,7 @@ import com.mynetpcb.core.capi.Moveable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.layer.Layerable;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.print.Printaware;
+import com.mynetpcb.core.capi.print.Printable;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.undo.Stateable;
@@ -34,7 +34,7 @@ import java.util.UUID;
  * Shape belongs to a layer wich is not accounted for in the context of circuit
  * @author Sergey Iliev
  */
-public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Unit>,Layerable{
+public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Unit>,Layerable{
     public enum Fill{
         EMPTY(1),
         FILLED(2),

@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
  *Printing contract to have the drawing item printed out
  * @author Sergey Iliev
  */
-public interface Printaware {
+public interface Printable {
     /**
      * Marks symbol as printable
      * @param g2 the printer graphics object

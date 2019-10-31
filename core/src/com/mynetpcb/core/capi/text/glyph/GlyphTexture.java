@@ -9,32 +9,21 @@ import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.utils.Utilities;
-
 import com.mynetpcb.d2.shapes.Box;
-
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-
 import com.mynetpcb.d2.shapes.Rectangle;
-
-import com.mynetpcb.d2.shapes.Segment;
-
 import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
 
-
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class GlyphTexture implements Texture {
@@ -340,6 +329,7 @@ public class GlyphTexture implements Texture {
                                                                                                   .ordinal()));
         FlyweightProvider provider = ShapeFlyweightFactory.getProvider(GeneralPath.class);
         GeneralPath temporal = (GeneralPath) provider.getShape();
+        temporal.reset();
         this.glyphs.forEach(glyph->{
                 for(int i=0;i<glyph.segments.length;i++){    
                      if(glyph.character==' '){
@@ -358,116 +348,43 @@ public class GlyphTexture implements Texture {
         provider.reset();
         
         if (this.isSelected){
-            this.drawControlShape(g2,viewportWindow,scale);
+            Point p=anchorPoint.clone();
+            p.scale(scale.getScaleX());
+            p.move(-viewportWindow.getX(),- viewportWindow.getY());
+            Utilities.drawCrosshair(g2, null, (int)(selectionRectWidth*scale.getScaleX()),p);
         }  
     }
     public void print(Graphics2D g2,PrintContext printContext,int layermask){
-//        if (this.isEmpty()) {
-//            return;
-//        }
-//
-//        g2.setColor(fillColor);
-//
-//        Rectangle r = getBoundingShape();
-//        
-//        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(GeneralPath.class);
-//        GeneralPath temporal = (GeneralPath) provider.getShape();
-//
-//
-//        g2.setStroke(new BasicStroke(thickness, Trackable.JoinType
-//                                                                     .JOIN_ROUND
-//                                                                     .ordinal(), Trackable.EndType
-//                                                                                          .CAP_ROUND
-//                                                                                          .ordinal()));
-//
-//        switch (this.alignment) {
-//        case LEFT:
-//            int xoffset = 0;
-//            for (Glyph glyph : glyphs) {
-//                if(glyph.getChar()==' '){
-//                    xoffset += glyph.getDelta();
-//                    continue;
-//                }
-//                int j = 0;
-//                for (int i = 0; i < glyph.getLinesNumber(); i++, j = (j + 2)) {
-//
-//                    temporal.moveTo(glyph.points[j].x + anchorPoint.x + xoffset,
-//                                    glyph.points[j].y + anchorPoint.y - r.height);
-//                    temporal.lineTo(glyph.points[j + 1].x + anchorPoint.x + xoffset,
-//                                    glyph.points[j + 1].y + anchorPoint.y - r.height);
-//                    
-//                }
-//                xoffset += glyph.getGlyphWidth() + glyph.getDelta();
-//            }    
-//            
-//             
-//             break;
-//        case RIGHT:
-//            xoffset = 0;
-//            for (Glyph glyph : glyphs) {
-//                if(glyph.getChar()==' '){
-//                    xoffset += glyph.getDelta();
-//                    continue;
-//                }
-//                int j = 0;
-//                for (int i = 0; i < glyph.getLinesNumber(); i++, j = (j + 2)) {
-//
-//                    temporal.moveTo(glyph.points[j].x + anchorPoint.x + xoffset - r.width,
-//                                    glyph.points[j].y + anchorPoint.y - r.height);
-//                    temporal.lineTo(glyph.points[j + 1].x + anchorPoint.x + xoffset -r.width,
-//                                    glyph.points[j + 1].y + anchorPoint.y - r.height);
-//                    
-//                }
-//                xoffset += glyph.getGlyphWidth() + glyph.getDelta();
-//            }    
-//        
-//             break;
-//        case BOTTOM:
-//            int yoffset = 0;
-//            for (Glyph glyph : glyphs) {
-//                if(glyph.getChar()==' '){
-//                    yoffset += glyph.getDelta();
-//                    continue;
-//                }
-//                int j = 0;
-//                for (int i = 0; i < glyph.getLinesNumber(); i++, j = (j + 2)) {
-//                  
-//                    temporal.moveTo(glyph.points[j].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j].y + anchorPoint.y-yoffset);
-//                    temporal.lineTo(glyph.points[j + 1].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j + 1].y + anchorPoint.y-yoffset);
-//                    
-//                }
-//                yoffset += glyph.getGlyphHeight() + glyph.getDelta();
-//            }
-//            break;
-//        case TOP:
-//            yoffset = 0;
-//            for (Glyph glyph : glyphs) {
-//                if(glyph.getChar()==' '){
-//                    yoffset += glyph.getDelta();
-//                    continue;
-//                }
-//
-//                int j = 0;
-//                for (int i = 0; i < glyph.getLinesNumber(); i++, j = (j + 2)) {
-//                    temporal.moveTo(glyph.points[j].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j].y + anchorPoint.y-yoffset+r.height);
-//                    temporal.lineTo(glyph.points[j + 1].x + anchorPoint.x  - r.width,
-//                                    glyph.points[j + 1].y + anchorPoint.y-yoffset+r.height);
-//                   }
-//                
-//                yoffset += glyph.getGlyphHeight() + glyph.getDelta();
-//            }            
-//            break;
-//        }
-//        g2.draw(temporal);        
-//        provider.reset();        
+        if (this.isEmpty()) {
+             return;
+        }
+
+        g2.setColor(fillColor);
+
+        g2.setStroke(new BasicStroke(thickness, Trackable.JoinType
+                                                                             .JOIN_ROUND
+                                                                             .ordinal(), Trackable.EndType
+                                                                                                  .CAP_ROUND
+                                                                                                  .ordinal()));
+        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(GeneralPath.class);
+        GeneralPath temporal = (GeneralPath) provider.getShape();
+        temporal.reset();
+        this.glyphs.forEach(glyph->{
+                for(int i=0;i<glyph.segments.length;i++){    
+                     if(glyph.character==' '){
+                         continue;
+                     }             
+                     temporal.moveTo(glyph.segments[i].ps.x,glyph.segments[i].ps.y);
+                     temporal.lineTo(glyph.segments[i].pe.x,glyph.segments[i].pe.y);                     
+                }
+        });
+
+        g2.draw(temporal);        
+        provider.reset();
+        
     } 
     
-    private void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
-        Utilities.drawCrosshair(g2, viewportWindow, scale, null, selectionRectWidth, anchorPoint);
-    }
+
     @Override
     public boolean isClicked(int x, int y) {
         if (this.text == null || this.text.length() == 0){

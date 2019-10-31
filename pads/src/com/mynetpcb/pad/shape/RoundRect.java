@@ -4,32 +4,22 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
-
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-
 import com.mynetpcb.d2.shapes.RoundRectangle;
-
 import com.mynetpcb.d2.shapes.Utils;
-import com.mynetpcb.pad.shape.GlyphLabel.Memento;
-
 import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-
-import java.util.Objects;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Node;
 
@@ -136,11 +126,28 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         }
         
         if (this.isSelected()) {
-            Utilities.drawCrosshair(g2, viewportWindow, scale,resizingPoint,this.selectionRectWidth,this.roundRect.points.get(0),this.roundRect.points.get(1),this.roundRect.points.get(2),this.roundRect.points.get(3));
+            //Utilities.drawCrosshair(g2, viewportWindow, scale,resizingPoint,this.selectionRectWidth,this.roundRect.points.get(0),this.roundRect.points.get(1),this.roundRect.points.get(2),this.roundRect.points.get(3));
+            r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p)); 
         }
     }
 
+    @Override
+    public void print(Graphics2D g2,PrintContext printContext,int layermask) {
+        if((this.getCopper().getLayerMaskID()&layermask)==0){
+            return;
+        }
 
+        g2.setStroke(new BasicStroke(thickness,1,1));    
+        g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());        
+        
+        if(this.fill==Fill.EMPTY){
+          this.roundRect.paint(g2, false);      
+        }else{
+          this.roundRect.paint(g2, true);      
+        }    
+        
+    
+    }
     @Override
     public boolean isClicked(int x, int y) {
             return this.roundRect.contains(new Point(x, y));

@@ -3,10 +3,9 @@ package com.mynetpcb.pad.shape;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
-
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
@@ -14,11 +13,6 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
-
-import com.mynetpcb.d2.shapes.Polyline;
-
-import com.mynetpcb.d2.shapes.Utils;
-import com.mynetpcb.pad.shape.Line.Memento;
 import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.BasicStroke;
@@ -27,13 +21,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
 import java.util.Optional;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Node;
 
@@ -112,7 +101,7 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
 
     @Override
     public void alignResizingPointToGrid(Point point) {
-        // TODO Implement this method
+        getOwningUnit().getGrid().snapToGrid(point); 
     }
     @Override
     public void move(double xoffset, double yoffset) {
@@ -170,11 +159,22 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
         }
         
         if (this.isSelected()) {
-            polygon.points.forEach(p->Utilities.drawCrosshair(g2, viewportWindow, scale,  resizingPoint,selectionRectWidth,(Point)p));        
+            r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p));        
         }            
         
     }
+    @Override
+    public void print(Graphics2D g2,PrintContext printContext,int layermask) {
+        if((this.getCopper().getLayerMaskID()&layermask)==0){
+            return;
+        }
 
+        g2.setStroke(new BasicStroke(thickness,1,1));    
+        g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());        
+        
+        this.polygon.paint(g2, true);      
+
+    }
     @Override
     public String toXML() {
         // TODO Implement this method

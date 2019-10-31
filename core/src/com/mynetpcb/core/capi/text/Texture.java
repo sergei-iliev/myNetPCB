@@ -1,7 +1,7 @@
 package com.mynetpcb.core.capi.text;
 
 import com.mynetpcb.core.capi.Drawable;
-import com.mynetpcb.core.capi.print.Printaware;
+import com.mynetpcb.core.capi.print.Printable;
 
 
 import com.mynetpcb.d2.shapes.Box;
@@ -17,7 +17,7 @@ import org.w3c.dom.Node;
 /*
  * Glyph and Font texture blueprint
  */
-public interface Texture extends Drawable,Printaware,Cloneable{
+public interface Texture extends Drawable,Printable,Cloneable{
     
     public boolean isEmpty();
 
