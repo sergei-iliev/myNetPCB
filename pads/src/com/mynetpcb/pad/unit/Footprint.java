@@ -169,7 +169,7 @@ public class Footprint extends Unit<Shape> {
             GlyphLabel label = new GlyphLabel();
             label.fromXML(n);
             label.getTexture().setTag("reference");
-            Add(label);
+            add(label);
         }
         nlist = ((Element) node).getElementsByTagName("value");
         n = nlist.item(0);
@@ -177,7 +177,7 @@ public class Footprint extends Unit<Shape> {
             GlyphLabel label = new GlyphLabel();
             label.fromXML(n);
             label.getTexture().setTag("value");
-            Add(label);
+            add(label);
         }
 
         parseSelection(node, false);
@@ -193,7 +193,7 @@ public class Footprint extends Unit<Shape> {
         for (int i = 0; i < nodelist.getLength(); i++) {
             Shape shape = this.shapeFactory.createShape(nodelist.item(i));
             shape.setSelected(selection);
-            this.Add(shape);
+            this.add(shape);
         }
     }
 

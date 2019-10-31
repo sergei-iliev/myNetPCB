@@ -54,7 +54,7 @@ public class ArcMidPointEventHandle<U extends UnitComponent,S extends Shape>  ex
 
 
     @Override
-    protected void Clear() {
+    protected void clear() {
 
     }
 }

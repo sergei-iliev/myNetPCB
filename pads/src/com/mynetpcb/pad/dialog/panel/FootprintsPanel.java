@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.event.UnitListener;
 import com.mynetpcb.core.capi.tree.UnitTreeCellRenderer;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.pad.component.FootprintComponent;
 
 import java.awt.BorderLayout;
@@ -77,30 +78,30 @@ public class FootprintsPanel extends JPanel  implements TreeSelectionListener,Un
             //***could be a click on Module or Chip
             TreeNodeData data=(TreeNodeData)node.getUserObject();
             if(node.getParent()!=footprintsTree.getModel().getRoot()){   //click on chip
-//              TreeNodeData footprintData=(TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
-//              if(footprintComponent.getModel().getUnit().getUUID().compareTo(footprintData.getUUID())!=0){                  
-//                  footprintComponent.getModel().getUnit().setScrollPositionValue(footprintComponent.getDialogFrame().getHorizontalScrollBar().getValue(),footprintComponent.getDialogFrame().getVerticalScrollBar().getValue());                                                                                     
-//                  footprintComponent.getModel().setActiveUnit(footprintData.getUUID());
-//              }   
-//              
-//              footprintComponent.getModel().getUnit().setSelected(false);
-//              footprintComponent.getModel().getUnit().setSelected(data.getUUID(),true);
-//              footprintComponent.componentResized(null);
-//                    //***fire node selected             
-//               footprintInspector.selectShapeEvent(new ShapeEvent(footprintComponent.getModel().getUnit().getShape(data.getUUID()), ShapeEvent.SELECT_SHAPE));              
-//                //***position on a symbol
-//                  Rectangle symbolRect=footprintComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape().getBounds();   
-//                  footprintComponent.setScrollPosition(symbolRect.x, symbolRect.y);                                                                                                                                          
-//            }else{           //click on unit
-//                footprintComponent.getModel().getUnit().setScrollPositionValue(footprintComponent.getViewportWindow().x,footprintComponent.getViewportWindow().y);                 
-//                footprintComponent.getModel().setActiveUnit(data.getUUID());
-//                footprintComponent.getModel().getUnit().setSelected(false);    
-//                footprintComponent.componentResized(null);
-//               
-//                footprintInspector.selectUnitEvent(new UnitEvent(footprintComponent.getModel().getUnit(), UnitEvent.SELECT_UNIT));                     
-//                footprintComponent.getDialogFrame().getHorizontalScrollBar().setValue(footprintComponent.getModel().getUnit().getScrollPositionXValue());
-//                footprintComponent.getDialogFrame().getVerticalScrollBar().setValue(footprintComponent.getModel().getUnit().getScrollPositionYValue());                           
-//                footprintComponent.Repaint();
+              TreeNodeData footprintData=(TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
+              if(footprintComponent.getModel().getUnit().getUUID().compareTo(footprintData.getUUID())!=0){                  
+                  footprintComponent.getModel().getUnit().setScrollPositionValue(footprintComponent.getDialogFrame().getHorizontalScrollBar().getValue(),footprintComponent.getDialogFrame().getVerticalScrollBar().getValue());                                                                                     
+                  footprintComponent.getModel().setActiveUnit(footprintData.getUUID());
+              }   
+              
+              footprintComponent.getModel().getUnit().setSelected(false);
+              footprintComponent.getModel().getUnit().setSelected(data.getUUID(),true);
+              footprintComponent.componentResized(null);
+                    //***fire node selected             
+               footprintInspector.selectShapeEvent(new ShapeEvent(footprintComponent.getModel().getUnit().getShape(data.getUUID()), ShapeEvent.SELECT_SHAPE));              
+                //***position on a symbol
+                  Box symbolRect=footprintComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
+                  footprintComponent.setScrollPosition((int)symbolRect.min.x, (int)symbolRect.min.y);                                                                                                                                          
+            }else{           //click on unit
+                footprintComponent.getModel().getUnit().setScrollPositionValue((int)footprintComponent.getViewportWindow().getX(),(int)footprintComponent.getViewportWindow().getY());                 
+                footprintComponent.getModel().setActiveUnit(data.getUUID());
+                footprintComponent.getModel().getUnit().setSelected(false);    
+                footprintComponent.componentResized(null);
+               
+                footprintInspector.selectUnitEvent(new UnitEvent(footprintComponent.getModel().getUnit(), UnitEvent.SELECT_UNIT));                     
+                footprintComponent.getDialogFrame().getHorizontalScrollBar().setValue(footprintComponent.getModel().getUnit().getScrollPositionXValue());
+                footprintComponent.getDialogFrame().getVerticalScrollBar().setValue(footprintComponent.getModel().getUnit().getScrollPositionYValue());                           
+                footprintComponent.Repaint();
             }
         }else{
             //***Root select

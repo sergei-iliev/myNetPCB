@@ -5,7 +5,6 @@ import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.shape.GlyphLabel;

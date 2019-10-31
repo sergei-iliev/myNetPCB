@@ -99,11 +99,6 @@ public class Line extends AbstractLine implements Externalizable{
         memento.saveStateFrom(this);
         return memento;
     }
-
-    @Override
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
-    }
     
     public static class Memento extends AbstractMemento<Footprint, Line> {
 
@@ -122,7 +117,7 @@ public class Line extends AbstractLine implements Externalizable{
             super.loadStateTo(shape);
             shape.polyline.points.clear();
             for (int i = 0; i < Ax.length; i++) {
-                shape.addPoint(new Point(Ax[i], Ay[i]));
+                shape.add(new Point(Ax[i], Ay[i]));
             }
             //***reset floating start point
             if (shape.polyline.points.size() > 0) {

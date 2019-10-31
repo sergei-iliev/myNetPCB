@@ -201,11 +201,6 @@ public class ChipText  implements Moveable{
     }
 
     @Override
-    public void mirror(com.mynetpcb.d2.shapes.Point A, com.mynetpcb.d2.shapes.Point B) {
-        // TODO Implement this method
-
-    }
-    @Override
     public void mirror(Line line) {
         
     }

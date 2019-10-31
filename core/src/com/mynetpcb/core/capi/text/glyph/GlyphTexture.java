@@ -7,7 +7,6 @@ import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.utils.Utilities;
 
@@ -306,8 +305,8 @@ public class GlyphTexture implements Texture {
             });  
                     
     }
-    //@Override
-    public void mirror(Point A, Point B) {
+    @Override
+    public void mirror(Line line) {
 //        Utilities.mirrorPoint(A,B, anchorPoint);
 //                
 //        if (A.x ==B.x) { //right-left mirroring

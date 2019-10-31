@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.event;
 
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.UnitMgr;
@@ -19,27 +20,27 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
         super(component);
     }
     @Override
-    public void Attach() {
-        super.Attach();
+    public void attach() {
+        super.attach();
         mx=(int)getTarget().getCenter().x;
         my=(int)getTarget().getCenter().y;
     } 
     @Override
-    protected void Clear() {
+    protected void clear() {
         
     }
 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
         if(e.getModifiers()==InputEvent.BUTTON3_MASK){  
-           getComponent().getDialogFrame().setButtonGroup( getComponent().COMPONENT_MODE);
-           getComponent().setMode(getComponent().COMPONENT_MODE);  
+           getComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+           getComponent().setMode(Mode.COMPONENT_MODE);  
            getComponent().Repaint();
            return;   //***right button click 
         } 
         try {
             Shape shape = getTarget().clone();
-            getComponent().getModel().getUnit().Add(shape);
+            getComponent().getModel().getUnit().add(shape);
             getComponent().getModel().getUnit().setSelected(false);
             shape.setSelected(true);
             shape.alignToGrid((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE));

@@ -14,7 +14,7 @@ public class DragingEventHandle <U extends UnitComponent,S extends Shape> extend
     }
 
     @Override
-    protected void Clear() {
+    protected void clear() {
     }
 
     @Override

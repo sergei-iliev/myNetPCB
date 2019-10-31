@@ -67,8 +67,8 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     }
 
     @Override
-    public void mirror(Point A,Point B) {
-        texture.mirror(A,B);
+    public void mirror(Line line) {
+        texture.mirror(line);
     }
     
     @Override
@@ -157,10 +157,6 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
-    }
-
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
     }
 
     public static class Memento extends AbstractMemento<Footprint,GlyphLabel>{

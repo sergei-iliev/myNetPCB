@@ -38,7 +38,7 @@ public interface Metrics {
      * @param g2 graphics - if null use internal canvas to calculate
      * @param text 
      */
-    public void calculateMetrics(Graphics2D g2,Text.Alignment alignment,Text.Style style,int fontSize, String text);
+    //public void calculateMetrics(Graphics2D g2,Text.Alignment alignment,Text.Style style,int fontSize, String text);
 
 }
 

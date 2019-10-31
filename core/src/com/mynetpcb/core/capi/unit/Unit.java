@@ -24,7 +24,6 @@ import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.print.PrintCallable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
-import com.mynetpcb.core.capi.shape.Container;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
@@ -70,7 +69,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 
-public abstract class Unit<S extends Shape> implements Container,ShapeEventDispatcher, PrintCallable,Undoable, Cloneable,Clipboardable {
+public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, PrintCallable,Undoable, Cloneable,Clipboardable {
     private UUID uuid;
 
     private int width, height;
@@ -161,7 +160,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         return uuid;
     }
 
-    public void Add(S shape) {
+    public void add(S shape) {
         if (shape == null)
             return;
         
@@ -798,7 +797,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
                 
             for(AbstractMemento state:mementos){
                 S element=(S)shapeFactory.createShape(state);
-                this.Add(element);                 
+                this.add(element);                 
                 fireShapeEvent(new ShapeEvent(element, ShapeEvent.SELECT_SHAPE));
             }   
             }
@@ -855,7 +854,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
                 
             for(AbstractMemento state:mementos){
                 S shape=(S)shapeFactory.createShape(state);
-                this.Add(shape);                 
+                this.add(shape);                 
                 fireShapeEvent(new ShapeEvent(shape, ShapeEvent.SELECT_SHAPE));
             }   
             }

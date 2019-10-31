@@ -39,6 +39,11 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
                 arc.fromXML(node);
                 return arc;   
             }
+            if(element.getTagName().equals("solidregion")){
+                SolidRegion region = new SolidRegion(0);
+                region.fromXML(node);
+                return region;   
+            }
             if(element.getTagName().equals("label")){
                 GlyphLabel label = new GlyphLabel();
                 label.fromXML(node);

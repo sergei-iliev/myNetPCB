@@ -63,6 +63,10 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
             return copy;
     }
     @Override
+    public long getOrderWeight(){
+            return (long)this.roundRect.area(); 
+    }
+    @Override
     public Point isControlRectClicked(int x, int y) {
                     Point pt=new Point(x,y);                    
                     for(Point p:this.roundRect.points){
@@ -184,14 +188,11 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         return null;
     }
 
+    @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
-    }
-
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
     }
     
     @Override

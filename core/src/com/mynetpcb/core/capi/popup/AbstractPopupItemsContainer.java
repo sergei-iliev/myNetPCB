@@ -20,8 +20,10 @@ import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 
 import com.mynetpcb.d2.shapes.Box;
 
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.Component;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -495,9 +497,9 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
                 getUnitComponent().getEventMgr().resetEventHandle();
                 getUnitComponent().getModel().getUnit().delete(getTarget().getUUID());
             }
-            //else{
-            //    getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
-            //}
+            else{
+                getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
+            }
 
             getUnitComponent().Repaint();
         }
@@ -521,33 +523,33 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
           return;
         }
         if(e.getActionCommand().equalsIgnoreCase("topbottom")||e.getActionCommand().equalsIgnoreCase("leftright")){   
-//            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
-//            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
-//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-//            Point p=getUnitComponent().getModel().getUnit().getGrid().positionOnGrid((int)r.getCenterX(),(int)r.getCenterY());      
-//            UnitMgr unitMgr = new UnitMgr();
-//            if(e.getActionCommand().equalsIgnoreCase("topbottom")){
-//                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Point(p.x-10,p.y),new Point(p.x+10,p.y));
-//            }else{
-//                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Point(p.x,p.y-10),new Point(p.x,p.y+10));
-//            }
-//            
-//            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);
-//            unitMgr.normalizePinText(shapes);
-//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento( MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-//            getUnitComponent().Repaint();
+            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
+            Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            Point p=getUnitComponent().getModel().getUnit().getGrid().positionOnGrid(r.getCenter());      
+            UnitMgr unitMgr = new UnitMgr();
+            if(e.getActionCommand().equalsIgnoreCase("topbottom")){
+                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Line(new Point(p.x-10,p.y),new Point(p.x+10,p.y)));
+            }else{
+                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Line(new Point(p.x,p.y-10),new Point(p.x,p.y+10)));
+            }
+            
+            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);
+            unitMgr.normalizePinText(shapes);
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento( MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            getUnitComponent().Repaint();
         } 
         if(e.getActionCommand().equalsIgnoreCase("rotateleft")||e.getActionCommand().equalsIgnoreCase("rotateright")){ 
-//            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
-//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-//            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);  
-//            UnitMgr unitMgr = new UnitMgr();
-//            unitMgr.rotateBlock(shapes,AffineTransform.getRotateInstance((e.getActionCommand().equalsIgnoreCase("rotateleft")?-1:1)*Math.PI/2,r.getCenterX(),r.getCenterY()));   
-//            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);  
-//            //skip if single pin
-//            unitMgr.normalizePinText(shapes);
-//            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-//            getUnitComponent().Repaint();
+            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);  
+            UnitMgr unitMgr = new UnitMgr();
+            unitMgr.rotateBlock(shapes,(e.getActionCommand().equalsIgnoreCase("rotateleft")?-1:1)*90,r.getCenter());   
+            unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);  
+            //skip if single pin
+            unitMgr.normalizePinText(shapes);
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            getUnitComponent().Repaint();
         }
         if(e.getActionCommand().equalsIgnoreCase("deleteunit")){  
             if(getUnitComponent().getModel().isChanged(getUnitComponent().getModel().getUnit().getUUID())){                        
@@ -632,17 +634,17 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().Repaint();            
         } 
         if(e.getActionCommand().equals("positiontocenter")){
-//            Unit unit=getUnitComponent().getModel().getUnit();
-//            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(unit.getShapes()));  
-//            int x=(int)unit.getBoundingRect().getCenterX();
-//            int y=(int)unit.getBoundingRect().getCenterY();
-//            UnitMgr unitMgr=new UnitMgr();
-//            unitMgr.moveBlock(unit.getShapes(), (unit.getWidth()/2)-x, (unit.getHeight()/2)-y);
-//            unitMgr.alignBlock(unit.getGrid(),unit.getShapes());
-//            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(unit.getShapes())); 
-//            //scroll to center
-//            getUnitComponent().setScrollPosition((unit.getWidth()/2), (unit.getHeight()/2));
-//            getUnitComponent().Repaint();
+            Unit unit=getUnitComponent().getModel().getUnit();
+            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(unit.getShapes()));  
+            int x=(int)unit.getBoundingRect().getCenter().x;
+            int y=(int)unit.getBoundingRect().getCenter().y;
+            UnitMgr unitMgr=new UnitMgr();
+            unitMgr.moveBlock(unit.getShapes(), (unit.getWidth()/2)-x, (unit.getHeight()/2)-y);
+            unitMgr.alignBlock(unit.getGrid(),unit.getShapes());
+            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(unit.getShapes())); 
+            //scroll to center
+            getUnitComponent().setScrollPosition((unit.getWidth()/2), (unit.getHeight()/2));
+            getUnitComponent().Repaint();
         } 
         
         if (e.getActionCommand().equalsIgnoreCase("DeleteBendingPoint")) {

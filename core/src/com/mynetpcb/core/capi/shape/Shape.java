@@ -117,14 +117,6 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
         copy.owningUnit=null;
         return copy;
     }
-        @Override
-        public AbstractMemento getState(MementoType operationType) {
-            return null;
-        }
-    
-        @Override
-        public void setState(AbstractMemento memento) {
-        }
     public Fill getFill(){
         return fill;
     }
@@ -143,10 +135,6 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
         
     }
 
-    @Override
-    public void mirror(Point A,Point B) {
-
-    }
     @Override
     public void mirror(Line line) {
         
@@ -249,4 +237,12 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
             return false;
         }
     }
+    
+    public AbstractMemento getState(MementoType operationType) {
+        throw new IllegalAccessError("Unknown memento state");
+    }
+    
+    public void setState(AbstractMemento memento) {
+        memento.loadStateTo(this);
+    }    
 }

@@ -12,11 +12,10 @@ import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Text;
-import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
 
 
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.Rectangle;
@@ -65,9 +64,9 @@ public class UnitMgr<U extends Unit, T extends Shape> {
             for (T child : children) {
                 T childCopy = (T) child.clone();
                 ((Ownerable) childCopy).setOwner(copyShape);
-                to.Add(childCopy);
+                to.add(childCopy);
             }
-            to.Add(copyShape);
+            to.add(copyShape);
         }
         to.setUnitName(from.getUnitName());
     }
@@ -90,9 +89,9 @@ public class UnitMgr<U extends Unit, T extends Shape> {
                 for (Shape child : children) {
                     Shape childCopy = child.clone();
                     ((Ownerable) childCopy).setOwner(clonning);
-                    target.Add(childCopy);
+                    target.add(childCopy);
                 }
-                target.Add(clonning);
+                target.add(clonning);
             } catch (CloneNotSupportedException cne) {
                 cne.printStackTrace(System.out);
             }
@@ -116,12 +115,12 @@ public class UnitMgr<U extends Unit, T extends Shape> {
                     Shape childCopy = child.clone();
                     ((Ownerable) childCopy).setOwner(clonning);
                     childCopy.setSelected(true);
-                    unit.Add(childCopy);
+                    unit.add(childCopy);
                 }
                 clonning.setSelected(true);
                 //***tweak naming
                 //CircuitMgr.getInstance().symbolNaming(circuit,clonning);
-                unit.Add(clonning);
+                unit.add(clonning);
             } catch (CloneNotSupportedException cne) {
                 cne.printStackTrace(System.out);
             }
@@ -142,14 +141,14 @@ public class UnitMgr<U extends Unit, T extends Shape> {
     /*
      * Block mirror(mind parent child attachments,circuitlabels only)
      */
-    public void mirrorBlock(U unit, Point A,Point B) {
+    public void mirrorBlock(U unit, Line line) {
         Collection<T> selectedShapes = unit.getSelectedShapes(true);
         for (T shape : selectedShapes) {
-            //shape.Mirror(A,B);
+            shape.mirror(line);
             //***align attached labels
             Collection<T> children = this.getChildrenByParent(unit.getShapes(), shape);
             for (T child : children) {
-                //child.Mirror(A,B);
+                child.mirror(line);
             }
         }
 
@@ -293,24 +292,24 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 
 
     private void normalizePinText(PinLineable pin) {
-        for (Texture text : pin.getPinText()) {
-            switch (pin.getOrientation()) {
-            case WEST:
-            case EAST:
-                if (Text.Orientation.HORIZONTAL == text.getAlignment().getOrientation()) {
-                    //if (text.getAnchorPoint().y > pin.getPinPoints().getA().y)
-                        //text.Mirror(pin.getPinPoints().getA(),pin.getPinPoints().getB());
-                }
-                break;
-            case NORTH:
-            case SOUTH:
-                if (Text.Orientation.VERTICAL == text.getAlignment().getOrientation()) {
-                    //if (text.getAnchorPoint().x > pin.getPinPoints().getA().x)
-                        //text.Mirror(pin.getPinPoints().getA(),pin.getPinPoints().getB());
-                }
-                break;
-            }
-        }
+//        for (Texture text : pin.getPinText()) {
+//            switch (pin.getOrientation()) {
+//            case WEST:
+//            case EAST:
+//                if (Text.Orientation.HORIZONTAL == text.getAlignment().getOrientation()) {
+//                    //if (text.getAnchorPoint().y > pin.getPinPoints().getA().y)
+//                        //text.Mirror(pin.getPinPoints().getA(),pin.getPinPoints().getB());
+//                }
+//                break;
+//            case NORTH:
+//            case SOUTH:
+//                if (Text.Orientation.VERTICAL == text.getAlignment().getOrientation()) {
+//                    //if (text.getAnchorPoint().x > pin.getPinPoints().getA().x)
+//                        //text.Mirror(pin.getPinPoints().getA(),pin.getPinPoints().getB());
+//                }
+//                break;
+//            }
+//        }
     }
 
     public void normalizePinText(Shape shape) {

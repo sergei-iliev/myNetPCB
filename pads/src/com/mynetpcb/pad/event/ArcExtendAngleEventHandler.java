@@ -18,7 +18,7 @@ public class ArcExtendAngleEventHandler<U extends UnitComponent,S extends Shape>
     }
     
     @Override
-    protected void Clear() {   
+    protected void clear() {   
     }
 
     @Override

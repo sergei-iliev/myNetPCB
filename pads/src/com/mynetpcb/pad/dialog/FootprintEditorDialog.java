@@ -11,6 +11,7 @@ import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.popup.JPopupButton;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -77,6 +78,7 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
     private JToggleButton SnapToGridButton = new JToggleButton();
     private JToggleButton CoordButton = new JToggleButton();
     private JToggleButton MeasureButton = new JToggleButton();
+    private JToggleButton SolidRegionButton = new JToggleButton();
     private ButtonGroup group = new ButtonGroup();
 
     protected JPopupButton AddFootprintButton = new JPopupButton(this);
@@ -164,6 +166,11 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         RectButton.setToolTipText("Add Rectangle");
         RectButton.setPreferredSize(new Dimension(35, 35));
 
+        SolidRegionButton.addActionListener(this);
+        SolidRegionButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/solid_region.png"));
+        SolidRegionButton.setToolTipText("Add Solid Region");
+        SolidRegionButton.setPreferredSize(new Dimension(35, 35));
+        
         EllipseButton.addActionListener(this);
         EllipseButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/ellipse.png"));
         EllipseButton.setToolTipText("Add Circle");
@@ -277,7 +284,8 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         group.add(EllipseButton);
         group.add(ArcButton);
         group.add(LineButton);
-        group.add(RectButton);        
+        group.add(RectButton);    
+        group.add(SolidRegionButton);    
         group.add(PadButton);
         group.add(LabelButton);
         group.add(DragHeand);
@@ -306,6 +314,8 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         leftButtonGroupPanel.add(LineButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(RectButton);                
+        leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
+        leftButtonGroupPanel.add(SolidRegionButton);                
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(PadButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
@@ -349,11 +359,11 @@ exit();
 
     @Override
     public void setButtonGroup(int requestedMode) {
-        if (requestedMode == FootprintComponent.COMPONENT_MODE) {
+        if (requestedMode == Mode.COMPONENT_MODE) {
             group.setSelected(SelectionButton.getModel(), true);
         }
         
-        if(requestedMode==FootprintComponent.LINE_MODE){
+        if(requestedMode==Mode.LINE_MODE){
             group.setSelected(LineButton.getModel(), true);            
         }
     }
@@ -402,7 +412,7 @@ exit();
             
                         footprintLoadDialog.dispose();
                         footprintLoadDialog=null;
-                        setButtonGroup(FootprintComponent.COMPONENT_MODE);
+                        setButtonGroup(Mode.COMPONENT_MODE);
             
                         //position on center
                         //Rectangle r=footprintComponent.getModel().getUnit().getBoundingRect();
@@ -466,24 +476,27 @@ exit();
         }
 
         if (e.getSource()==RectButton) {
-            footprintComponent.setMode(FootprintComponent.RECT_MODE);
+            footprintComponent.setMode(Mode.RECT_MODE);
+        }
+        if (e.getSource()==SolidRegionButton) {
+            footprintComponent.setMode(Mode.SOLID_REGION);
         }
         if (e.getSource()==EllipseButton) {
-            footprintComponent.setMode(FootprintComponent.ELLIPSE_MODE);
+            footprintComponent.setMode(Mode.ELLIPSE_MODE);
         }
         if (e.getSource()==ArcButton) {
-            footprintComponent.setMode(FootprintComponent.ARC_MODE);
+            footprintComponent.setMode(Mode.ARC_MODE);
         }
         if (e.getSource()==LineButton) {
-            footprintComponent.setMode(FootprintComponent.LINE_MODE);
+            footprintComponent.setMode(Mode.LINE_MODE);
         }
         
         if (e.getSource()==PadButton) {
-            footprintComponent.setMode(FootprintComponent.PAD_MODE);
+            footprintComponent.setMode(Mode.PAD_MODE);
         }
         
         if (e.getSource()==LabelButton) {
-            footprintComponent.setMode(FootprintComponent.LABEL_MODE);
+            footprintComponent.setMode(Mode.LABEL_MODE);
         }
         
         if (e.getSource()==PrintButton) {
@@ -495,19 +508,19 @@ exit();
         }
         
         if (e.getSource()==DragHeand) {
-            footprintComponent.setMode(FootprintComponent.DRAGHEAND_MODE);
+            footprintComponent.setMode(Mode.DRAGHEAND_MODE);
         }
         if (e.getSource()==SnapToGridButton) {
             footprintComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
         }
         if(e.getSource()==CoordButton){ 
-            footprintComponent.setMode(FootprintComponent.ORIGIN_SHIFT_MODE);
+            footprintComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
         }
         if (e.getSource()==SelectionButton) {
-            footprintComponent.setMode(FootprintComponent.COMPONENT_MODE);
+            footprintComponent.setMode(Mode.COMPONENT_MODE);
         }
         if (e.getSource()==MeasureButton) {
-            footprintComponent.setMode(FootprintComponent.MEASUMENT_MODE);
+            footprintComponent.setMode(Mode.MEASUMENT_MODE);
         }
     }
 
@@ -517,7 +530,7 @@ exit();
      */
     private void LoadFootprints(FootprintContainer source) {
         footprintComponent.clear();
-        footprintComponent.setMode(FootprintComponent.COMPONENT_MODE);
+        footprintComponent.setMode(Mode.COMPONENT_MODE);
         if(source==null){
             Footprint footprint=new Footprint((int)Grid.MM_TO_COORD(50),(int)Grid.MM_TO_COORD(50)); 
             footprintComponent.getModel().Add(footprint);
@@ -547,17 +560,17 @@ exit();
         //align to grid in board in-line editing
         FootprintMgr.getInstance().alignBlock(footprintComponent.getModel().getUnit().getGrid(), footprintComponent.getModel().getUnit().getShapes());
 
-//        //position all to symbol center
+        //position all to symbol center
 //        for(Unit unit:footprintComponent.getModel().getUnits()){
-//            Rectangle r=unit.getBoundingRect();
+//            com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
 //            Point dst=new Point();
-//            unit.getScalableTransformation().getCurrentTransformation().transform(r.getLocation(),dst);
+//            unit.getScalableTransformation().getCurrentTransformation().transform(r.min,dst);
 //            unit.setScrollPositionValue((int)dst.getX(),(int)dst.getY());            
 //        }
 //        //position to symbol center
 //        Rectangle r=footprintComponent.getModel().getUnit().getBoundingRect();
 //        footprintComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
-        
+
         //remember state
         footprintComponent.getModel().registerInitialState();
         footprintComponent.Repaint();

@@ -33,7 +33,7 @@ public abstract class EventMgr<C extends UnitComponent,S extends Shape>{
  
     public void resetEventHandle(){
         if (this.targetEventHandle != null) {
-            this.targetEventHandle.Detach();
+            this.targetEventHandle.detach();
         }
         this.targetEventHandle = null;                
     }

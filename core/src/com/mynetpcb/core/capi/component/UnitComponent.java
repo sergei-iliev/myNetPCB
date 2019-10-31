@@ -19,6 +19,7 @@ import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -90,15 +91,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                                                                                                                    KeyListener,
                                                                                                                    ContainerEventDispatcher {
 
-    public static final int COMPONENT_MODE = 0x00;
-    
-    public static final int ORIGIN_SHIFT_MODE=0x08;
-    
-    public static final int MEASUMENT_MODE=0x0C;
-    
     private static final int MIN_UNIT_INCREAMEN=0x10; 
-    
-    public static final int DRAGHEAND_MODE=0x11; 
     
     private M model;
 
@@ -754,8 +747,8 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                         this.getPopupMenu().setVisible(false);                
                     }else{
                     //2.kill current mode
-                        this.getDialogFrame().setButtonGroup(COMPONENT_MODE);
-                        this.setMode(COMPONENT_MODE);                        
+                        this.getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+                        this.setMode(Mode.COMPONENT_MODE);                        
                     }
                     Repaint();
                     return true;

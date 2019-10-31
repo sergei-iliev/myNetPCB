@@ -60,7 +60,11 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
     public void setStartAngle(double startAngle){        
         this.arc.startAngle=Utilities.roundDouble(startAngle);
     }
-    
+    @Override
+    public long getOrderWeight() {
+        
+        return (long)arc.area();
+    }
     public double getRadius(){
        return arc.r;
     }
@@ -249,10 +253,6 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
-    }
-
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
     }
     
     public static class Memento extends AbstractMemento<Footprint,Arc>{

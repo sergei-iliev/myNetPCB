@@ -17,7 +17,7 @@ public class UnitEventHandle <U extends UnitComponent,S extends Shape> extends E
     }
 
     @Override
-    protected void Clear() {
+    protected void clear() {
         selectionRect.setRect(0,0,0,0);
     }
 

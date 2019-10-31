@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.print.Printaware;
 
 
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
 
@@ -20,11 +21,11 @@ public interface Texture extends Drawable,Printaware,Cloneable{
     
     public boolean isEmpty();
 
-    public default Text.Alignment getAlignment(){return null;}
+    //public default Text.Alignment getAlignment(){return null;}
     
-    public default void setAlignment(Text.Alignment alignment){}
+    //public default void setAlignment(Text.Alignment alignment){}
     
-    public default void setOrientation(Text.Orientation orientation){}
+    //public default void setOrientation(Text.Orientation orientation){}
     
     public Point getAnchorPoint();
     
@@ -42,7 +43,7 @@ public interface Texture extends Drawable,Printaware,Cloneable{
     
     public void move(double xoffset,double yoffset);
     
-    public void mirror(Point A,Point B);
+    public void mirror(Line line);
     
     public void translate(AffineTransform transform);
     

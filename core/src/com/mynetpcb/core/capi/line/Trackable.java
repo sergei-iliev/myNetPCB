@@ -15,7 +15,7 @@ import java.util.List;
  *Define bendable line capabilities
  * @author Sergey Iliev
  */
-public interface Trackable<LinePoint> extends Drawable,Unitable<Unit>{
+public interface Trackable<P extends Point> extends Drawable,Unitable<Unit>{
     public enum JoinType{
         JOIN_MITER,
         JOIN_ROUND,
@@ -32,13 +32,13 @@ public interface Trackable<LinePoint> extends Drawable,Unitable<Unit>{
      * The basic building points of a track
      * @return the points the track consists of
      */
-     public List<LinePoint> getLinePoints();  
+     public List<P> getLinePoints();  
     
 /**
      * Add new point to the track
      * @param point
      */
-     public void addPoint(Point point); 
+     public void add(Point point); 
 
      public void add(double x,double y); 
 

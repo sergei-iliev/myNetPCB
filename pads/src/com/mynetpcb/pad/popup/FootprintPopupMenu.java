@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.dialog.save.FootprintSaveDialog;
@@ -62,8 +63,8 @@ public class FootprintPopupMenu extends AbstractPopupItemsContainer<FootprintCom
           return;  
         }
         if (e.getActionCommand().equalsIgnoreCase("Resume")) {
-            getUnitComponent().getDialogFrame().setButtonGroup(FootprintComponent.LINE_MODE);
-            getUnitComponent().setMode(FootprintComponent.LINE_MODE);         
+            getUnitComponent().getDialogFrame().setButtonGroup(Mode.LINE_MODE);
+            getUnitComponent().setMode(Mode.LINE_MODE);         
             getUnitComponent().resumeLine((Trackable)getTarget(),"line", x, y);
         }  
         super.actionPerformed(e);      

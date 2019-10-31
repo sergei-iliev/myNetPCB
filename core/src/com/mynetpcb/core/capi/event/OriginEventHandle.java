@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.event;
 
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 
 import java.awt.event.KeyEvent;
@@ -14,7 +15,7 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
     }
     
     @Override
-    protected void Clear() {
+    protected void clear() {
     }
 
     @Override
@@ -23,8 +24,8 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
             //escape
             getComponent().getModel().getUnit().getCoordinateSystem().reset(0,0);    
             getComponent().getModel().fireUnitEvent(new UnitEvent(null, UnitEvent.PROPERTY_CHANGE));
-            getComponent().getDialogFrame().setButtonGroup(getComponent().COMPONENT_MODE);
-            getComponent().setMode(getComponent().COMPONENT_MODE);
+            getComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+            getComponent().setMode(Mode.COMPONENT_MODE);
             getComponent().Repaint();
             return;
         }else{
@@ -44,8 +45,8 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
 
         getComponent().getModel().getUnit().getCoordinateSystem().alignToGrid((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)); 
         getComponent().getModel().fireUnitEvent(new UnitEvent(null, UnitEvent.PROPERTY_CHANGE));
-        getComponent().getDialogFrame().setButtonGroup(getComponent().COMPONENT_MODE);
-        getComponent().setMode(getComponent().COMPONENT_MODE);
+        getComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+        getComponent().setMode(Mode.COMPONENT_MODE);
         getComponent().Repaint();
     }
 
@@ -78,7 +79,7 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
       return false;  
     }
     public void Attach() {
-        super.Attach();
+        super.attach();
         getComponent().getModel().getUnit().getCoordinateSystem().reset(0,0);   
     }
 

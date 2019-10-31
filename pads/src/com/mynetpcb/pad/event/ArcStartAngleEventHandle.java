@@ -67,7 +67,7 @@ public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape> 
 
 
     @Override
-    protected void Clear() {
+    protected void clear() {
 
     }
 }

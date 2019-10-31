@@ -26,7 +26,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
 
     
     @Override
-    protected void Clear() {
+    protected void clear() {
         if(texture!=null){
             texture.clear();  
             texture=null;

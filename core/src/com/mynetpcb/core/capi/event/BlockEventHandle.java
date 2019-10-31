@@ -28,8 +28,8 @@ public class BlockEventHandle <U extends UnitComponent,S extends Shape> extends 
     }
 
     @Override
-    public void Attach(){
-        super.Attach();
+    public void attach(){
+        super.attach();
         selectedSymbols = getComponent().getModel().getUnit().getSelectedShapes(false);
         //used in Do/Undo
         selectedWires = UnitMgr.getInstance().getSublineWires(getComponent().getModel().getUnit());
@@ -38,7 +38,7 @@ public class BlockEventHandle <U extends UnitComponent,S extends Shape> extends 
     }
     
     @Override
-    protected void Clear() {
+    protected void clear() {
         selectedSymbols.clear();
         selectedWirePoints.clear();
         selectedWires.clear();

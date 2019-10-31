@@ -16,9 +16,17 @@ public class LineEventHandle <U extends UnitComponent,S extends Shape> extends E
     public LineEventHandle(U component) {
         super(component);
     }
-    
     @Override
-    protected void Clear() {   
+    public void attach() {        
+        super.attach();
+        LineBendingProcessor lineBendingProcessor=getComponent().getBendingProcessorFactory().resolve(null);
+        lineBendingProcessor.initialize((Trackable)getTarget());
+        getComponent().setLineBendingProcessor(lineBendingProcessor);
+        
+        
+    }    
+    @Override
+    protected void clear() {   
     }
 
     @Override
@@ -27,11 +35,7 @@ public class LineEventHandle <U extends UnitComponent,S extends Shape> extends E
             getComponent().getPopupMenu().registerLinePopup(e,getTarget());  
             return;
         }
-        //set default bending
-        LineBendingProcessor lineBendingProcessor=getComponent().getBendingProcessorFactory().resolve(null);
-        getComponent().setLineBendingProcessor(lineBendingProcessor);
-        
-        getComponent().getLineBendingProcessor().initialize((Trackable)getTarget());
+
         getComponent().getModel().getUnit().setSelected(false);
         getTarget().setSelected(true); 
         
@@ -96,6 +100,6 @@ public class LineEventHandle <U extends UnitComponent,S extends Shape> extends E
           if(getComponent().getLineBendingProcessor().getLine()!=null)
               getComponent().getLineBendingProcessor().release(); 
         }
-        super.Detach();     
+        super.detach();     
      }
 }

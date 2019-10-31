@@ -13,14 +13,14 @@ public class MeasureEventHandle  <U extends UnitComponent,S extends Shape> exten
     }
 
     @Override
-    protected void Clear() {
+    protected void clear() {
  
     }
     
     @Override
-    public void Detach() {
+    public void detach() {
         getComponent().getModel().getUnit().getRuler().setResizingPoint(null);
-        super.Detach();
+        super.detach();
     }
 
     @Override

@@ -88,6 +88,10 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
     public Box getBoundingShape() {
         return this.circle.box();         
     }
+    @Override
+    public long getOrderWeight(){
+        return (long)this.circle.area(); 
+    }
     
     @Override
     public boolean isClicked(int x, int y) {        
@@ -241,10 +245,6 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
-    }
-
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
     }
     
     public static class Memento extends AbstractMemento<Footprint,Circle> {     

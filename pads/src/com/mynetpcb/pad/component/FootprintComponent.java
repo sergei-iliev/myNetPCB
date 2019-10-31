@@ -23,6 +23,7 @@ import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.DefaultBendingProcessorFactory;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
@@ -35,6 +36,7 @@ import com.mynetpcb.pad.container.FootprintContainer;
 import com.mynetpcb.pad.container.FootprintContainerFactory;
 import com.mynetpcb.pad.dialog.FootprintLoadDialog;
 import com.mynetpcb.pad.event.FootprintEventMgr;
+import com.mynetpcb.pad.event.SolidRegionEventHandle;
 import com.mynetpcb.pad.popup.FootprintPopupMenu;
 
 import com.mynetpcb.pad.shape.Arc;
@@ -43,6 +45,7 @@ import com.mynetpcb.pad.shape.GlyphLabel;
 
 import com.mynetpcb.pad.shape.Line;
 import com.mynetpcb.pad.shape.RoundRect;
+import com.mynetpcb.pad.shape.SolidRegion;
 import com.mynetpcb.pad.unit.Footprint;
 import com.mynetpcb.pad.unit.FootprintMgr;
 
@@ -63,17 +66,7 @@ import javax.swing.JOptionPane;
 
 public class FootprintComponent extends UnitComponent<Footprint, Shape, FootprintContainer> implements CommandListener{    
 
-    public static final int PAD_MODE = 0x01;
 
-    public static final int RECT_MODE = 0x02;
-    
-    public static final int LINE_MODE = 0x03;
-    
-    public static final int ELLIPSE_MODE = 0x04;
-    
-    public static final int ARC_MODE = 0x05;
-    
-    public static final int LABEL_MODE = 0x09;
     
     private final FootprintPopupMenu popup;
     
@@ -81,7 +74,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         super(dialogFrame);
         this.setModel(new FootprintContainer());
         this.eventMgr=new FootprintEventMgr(this);
-        this.setMode(COMPONENT_MODE);
+        this.setMode(Mode.COMPONENT_MODE);
         this.setBackground(Color.BLACK);
         this.loadDialogBuilder=new FootprintLoadDialog.Builder();
         this.popup=new FootprintPopupMenu(this);
@@ -95,35 +88,37 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         
         this.requestFocusInWindow(); //***for the cancel button
         switch (getMode()){
-            case RECT_MODE:
+            case Mode.SOLID_REGION:
+            break;
+            case Mode.RECT_MODE:
              shape=new RoundRect(0,0,Grid.MM_TO_COORD(10),Grid.MM_TO_COORD(7),(int)Grid.MM_TO_COORD(0.8),(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;
-            case PAD_MODE:
+            case Mode.PAD_MODE:
              //shape = FootprintMgr.getInstance().createPad(this.getModel().getUnit());
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;
-            case ARC_MODE:
+            case Mode.ARC_MODE:
              shape=new Arc(0,0,Grid.MM_TO_COORD(3.4),60,60,(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;                           
-            case ELLIPSE_MODE:
+            case Mode.ELLIPSE_MODE:
              shape=new Circle(0,0,Grid.MM_TO_COORD(3.4),(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;             
-            case LABEL_MODE:             
+            case Mode.LABEL_MODE:             
              shape=new GlyphLabel("Label",(int)Grid.MM_TO_COORD(0.3),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;
-            case ORIGIN_SHIFT_MODE:  
+            case Mode.ORIGIN_SHIFT_MODE:  
              getEventMgr().setEventHandle("origin",null);   
              break;      
-        case DRAGHEAND_MODE:
+            case Mode.DRAGHEAND_MODE:
 //             Cursor cursor =
 //                    getToolkit().getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame() ,
 //                                                                                         "/com/mynetpcb/core/images/dragopen.png").getImage(),
@@ -148,7 +143,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
 
             //find the right handler to handle the event
             switch (getMode()){
-                case COMPONENT_MODE:
+                case Mode.COMPONENT_MODE:
                 /*
                  * 1.Coordinate system 
                  * 2.Control rect/reshape point
@@ -190,7 +185,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                 }
                 break;
                 
-                case LINE_MODE:
+                case Mode.LINE_MODE:
                 //***is this a new wire
                 if ((getEventMgr().getTargetEventHandle() == null) ||
                     !(getEventMgr().getTargetEventHandle() instanceof LineEventHandle)) {
@@ -204,7 +199,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                    
                     if ((shape == null) ||(!(shape instanceof Line))) {
                         shape = new Line((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
-                        getModel().getUnit().Add(shape);
+                        getModel().getUnit().add(shape);
                     }else {
                         /*Click on a line
                                     *1.Click at begin or end point - resume
@@ -217,20 +212,31 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                             return;
                         } else {
                             shape = new Line((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);                        
-                            getModel().getUnit().Add(shape);
+                            getModel().getUnit().add(shape);
                         }
                     } 
                     getEventMgr().setEventHandle("line", shape);
                 }
                 
                 break;
-                
-                case PAD_MODE:
+                case Mode.SOLID_REGION:
+                    //is this a new copper area
+                    if ((this.getEventMgr().getTargetEventHandle() == null) ||
+                        !(this.getEventMgr().getTargetEventHandle() instanceof SolidRegionEventHandle)) {
+                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
+                        return; //***right button click
+                    }
+                        shape =new SolidRegion(Layer.LAYER_FRONT);
+                        this.getModel().getUnit().add(shape);
+                        this.getEventMgr().setEventHandle("solidregion", shape);
+                    }                   
+                    break;                
+                case Mode.PAD_MODE:
                 break;
-                case DRAGHEAND_MODE:
+                case Mode.DRAGHEAND_MODE:
                     getEventMgr().setEventHandle("dragheand", null);
                     break;
-            case MEASUMENT_MODE:
+            case Mode.MEASUMENT_MODE:
                 if ((getEventMgr().getTargetEventHandle() != null) ||
                     (getEventMgr().getTargetEventHandle() instanceof MeasureEventHandle)) {
                     getEventMgr().resetEventHandle();
@@ -296,16 +302,15 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
                     Box r=getModel().getUnit().getShapesRect(shapes);
                     Point center=r.getCenter();
-                    Point p=getModel().getUnit().getGrid().positionOnGrid((int)center.x,(int)center.y); 
+                    Point p=getModel().getUnit().getGrid().positionOnGrid(center); 
                     if(e.getKeyCode() == KeyEvent.VK_Q){
-                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),                                        
-                                            new Point(p.x - 10, p.y),
-                                                              new Point(p.x + 10, p.y));
+                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),new com.mynetpcb.d2.shapes.Line(new Point(p.x - 10, p.y),
+                                                              new Point(p.x + 10, p.y)));
                                            
                     }else{
-                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),
+                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),new com.mynetpcb.d2.shapes.Line(
                                 new Point(p.x, p.y - 10),
-                                          new Point(p.x, p.y + 10));
+                                          new Point(p.x, p.y + 10)));
                     }
                     
                     FootprintMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);

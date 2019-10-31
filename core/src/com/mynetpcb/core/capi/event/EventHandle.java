@@ -89,7 +89,7 @@ public abstract class EventHandle<C extends UnitComponent,S extends Shape> imple
 
     }
    
-    protected abstract void Clear();
+    protected abstract void clear();
     /*
      * zoomin,rotating and so on
      */
@@ -127,15 +127,15 @@ public abstract class EventHandle<C extends UnitComponent,S extends Shape> imple
 
     //***use to init resources on Handle select
 
-    public void Attach() {
+    public void attach() {
         this.ctrlButtonPress = false;
         mx=0;
         my=0;  
     }
     //***use to clean resources on Handle close
 
-    public void Detach() {
-        Clear();
+    public void detach() {
+        clear();
     }
 
     public void setTarget(S target) {

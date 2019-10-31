@@ -13,8 +13,6 @@ import java.awt.geom.AffineTransform;
 public interface Moveable extends Drawable,Cloneable {
 
     public void move(double xoffset, double yoffset);
-        
-    public void mirror(Point A,Point B);
     
     public void mirror(Line line);
     

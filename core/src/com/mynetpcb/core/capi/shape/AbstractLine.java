@@ -86,7 +86,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     }
 
     @Override
-    public void addPoint(Point point) {
+    public void add(Point point) {
         polyline.points.add(new LinePoint(point));
     }
 
@@ -116,13 +116,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
                                                            - (this.thickness / 2), y
                                                            - (this.thickness / 2), this.thickness,
                                                            this.thickness);
-//       LinePoint prevPoint = this.polyline.points.get(0);
-//       for(LinePoint point:this.polyline.points){
-//           if(Utils.intersectLineLine(prevPoint, point, rect.min, rect.max)){
-//              
-//           }
-//           prevPoint = point;
-//       }
+
        
        
         int count=-1,index=-1;
@@ -147,45 +141,26 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         }
          
    }
-//    @Override
-//    public Point getEndPoint(int x, int y) {        
-//        if (points.size() ==0) {
-//            return null;
-//        }
-//        Point point=isBendingPointClicked(x, y);
-//        if(point==null){
-//            return null;
-//        }
-//        //***head point
-//        if (points.get(0).x==point.x&&points.get(0).y==point.y) {
-//            return points.get(0);
-//        }
-//        //***tail point
-//        if ((points.get(points.size() - 1)).x==point.x&& (points.get(points.size() - 1)).y==point.y) {
-//            return (points.get(points.size() - 1));
-//        }
-//        
-//        return null;
-//    }
+
     @Override
     public boolean isEndPoint(double x, double y) {
-//        if (points.size() < 2) {
+        if (polyline.points.size() < 2) {
             return false;
-//        }
-//        
-//        Point point=isBendingPointClicked(x, y);
-//        if(point==null){
-//            return false;
-//        }
-//        //***head point
-//        if (points.get(0).x==point.x&&points.get(0).y==point.y) {
-//            return true;
-//        }
-//        //***tail point
-//        if ((points.get(points.size() - 1)).x==point.x&& (points.get(points.size() - 1)).y==point.y) {
-//            return true;
-//        }
-//        return false;
+        }
+        
+        Point point=isBendingPointClicked(x, y);
+        if(point==null){
+            return false;
+        }
+        //***head point
+        if (polyline.points.get(0).x==point.x&&polyline.points.get(0).y==point.y) {
+            return true;
+        }
+        //***tail point
+        if ((polyline.points.get(polyline.points.size() - 1)).x==point.x&& (polyline.points.get(polyline.points.size() - 1)).y==point.y) {
+            return true;
+        }
+        return false;
     }
 //    @Override
 //    public boolean isInRect(Rectangle r) {
@@ -197,11 +172,11 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
 //    }
     @Override
     public void reverse(double x,double y) {
-//        Point p=isBendingPointClicked(x, y);
-//        if (Utils.EQ(points.get(0).x,p.x) &&
-//            points.get(0).y == p.y) {
-//            Collections.reverse(points);
-//        }       
+        Point p=isBendingPointClicked(x, y);
+        if (Utils.EQ(polyline.points.get(0).x,p.x) &&
+            Utils.EQ(polyline.points.get(0).y,p.y)) {
+            Collections.reverse(polyline.points);
+        }       
     }
 
     @Override
@@ -232,6 +207,10 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     @Override
     public void move(double xoffset,double yoffset) {
         this.polyline.move(xoffset,yoffset);
+    }
+    @Override
+    public void mirror(Line line) {        
+        this.polyline.mirror(line);
     }
     @Override
     public void rotate(double angle, Point origin) {        
@@ -278,16 +257,16 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     public void setResizingPoint(Point point) {
         this.resizingPoint=point;
     }
-//    @Override
-//    public void setSelected(boolean selection) {
-//        super.setSelected(selection);
-//        if(!selection){
-//            resizingPoint=null;
-//            for (LinePoint point : points) {
-//                point.setSelected(selection);
-//            }
-//        }
-//    }
+    @Override
+    public void setSelected(boolean selection) {
+        super.setSelected(selection);
+        if(!selection){
+            resizingPoint=null;
+            for (LinePoint point : polyline.points) {
+                point.setSelected(selection);
+            }
+        }
+    }
     @Override
     public void shiftFloatingPoints() {
         this.floatingStartPoint.set((Point)this.polyline.points.get(this.polyline.points.size()-1));
@@ -296,14 +275,14 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
 
     @Override
     public void deleteLastPoint(){
-//        if (points.size() == 0)
-//            return;
-//
-//        points.remove(points.get(points.size() - 1));
-//
-//        //***reset floating start point
-//        if (points.size() > 0)
-//            floatingStartPoint.setLocation(points.get(points.size() - 1));        
+        if (polyline.points.size() == 0)
+            return;
+
+        polyline.points.remove(polyline.points.get(polyline.points.size() - 1));
+
+        //***reset floating start point
+        if (polyline.points.size() > 0)
+            floatingStartPoint.set(polyline.points.get(polyline.points.size() - 1));        
     }
 
     @Override

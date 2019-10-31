@@ -7,7 +7,6 @@ import com.mynetpcb.core.capi.SortedList;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.tree.AttachedItem;
 
@@ -185,19 +184,19 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
     public abstract void updateUI();
     
     //***common text alignment code
-    protected void validateAlignmentComboText(JComboBox combo,Texture text){
-        if(text==null)
-            return;
-        combo.removeActionListener(this);
-        if(text.getAlignment().getOrientation() == Text.Orientation.HORIZONTAL){
-            combo.setModel(new DefaultComboBoxModel(textAlignmentHorizontal));            
-            combo.setSelectedIndex(text.getAlignment() == Text.Alignment.LEFT?0:1);
-        }else{
-            combo.setModel(new DefaultComboBoxModel(textAlignmentVertical));
-            combo.setSelectedIndex(text.getAlignment() == Text.Alignment.BOTTOM?0:1);        
-        }        
-        combo.addActionListener(this);          
-    }
+//    protected void validateAlignmentComboText(JComboBox combo,Texture text){
+//        if(text==null)
+//            return;
+//        combo.removeActionListener(this);
+//        if(text.getAlignment().getOrientation() == Text.Orientation.HORIZONTAL){
+//            combo.setModel(new DefaultComboBoxModel(textAlignmentHorizontal));            
+//            combo.setSelectedIndex(text.getAlignment() == Text.Alignment.LEFT?0:1);
+//        }else{
+//            combo.setModel(new DefaultComboBoxModel(textAlignmentVertical));
+//            combo.setSelectedIndex(text.getAlignment() == Text.Alignment.BOTTOM?0:1);        
+//        }        
+//        combo.addActionListener(this);          
+//    }
     
     protected void setSelectedIndex(JComboBox combo,int index){
         //***disconnect from listener

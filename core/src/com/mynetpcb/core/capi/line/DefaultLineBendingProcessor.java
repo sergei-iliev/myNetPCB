@@ -8,7 +8,7 @@ public class DefaultLineBendingProcessor extends LineBendingProcessor {
        boolean result=false;
        if(!isOverlappedPoint(point)){
            if(!isPointOnLine(point)){
-               getLine().addPoint(point);   
+               getLine().add(point);   
                result=true;
            }               
        }         

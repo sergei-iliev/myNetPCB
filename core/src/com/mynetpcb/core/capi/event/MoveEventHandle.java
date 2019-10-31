@@ -75,7 +75,7 @@ public class MoveEventHandle <U extends UnitComponent,S extends Shape> extends E
     public void doubleScaledClick(MouseScaledEvent e) {
     }
     @Override
-    protected void Clear() {
+    protected void clear() {
     
     }    
     
