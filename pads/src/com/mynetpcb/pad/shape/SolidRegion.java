@@ -31,7 +31,6 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
     private Point floatingStartPoint; //***mid 90 degree forming
     private Point floatingEndPoint;
     private Point resizingPoint;    
-    private double rotate;
     
     public SolidRegion(int layermaskId) {
         

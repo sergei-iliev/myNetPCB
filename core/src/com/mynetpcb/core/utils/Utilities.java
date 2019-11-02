@@ -12,9 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import java.io.BufferedInputStream;
@@ -105,30 +103,6 @@ public final class Utilities {
          return Math.round(number*10000)/10000 ;
     }
     
-//    public static Rectangle2D getScaleRect(Rectangle2D rect, AffineTransform scale) {
-//        Point2D P1 = new Point2D.Double(rect.getMinX(), rect.getMinY());
-//        Point2D P2 = new Point2D.Double(rect.getMaxX(), rect.getMaxY());
-//        scale.transform(P1, P1);
-//        scale.transform(P2, P2);
-//        return new Rectangle2D.Double(P1.getX(), P1.getY(), P2.getX() - P1.getX(), P2.getY() - P1.getY());
-//    }
-//
-//    public static void setScaleRect(int x, int y, int width, int height, RectangularShape target,
-//                                    AffineTransform scale) {
-//        Point2D P1 = new Point2D.Double(x, y);
-//        Point2D P2 = new Point2D.Double(x + width, y + height);
-//        scale.transform(P1, P1);
-//        scale.transform(P2, P2);
-//        target.setFrame(P1.getX(), P1.getY(), P2.getX() - P1.getX(), P2.getY() - P1.getY());
-//    }
-
-    public static void setScaleLine(Line2D source, Line2D target, AffineTransform scale) {
-        Point2D A = new Point2D.Double();
-        Point2D B = new Point2D.Double();
-        scale.transform(source.getP1(), A);
-        scale.transform(source.getP2(), B);
-        target.setLine(A, B);
-    }
 
     public static void IncrementRect(Rectangle2D rect, int x, int y) {
         rect.setRect(rect.getX() - x, rect.getY() - y, rect.getWidth() + 2 * x, rect.getHeight() + 2 * y);
@@ -303,32 +277,6 @@ public final class Utilities {
         transformer.transform(source, result);
         return result.getWriter().toString();
     }
-//    public static void drawLine(Line2D line, Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-//        Utilities.setScaleLine(line, line, scale);
-//        line.setLine(line.getX1() - viewportWindow.getX(), line.getY1() - viewportWindow.getY(), line.getX2() - viewportWindow.getX(),
-//                     line.getY2() - viewportWindow.getY());
-//        g2.draw(line);
-//    }    
-//    public static void drawCrosshair(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
-//                                         Point resizingPoint, int length, Point... points) {
-//                    FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
-//                    Line2D line = (Line2D) provider.getShape();
-//            
-//                    g2.setStroke(new BasicStroke(1));
-//            
-//                    for (Point point : points) {
-//                        if (resizingPoint != null && resizingPoint.equals(point))
-//                            g2.setColor(Color.YELLOW);
-//                        else
-//                            g2.setColor(Color.BLUE);
-//                        line.setLine(point.x - length, point.y, point.x + length, point.y);
-//                        Utilities.drawLine(line, g2, viewportWindow, scale);
-//            
-//                        line.setLine(point.x, point.y - length, point.x, point.y + length);
-//                        Utilities.drawLine(line, g2, viewportWindow, scale);
-//                    }
-//                    provider.reset();            
-//        }
     
     public static void drawCrosshair(Graphics2D g2,
                                      Point resizingPoint, int length, Point... points) {

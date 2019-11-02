@@ -19,7 +19,6 @@ import com.mynetpcb.core.capi.io.FutureCommand;
 import com.mynetpcb.core.capi.io.ReadUnitLocal;
 import com.mynetpcb.core.capi.io.remote.ReadConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
-
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.DefaultBendingProcessorFactory;
 import com.mynetpcb.core.capi.line.Trackable;
@@ -28,8 +27,6 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-
-
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.container.FootprintContainer;
@@ -38,11 +35,9 @@ import com.mynetpcb.pad.dialog.FootprintLoadDialog;
 import com.mynetpcb.pad.event.FootprintEventMgr;
 import com.mynetpcb.pad.event.SolidRegionEventHandle;
 import com.mynetpcb.pad.popup.FootprintPopupMenu;
-
 import com.mynetpcb.pad.shape.Arc;
 import com.mynetpcb.pad.shape.Circle;
 import com.mynetpcb.pad.shape.GlyphLabel;
-
 import com.mynetpcb.pad.shape.Line;
 import com.mynetpcb.pad.shape.RoundRect;
 import com.mynetpcb.pad.shape.SolidRegion;
@@ -55,11 +50,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
-
 
 import javax.swing.JOptionPane;
 
@@ -96,7 +89,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
              getEventMgr().setEventHandle("cursor",shape);   
              break;
             case Mode.PAD_MODE:
-             //shape = FootprintMgr.getInstance().createPad(this.getModel().getUnit());
+             shape = FootprintMgr.getInstance().createPad(this.getModel().getUnit());
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;

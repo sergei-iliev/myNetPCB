@@ -6,10 +6,9 @@ import com.mynetpcb.core.capi.unit.UnitMgr;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.pad.Packaging;
 import com.mynetpcb.pad.dialog.FootprintLoadDialog;
+import com.mynetpcb.pad.shape.Pad;
 
 import java.awt.Window;
-
-import java.util.List;
 
 
 public final class FootprintMgr extends UnitMgr<Footprint,Shape> {
@@ -25,27 +24,25 @@ public final class FootprintMgr extends UnitMgr<Footprint,Shape> {
       return footprintMgr;
     }   
     
-//    public Pad createPad(Footprint footprint){
-//        int size=footprint.getShapes(Pad.class).size();
-//        Pad pad=null;
-//        if(size==0){
-//            pad=new Pad(0,0,Grid.MM_TO_COORD(1.52),Grid.MM_TO_COORD(1.52));
-//            pad.setDrill(new Drill(Grid.MM_TO_COORD(0.8),Grid.MM_TO_COORD(0.8)));
-//        }else{
-//            
-//            Pad last=((List<Pad>)footprint.<Pad>getShapes(Pad.class)).get(0);
-//            try {
-//                pad=last.clone();
-//                pad.setLocation(0, 0);
-//                //remove text
-//                pad.getChipText().getTextureByTag("number").setText("");
-//                pad.getChipText().getTextureByTag("netvalue").setText("");
-//            } catch (CloneNotSupportedException e) {
-//              e.printStackTrace();
-//            }
-//        }
-//        return pad;
-//    }
+    public Pad createPad(Footprint footprint){
+        int size=footprint.getShapes(Pad.class).size();
+        Pad pad=null;
+        if(size==0){
+            pad=new Pad(Grid.MM_TO_COORD(1.52));
+        }else{
+            
+            Pad last=(footprint.<Pad>getShapes(Pad.class)).get(size-1);
+            try {
+                pad=last.clone();
+                //remove text
+                //pad.getChipText().getTextureByTag("number").setText("");
+                //pad.getChipText().getTextureByTag("netvalue").setText("");
+            } catch (CloneNotSupportedException e) {
+              e.printStackTrace();
+            }
+        }
+        return pad;
+    }
 
     /**
      *Avoid duplication of code when assigning a footprint to symbol/schsymbol

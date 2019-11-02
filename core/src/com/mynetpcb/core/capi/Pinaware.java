@@ -9,6 +9,7 @@ import java.util.Collection;
  *SCHSymbol and PCBFootprint must implement it
  * @author Sergey Iliev
  */
+@Deprecated
 public interface Pinaware<P extends Pinable>{
   
     public Collection<P> getPins(); 

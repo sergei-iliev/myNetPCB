@@ -15,6 +15,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Texture;
 
 
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
@@ -164,11 +165,11 @@ public class UnitMgr<U extends Unit, T extends Shape> {
     * The rectangle based on selected Pinnables in the Unit
     */
 
-    public Rectangle getPinsRect(Collection<T> shapes) {
-//        int x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
-//        boolean isPinnable = false;
-//
-//        for (Moveable symbol : shapes) {
+    public Box getPinsRect(Collection<T> shapes) {
+        double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+        boolean isPinnable = false;
+
+        for (Moveable symbol : shapes) {
 //            if (symbol instanceof Pinaware) { //group of pins
 //                Pinaware element = (Pinaware) symbol;
 //                Rectangle r = element.getPinsRect();
@@ -178,36 +179,36 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 //                y2 = Math.max(y2, r.y + r.height);
 //                isPinnable = true;
 //            }
-//            if (symbol instanceof Pinable) { //single pin
-//                Pinable pin = (Pinable) symbol;
-//                Point point = pin.getPinPoint();
-//                x1 = Math.min(x1, point.x);
-//                y1 = Math.min(y1, point.y);
-//                x2 = Math.max(x2, point.x);
-//                y2 = Math.max(y2, point.y);
-//                isPinnable = true;
-//            }
-//
-//        
-//        }
-//        if (isPinnable)
-//            return new Rectangle(x1, y1, x2 - x1, y2 - y1);
-//        else
+            if (symbol instanceof Pinable) { //single pin
+                Pinable pin = (Pinable) symbol;
+                Point point = pin.getPinPoint();
+                x1 = Math.min(x1, point.x);
+                y1 = Math.min(y1, point.y);
+                x2 = Math.max(x2, point.x);
+                y2 = Math.max(y2, point.y);
+                isPinnable = true;
+            }
+
+        
+        }
+        if (isPinnable)
+            return new Box(x1, y1, x2 - x1, y2 - y1);
+        else
             return null;
     
 }
     public void alignBlock(Grid grid, Collection<T> shapes) {
-//        //***order chips first
-//        Rectangle r = getPinsRect(shapes);
-//        //***no need to align if no pins present
-//        if (r == null) {
-//            return;
-//        }
-//        Point point = grid.positionOnGrid(r.x, r.y);
-//
-//        for (T shape : shapes) {
-//            shape.move((point.x - r.x), (point.y - r.y));
-//        }
+        //***order chips first
+        Box r = getPinsRect(shapes);
+        //***no need to align if no pins present
+        if (r == null) {
+            return;
+        }
+        Point point = grid.positionOnGrid(r.min);
+
+        for (T shape : shapes) {
+            shape.move((point.x - r.min.x), (point.y - r.min.y));
+        }
     }
 
     public void deleteBlock(U unit, Collection<T> shapes) {

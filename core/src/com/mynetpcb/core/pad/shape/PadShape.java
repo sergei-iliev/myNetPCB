@@ -5,7 +5,6 @@ import com.mynetpcb.core.capi.Pinable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
-
 import com.mynetpcb.core.pad.Net;
 
 public abstract class PadShape extends Shape implements Pinable, Net, Textable, Externalizable{

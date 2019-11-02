@@ -11,6 +11,7 @@ import java.util.Collection;
  *Single pin manipulation for Symbol and Circuit
  * @author Sergey Iliev
  */
+@Deprecated
 public interface PinLineable extends Pinable{
     public static class Pair{
        private  Point A=new Point();
@@ -41,6 +42,6 @@ public interface PinLineable extends Pinable{
    /**
     * Each pin has orientation
     */
-   public Orientation getOrientation();
+   //public Orientation getOrientation();
    
 }

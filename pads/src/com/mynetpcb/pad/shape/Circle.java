@@ -25,7 +25,6 @@ import org.w3c.dom.Node;
 public class Circle  extends Shape implements ArcGerberable,Resizeable,Externalizable{
     
     private com.mynetpcb.d2.shapes.Circle circle;
-    private double rotate;
     private Point resizingPoint;
     
     public Circle(double x,double y,double r,int thickness,int layermaskId) {
@@ -34,7 +33,6 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
 		this.selectionRectWidth=3000;
 		this.resizingPoint=null;
 		this.circle=new com.mynetpcb.d2.shapes.Circle(new Point(x,y),r);
-		this.rotate=0;
 	}
     @Override
     public Circle clone() throws CloneNotSupportedException{

@@ -11,17 +11,13 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.undo.Stateable;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.Unitable;
-
-
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-
 import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-
 import java.awt.geom.AffineTransform;
 
 import java.lang.reflect.Method;
@@ -61,6 +57,8 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     protected int thickness;
     
     protected Fill fill;
+    
+    protected double rotate;
     
     protected  Color fillColor;
     
@@ -116,6 +114,13 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
         copy.uuid = UUID.randomUUID(); 
         copy.owningUnit=null;
         return copy;
+    }
+    
+    public double getRotation(){
+        return rotate;
+    }
+    public void setRotation(double alpha){
+        
     }
     public Fill getFill(){
         return fill;

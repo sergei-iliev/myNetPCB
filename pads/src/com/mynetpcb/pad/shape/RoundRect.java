@@ -25,8 +25,6 @@ import org.w3c.dom.Node;
 
 public class RoundRect extends Shape implements Resizeable,Externalizable{
   
-    
-    private double rotate;
     private Point resizingPoint;
     private RoundRectangle roundRect;
     

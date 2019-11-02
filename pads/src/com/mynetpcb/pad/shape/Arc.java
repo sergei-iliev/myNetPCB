@@ -25,7 +25,6 @@ import org.w3c.dom.Node;
 public class Arc  extends Shape implements ArcGerberable, Resizeable,Externalizable {
     
     private com.mynetpcb.d2.shapes.Arc arc;
-    private double rotate;
     private Point resizingPoint;
     
     public Arc(double x,double y,double r,double startAngle,double endAngle,int thickness,int layermaskid)   {
@@ -33,7 +32,6 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
         this.displayName="Arc";
         this.arc=new com.mynetpcb.d2.shapes.Arc(new Point(x,y),r,startAngle,endAngle); 
         this.selectionRectWidth=3000;
-        this.rotate=0;
     }
     @Override
     public Arc clone() throws CloneNotSupportedException {        

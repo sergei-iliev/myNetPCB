@@ -1,43 +1,18 @@
 package com.mynetpcb.core.capi.shape;
 
 import com.mynetpcb.core.capi.Resizeable;
-import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
-import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Trackable;
-
-import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.utils.Utilities;
-
 import com.mynetpcb.d2.shapes.Box;
-
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-
 import com.mynetpcb.d2.shapes.Polyline;
-
-import com.mynetpcb.d2.shapes.Rectangle;
-
 import com.mynetpcb.d2.shapes.Utils;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-
-import java.awt.geom.AffineTransform;
-
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
-
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public abstract class AbstractLine extends Shape implements Trackable<LinePoint>, Resizeable{
     protected Point floatingStartPoint; //***the last wire point
@@ -96,17 +71,34 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     }
     @Override
     public boolean isClicked(int x,int y) {
-                Box rect = Box.fromRect(x
-                                                                    - (this.thickness / 2), y
-                                                                    - (this.thickness / 2), this.thickness,
-                                                                    this.thickness);
+                
+                Point pt=new Point(x,y);
+
                 LinePoint prevPoint = this.polyline.points.get(0);
+                Line line=new Line(new Point(), new Point());
                 for(LinePoint point:this.polyline.points){
-                    if(Utils.intersectLineLine(prevPoint, point, rect.min, rect.max)){
-                        return true;
+                    if(prevPoint.equals(point)){
+                        prevPoint = point;
+                        continue;
+                    }
+
+                    line.setLine(prevPoint, point);
+                    Point projectionPoint = line.projectionPoint(pt);
+
+                    if(projectionPoint.distanceTo(pt)>this.thickness){
+                        prevPoint = point;
+                        continue;
+                    }
+                    
+                    double a = (projectionPoint.x - prevPoint.x) / ((point.x - prevPoint.x) == 0 ? 1 : point.x - prevPoint.x);
+                    double b = (projectionPoint.y - prevPoint.y) / ((point.y - prevPoint.y) == 0 ? 1 : point.y - prevPoint.y);
+
+                    if (0 <= a && a <= 1 && 0 <= b && b <= 1) { //is projection between start and end point                                                    
+                            return true;
                     }
                     prevPoint = point;
                 }
+                
             return false;
     }    
     @Override
