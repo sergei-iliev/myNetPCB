@@ -4,9 +4,7 @@ package com.mynetpcb.d2.shapes;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 
 public class Utils{
     public static final double DP_TOL = 0.000001;
@@ -18,6 +16,23 @@ public class Utils{
     public static double degrees (double radians) {
         return radians * 180 / Math.PI;
     }
+    /*****
+    *
+    *   Intersect Line with Rectangle
+    *
+    *****/
+    public static boolean intersectLineRectangle(Point a1,Point a2,Point min,Point max) {
+        
+        Point topRight   = new Point( max.x, min.y );
+        Point bottomLeft = new Point( min.x, max.y );
+        
+        boolean inter1 = intersectLineLine(min, topRight, a1, a2);
+        boolean inter2 = intersectLineLine(topRight, max, a1, a2);
+        boolean inter3 = intersectLineLine(max, bottomLeft, a1, a2);
+        boolean inter4 = intersectLineLine(bottomLeft, min, a1, a2);
+        
+        return inter1||inter2||inter3||inter4;
+    };    
     /*****
     *
     *   Intersect Line with Line
@@ -42,24 +57,7 @@ public class Utils{
         }
         return result;
     };
-    /*****
-    *
-    *   Intersect Line with Rectangle
-    *
-    *****/
-    public static boolean intersectLineRectangle(Point a1,Point a2,Point topRight,Point bottomLeft) {
-        //var min        = Min(r1,r2);
-        //var max        = Max(r1,r2);
-        //var topRight   = new d2.Point( max.x, min.y );
-        //var bottomLeft = new d2.Point( min.x, max.y );
-        
-        //boolean inter1 = intersectLineLine(min, topRight, a1, a2);
-        //boolean inter2 = intersectLineLine(topRight, max, a1, a2);
-        //boolean inter3 = intersectLineLine(max, bottomLeft, a1, a2);
-        //boolean inter4 = intersectLineLine(bottomLeft, min, a1, a2);
-        
-        return intersectLineRectangle(a1, a2, topRight, bottomLeft);
-    };
+
     public static void drawCrosshair(Graphics2D g2,int length, Point... points) {
 
         Line2D line = new Line2D.Double();

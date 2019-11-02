@@ -1,12 +1,11 @@
 package com.mynetpcb.d2.shapes;
 
 import java.awt.Graphics2D;
-import com.mynetpcb.d2.shapes.Polygon;
 
 
 public class Rectangle extends Polygon {
 
-    public Rectangle(double x,double y,double width,double height) {
+    public Rectangle(double x,double y,double width,double height) {        
         this.points.add(new Point(x,y));                        
         this.points.add(new Point(x+width,y));
         this.points.add(new Point(x+width,y+height));
@@ -17,7 +16,7 @@ public class Rectangle extends Polygon {
     @Override
     public Rectangle clone() {
         Rectangle copy=new Rectangle(0,0,0,0);
-
+        copy.points.clear();
         this.points.forEach(point->{
             copy.points.add(point.clone());
         });  

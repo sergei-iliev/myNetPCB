@@ -14,16 +14,9 @@ import com.mynetpcb.d2.shapes.Shape;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-
 import java.awt.Graphics;
-
 import java.awt.Graphics2D;
-
-import java.awt.MouseInfo;
-
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -107,8 +100,8 @@ public class d2 extends  JFrame {
            polygon1.rotate(10);
            d2Component.add(polygon1);
            
-           Hexagon hexagon=new Hexagon(new Point(300,100),70);
-           hexagon.rotate(30,hexagon.center);
+           Hexagon hexagon=new Hexagon(300,100,70);
+           hexagon.rotate(30,hexagon.pc);
            d2Component.add(hexagon);
            Hexagon hexagon1=hexagon.clone();
            hexagon1.rotate(10);

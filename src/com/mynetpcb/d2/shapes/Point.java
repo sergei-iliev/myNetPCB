@@ -97,4 +97,9 @@ public class Point extends Shape{
     public void paint(Graphics2D g2,boolean fill) {
         Utils.drawCrosshair(g2,10,this); 
     }
+    
+    @Override
+    public String toString() {        
+        return "["+x+","+y+"]";
+    }
 }

@@ -29,7 +29,7 @@ public class Obround extends Shape {
 
     @Override
     public Obround clone() {
-        Obround copy = new Obround(this.pc, this.width, this.height);
+        Obround copy = new Obround(new Point(this.pc.x,this.pc.y), this.width, this.height);
         copy.ps.x = this.ps.x;
         copy.ps.y = this.ps.y;
 
@@ -37,7 +37,14 @@ public class Obround extends Shape {
         copy.pe.y = this.pe.y;
         return copy;
     }
-
+    public Box box(){
+             return new Box(
+                    Math.min(this.ps.x, this.pe.x),
+                    Math.min(this.ps.y, this.pe.y),
+                    Math.max(this.ps.x, this.pe.x),
+                    Math.max(this.ps.y, this.pe.y)
+                );                  
+    }
     private void reset() {
         double w = 0, h = 0;
         if (this.width > this.height) { //horizontal
