@@ -4,7 +4,6 @@ import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
-import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
@@ -30,7 +29,7 @@ public class GlyphTexture implements Texture {
 
     private String text,tag;
 
-    private int id,layermaskId;
+    private int id;
     
     private Point anchorPoint;
 
@@ -63,7 +62,6 @@ public class GlyphTexture implements Texture {
         this.height=0;
         this.width=0;
         
-        this.layermaskId=Layer.SILKSCREEN_LAYER_FRONT;
         this.isSelected=false;
         this.rotate=0;
         this.mirrored=false;        
@@ -305,11 +303,6 @@ public class GlyphTexture implements Texture {
 //        }                
     }
 
-    //@Override
-    public void translate(AffineTransform translate) {
-        // TODO Implement this method
-    }
-
 
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
@@ -490,15 +483,15 @@ public class GlyphTexture implements Texture {
         
     }
     
-    @Override
-    public int getLayermaskId(){
-        return layermaskId;
-    }
-    
-    @Override
-    public void setLayermaskId(int layermaskId){
-        this.layermaskId=layermaskId;
-    }
+//    @Override
+//    public int getLayermaskId(){
+//        return layermaskId;
+//    }
+//    
+//    @Override
+//    public void setLayermaskId(int layermaskId){
+//        this.layermaskId=layermaskId;
+//    }
     
     @Override
     public Texture.Memento createMemento() {

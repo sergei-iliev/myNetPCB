@@ -1,5 +1,6 @@
 package com.mynetpcb.pad.dialog.panel.inspector;
 
+import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -74,17 +75,17 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         drillWidth=new JTextField("");  drillWidth.addKeyListener(this);panel.add(drillWidth,BorderLayout.CENTER);
         layoutPanel.add(panel);  
         
-        //****offset x
-        panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-        label=new JLabel("Offset X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
-        drillOffsetX=new JTextField("");  drillOffsetX.addKeyListener(this); panel.add(drillOffsetX,BorderLayout.CENTER);
-        layoutPanel.add(panel);
-        
-        //****offset y
-        panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-        label=new JLabel("Offset Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
-        drillOffsetY=new JTextField("");  drillOffsetY.addKeyListener(this);panel.add(drillOffsetY,BorderLayout.CENTER);
-        layoutPanel.add(panel);         
+//        //****offset x
+//        panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+//        label=new JLabel("Offset X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
+//        drillOffsetX=new JTextField("");  drillOffsetX.addKeyListener(this); panel.add(drillOffsetX,BorderLayout.CENTER);
+//        layoutPanel.add(panel);
+//        
+//        //****offset y
+//        panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+//        label=new JLabel("Offset Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
+//        drillOffsetY=new JTextField("");  drillOffsetY.addKeyListener(this);panel.add(drillOffsetY,BorderLayout.CENTER);
+//        layoutPanel.add(panel);         
         //***layer MULTISELECT combo box
 //        panel=new JPanel(); panel.setLayout(new BorderLayout()); 
 //        label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -161,33 +162,39 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
     public void updateUI() {
         Pad pad=(Pad)getTarget();
         padRotate.setText(String.valueOf(pad.getRotation()));
-        //numberSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getChipText().getTextureByTag("number").getSize())));
         
-        //padNetName.setText(pad.getNetName());
-        //netvalueSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getChipText().getTextureByTag("netvalue").getSize())));
+        padNumber.setText(pad.getTextureByTag("number").getText());
+        numberSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getSize())));
+        numberX.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getAnchorPoint().x)));
+        numberY.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getAnchorPoint().y)));
         
-//        widthField.setText(String.valueOf(Grid.COORD_TO_MM(pad.getWidth())));
-//        if(pad.getShape() == Pad.Shape.CIRCULAR||pad.getShape()==Pad.Shape.POLYGON){
-//            heightField.setEnabled(false);
-//        }else{
-//            heightField.setEnabled(true);
-//            heightField.setText(String.valueOf(Grid.COORD_TO_MM(pad.getHeight())));  
-//        }
-//        
+        padNetName.setText(pad.getTextureByTag("netvalue").getText());        
+        netvalueSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getSize())));
+        netvalueX.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getAnchorPoint().x)));
+        netvalueY.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getAnchorPoint().y)));
+        
+        widthField.setText(String.valueOf(Grid.COORD_TO_MM(pad.getWidth())));
+        if(pad.getShape() == Pad.Shape.CIRCULAR||pad.getShape()==Pad.Shape.POLYGON){
+            heightField.setEnabled(false);
+        }else{
+            heightField.setEnabled(true);
+            heightField.setText(String.valueOf(Grid.COORD_TO_MM(pad.getHeight())));  
+        }
+        
         leftField.setText(toUnitX(pad.getCenter().x));
         topField.setText(toUnitY(pad.getCenter().y));
         
         setSelectedItem(layerCombo, pad.getCopper());
         setSelectedItem(padTypeCombo, pad.getType());
         setSelectedItem(padShapeCombo, pad.getShape());
-//        
-//        drillWidth.setText(String.valueOf(Grid.COORD_TO_MM(pad.getDrill()==null?0:pad.getDrill().getWidth())));
-//        drillOffsetX.setText(String.valueOf(Grid.COORD_TO_MM(pad.getOffset().x )));
-//        drillOffsetY.setText(String.valueOf(Grid.COORD_TO_MM(pad.getOffset().y)));
+        
+        drillWidth.setText(String.valueOf(Grid.COORD_TO_MM(pad.getDrill()==null?0:pad.getDrill().getWidth())));
+        //drillOffsetX.setText(String.valueOf(Grid.COORD_TO_MM(pad.getOffset().x )));
+        //drillOffsetY.setText(String.valueOf(Grid.COORD_TO_MM(pad.getOffset().y)));
      
         drillWidth.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD);
-        drillOffsetX.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD);
-        drillOffsetY.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD); 
+        //drillOffsetX.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD);
+        //drillOffsetY.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD); 
 
     }
 
@@ -195,24 +202,24 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         Pad pad=(Pad)getTarget();
-//        if(e.getSource()==padShapeCombo){
-//           pad.setShape((Pad.Shape)padShapeCombo.getSelectedItem());
-//           updateUI();
-//        }
+        if(e.getSource()==padShapeCombo){
+           pad.setShape((Pad.Shape)padShapeCombo.getSelectedItem());
+           updateUI();
+        }
         
         if(e.getSource()==padTypeCombo){
             pad.setType((Pad.Type)padTypeCombo.getSelectedItem());  
             updateUI();
         }
         
-//        if(e.getSource()==layerCombo){
-//            Layer.Copper copper=(Layer.Copper) layerCombo.getSelectedItem();
-//            if(copper.isCopperLayer()){
-//               pad.setCopper((Layer.Copper) layerCombo.getSelectedItem());            
-//            }else{
-//              setSelectedItem(layerCombo, pad.getCopper());   
-//            }
-//        }
+        if(e.getSource()==layerCombo){
+            //Layer.Copper copper=(Layer.Copper) layerCombo.getSelectedItem();
+            //if(copper.isCopperLayer()){
+               pad.setCopper((Layer.Copper) layerCombo.getSelectedItem());            
+            //}else{
+            //  setSelectedItem(layerCombo, pad.getCopper());   
+            //}
+        }
         
 
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
@@ -227,16 +234,19 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
            pad.setRotation(Double.parseDouble(this.padRotate.getText())); 
            
         }
-//        if(e.getSource()==this.heightField){
-//           pad.setHeight(Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));  
-//        }
-//        
-//        if(e.getSource()==this.padNumber){
-//           pad.getChipText().getTextureByTag("number").setText(padNumber.getText());
-//        }
-//        if(e.getSource()==this.numberSize){
-//           pad.getChipText().getTextureByTag("number").setSize(Grid.MM_TO_COORD(Double.parseDouble(numberSize.getText())));
-//        }
+        if(e.getSource()==this.widthField){
+           pad.setWidth(Grid.MM_TO_COORD(Double.parseDouble(widthField.getText())));  
+        }        
+        if(e.getSource()==this.heightField){
+           pad.setHeight(Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));  
+        }
+        
+        if(e.getSource()==this.padNumber){
+           pad.getTextureByTag("number").setText(padNumber.getText());
+        }
+        if(e.getSource()==this.numberSize){
+           pad.getTextureByTag("number").setSize((int)Grid.MM_TO_COORD(Double.parseDouble(numberSize.getText())));
+        }
 //        if(e.getSource()==this.numberX){
 //           pad.getChipText().getTextureByTag("number").getAnchorPoint().x= fromUnitX(numberX.getText());
 //        }
@@ -244,12 +254,12 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
 //           pad.getChipText().getTextureByTag("number").getAnchorPoint().y= fromUnitY(numberY.getText());
 //        }
 //        
-//        if(e.getSource()==this.padNetName){
-//           pad.setNetName(padNetName.getText());
-//        }
-//        if(e.getSource()==this.netvalueSize){
-//           pad.getChipText().getTextureByTag("netvalue").setSize(Grid.MM_TO_COORD(Double.parseDouble(netvalueSize.getText())));
-//        }        
+        if(e.getSource()==this.padNetName){
+           pad.getTextureByTag("netvalue").setText(padNetName.getText());
+        }
+        if(e.getSource()==this.netvalueSize){
+           pad.getTextureByTag("netvalue").setSize((int)Grid.MM_TO_COORD(Double.parseDouble(netvalueSize.getText())));
+        }        
 //        if(e.getSource()==this.netvalueX){
 //           pad.getChipText().getTextureByTag("netvalue").getAnchorPoint().x= fromUnitX(netvalueX.getText());
 //        }
@@ -265,9 +275,9 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
 //           pad.getOffset().y=(Grid.MM_TO_COORD(Double.parseDouble(drillOffsetY.getText())));  
 //        }
 //        
-//        if(e.getSource()==this.drillWidth){
-//           pad.getDrill().setWidth(Grid.MM_TO_COORD(Double.parseDouble(drillWidth.getText())));  
-//        }
+        if(e.getSource()==this.drillWidth){
+           pad.getDrill().setWidth(Grid.MM_TO_COORD(Double.parseDouble(drillWidth.getText())));  
+        }
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint();  
         

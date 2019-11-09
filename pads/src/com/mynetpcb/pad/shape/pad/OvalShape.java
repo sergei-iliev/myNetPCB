@@ -71,13 +71,10 @@ public class OvalShape implements PadDrawing {
     }
 
     @Override
-    public void setWidth(int width) {
-        // TODO Implement this method
-    }
-
-    @Override
-    public void setHeight(int height) {
-        // TODO Implement this method
+    public void setSize(double width, double height) {        
+        this.obround.setWidth(width);
+        this.obround.setHeight(height);
+        this.obround.rotate(this.padRef.get().getRotation());
     }
 
     @Override
@@ -109,9 +106,8 @@ public class OvalShape implements PadDrawing {
     }
 
     @Override
-    public void print(Graphics2D graphics2D, PrintContext printContext, int i) {
-        // TODO Implement this method
-
-
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:padRef.get().getCopper().getColor());  
+        obround.paint(g2, true);
     }
 }

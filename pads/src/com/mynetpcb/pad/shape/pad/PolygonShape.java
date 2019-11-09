@@ -55,20 +55,23 @@ public class PolygonShape implements PadDrawing {
     }
 
     @Override
-    public void printClearance(Graphics2D graphics2D, PrintContext printContext, ClearanceSource clearanceSource) {
+    public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource clearanceSource) {
         // TODO Implement this method
+
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:padRef.get().getCopper().getColor());  
+        hexagon.paint(g2, true);
 
     }
 
     @Override
-    public void setWidth(int i) {
-        // TODO Implement this method
+    public void setSize(double width,double height){
+        this.hexagon.setWidth(width);
+        this.hexagon.rotate(this.padRef.get().getRotation());
     }
 
-    @Override
-    public void setHeight(int i) {
-        // TODO Implement this method
-    }
 
     @Override
     public void move(double xoffset, double yoffset) {
@@ -102,9 +105,4 @@ public class PolygonShape implements PadDrawing {
         hexagon.rotate(angle, pt);
     }
 
-    @Override
-    public void print(Graphics2D graphics2D, PrintContext printContext, int i) {
-        // TODO Implement this method
-
-    }
 }

@@ -169,7 +169,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     //***block operation
                     if (FootprintMgr.getInstance().isBlockSelected(getModel().getUnit()) && shape.isSelected())
                          getEventMgr().setEventHandle("block", shape);
-                    else if(!(shape instanceof GlyphLabel)&&(shape instanceof Textable)&&( ((Textable)shape).getClickedTexture(scaledEvent.getX(), scaledEvent.getY())!=null)) 
+                    else if((shape instanceof Textable)&&( ((Textable)shape).getClickedTexture(scaledEvent.getX(), scaledEvent.getY())!=null)) 
                          getEventMgr().setEventHandle("texture", shape);
                     else
                          getEventMgr().setEventHandle("move",shape);

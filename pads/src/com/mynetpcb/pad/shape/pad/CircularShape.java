@@ -61,6 +61,11 @@ public class CircularShape implements PadDrawing {
 
         }
         @Override
+        public void print(Graphics2D g2, PrintContext printContext, int layermask) {   
+            g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:padRef.get().getCopper().getColor());        
+            this.circle.paint(g2, true);                      
+        }        
+        @Override
         public void rotate(double alpha, Point pt) {
             this.circle.rotate(alpha,pt);       
         }
@@ -82,18 +87,8 @@ public class CircularShape implements PadDrawing {
         }
         
         @Override
-        public void setWidth(int width) {
+        public void setSize(double width,double height) {
             this.circle.r=width/2;
         }
 
-        @Override
-        public void setHeight(int i) {
-
-        }
-
-        @Override
-        public void print(Graphics2D graphics2D, PrintContext printContext, int i) {
-            // TODO Implement this method
-
-        }
     }

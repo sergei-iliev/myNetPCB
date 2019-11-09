@@ -2,6 +2,7 @@ package com.mynetpcb.pad.shape;
 
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Point;
@@ -26,6 +27,14 @@ public class Drill extends Shape implements Externalizable{
         copy.circle=this.circle.clone();        
         return copy;
     }
+    public double getWidth(){
+        return 2*this.circle.r;
+    }
+    
+    public void setWidth(double width){
+            this.circle.r=width/2;
+    }
+    
     public void set(double x,double y){
         this.circle.pc.set(x,y); 
     }
@@ -34,7 +43,10 @@ public class Drill extends Shape implements Externalizable{
     public void move(double xoffset,double yoffset) {
         this.circle.move(xoffset,yoffset);
     }
-    
+    @Override
+    public void rotate(double alpha, Point pt) {
+     this.circle.rotate(alpha,pt);        
+    }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         
@@ -44,6 +56,12 @@ public class Drill extends Shape implements Externalizable{
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
         c.paint(g2,true);
                         
+    }
+    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {        
+        g2.setColor(printContext.getBackgroundColor());        
+        this.circle.paint(g2, true);                 
     }
     
     @Override

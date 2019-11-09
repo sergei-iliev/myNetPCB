@@ -50,7 +50,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
             if(getTarget().showContextPopup()!=null){                
                getTarget().showContextPopup().invoke(getComponent().getPopupMenu(),e, getTarget());
             }else{   
-               getComponent().getPopupMenu().registerChipPopup(e, getTarget()); 
+               //getComponent().getPopupMenu().registerChipPopup(e, getTarget()); 
             }
             }catch(Exception ex){
                 ex.printStackTrace(System.out);
@@ -61,8 +61,8 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
         my = e.getY();         
         getComponent().getModel().getUnit().setSelected(false);               
         getTarget().setSelected(true); 
-texture=null;
-         //texture= new WeakReference<Texture>(((Textable)getTarget()).getChipText().getClickedTexture(e.getX(),e.getY()));  
+
+         texture= new WeakReference<Texture>(((Textable)getTarget()).getClickedTexture(e.getX(),e.getY()));  
          getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
          
          getComponent().Repaint();

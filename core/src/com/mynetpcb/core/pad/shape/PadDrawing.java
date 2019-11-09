@@ -20,9 +20,8 @@ public interface PadDrawing extends Printable {
 
         public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source);
 
-        public void setWidth(int width);
-
-        public void setHeight(int height);
+        public void setSize(double width,double height);
+        
         
         public void move(double x,double y);
         

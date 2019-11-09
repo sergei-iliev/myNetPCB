@@ -58,19 +58,20 @@ public class RectangularShape implements PadDrawing {
 
     }
     @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:padRef.get().getCopper().getColor());  
+        rect.paint(g2, true);
+    }    
+    @Override
     public void rotate(double alpha, Point pt) {
         this.rect.rotate(alpha,pt);       
     }
     @Override
-    public void setWidth(int width) {
-        //this.rect.setSize(this.padRef.get().getwi,this.pad.height);
-        //this.rect.rotate(this.padRef.get().getRotation());
+    public void setSize(double width,double height){
+        this.rect.setSize(width,height);
+        this.rect.rotate(this.padRef.get().getRotation());
     }
 
-    @Override
-    public void setHeight(int i) {
-        // TODO Implement this method
-    }
 
     @Override
     public void move(double xoffset, double yoffset) {
@@ -99,9 +100,4 @@ public class RectangularShape implements PadDrawing {
         return this.rect.contains(pt);
     }
 
-    @Override
-    public void print(Graphics2D graphics2D, PrintContext printContext, int i) {
-        // TODO Implement this method
-
-    }
 }

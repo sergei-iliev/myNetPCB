@@ -2,7 +2,9 @@ package com.mynetpcb.pad.shape;
 
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
+import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.shape.PadDrawing;
@@ -31,15 +33,20 @@ public class Pad extends PadShape{
 
     private PadShape.Type type;
 
-    //private Point offset;
-
-    //private ChipText text;
+    private double width,height;
     
-    public Pad(double width) { 
+    private FontTexture number,netvalue; 
+    
+    public Pad(double width,double height) { 
+        this.width=width;
+        this.height=height;
         this.rotate=0;
         this.displayName="Pad";
         this.shape=new PolygonShape(0,0,width,this);
         this.setType(PadShape.Type.THROUGH_HOLE);  
+        
+        this.number=new FontTexture("number","1",0,0,4000);
+        this.netvalue=new FontTexture("netvalue","",0,0,4000);  
     }
     public Pad clone() throws CloneNotSupportedException {
         Pad copy = (Pad) super.clone();
@@ -48,7 +55,8 @@ public class Pad extends PadShape{
         copy.shape=this.shape.copy(copy);        
         //copy.offset=new Point(this.offset.x,this.offset.y);
 
-        //copy.text = this.text.clone();
+        copy.number = this.number.clone();
+        copy.netvalue = this.netvalue.clone();
         if (drill != null) {
             copy.drill = drill.clone();
         }
@@ -88,27 +96,46 @@ public class Pad extends PadShape{
     public void setShape(Shape shape) {
         switch (shape) {
         case CIRCULAR:
-            //this.shape = new CircularShape();
+            this.shape = new CircularShape(this.shape.getCenter().x,this.shape.getCenter().y,this.width,this);
             break;
-//        case OVAL:
-//            this.shape = new OvalShape();
-//            break;
-//        case RECTANGULAR:
-//            this.shape = new RectangularShape();
-//            break;
-//        case POLYGON:
-//            this.shape = new PolygonShape();
-//            break;
+        case OVAL:
+           this.shape=new OvalShape(this.shape.getCenter().x,this.shape.getCenter().y,this.width,this.height,this);
+            break;
+        case RECTANGULAR:
+            this.shape = new RectangularShape(this.shape.getCenter().x,this.shape.getCenter().y,this.width,this.height,this);
+            break;
+        case POLYGON:
+            this.shape = new PolygonShape(this.shape.getCenter().x,this.shape.getCenter().y,this.width,this);
+            break;
         }
     }  
+    public double getWidth(){
+        return width;
+    }
+    public double getHeight(){
+        return height;
+    }
+    
+    public void setWidth(double width){
+                    this.width=width;
+                    this.shape.setSize(width,height);    
+    }
+    
+    public void setHeight(double height){
+                    this.height=height;
+                    this.shape.setSize(width,height);   
+    }    
     public void setRotation(double rotate){
         double alpha=rotate-this.rotate;   
         
           this.shape.rotate(alpha,this.shape.getCenter());
-          //this.text.setRotation(rotate,this.shape.center);
-          //if(this.drill!=null){
-           //     this.drill.rotate(alpha);
-          //}               
+          
+          this.number.setRotation(rotate,this.shape.getCenter());
+          this.netvalue.setRotation(rotate,this.shape.getCenter());
+          
+          if(this.drill!=null){
+                this.drill.rotate(alpha,this.shape.getCenter());
+          }               
         
         this.rotate=rotate;        
     }
@@ -126,7 +153,9 @@ public class Pad extends PadShape{
         //rotate anchor point
         this.shape.rotate(rotate,pt);
                  
-        
+        if(this.drill!=null){
+         this.drill.rotate(rotate,pt);
+        }
     }
     public void move(double xoffset,double yoffset){
                this.shape.move(xoffset, yoffset);
@@ -134,8 +163,22 @@ public class Pad extends PadShape{
                if(this.drill!=null){
                  this.drill.move(xoffset, yoffset);
                }
-//               this.text.Move(xoffset,yoffset);
-               
+               this.number.move(xoffset,yoffset);
+               this.netvalue.move(xoffset,yoffset);
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        switch (type) {
+        case THROUGH_HOLE:case CONNECTOR:
+            shape.print(g2, printContext, layermask);
+            if (drill != null) {
+                drill.print(g2, printContext, layermask);
+            }
+            break;
+        case SMD:
+            shape.print(g2, printContext, layermask);
+            break;
+        }
     }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
@@ -152,8 +195,12 @@ public class Pad extends PadShape{
                 break;
             
             }
-            //this.text.paint(g2, viewportWindow, scale);     
-     }        
+            this.number.paint(g2, viewportWindow, scale,0);
+            this.netvalue.paint(g2, viewportWindow, scale,0);
+     } 
+    public Drill getDrill(){
+        return drill;
+    }
     @Override
     public Box getBoundingShape() {        
         return this.shape.getBoundingShape();
@@ -165,7 +212,8 @@ public class Pad extends PadShape{
     }
     public void setSelected (boolean selection) {
         super.setSelected(selection);
-        //this.text.setSelected(selection);
+        this.number.setSelected(selection);
+        this.netvalue.setSelected(selection);
     }
     @Override
     public PadShape.Shape getShape() {
@@ -194,17 +242,29 @@ public class Pad extends PadShape{
     }
 
     @Override
-    public Texture getClickedTexture(int i, int i2) {
-        // TODO Implement this method
+    public Texture getClickedTexture(int x, int y) {
+        if(number.isClicked(x, y))
+            return number;
+        else if(netvalue.isClicked(x, y))
+            return netvalue;
+        else
         return null;
     }
 
     @Override
-    public boolean isClickedTexture(int i, int i2) {
-        // TODO Implement this method
-        return false;
+    public boolean isClickedTexture(int x, int y) {
+        return getClickedTexture(x, y)!=null;
     }
 
+    @Override
+    public Texture getTextureByTag(String tag) {
+        if(tag.equals(number.getTag()))
+            return number;
+        else if(tag.equals(netvalue.getTag()))
+            return netvalue;
+        else
+        return null;
+    }
     @Override
     public String toXML() {
         // TODO Implement this method

@@ -2,14 +2,9 @@ package com.mynetpcb.core.capi.text;
 
 import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.print.Printable;
-
-
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-
-
-import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Node;
 
@@ -20,12 +15,6 @@ import org.w3c.dom.Node;
 public interface Texture extends Drawable,Printable,Cloneable{
     
     public boolean isEmpty();
-
-    //public default Text.Alignment getAlignment(){return null;}
-    
-    //public default void setAlignment(Text.Alignment alignment){}
-    
-    //public default void setOrientation(Text.Orientation orientation){}
     
     public Point getAnchorPoint();
     
@@ -44,8 +33,6 @@ public interface Texture extends Drawable,Printable,Cloneable{
     public void move(double xoffset,double yoffset);
     
     public void mirror(Line line);
-    
-    public void translate(AffineTransform transform);
     
     public Box getBoundingShape();
     
@@ -67,9 +54,9 @@ public interface Texture extends Drawable,Printable,Cloneable{
     
     public String toXML();
     
-    public int getLayermaskId();
+    //public int getLayermaskId();
     
-    public void setLayermaskId(int layermaskId);
+    //public void setLayermaskId(int layermaskId);
         
     public Memento createMemento();
     
