@@ -104,5 +104,9 @@ public class PolygonShape implements PadDrawing {
     public void rotate(double angle, Point pt) {
         hexagon.rotate(angle, pt);
     }
+    @Override
+    public Memento getState(){
+        return null;
+    }
 
 }

@@ -8,6 +8,7 @@ import com.mynetpcb.d2.shapes.FontText;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Rectangle;
+import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -17,14 +18,14 @@ import org.w3c.dom.Node;
 
 public class FontTexture implements Texture{
     private String tag;
-    private int id;
     private FontText shape;
     private boolean isSelected;
+    private Color fillColor;
     
     public FontTexture(String tag,String text, double x, double y, int size) {
-        this.tag=tag;        
-        this.id=1;        
+        this.tag=tag;              
         this.shape=new FontText(x,y,text,size);       
+        this.fillColor=Color.WHITE;
     }
     @Override
     public FontTexture clone() throws CloneNotSupportedException {
@@ -50,16 +51,6 @@ public class FontTexture implements Texture{
     @Override
     public void setTag(String tag) {
         this.tag=tag;
-    }
-
-    @Override
-    public int getID() {        
-        return id;
-    }
-
-    @Override
-    public void setID(int id) {
-        this.id=id;
     }
 
     @Override
@@ -143,7 +134,8 @@ public class FontTexture implements Texture{
         if(shape.fontSize*scale.getScaleX()<7){            
            return;
         }
-        g2.setColor(Color.WHITE);
+   
+        g2.setColor(fillColor);
         FontText t=this.shape.clone();
         t.scale(scale.getScaleX());
         t.move(-viewportWindow.getX(),- viewportWindow.getY());     
@@ -180,12 +172,90 @@ public class FontTexture implements Texture{
 
     @Override
     public Color getFillColor() {
-        return null;
+        return fillColor;
     }
-
+    
+    @Override
+    public void set(double x, double y){
+      this.shape.anchorPoint.set(x,y);     
+    }
+    
     @Override
     public void setFillColor(Color color) {
-        // TODO Implement this method
+       this.fillColor=color;
     }
 
+    public static class Memento  implements Texture.Memento{
+         private String text;
+      
+         private int fontSize,fontStyle;
+        
+         private double rotate;
+        
+         private double x;
+
+         private double y;
+
+         private String tag;
+
+         //private int id;
+         
+        
+
+         public void loadStateTo(Texture _symbol) {
+             FontTexture symbol=(FontTexture)_symbol;
+             //symbol.id=this.id;
+             symbol.shape.fontSize=this.fontSize;
+             symbol.shape.fontStyle=this.fontStyle;
+             symbol.shape.anchorPoint.set(x, y);
+             symbol.tag = this.tag;   
+             symbol.shape.rotate=this.rotate;
+             symbol.setText(text);
+         }
+        @Override
+         public void saveStateFrom(Texture _symbol) {
+             FontTexture symbol=(FontTexture)_symbol;
+             //this.id=symbol.id;
+             x = symbol.shape.anchorPoint.x;
+             y = symbol.shape.anchorPoint.y;
+             this.tag = symbol.tag;
+             this.text = symbol.shape.text;
+             this.fontSize=symbol.shape.fontSize;
+             this.fontStyle=symbol.shape.fontStyle;
+             this.rotate=symbol.shape.rotate;
+         }
+         
+//         @Override
+//         public int getId() {
+//             return id;
+//         }
+
+         @Override
+         public boolean equals(Object obj) {
+             if (this == obj) {
+                 return true;
+             }
+             if (!(obj instanceof FontTexture.Memento)) {
+                 return false;
+             }
+             FontTexture.Memento other = (FontTexture.Memento)obj;
+             return (
+                     //other.id==this.id&&
+                     other.tag.equals(this.tag) &&
+                     other.text.equals(this.text) &&
+                     Utils.EQ(other.x,this.x)  &&
+                     Utils.EQ(other.y,this.y) &&
+                     Utils.EQ(other.rotate,this.rotate) &&
+                     other.fontSize==this.fontSize &&
+                     other.fontStyle==this.fontStyle);
+         }
+
+         @Override
+         public int hashCode() {
+            int hash =
+             31 +/*this.id*/+ + this.fontSize+fontStyle+
+             this.tag.hashCode() + this.text.hashCode() + Double.hashCode(x) +Double.hashCode(y)+Double.hashCode(rotate);
+             return hash;
+         }
+    }
 }

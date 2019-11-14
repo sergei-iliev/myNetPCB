@@ -15,7 +15,6 @@ import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.component.FootprintComponent;
@@ -33,14 +32,12 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.AffineTransform;
 
 import java.util.Collection;
 

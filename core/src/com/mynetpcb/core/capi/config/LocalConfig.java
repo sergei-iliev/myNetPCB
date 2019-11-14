@@ -69,7 +69,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
             symbolsRoot  =new File(library,this.SYMBOLS_FOLDER_NAME).toURI();
             
-            footprintsRoot=new File(library,this.FOOTPRINTS_FOLDER_NAME).toURI();
+            //footprintsRoot=new File(library,this.FOOTPRINTS_FOLDER_NAME).toURI();
+            footprintsRoot=new File("C:/sergei/java/myNetPCB/deploy/library",this.FOOTPRINTS_FOLDER_NAME).toURI();
         }
         
         public void setIsOnline(boolean isOnline) {

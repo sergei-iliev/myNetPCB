@@ -3,8 +3,6 @@ package com.mynetpcb.pad.shape;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
-import com.mynetpcb.d2.shapes.Point;
-import com.mynetpcb.pad.unit.Footprint;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -14,11 +12,11 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
     @Override
     public Shape createShape(Node node) {
             Element element=(Element)node;
-//            if(element.getTagName().equals("pad")){
-//                Pad pad = new Pad();
-//                pad.fromXML(node);
-//                return pad;   
-//            }
+            if(element.getTagName().equals("pad")){
+                Pad pad = new Pad(0,0);
+                pad.fromXML(node);
+                return pad;   
+            }
             if(element.getTagName().equals("line")){
                 Line line = new Line(0, 0);
                 line.fromXML(node);
@@ -34,6 +32,11 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
                 circle.fromXML(node);
                 return circle;   
             }
+            if(element.getTagName().equals("circle")){
+                Circle circle = new Circle(0,0,0,0,0);
+                circle.fromXML(node);
+                return circle;   
+            }            
             if(element.getTagName().equals("arc")){
                 Arc arc = new Arc(0,0,0,0,0,0,0);
                 arc.fromXML(node);
@@ -74,11 +77,11 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
                 line.setState(memento);
                 return line;    
             }
-//            if(memento instanceof Pad.Memento){
-//                Pad pad=new Pad();  
-//                pad.setState(memento);
-//                return pad;               
-//            }
+            if(memento instanceof Pad.Memento){
+                Pad pad=new Pad(0,0);  
+                pad.setState(memento);
+                return pad;               
+            }
             if(memento instanceof RoundRect.Memento){
                 RoundRect roundRect=new RoundRect();  
                 roundRect.setState(memento);

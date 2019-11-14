@@ -99,5 +99,10 @@ public class RectangularShape implements PadDrawing {
     public boolean contains(Point pt) {
         return this.rect.contains(pt);
     }
+    
+    @Override
+    public Memento getState(){
+        return null;
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.mynetpcb.core.capi.shape;
 
+
 public interface Mode {
     public static final int PAD_MODE = 1;
 
@@ -22,5 +23,15 @@ public interface Mode {
     public static final int COMPONENT_MODE=10;
     
     public static final int MEASUMENT_MODE=11;
+    
+    public static final int TRACK_MODE = 12;
+
+    public static final int FOOTPRINT_MODE = 13;
+    
+    public static final int VIA_MODE = 14;
+
+    public static final int COPPERAREA_MODE = 15;
+    
+    public static final int HOLE_MODE = 16;
 
 }

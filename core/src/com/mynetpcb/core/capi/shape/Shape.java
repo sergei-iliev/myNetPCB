@@ -68,6 +68,7 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     
     protected Layer.Copper copper;
     
+    
     public Shape(int thickness,int layermask) {
       this.uuid = UUID.randomUUID(); 
 

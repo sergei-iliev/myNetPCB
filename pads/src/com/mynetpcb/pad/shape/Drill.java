@@ -4,8 +4,12 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.undo.AbstractMemento;
+import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Utils;
+import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -75,5 +79,68 @@ public class Drill extends Shape implements Externalizable{
         // TODO Implement this method
 
     }
+    @Override
+    public AbstractMemento getState(MementoType operationType) {
+        AbstractMemento memento = new Memento(operationType);
+        memento.saveStateFrom(this);
+        return memento;
+    }
 
+    
+     public static class Memento extends AbstractMemento<Footprint,Drill>{
+        double x,y,r;
+
+        public Memento(MementoType mementoType) {
+            super(mementoType);
+        }
+
+        @Override
+        public void loadStateTo(Drill shape) {
+            if(shape==null)
+                return;
+            super.loadStateTo(shape);
+            shape.circle.pc.set(x,y);
+            shape.circle.r=r;                            
+        }
+        
+        @Override
+        public void saveStateFrom(Drill shape) {
+            if(shape==null)
+                return;
+
+            super.saveStateFrom(shape);
+            x=shape.circle.pc.x;
+            y=shape.circle.pc.y;
+            r=shape.circle.r;            
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Memento)) {
+                return false;
+            }
+
+            Memento other = (Memento)obj;
+            
+               return Utils.EQ(x,other.x)
+                    &&Utils.EQ(y,other.y)
+                    &&Utils.EQ(r,other.r);                
+        }
+
+        @Override
+        public int hashCode() {
+            int hash=31;
+            hash +=Double.hashCode(x)+Double.hashCode(y)+Double.hashCode(r);
+            return hash;
+        }
+        @Override
+        public boolean isSameState(Footprint unit) {
+             throw new IllegalStateException("Drill can not exist by iself");
+        }
+    
+        
+    }
 }

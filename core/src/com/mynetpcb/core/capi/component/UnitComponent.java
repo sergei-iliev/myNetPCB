@@ -13,9 +13,9 @@ import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerEventDispatcher;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.EventMgr;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
 import com.mynetpcb.core.capi.line.LineBendingProcessor;
-import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -27,7 +27,6 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.UnitMgr;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.utils.Utilities;
-
 import com.mynetpcb.d2.shapes.Box;
 
 import java.awt.Cursor;
@@ -35,7 +34,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;

@@ -9,8 +9,10 @@ import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.pad.shape.PadShape;
+import com.mynetpcb.core.pad.shape.PadShape.Shape;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.shape.pad.CircularShape;
 import com.mynetpcb.pad.shape.pad.OvalShape;
 import com.mynetpcb.pad.shape.pad.PolygonShape;
@@ -42,7 +44,7 @@ public class Pad extends PadShape{
         this.height=height;
         this.rotate=0;
         this.displayName="Pad";
-        this.shape=new PolygonShape(0,0,width,this);
+        this.shape=new CircularShape(0,0,width,this);
         this.setType(PadShape.Type.THROUGH_HOLE);  
         
         this.number=new FontTexture("number","1",0,0,4000);
@@ -281,63 +283,75 @@ public class Pad extends PadShape{
     
     public static class Memento extends AbstractMemento<Footprint, Pad> {
 
-        //private ChipText.Memento labelTextMemento;
+        private Texture.Memento number,netvalue;
 
-        //private Drill.Memento drillMemento;
+        private Drill.Memento drill;
 
-        private int x, y, width, height, arc;
-
-        private int shape;
+        private PadDrawing.Memento drawing;
+        
+        private double x, y, width, height,rotate;
 
         private int type;
 
-        private int offsetx;
-
-        private int offsety;
+    
+ 
 
         public Memento(MementoType mementoType) {
             super(mementoType);
-            //labelTextMemento = new ChipText.Memento();
-            //drillMemento = new Drill.Memento(mementoType);
+            number=new FontTexture.Memento();
+            netvalue=new FontTexture.Memento();        
+            drill = new Drill.Memento(mementoType);        
         }
 
         @Override
         public void clear() {
-            super.clear();
-            //labelTextMemento.Clear();
-            //drillMemento.Clear();
+            super.clear();            
+            drill.clear();
         }
 
         @Override
-        public void loadStateTo(Pad shape) {
-            super.loadStateTo(shape);
-//            shape.setX(x);
-//            shape.setY(y);
-//            shape.setWidth(width);
-//            shape.setHeight(height);
-//            shape.arc = arc;
-//            shape.offset.x = offsetx;
-//            shape.offset.y = offsety;
-//            shape.setType(Type.values()[type]);
-//            shape.setShape(Shape.values()[this.shape]);
-//            labelTextMemento.loadStateTo(shape.getChipText());
-//            drillMemento.loadStateTo(shape.getDrill());
+        public void loadStateTo(Pad pad) {
+            super.loadStateTo(pad);
+
+            pad.width=width;
+            pad.height=height;
+            pad.rotate=rotate;
+            pad.type=Type.values()[type];
+
+            //could be different shape
+            if(drawing.getClass()!=pad.shape.getClass()){
+                if(drawing instanceof CircularShape.Memento){
+                    pad.setShape(Shape.CIRCULAR);           
+                }else if(drawing instanceof OvalShape.Memento){
+                    pad.setShape(Shape.OVAL); 
+                }else if(drawing instanceof PolygonShape.Memento){
+                    pad.setShape(Shape.POLYGON);                     
+                }else{
+                    pad.setShape(Shape.RECTANGULAR);                     
+                }
+              
+            }            
+            drawing.loadStateTo(pad.shape);
+            
+            number.loadStateTo(pad.number);
+            netvalue.loadStateTo(pad.netvalue);
+            drill.loadStateTo(pad.drill);
         }
 
         @Override
-        public void saveStateFrom(Pad shape) {
-            super.saveStateFrom(shape);
-//            x = shape.getX();
-//            y = shape.getY();
-//            width = shape.getWidth();
-//            height = shape.getHeight();
-//            arc = shape.arc;
-//            offsetx = shape.offset.x;
-//            offsety = shape.offset.y;
-//            this.shape = shape.getShape().ordinal();
-//            type = shape.getType().ordinal();
-//            labelTextMemento.saveStateFrom(shape.getChipText());
-//            drillMemento.saveStateFrom(shape.getDrill());
+        public void saveStateFrom(Pad pad) {
+            super.saveStateFrom(pad);
+            x = pad.shape.getCenter().x;
+            y = pad.shape.getCenter().y;
+            width = pad.getWidth();
+            height = pad.getHeight();
+            rotate = pad.rotate;
+            type = pad.getType().ordinal();
+            
+            drawing=pad.shape.getState();
+            number.saveStateFrom(pad.number);
+            netvalue.saveStateFrom(pad.netvalue);
+            drill.saveStateFrom(pad.drill);
         }
 
         @Override
@@ -350,18 +364,19 @@ public class Pad extends PadShape{
             }
 
             Memento other = (Memento) obj;
-
-            return super.equals(obj);
+            
+            return super.equals(obj)&&
+                   Utils.EQ(x,other.x)&&Utils.EQ(y,other.y)&&Utils.EQ(width,other.width)&&Utils.EQ(height,other.height)&&
+                   type==other.type&&drill.equals(other.drill)&&number.equals(other.number)&&netvalue.equals(other.netvalue);
+                   
 
         }
 
         @Override
         public int hashCode() {
-            int hash = getUUID().hashCode();
-            hash +=
-                getMementoType().hashCode() + x + y + width + height + arc + shape + type + offsetx + offsety +
-                layerindex;
-
+            int hash = super.hashCode()+            
+            Double.hashCode(x)+Double.hashCode(y)+Double.hashCode(width)+Double.hashCode(height)+
+            type+drill.hashCode()+number.hashCode()+netvalue.hashCode();    
             return hash;
         }
 

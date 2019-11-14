@@ -12,27 +12,40 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 public interface PadDrawing extends Printable {
-        
-        public boolean paint(Graphics2D  g2, ViewportWindow viewportWindow, AffineTransform scale);
 
-        public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
-                                  ClearanceSource source);
+    public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale);
 
-        public void printClearance(Graphics2D g2,PrintContext printContext, ClearanceSource source);
+    public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
+                              ClearanceSource source);
 
-        public void setSize(double width,double height);
-        
-        
-        public void move(double x,double y);
-        
-        public Point getCenter();
-        
-        public Box getBoundingShape();
-            
-        public <D extends PadDrawing> D copy(Shape pad);
+    public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source);
 
-        public boolean contains(Point pt);
-        
-        public void rotate(double rotate, Point pt) ;
+    public void setSize(double width, double height);
+
+
+    public void move(double x, double y);
+
+    public Point getCenter();
+
+    public Box getBoundingShape();
+
+    public <D extends PadDrawing> D copy(Shape pad);
+
+    public boolean contains(Point pt);
+
+    public void rotate(double rotate, Point pt);
+
+    public Memento getState();
+     
+    
+    public interface Memento<P extends PadDrawing> {
+
+        public void loadStateTo(P shape);
+
+        public void saveStateFrom(P shape);
+
+        public int hashCode();
+
+    }
 
 }

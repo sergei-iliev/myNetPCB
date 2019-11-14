@@ -28,8 +28,6 @@ import org.w3c.dom.Node;
 public class GlyphTexture implements Texture {
 
     private String text,tag;
-
-    private int id;
     
     private Point anchorPoint;
 
@@ -52,7 +50,6 @@ public class GlyphTexture implements Texture {
     
     public GlyphTexture(String text,String tag, int x, int y, int size) {
         this.tag=tag;
-        this.id=1;
         this.anchorPoint = new Point(x, y);
         this.glyphs = new ArrayList<>();
         this.thickness = (int)Grid.MM_TO_COORD(0.2);
@@ -164,6 +161,10 @@ public class GlyphTexture implements Texture {
         this.glyphs.forEach(glyph->{
             glyph.rotate(this.rotate,this.anchorPoint);                  
         });
+    }
+    @Override
+    public void set(double x, double y) {        
+
     }
     public int getSize() {
         return size;
@@ -466,15 +467,6 @@ public class GlyphTexture implements Texture {
         this.tag = tag;
     }
 
-    @Override
-    public int getID() {        
-        return this.id;
-    }
-
-    @Override
-    public void setID(int id) {
-       this.id=id;
-    }
     public boolean isTextLayoutVisible() {
         return false;
     }
@@ -505,7 +497,7 @@ public class GlyphTexture implements Texture {
 
         private double Ay;
 
-        private int id;
+        //private int id;
         
         private List<Glyph> glyphs;
 
@@ -521,7 +513,7 @@ public class GlyphTexture implements Texture {
         public void loadStateTo(Texture _symbol) {
             GlyphTexture symbol=(GlyphTexture)_symbol;
             symbol.anchorPoint.set(Ax, Ay);
-            symbol.id=this.id;
+            //symbol.id=this.id;
             symbol.text = this.text;           
             symbol.size = this.size;
             symbol.width=this.width;
@@ -544,7 +536,7 @@ public class GlyphTexture implements Texture {
             GlyphTexture symbol=(GlyphTexture)_symbol;
             Ax = symbol.anchorPoint.x;
             Ay = symbol.anchorPoint.y;
-            this.id=symbol.id;
+            //this.id=symbol.id;
             this.text = symbol.text;        
             this.size = symbol.size;
             this.thickness = symbol.thickness;
@@ -563,10 +555,10 @@ public class GlyphTexture implements Texture {
             }
         }
         
-        @Override
-        public int getID() {            
-            return id;
-        }
+//        @Override
+//        public int getId() {            
+//            return id;
+//        }
         
         public void Clear() {
             this.glyphs.clear();
@@ -581,7 +573,9 @@ public class GlyphTexture implements Texture {
                 return false;
             }
             GlyphTexture.Memento other = (GlyphTexture.Memento) obj;
-            return (other.id==this.id&&other.size == this.size &&other.width == this.width&&other.height == this.height &&
+            return (
+                    //other.id==this.id&&
+                    other.size == this.size &&other.width == this.width&&other.height == this.height &&
                     other.thickness == this.thickness && other.text.equals(this.text) && Utils.EQ(other.Ax,this.Ax) &&
                     Utils.EQ(other.Ay,this.Ay)&&Utils.EQ(other.rotate,this.rotate)&&this.mirrored==other.mirrored) && other.glyphs.equals(this.glyphs);
         }
@@ -589,7 +583,7 @@ public class GlyphTexture implements Texture {
         @Override
         public int hashCode() {
             int hash =
-                31 +this.id+ this.size +this.width+this.height + this.thickness + this.text.hashCode() + Double.hashCode(Ax) + Double.hashCode(Ay) +Double.hashCode(rotate) +
+                31 +/*this.id*/+ this.size +this.width+this.height + this.thickness + this.text.hashCode() + Double.hashCode(Ax) + Double.hashCode(Ay) +Double.hashCode(rotate) +
                 Boolean.hashCode(this.mirrored)+
                 this.glyphs.hashCode();
 

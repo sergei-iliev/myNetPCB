@@ -21,7 +21,7 @@ public class OvalShape implements PadDrawing {
 
     public OvalShape(double x, double y, double width, double height, Shape pad) {
         padRef = new WeakReference<>(pad);
-        this.obround = new Obround(new Point(x, y), width, height);
+        this.obround = new Obround(x,y, width, height);
     }
 
     public OvalShape copy(Shape pad) {
@@ -72,8 +72,7 @@ public class OvalShape implements PadDrawing {
 
     @Override
     public void setSize(double width, double height) {        
-        this.obround.setWidth(width);
-        this.obround.setHeight(height);
+        this.obround.setSize(width,height);        
         this.obround.rotate(this.padRef.get().getRotation());
     }
 
@@ -110,4 +109,45 @@ public class OvalShape implements PadDrawing {
         g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:padRef.get().getCopper().getColor());  
         obround.paint(g2, true);
     }
+    
+
+    @Override
+    public Memento getState(){
+        Memento memento=new Memento();
+        memento.saveStateFrom(this);
+        return memento;
+    }
+    
+    public static class Memento implements PadDrawing.Memento<OvalShape> {
+        private double pcx,pcy;
+        private double width;
+        private double height;
+        private double psx,psy, pex,pey;
+        
+        @Override
+        public void loadStateTo(OvalShape shape) {
+    
+            shape.obround.pc.set(pcx,pcy);
+            shape.obround.ps.set(psx,psy);
+            shape.obround.pe.set(pex,pey);
+            
+            shape.obround.width=width;
+            shape.obround.height=height;
+        }
+
+        @Override
+        public void saveStateFrom(OvalShape shape) {
+            pcx=shape.obround.pc.x;
+            pcy=shape.obround.pc.y;
+            
+            psx=shape.obround.ps.x;
+            psy=shape.obround.ps.y;
+            
+            pex=shape.obround.pe.x;
+            pey=shape.obround.pe.y;
+            
+            width=shape.obround.width;
+            height=shape.obround.height;
+        }
+    }    
 }

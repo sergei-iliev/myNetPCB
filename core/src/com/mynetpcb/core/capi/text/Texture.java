@@ -21,10 +21,7 @@ public interface Texture extends Drawable,Printable,Cloneable{
     public String getTag();
 
     public void setTag(String tag);
-    
-    public int getID();
-    
-    public void setID(int id);
+
     
     public String getText();
     
@@ -60,9 +57,9 @@ public interface Texture extends Drawable,Printable,Cloneable{
         
     public Memento createMemento();
     
+    public void set(double x, double y);
+    
     public interface Memento{
-        
-        public int getID();
         
         public void loadStateTo(Texture symbol);
             
