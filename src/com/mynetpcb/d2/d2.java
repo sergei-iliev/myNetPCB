@@ -62,12 +62,12 @@ public class d2 extends  JFrame {
            pane.add(panel);
        }
        private void addShapes(){
-           FontText t1=new FontText(new Point(900,400),"Sergio Leonq",8);
+           FontText t1=new FontText(900,400,"Sergio Leonq",8);
            d2Component.add(t1);
            fontSize.addChangeListener((e) -> {t1.setSize(fontSize.getValue());
                                               d2Component.repaint(); }); 
            
-           angle.addChangeListener((e) -> {t1.rotate(angle.getValue(),null);
+           angle.addChangeListener((e) -> {t1.rotate(angle.getValue(),t1.anchorPoint);
                                               d2Component.repaint(); }); 
            
            //Point p1=new Point(100,100);                    

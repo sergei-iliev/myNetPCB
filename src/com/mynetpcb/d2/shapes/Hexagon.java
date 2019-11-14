@@ -58,8 +58,7 @@ public class Hexagon extends Polygon {
     } 
     
     public void rotate(double angle){
-        this.pc.rotate(angle,new Point(0,0));
-        super.rotate(angle,new Point(0,0));
+        this.rotate(angle,this.pc);        
     } 
     
     

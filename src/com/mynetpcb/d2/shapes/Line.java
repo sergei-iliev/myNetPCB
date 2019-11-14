@@ -8,10 +8,19 @@ public class Line extends Shape {
 
     private Line2D cache = new Line2D.Double();
 
+    public Line(double x1,double y1,double x2,double y2) {
+        this.p1 = new Point(x1,y1);
+        this.p2 = new Point(x2,y2);
+    }
+
     public Line(Point p1, Point p2) {
         this.p1 = p1;
         this.p2 = p2;
     }
+    public void setLine(double x1,double y1,double x2,double y2){
+        this.p1.set(x1, y1);
+        this.p2.set(x2,y2);
+    }    
     public void setLine(Point p1, Point p2){
         this.p1=p1;
         this.p2=p2;
@@ -48,7 +57,14 @@ public class Line extends Shape {
         //are they colinear?
         return Utils.EQ(v.cross(oy), 0);
     }
-
+    public void move(double offsetX,double offsetY){
+        this.p1.move(offsetX,offsetY);
+        this.p2.move(offsetX,offsetY);              
+    }    
+    public void scale(double alpha){
+            this.p1.scale(alpha);
+            this.p2.scale(alpha);           
+    } 
     @Override
     public void rotate(double angle, Point center) {
         this.p1.rotate(angle, center);

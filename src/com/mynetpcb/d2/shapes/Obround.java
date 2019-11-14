@@ -14,10 +14,10 @@ import java.awt.geom.Line2D;
  * @warning obround may change its width and height - it should recalculate its size
  */
 public class Obround extends Shape {
-    private Point pc;
-    private double width;
-    private double height;
-    private Point ps, pe;
+    public Point pc;
+    public double width;
+    public double height;
+    public Point ps, pe;
     private Line2D cache = new Line2D.Double();
     
     public Obround(Point pt, double width, double height) {
@@ -26,7 +26,9 @@ public class Obround extends Shape {
         this.height = height;
         this.reset();
     }
-
+    public Obround(double x,double y, double width, double height) {
+        this(new Point(x,y),width,height);
+    }
     @Override
     public Obround clone() {
         Obround copy = new Obround(new Point(this.pc.x,this.pc.y), this.width, this.height);
@@ -62,16 +64,20 @@ public class Obround extends Shape {
         }
     }
 
-    public void setWidth(double width) {
-        this.width = width;
-        this.reset();
+//    public void setWidth(double width) {
+//        this.width = width;
+//        this.reset();
+//    }
+//
+//    public void setHeight(double height) {
+//        this.height = height;
+//        this.reset();
+//    }
+    public void setSize(double width,double height){
+      this.height = height;
+      this.width=width;
+      this.reset();                         
     }
-
-    public void setHeight(double height) {
-        this.height = height;
-        this.reset();
-    }
-
     /**
     if (x-x1)/(x2-x1) = (y-y1)/(y2-y1) = alpha (a constant), then the point C(x,y) will lie on the line between pts 1 & 2.
     If alpha < 0.0, then C is exterior to point 1.

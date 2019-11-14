@@ -68,7 +68,11 @@ public class Point extends Shape{
       this.x=prj.x;
       this.y=prj.y;  
     }
-    
+    public double distanceTo(double x,double y) {
+        double dx = x - this.x;
+        double dy = y - this.y;
+        return Math.sqrt(dx*dx + dy*dy);      
+    }
     public double distanceTo(Shape shape) {
         if (shape instanceof Point) {
                 double dx = ((Point)shape).x - this.x;
@@ -93,6 +97,12 @@ public class Point extends Shape{
         Point pt=(Point)obj;
         return Utils.EQ(this.x, pt.x) && Utils.EQ(this.y, pt.y);
     }
+    
+    @Override
+    public int hashCode() {        
+        return 31+Double.hashCode(x)+Double.hashCode(y);        
+    }
+    
     @Override
     public void paint(Graphics2D g2,boolean fill) {
         Utils.drawCrosshair(g2,10,this); 

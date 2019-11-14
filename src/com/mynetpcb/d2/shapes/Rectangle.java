@@ -29,6 +29,9 @@ public class Rectangle extends Polygon {
               this.points.get(2).set(x+width,y+height);
               this.points.get(3).set(x,y+height);                                                                       
     }
+    public void setSize(double width,double height){
+      this.reset(width,height);                         
+    }
     public void resize(int offX,int offY,Point point){
             if(point==this.points.get(2)){
     //do same
@@ -118,12 +121,12 @@ public class Rectangle extends Polygon {
     
     }    
     public void reset(double width,double height){
-//            let pc=this.box.center;                 
-//            this.points=[];
-//            this.points.push(new d2.Point(pc.x-(width/2),pc.y-(height/2)));     //topleft point
-//            this.points.push(new d2.Point(pc.x+(width/2),pc.y-(height/2)));
-//            this.points.push(new d2.Point(pc.x+(width/2),pc.y+(height/2)));
-//            this.points.push(new d2.Point(pc.x-(width/2),pc.y+(height/2)));                                         
+            Point pc=this.box().getCenter();                 
+            this.points.clear();
+            this.points.add(new Point(pc.x-(width/2),pc.y-(height/2)));     //topleft point
+            this.points.add(new Point(pc.x+(width/2),pc.y-(height/2)));
+            this.points.add(new Point(pc.x+(width/2),pc.y+(height/2)));
+            this.points.add(new Point(pc.x-(width/2),pc.y+(height/2)));                                         
     }
     
     public double area(){
