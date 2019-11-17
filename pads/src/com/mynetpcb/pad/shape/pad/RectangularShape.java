@@ -102,7 +102,33 @@ public class RectangularShape implements PadDrawing {
     
     @Override
     public Memento getState(){
-        return null;
+        Memento memento=new Memento();
+        memento.saveStateFrom(this);
+        return memento;
     }
+    public static class Memento implements PadDrawing.Memento<RectangularShape> {
+        private double x[],y[];
+        
+        @Override
+        public void loadStateTo(RectangularShape shape) {    
+            int i=0;
+            for(Point pt:shape.rect.points){
+                pt.set(x[i],y[i]);
+                i++;               
+            }            
 
+        }
+
+        @Override
+        public void saveStateFrom(RectangularShape shape) {
+            x=new double[shape.rect.points.size()];
+            y=new double[shape.rect.points.size()];
+            int i=0;
+            for(Point pt:shape.rect.points){
+                x[i]=pt.x;
+                y[i]=pt.y;
+                i++;
+            }            
+        }
+    } 
 }

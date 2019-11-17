@@ -320,16 +320,7 @@ public class Pad extends PadShape{
 
             //could be different shape
             if(drawing.getClass()!=pad.shape.getClass()){
-                if(drawing instanceof CircularShape.Memento){
-                    pad.setShape(Shape.CIRCULAR);           
-                }else if(drawing instanceof OvalShape.Memento){
-                    pad.setShape(Shape.OVAL); 
-                }else if(drawing instanceof PolygonShape.Memento){
-                    pad.setShape(Shape.POLYGON);                     
-                }else{
-                    pad.setShape(Shape.RECTANGULAR);                     
-                }
-              
+                pad.setShape(getShape());           
             }            
             drawing.loadStateTo(pad.shape);
             
@@ -353,7 +344,17 @@ public class Pad extends PadShape{
             netvalue.saveStateFrom(pad.netvalue);
             drill.saveStateFrom(pad.drill);
         }
-
+        private PadShape.Shape getShape(){
+            if(drawing instanceof CircularShape.Memento){
+                return Shape.CIRCULAR;           
+            }else if(drawing instanceof OvalShape.Memento){
+               return Shape.OVAL; 
+            }else if(drawing instanceof PolygonShape.Memento){
+                return Shape.POLYGON;                     
+            }else{
+                return Shape.RECTANGULAR;                     
+            } 
+        }
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -367,7 +368,7 @@ public class Pad extends PadShape{
             
             return super.equals(obj)&&
                    Utils.EQ(x,other.x)&&Utils.EQ(y,other.y)&&Utils.EQ(width,other.width)&&Utils.EQ(height,other.height)&&
-                   type==other.type&&drill.equals(other.drill)&&number.equals(other.number)&&netvalue.equals(other.netvalue);
+                   type==other.type&&getShape().ordinal()==other.getShape().ordinal()&&drill.equals(other.drill)&&number.equals(other.number)&&netvalue.equals(other.netvalue);
                    
 
         }
@@ -376,7 +377,7 @@ public class Pad extends PadShape{
         public int hashCode() {
             int hash = super.hashCode()+            
             Double.hashCode(x)+Double.hashCode(y)+Double.hashCode(width)+Double.hashCode(height)+
-            type+drill.hashCode()+number.hashCode()+netvalue.hashCode();    
+            type+getShape().ordinal()+drill.hashCode()+number.hashCode()+netvalue.hashCode();    
             return hash;
         }
 

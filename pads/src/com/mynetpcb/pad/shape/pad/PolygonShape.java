@@ -106,7 +106,41 @@ public class PolygonShape implements PadDrawing {
     }
     @Override
     public Memento getState(){
-        return null;
+        Memento memento=new Memento();
+        memento.saveStateFrom(this);
+        return memento;
     }
+    public static class Memento implements PadDrawing.Memento<PolygonShape> {
+        private double pcx,pcy;
+        private double width;
 
+        private double x[],y[];
+        
+        @Override
+        public void loadStateTo(PolygonShape shape) {    
+            shape.hexagon.pc.set(pcx,pcy);
+            shape.hexagon.width=width;
+            int i=0;
+            for(Point pt:shape.hexagon.points){
+                pt.set(x[i],y[i]);
+                i++;               
+            }            
+
+        }
+
+        @Override
+        public void saveStateFrom(PolygonShape shape) {
+            pcx=shape.hexagon.pc.x;
+            pcy=shape.hexagon.pc.y;
+            width=shape.hexagon.width;
+            x=new double[shape.hexagon.points.size()];
+            y=new double[shape.hexagon.points.size()];
+            int i=0;
+            for(Point pt:shape.hexagon.points){
+                x[i]=pt.x;
+                y[i]=pt.y;
+                i++;
+            }            
+        }
+    } 
 }
