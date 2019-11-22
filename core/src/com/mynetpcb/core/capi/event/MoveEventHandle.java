@@ -1,7 +1,7 @@
 package com.mynetpcb.core.capi.event;
 
 import com.mynetpcb.core.capi.component.UnitComponent;
-import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
 
@@ -24,7 +24,7 @@ public class MoveEventHandle <U extends UnitComponent,S extends Shape> extends E
         }
         //***is this a right click popup request?
         if (SwingUtilities.isRightMouseButton(e)) {
-            if (getTarget() instanceof Trackable){
+            if (getTarget() instanceof AbstractLine){
                 getComponent().getPopupMenu().registerLineSelectPopup(e, getTarget());
             }else{
                 getComponent().getPopupMenu().registerShapePopup(e, getTarget());

@@ -4,18 +4,15 @@ package com.mynetpcb.core.capi.event;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.UndoCallback;
+import com.mynetpcb.d2.shapes.Box;
 
 import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-
-import java.awt.geom.Point2D;
 
 import java.lang.ref.WeakReference;
 
@@ -154,17 +151,15 @@ public abstract class EventHandle<C extends UnitComponent,S extends Shape> imple
     }
   
     //***helper method
-    protected void drawSelectionRect(Graphics2D g,Rectangle selectionRect) {
+    protected void drawSelectionRect(Graphics2D g,Box selectionRect) {
         if (selectionRect.getWidth() != 0 || selectionRect.getHeight() != 0) {
             AlphaComposite composite =
                 AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
             Composite originalComposite = g.getComposite();
             g.setPaint(Color.GRAY);
             g.setComposite(composite);
-            g.fill(selectionRect);
+            selectionRect.paint(g, true);
             g.setComposite(originalComposite);
-            g.setStroke(new BasicStroke(1));
-            g.draw(selectionRect);            
         }
     }
 }

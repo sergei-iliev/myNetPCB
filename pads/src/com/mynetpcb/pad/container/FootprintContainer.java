@@ -2,7 +2,6 @@ package com.mynetpcb.pad.container;
 
 
 import com.mynetpcb.core.capi.container.UnitContainer;
-import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.unit.Footprint;
@@ -31,7 +30,7 @@ public class FootprintContainer extends UnitContainer<Footprint,Shape>{
         setFileName("Footprints");
     }
     @Override
-    public StringBuffer Format() {
+    public StringBuffer format() {
         StringBuffer xml=new StringBuffer();
         xml.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n"); 
         xml.append("<footprints identity=\"Footprint\" version=\"1.0\">\r\n");
@@ -44,7 +43,7 @@ public class FootprintContainer extends UnitContainer<Footprint,Shape>{
     }
 
     @Override
-    public void Parse(String xml) throws XPathExpressionException,ParserConfigurationException,
+    public void parse(String xml) throws XPathExpressionException,ParserConfigurationException,
                                          SAXException, IOException { 
         Document document = Utilities.buildDocument(xml);
         
@@ -78,13 +77,13 @@ public class FootprintContainer extends UnitContainer<Footprint,Shape>{
             }  
            Footprint footprint=new Footprint(1,1);
            footprint.parse(node); 
-           Add(footprint); //attach listeners
+           add(footprint); //attach listeners
            //footprint.notifyListeners(ShapeEvent.ADD_SHAPE); 
         }  
     }
 
     @Override
-    public void Parse(String xml, int index) throws ParserConfigurationException, SAXException, IOException,
+    public void parse(String xml, int index) throws ParserConfigurationException, SAXException, IOException,
                                                     XPathExpressionException {
         Document document = Utilities.buildDocument(xml);
         

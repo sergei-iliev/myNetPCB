@@ -220,7 +220,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         setSize(1, 1);
         revalidate();
         eventMgr.resetEventHandle();
-        model.Clear();
+        model.clear();
         System.gc();
     }
 
@@ -230,7 +230,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     public void release() {
         this.clear();
         parameters.clear();
-        model.Release();
+        model.release();
 
         //***clear listeners list
         for (int i = 0; i < containerListeners.getListenerList().length; i++) {

@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.gerber.ArcGerberable;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -15,11 +16,14 @@ import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.unit.Footprint;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Arc  extends Shape implements ArcGerberable, Resizeable,Externalizable {
@@ -210,7 +214,26 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
 
     @Override
     public void fromXML(Node node)  {
+        Element  element= (Element)node;        
+        this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));    
+        int xx=(Integer.parseInt(element.getAttribute("x")));
+        int yy=(Integer.parseInt(element.getAttribute("y")));  
+        
+        if(element.getAttribute("width").length()>0){      
+            int diameter=(Integer.parseInt(element.getAttribute("width")));           
+            this.arc.pc.set(xx+((diameter/2)),yy+((diameter/2)));
+            this.arc.r=diameter/2;                            
+        }else{
+            int radius=(Integer.parseInt(element.getAttribute("radius"))); 
+            this.arc.pc.set(xx,yy);
+            this.arc.r=radius;                                      
+        } 
+        
+        this.setStartAngle(Double.parseDouble(element.getAttribute("start")));
+        this.setExtendAngle(Double.parseDouble(element.getAttribute("extend")));
 
+        this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+        this.setFill(Fill.values()[(element.getAttribute("fill")==""?0:Integer.parseInt(element.getAttribute("fill")))]);
     }
 
     @Override
@@ -233,7 +256,11 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
             //transparent rect
             a.paint(g2, false);
         } else { //filled
+            AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
+            Composite originalComposite = g2.getComposite();                     
+            g2.setComposite(composite ); 
             a.paint(g2,true);
+            g2.setComposite(originalComposite); 
         }
         
         if(this.isSelected()){            

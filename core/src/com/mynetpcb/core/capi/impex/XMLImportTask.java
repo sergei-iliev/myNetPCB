@@ -14,8 +14,6 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
-import java.util.Map;
-
 import javax.swing.SwingUtilities;
 
 
@@ -68,7 +66,7 @@ public class XMLImportTask extends CommandResult<UnitContainer> {
                 }
             }
             xml = Utilities.addNode(xml, "filename", file.getName());
-            container.Parse(xml);
+            container.parse(xml);
         } catch (Exception e) {
             e.printStackTrace();
             invokeErrorDialog(e.getMessage());

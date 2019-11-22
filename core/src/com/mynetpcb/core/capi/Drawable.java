@@ -1,7 +1,6 @@
 package com.mynetpcb.core.capi;
 
 import com.mynetpcb.d2.shapes.Box;
-import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -35,7 +34,7 @@ public interface Drawable {
      * @param r to check against
      * @return 
      */
-    public boolean isInRect(Rectangle r);
+    public boolean isInRect(Box r);
     
     /**
      * Represents outline shape of the figure as drawn by the rendering engine.

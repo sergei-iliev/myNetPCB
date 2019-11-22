@@ -2,6 +2,7 @@ package com.mynetpcb.pad.shape;
 
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -18,7 +19,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
+import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Line extends AbstractLine implements Externalizable{
@@ -94,7 +97,16 @@ public class Line extends AbstractLine implements Externalizable{
 
     @Override
     public void fromXML(Node node) {
-        // TODO Implement this method
+        Element element = (Element) node;        
+        this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));
+        
+        StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
+
+        while (st.hasMoreTokens()) {
+           this.add(new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+        }
+        
+        this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
 
     }
     

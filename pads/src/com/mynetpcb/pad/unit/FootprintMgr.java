@@ -10,6 +10,8 @@ import com.mynetpcb.pad.shape.Pad;
 
 import java.awt.Window;
 
+import java.util.Collection;
+
 
 public final class FootprintMgr extends UnitMgr<Footprint,Shape> {
     private static FootprintMgr footprintMgr;
@@ -24,6 +26,11 @@ public final class FootprintMgr extends UnitMgr<Footprint,Shape> {
       return footprintMgr;
     }   
     
+    public void sendToBack(Collection<Shape> shapes,Shape target){
+        for(Shape shape:shapes){
+           // if(shape.isInRect(arg0))
+        }
+    }
     public Pad createPad(Footprint footprint){
         int size=footprint.getShapes(Pad.class).size();
         Pad pad=null;
@@ -34,9 +41,6 @@ public final class FootprintMgr extends UnitMgr<Footprint,Shape> {
             Pad last=(footprint.<Pad>getShapes(Pad.class)).get(size-1);
             try {
                 pad=last.clone();
-                //remove text
-                //pad.getChipText().getTextureByTag("number").setText("");
-                //pad.getChipText().getTextureByTag("netvalue").setText("");
             } catch (CloneNotSupportedException e) {
               e.printStackTrace();
             }

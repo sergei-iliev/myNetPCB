@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.popup;
 
 
+//import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.component.UnitComponent;
@@ -9,26 +10,21 @@ import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.gui.filter.ImpexFileFilter;
-//import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.UnitMgr;
-import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
-
 import com.mynetpcb.d2.shapes.Box;
-
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.Component;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
 
 import java.lang.ref.WeakReference;
 
@@ -240,10 +236,10 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         submenu.put("LeftRight",item);
         item = new JMenuItem("Top - Bottom");item.setActionCommand("TopBottom");item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.SHIFT_MASK));
         submenu.put("TopBottom",item);       
-        shapeMenu.put("Mirror",submenu);
+        shapeMenu.put("Mirror",submenu);        
         
         //***separator
-        shapeMenu.put("Separator2",null);         
+        shapeMenu.put("Separator3",null);         
         
         item=new JMenuItem("Delete"); item.setActionCommand("Delete");        
         shapeMenu.put("Delete",item);     
@@ -480,12 +476,12 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         
         if (e.getActionCommand().equalsIgnoreCase("cancelwiring")) {
             //****empty circuit space could be right clicked without a wire beneath
-//            getUnitComponent().getLineBendingProcessor().Release();  
-//            getTarget().setSelected(false);
-//            getUnitComponent().getEventMgr().resetEventHandle();
-//            getUnitComponent().getDialogFrame().setButtonGroup(0x00);
-//            getUnitComponent().setMode(0x00);
-//            getUnitComponent().Repaint(); 
+            getUnitComponent().getLineBendingProcessor().release();  
+            getTarget().setSelected(false);
+            getUnitComponent().getEventMgr().resetEventHandle();
+            getUnitComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+            getUnitComponent().setMode(Mode.COMPONENT_MODE);
+            getUnitComponent().Repaint(); 
 
         }
         if (e.getActionCommand().equalsIgnoreCase("deletelastpoint")) {
@@ -557,7 +553,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
                     return;
                 }                      
             }
-            getUnitComponent().getModel().Delete(getUnitComponent().getModel().getUnit().getUUID());
+            getUnitComponent().getModel().delete(getUnitComponent().getModel().getUnit().getUUID());
             if (getUnitComponent().getModel().getUnits().size() > 0) {
                 getUnitComponent().getModel().setActiveUnit(0);
                 getUnitComponent().revalidate();

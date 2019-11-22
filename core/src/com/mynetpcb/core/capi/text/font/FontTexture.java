@@ -7,7 +7,6 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.FontText;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-import com.mynetpcb.d2.shapes.Rectangle;
 import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.Color;
@@ -104,7 +103,22 @@ public class FontTexture implements Texture{
 
     @Override
     public void fromXML(Node node) {
-        // TODO Implement this method
+        
+        if (node == null || node.getTextContent().length()==0) {
+            this.shape.text = "";
+            return;
+        }
+        String[] tokens=node.getTextContent().split(",");
+        this.shape.anchorPoint.set(Double.parseDouble(tokens[1]),
+                Double.parseDouble(tokens[2]));     
+        
+        this.shape.setText(tokens[0]);
+        this.shape.setSize(Integer.parseInt(tokens[5]));
+        try{
+          this.shape.rotate(Double.parseDouble(tokens[6]));
+        }catch(Exception e){
+          this.shape.rotate(0);  
+        }
     }
 
     @Override
@@ -155,7 +169,7 @@ public class FontTexture implements Texture{
     }
 
     @Override
-    public boolean isInRect(Rectangle r) {
+    public boolean isInRect(Box r) {
         // TODO Implement this method
         return false;
     }

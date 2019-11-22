@@ -7,6 +7,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
+import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
 
 import java.util.Collections;
@@ -49,7 +50,25 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     public Box getBoundingShape(){
         return this.polyline.box();
     }
-    
+    @Override
+    public boolean isInRect(Box box) {
+        LinePoint prevPoint = this.polyline.points.get(0);
+        Segment segment=new Segment();
+        for(LinePoint point:this.polyline.points){
+            if(prevPoint.equals(point)){
+                prevPoint = point;
+                continue;
+            }
+            
+            segment.set(prevPoint,point);
+            
+            if(segment.intersects(box)){
+                return true;
+            }
+            prevPoint = point;
+        }
+         return false;       
+    }
     @Override
     public void alignResizingPointToGrid(Point targetPoint) {
         getOwningUnit().getGrid().snapToGrid(targetPoint); 
@@ -154,14 +173,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         }
         return false;
     }
-//    @Override
-//    public boolean isInRect(Rectangle r) {
-//        for(Point wirePoint:points){
-//            if (!r.contains(wirePoint))
-//                return false;            
-//        }
-//        return true;
-//    }
+
     @Override
     public void reverse(double x,double y) {
         Point p=isBendingPointClicked(x, y);

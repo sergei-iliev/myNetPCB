@@ -5,17 +5,12 @@ import com.mynetpcb.core.capi.Frameable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.print.Printable;
-import com.mynetpcb.core.utils.Utilities;
-
 import com.mynetpcb.d2.shapes.Box;
-import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 
 public class UnitFrame implements Frameable,Printable{
     
@@ -55,7 +50,7 @@ public class UnitFrame implements Frameable,Printable{
     }
 
     @Override
-    public boolean isInRect(Rectangle r) {
+    public boolean isInRect(Box r) {
         return false;
     }
 

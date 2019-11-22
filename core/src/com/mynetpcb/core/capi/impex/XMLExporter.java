@@ -16,7 +16,7 @@ public class XMLExporter implements Impex<UnitContainer>{
         PrintWriter ps=null;
         try{                                         
             ps=new PrintWriter((String)context.get("target.file"),"UTF-8");
-            ps.print(source.Format()); 
+            ps.print(source.format()); 
         }finally{
             if(ps!=null){ 
               ps.close();

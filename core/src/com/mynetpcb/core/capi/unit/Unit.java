@@ -55,6 +55,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -98,7 +99,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
     
     public Unit(int width, int height) {
         uuid = UUID.randomUUID();
-        shapes = new SortedList<S>();
+        shapes = new LinkedList<S>();
         scalableTransformation = new ScalableTransformation();
         shapeListeners = new EventListenerList();
         this.grid = new Grid(0.8, Grid.Units.MM);
@@ -272,7 +273,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         //default
         return true;
     }
-    public void setSelected(Rectangle rect) {
+    public void setSelected(Box rect) {
 
         for (S shape : shapes) {
             if(!isShapeVisibleOnLayers(shape)){
@@ -281,9 +282,9 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
             if (shape.isInRect(rect)) {
                 shape.setSelected(true);
             }else{
-                if(shape instanceof Sublineable&& ((Sublineable)shape).isSublineInRect(rect)){
-                    ((Sublineable)shape).setSublineSelected(rect, true);  
-                }
+                //if(shape instanceof Sublineable&& ((Sublineable)shape).isSublineInRect(rect)){
+                //    ((Sublineable)shape).setSublineSelected(rect, true);  
+                //}
             }
         }
     }
@@ -598,7 +599,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         
     }
     
-    public BufferedImage getImage(Rectangle2D clipRect, AffineTransform transformation,Color background) {
+    public BufferedImage getImage(Box clipRect, AffineTransform transformation,Color background) {
 
         int width = (int)(getWidth() * transformation.getScaleX());
         int height = (int)(getHeight() * transformation.getScaleX());

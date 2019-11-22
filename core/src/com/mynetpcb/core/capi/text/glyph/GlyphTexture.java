@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
@@ -22,7 +23,9 @@ import java.awt.geom.GeneralPath;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class GlyphTexture implements Texture {
@@ -41,7 +44,7 @@ public class GlyphTexture implements Texture {
 
     private Color fillColor;
 
-    private int selectionRectWidth;
+    private int selectionRectWidth,layermaskId;
     
     private boolean isSelected;
     
@@ -58,7 +61,7 @@ public class GlyphTexture implements Texture {
         this.text = text;
         this.height=0;
         this.width=0;
-        
+        this.layermaskId=Layer.SILKSCREEN_LAYER_FRONT;
         this.isSelected=false;
         this.rotate=0;
         this.mirrored=false;        
@@ -74,6 +77,7 @@ public class GlyphTexture implements Texture {
         this.mirrored=copy.mirrored;        
         this.fillColor=copy.fillColor;
         this.thickness=copy.thickness;
+        this.layermaskId=copy.layermaskId;
         setSize(copy.size);         
     }
     
@@ -389,7 +393,7 @@ public class GlyphTexture implements Texture {
     }
 
     @Override
-    public boolean isInRect(Rectangle r) {
+    public boolean isInRect(Box r) {
         return false;
     }
 
@@ -429,34 +433,48 @@ public class GlyphTexture implements Texture {
                 ",,"+this.thickness+","+this.size);
     }
     public void fromXML(Node node) {
-//        if (node == null || node.getTextContent().length()==0) {
-//            this.text = "";
-//            return;
-//        }
-//        Element  element= (Element)node;
-//        if(element.getAttribute("layer")!=null&&!element.getAttribute("layer").isEmpty()){
-//           this.layermaskId =Layer.Copper.valueOf(element.getAttribute("layer")).getLayerMaskID();
-//        }else{
-//            this.layermaskId=Layer.Copper.FSilkS.getLayerMaskID();
-//        }
-//        StringTokenizer st=new StringTokenizer(node.getTextContent(),",");  
-//        this.text=st.nextToken();
-//        anchorPoint.setLocation(Integer.parseInt(st.nextToken()),
-//                                Integer.parseInt(st.nextToken()));        
-//        this.alignment = Text.Alignment.valueOf(st.nextToken().toUpperCase());                
-//        try{
-//          this.thickness=Integer.parseInt(st.nextToken());        
-//        }catch(Exception e){
-//            this.thickness=2000;
-//        }
-//        int size=20000;
-//        try{
-//           size=(Integer.parseInt(st.nextToken()));
-//        }catch(NoSuchElementException e){        
-//            
-//        }
-//        //invalidate
-//        this.setSize(size);
+        
+        if (node == null || node.getTextContent().length()==0) {
+            this.text = "";
+            return;
+        }
+        Element  element= (Element)node;
+        if(!element.getAttribute("layer").isEmpty()){
+           this.layermaskId =Layer.Copper.valueOf(element.getAttribute("layer")).getLayerMaskID();
+        }else{
+           this.layermaskId=Layer.Copper.FSilkS.getLayerMaskID();
+        }
+        //StringTokenizer st=new StringTokenizer(node.getTextContent(),",");  
+        String[] st=node.getTextContent().split(",");
+
+        this.text=st[0];
+        anchorPoint.set(Integer.parseInt(st[1]),
+                                Integer.parseInt(st[2]));        
+        //st.nextToken();
+        try{
+          this.thickness=Integer.parseInt(st[4] );        
+        }catch(Exception e){
+            this.thickness=2000;
+        }
+        this.size=20000;
+        try{
+           this.size=(Integer.parseInt(st[5]));
+        }catch(NoSuchElementException e){        
+            
+        }
+        this.rotate=0;
+        try{
+           this.rotate=(Integer.parseInt(st[6]));
+        }catch(Exception e){        
+            
+        }        
+        //mirror?
+        Layer.Side side=Layer.Side.resolve(this.layermaskId);
+        if(side==Layer.Side.BOTTOM){
+           this.mirrored=true;              
+        }        
+        //invalidate
+        this.setSize(size);
         
     }
     public String getTag() {

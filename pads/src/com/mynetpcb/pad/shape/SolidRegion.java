@@ -3,6 +3,7 @@ package com.mynetpcb.pad.shape;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -15,15 +16,19 @@ import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.pad.unit.Footprint;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Externalizable{
@@ -147,6 +152,9 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
         r.scale(scale.getScaleX());
         r.move(-viewportWindow.getX(),- viewportWindow.getY());
     
+        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
+        Composite originalComposite = g2.getComposite();                     
+        g2.setComposite(composite ); 
         
         g2.setStroke(new BasicStroke());
 
@@ -156,6 +164,8 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
         }else{
           r.paint(g2, true);  
         }
+        
+        g2.setComposite(originalComposite);
         
         if (this.isSelected()) {
             r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p));        
@@ -182,7 +192,13 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
 
     @Override
     public void fromXML(Node node) {
-        // TODO Implement this method
+        Element element = (Element) node;
+        this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));
+        StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
+
+        while (st.hasMoreTokens()) {
+           this.add(new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+        }
 
     }
 

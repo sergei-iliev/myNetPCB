@@ -2,6 +2,7 @@ package com.mynetpcb.pad.shape;
 
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.font.FontTexture;
@@ -22,6 +23,7 @@ import com.mynetpcb.pad.unit.Footprint;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -95,6 +97,26 @@ public class Pad extends PadShape{
                         break;
                             }
     }
+    private void setShape(double x,double y,Shape shape) {
+        switch (shape) {
+        case CIRCULAR:
+            this.shape = new CircularShape(x,y,this.width,this);
+            break;
+        case OVAL:
+           this.shape=new OvalShape(x,y,this.width,this.height,this);
+            break;
+        case RECTANGULAR:
+            this.shape = new RectangularShape(x,y,this.width,this.height,this);
+            break;
+        case POLYGON:
+            this.shape = new PolygonShape(x,y,this.width,this);
+            break;
+        }
+        //restore rotation
+        if(this.rotate!=0){
+            this.shape.rotate(this.rotate,this.shape.getCenter());
+        }        
+    } 
     public void setShape(Shape shape) {
         switch (shape) {
         case CIRCULAR:
@@ -110,6 +132,10 @@ public class Pad extends PadShape{
             this.shape = new PolygonShape(this.shape.getCenter().x,this.shape.getCenter().y,this.width,this);
             break;
         }
+        //restore rotation
+        if(this.rotate!=0){
+            this.shape.rotate(this.rotate,this.shape.getCenter());
+        }         
     }  
     public double getWidth(){
         return width;
@@ -275,7 +301,45 @@ public class Pad extends PadShape{
 
     @Override
     public void fromXML(Node node){
-        // TODO Implement this method
+        Element element = (Element) node;
+        this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));
+        //fix copper All->copper Cu
+        if(this.copper.getLayerMaskID()==Layer.LAYER_ALL){
+            this.setCopper(Layer.Copper.Cu);
+        }
+        this.setType(Pad.Type.valueOf(element.getAttribute("type")));
+        
+        double x=Double.parseDouble(element.getAttribute("x"));
+        double y=Double.parseDouble(element.getAttribute("y"));
+        
+        this.width=Double.parseDouble(element.getAttribute("width"));
+        this.height=Double.parseDouble(element.getAttribute("height"));
+        
+        if(element.getAttribute("rt").length()>0){
+          this.rotate=Double.parseDouble(element.getAttribute("rt"));
+        }
+
+        this.setShape(x,y,Pad.Shape.valueOf(element.getAttribute("shape")));
+
+        //Element offset = (Element) element.getElementsByTagName("offset").item(0);
+        //this.offset.x = (Integer.parseInt(offset.getAttribute("x")));
+        //this.offset.y = (Integer.parseInt(offset.getAttribute("y")));
+        if (drill != null) {
+            drill.fromXML(element.getElementsByTagName("drill").item(0));
+        }
+
+        Element number = (Element) element.getElementsByTagName("number").item(0);
+        if (number == null) {
+            this.number.move(x, y);
+        } else {
+            this.number.fromXML(number);
+        }
+        Element netvalue = (Element) element.getElementsByTagName("netvalue").item(0);
+        if (netvalue == null) {
+            this.netvalue.move(x, y);
+        } else {
+            this.netvalue.fromXML(netvalue);
+        }
 
     }
     

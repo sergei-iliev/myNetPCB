@@ -3,17 +3,19 @@ package com.mynetpcb.core.capi.event;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.shape.Shape;
 
+import com.mynetpcb.d2.shapes.Box;
+
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import javax.swing.SwingUtilities;
 
 public class UnitEventHandle <U extends UnitComponent,S extends Shape> extends EventHandle<U,S>{
-    private final Rectangle selectionRect;
+    private final Box selectionRect;
     
     public UnitEventHandle(U component) {
         super(component);
-        selectionRect = new Rectangle();
+        selectionRect = new Box();
     }
 
     @Override
@@ -36,7 +38,8 @@ public class UnitEventHandle <U extends UnitComponent,S extends Shape> extends E
 
     @Override
     public void mouseScaledReleased(MouseScaledEvent e) {
-        getComponent().getModel().getUnit().setSelected(getComponent().getModel().getUnit().getScalableTransformation().getInverseRect((int)getComponent().getViewportWindow().getX()+selectionRect.x,(int)getComponent().getViewportWindow().getY()+selectionRect.y,selectionRect.width,selectionRect.height));
+        selectionRect.move(getComponent().getViewportWindow().getX(), getComponent().getViewportWindow().getY());
+        getComponent().getModel().getUnit().setSelected(getComponent().getModel().getUnit().getScalableTransformation().getInverseRect(selectionRect));
         getComponent().Repaint();    
     }
 

@@ -109,7 +109,7 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         return unitsMap.values();
     }
 
-    public void Add(T unit) {
+    public void add(T unit) {
         unitsMap.put(unit.getUUID(), unit);
         statesMap.put(unit.getUUID(),new CompositeMemento(MementoType.MEMENTO).add(unit.getShapes()));
         attachShapeListeners(unit);
@@ -120,7 +120,7 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         }
     }
 
-    public void Delete(UUID uuid) {
+    public void delete(UUID uuid) {
         T _unit = unitsMap.get(uuid);
         if (_unit == null) {
             return;
@@ -135,10 +135,10 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         statesMap.remove(uuid);
     }
 
-    public void Clear() {
+    public void clear() {
         List<UUID> keys = new ArrayList<UUID>(unitsMap.keySet());
         for (int i = 0; i < keys.size(); i++) {
-            Delete(keys.get(i));
+            delete(keys.get(i));
         }
         this.fileName=null;
         this.categoryName=null;
@@ -147,8 +147,8 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         statesMap.clear();
     }
 
-    public void Release() {
-        this.Clear();
+    public void release() {
+        this.clear();
         //***clear listeners list
         if (unitListeners != null){
         for (int i = 0; i < unitListeners.getListenerList().length; i++) {
@@ -277,12 +277,12 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
     }
 
 
-    public abstract StringBuffer Format();
+    public abstract StringBuffer format();
 
-    public abstract void Parse(String xml) throws XPathExpressionException, ParserConfigurationException, SAXException,
+    public abstract void parse(String xml) throws XPathExpressionException, ParserConfigurationException, SAXException,
                                                   IOException;
 
-    public abstract void Parse(String xml, int index) throws XPathExpressionException, ParserConfigurationException,
+    public abstract void parse(String xml, int index) throws XPathExpressionException, ParserConfigurationException,
                                                              SAXException, IOException;
 
 

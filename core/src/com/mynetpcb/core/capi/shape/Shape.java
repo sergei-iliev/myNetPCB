@@ -14,7 +14,6 @@ import com.mynetpcb.core.capi.unit.Unitable;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -173,8 +172,8 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     }
 
     @Override
-    public boolean isInRect(Rectangle r) {
-        if(r.contains(getBoundingShape().getCenter().x,getBoundingShape().getCenter().y))
+    public boolean isInRect(Box r) {
+        if(r.contains(getBoundingShape().getCenter()))
          return true;
         else
          return false; 

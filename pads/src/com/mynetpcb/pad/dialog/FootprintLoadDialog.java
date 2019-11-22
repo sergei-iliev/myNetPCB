@@ -355,7 +355,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
             selectionPanel.Clear();
             try {
                 UnitContainer model = new FootprintContainer();
-                model.Parse(result);
+                model.parse(result);
                 selectionPanel.getSelectionGrid().setModel(model);
             } catch (Exception ioe) {
                 ioe.printStackTrace(System.out);

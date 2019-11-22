@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Drill extends Shape implements Externalizable{
@@ -76,8 +77,9 @@ public class Drill extends Shape implements Externalizable{
 
     @Override
     public void fromXML(Node node) {
-        // TODO Implement this method
-
+        Element  element= (Element)node;
+        this.set(Double.parseDouble(element.getAttribute("x")),Double.parseDouble(element.getAttribute("y")));
+        this.setWidth(Double.parseDouble(element.getAttribute("width")));  
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {

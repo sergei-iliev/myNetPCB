@@ -355,7 +355,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         if(reciever==Footprint.class){         
                 getModel().getUnit().clear();             
              try{  
-                getModel().Parse(result,getModel().getActiveUnitIndex());                             
+                getModel().parse(result,getModel().getActiveUnitIndex());                             
                 getModel().getUnit().setSelected(false); 
                 getModel().registerInitialState(); 
              }catch(Exception ioe){ioe.printStackTrace(System.out);}                          
@@ -377,13 +377,13 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     for (Footprint footprint : source.getUnits()) {
                         try {
                             Footprint copy = footprint.clone();
-                            this.getModel().Add(copy);
+                            this.getModel().add(copy);
                             copy.notifyListeners(ShapeEvent.ADD_SHAPE);
                         } catch (CloneNotSupportedException f) {
                             f.printStackTrace(System.out);
                         }
                     }
-                    source.Clear();
+                    source.clear();
                 
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace(System.out);

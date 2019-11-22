@@ -15,6 +15,7 @@ import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.component.FootprintComponent;
@@ -386,7 +387,7 @@ exit();
                 footprintComponent.getModel().getUnit().setScrollPositionValue((int)footprintComponent.getViewportWindow().getX(),(int)footprintComponent.getViewportWindow().getY());                      
             }
             Footprint footprint = new Footprint((int)Grid.MM_TO_COORD(50), (int)Grid.MM_TO_COORD(50));
-            footprintComponent.getModel().Add(footprint);
+            footprintComponent.getModel().add(footprint);
             footprintComponent.getModel().setActiveUnit(footprint.getUUID());
             footprintComponent.componentResized(null);
             footprintComponent.getModel().fireUnitEvent(new UnitEvent(footprint, UnitEvent.SELECT_UNIT));
@@ -530,13 +531,13 @@ exit();
         footprintComponent.setMode(Mode.COMPONENT_MODE);
         if(source==null){
             Footprint footprint=new Footprint((int)Grid.MM_TO_COORD(50),(int)Grid.MM_TO_COORD(50)); 
-            footprintComponent.getModel().Add(footprint);
+            footprintComponent.getModel().add(footprint);
         }else{
         for (Footprint footprint : source.getUnits()) {
             try {
                 Footprint copy = footprint.clone();
                 copy.getScalableTransformation().Reset(0.5,10,4,13);
-                footprintComponent.getModel().Add(copy);
+                footprintComponent.getModel().add(copy);
                 copy.notifyListeners(ShapeEvent.ADD_SHAPE);
             } catch (CloneNotSupportedException f) {
                 f.printStackTrace(System.out);
@@ -558,15 +559,15 @@ exit();
         FootprintMgr.getInstance().alignBlock(footprintComponent.getModel().getUnit().getGrid(), footprintComponent.getModel().getUnit().getShapes());
 
         //position all to symbol center
-//        for(Unit unit:footprintComponent.getModel().getUnits()){
-//            com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
-//            Point dst=new Point();
-//            unit.getScalableTransformation().getCurrentTransformation().transform(r.min,dst);
-//            unit.setScrollPositionValue((int)dst.getX(),(int)dst.getY());            
-//        }
-//        //position to symbol center
-//        Rectangle r=footprintComponent.getModel().getUnit().getBoundingRect();
-//        footprintComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
+        for(Unit unit:footprintComponent.getModel().getUnits()){
+            com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
+            com.mynetpcb.d2.shapes.Point pt=r.min.clone();
+            pt.scale(unit.getScalableTransformation().getCurrentTransformation().getScaleX());            
+            unit.setScrollPositionValue((int)pt.x,(int)pt.y);            
+        }
+        //position to symbol center
+        com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getBoundingRect();
+        footprintComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
 
         //remember state
         footprintComponent.getModel().registerInitialState();

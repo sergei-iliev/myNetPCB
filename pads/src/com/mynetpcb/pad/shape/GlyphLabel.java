@@ -10,7 +10,6 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
@@ -18,9 +17,7 @@ import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -144,7 +141,6 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     
     @Override
     public void fromXML(Node node){
-        //extract layer info
         Element  element= (Element)node;
         if(element.getAttribute("layer")!=null&&!element.getAttribute("layer").isEmpty()){
            this.copper =Layer.Copper.valueOf(element.getAttribute("layer"));

@@ -21,6 +21,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import java.util.StringTokenizer;
+
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class RoundRect extends Shape implements Resizeable,Externalizable{
@@ -35,7 +38,7 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         this.resizingPoint = null;
         this.rotate=0;  
         this.roundRect=new RoundRectangle(x,y,width,height,arc);   
-        this.roundRect.rotate(30, this.roundRect.box().getCenter());
+        //this.roundRect.rotate(30, this.roundRect.box().getCenter());
     }
     public RoundRect() {
         this(0, 0, 0, 0, 0, 0, Layer.SILKSCREEN_LAYER_FRONT);
@@ -120,8 +123,13 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
             //transparent rect
             r.paint(g2, false);
         } else { //filled
+            //AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
+            //Composite originalComposite = g2.getComposite();                     
+            //g2.setComposite(composite ); 
             r.paint(g2,true);
+            //g2.setComposite(originalComposite);
         }
+
         
         if (this.isSelected()) {
             //Utilities.drawCrosshair(g2, viewportWindow, scale,resizingPoint,this.selectionRectWidth,this.roundRect.points.get(0),this.roundRect.points.get(1),this.roundRect.points.get(2),this.roundRect.points.get(3));
@@ -192,7 +200,32 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         // TODO Implement this method
         return null;
     }
-
+    @Override
+    public void fromXML(Node node){
+        Element element = (Element) node;
+        if (element.hasAttribute("copper")) {
+            this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));
+        }
+      
+        if(element.getAttribute("width").length()>0){
+            this.roundRect.setRect(Integer.parseInt(element.getAttribute("x")),Integer.parseInt(element.getAttribute("y")),Integer.parseInt(element.getAttribute("width")),Integer.parseInt(element.getAttribute("height")),Integer.parseInt(element.getAttribute("arc"))/2);  
+        }else{
+            StringTokenizer st = new StringTokenizer(element.getAttribute("points"), ",");
+             
+            this.roundRect.points.clear();
+            
+            while (st.hasMoreTokens()) {
+                this.roundRect.points.add(new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+            }
+                        
+            this.roundRect.setRounding(Integer.parseInt(element.getAttribute("arc")));           
+        }
+        
+        this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+        this.setFill(Fill.values()[(element.getAttribute("fill") == "" ? 0 :
+                                            Integer.parseInt(element.getAttribute("fill")))]);   
+    
+    }
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
@@ -200,11 +233,6 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         return memento;
     }
     
-    @Override
-    public void fromXML(Node node){
-        // TODO Implement this method
-
-    }
 
 
 
