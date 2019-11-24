@@ -62,6 +62,14 @@ public class Box extends Shape {
     public Box clone() {
         return new Box(this.min.x,this.min.y,this.max.x,this.max.y);
     }
+    public void grow(double offset){
+        this.min.x-=offset;
+        this.min.y-=offset;
+        
+        this.max.x+=offset;
+        this.max.y+=offset;
+
+    }  
     public Point getCenter() {
         return new Point( (this.min.x + this.max.x)/2, (this.min.y + this.max.y)/2 );
     }
@@ -123,7 +131,11 @@ public class Box extends Shape {
     @Override
     public void paint(Graphics2D g2, boolean fill) {
        rect.setRect(getX(),getY(), getWidth(), getHeight());
-       g2.draw(rect);
+       if(fill){
+         g2.fill(rect);   
+       }else{
+         g2.draw(rect);
+       }
     }
 
     @Override

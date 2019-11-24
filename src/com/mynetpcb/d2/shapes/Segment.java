@@ -52,7 +52,60 @@ public class Segment extends Shape {
     public void mirror(Line line){
             this.ps.mirror(line);
             this.pe.mirror(line);
-    }    
+    }  
+    /**
+     * Liang-Barsky function by Daniel White 
+     * 
+     * @link http://www.skytopia.com/project/articles/compsci/clipping.html
+     */
+    public boolean intersects(Box box){
+        double x0=ps.x,y0=ps.y,x1=pe.x,y1=pe.y;
+        double xmin=box.min.x, xmax=box.max.x, ymin=box.min.y, ymax=box.max.y;
+        double t0 = 0, t1 = 1;
+        double dx = pe.x - ps.x, dy = pe.y - ps.y;
+        double p=0, q=0, r=0;
+
+          for(int edge = 0; edge < 4; edge++) {   // Traverse through left, right, bottom, top edges.
+            if (edge == 0) { 
+                p = -dx; 
+                q = -(xmin - x0); 
+            }
+            if (edge == 1) { 
+                p =  dx; 
+                q =  (xmax - x0); 
+            }
+            if (edge == 2) { 
+                p = -dy; 
+                q = -(ymin - y0); 
+            }
+            if (edge == 3) { 
+                p =  dy; 
+                q =  (ymax - y0); 
+            }
+
+            r = q / p;
+
+            if (p == 0 && q < 0) 
+                return false;   // Don't draw line at all. (parallel line outside)
+
+            if(p < 0) {
+              if (r > t1)
+                return false;     // Don't draw line at all.
+              else if (r > t0) 
+                  t0 = r;     // Line is clipped!
+            } else if (p > 0) {
+              if(r < t0) 
+                  return false;      // Don't draw line at all.
+              else if (r < t1) 
+                  t1 = r;     // Line is clipped!
+            }
+          }
+
+          return true;
+        
+        
+    }
+    
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         cache.setLine(ps.x, ps.y, pe.x, pe.y);

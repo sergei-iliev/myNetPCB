@@ -2,8 +2,6 @@ package com.mynetpcb.d2.shapes;
 
 import java.awt.Graphics2D;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +16,13 @@ public class RoundRectangle extends Rectangle {
         this.rounding = rounding;
         this.reset();
     }
-
+    
+    public void setRect(double x,double y,double width,double height,int rounding){
+            super.setRect(x,y,width,height);
+            this.rounding=rounding;
+            this.reset();
+    }  
+    
     @Override
     public RoundRectangle clone() {
         RoundRectangle copy=new RoundRectangle(0,0,0,0,this.rounding);
@@ -117,7 +121,7 @@ public class RoundRectangle extends Rectangle {
             this.points.get(3).set(p);
             
             this.reset();
-    }
+    }  
     public boolean contains(Point pt){
        if(!super.contains(pt)){
                return false;
