@@ -207,7 +207,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
             selectionPanel.Clear();
             try{
             UnitContainer model= new BoardContainer();
-            model.Parse(result);
+            model.parse(result);
             selectionPanel.getSelectionGrid().setModel(model);
             } catch (Exception ioe) {
             ioe.printStackTrace(System.out);

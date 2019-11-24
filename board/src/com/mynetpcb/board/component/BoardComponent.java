@@ -8,9 +8,14 @@ import com.mynetpcb.board.event.CopperAreaEventHandle;
 import com.mynetpcb.board.event.TrackEventHandle;
 import com.mynetpcb.board.line.BoardBendingProcessorFactory;
 import com.mynetpcb.board.popup.BoardPopupMenu;
+import com.mynetpcb.board.shape.PCBArc;
+import com.mynetpcb.board.shape.PCBCircle;
+import com.mynetpcb.board.shape.PCBLabel;
+import com.mynetpcb.board.shape.PCBRoundRect;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.core.capi.DialogFrame;
+import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.container.UnitContainerProducer;
@@ -27,6 +32,8 @@ import com.mynetpcb.core.capi.io.FutureCommand;
 import com.mynetpcb.core.capi.io.ReadUnitLocal;
 import com.mynetpcb.core.capi.io.remote.ReadConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
@@ -34,6 +41,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.shape.Arc;
+import com.mynetpcb.pad.shape.Line;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -74,36 +82,38 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
         Cursor cursor = null;
         this.requestFocusInWindow(); //***for the cancel button
         switch (getMode()) {
+            case Mode.SOLID_REGION:
+            break;        
         case Mode.ELLIPSE_MODE:
-//            shape =
-//                new PCBCircle(0, 0, Grid.MM_TO_COORD(4), Grid.MM_TO_COORD(0.2),
-//                               getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.SILKSCREEN_LAYER_BACK :
-//                               Layer.SILKSCREEN_LAYER_FRONT);
-//            setContainerCursor(shape);
-//            getEventMgr().setEventHandle("cursor", shape);
+            shape =
+                new PCBCircle(0,0,Grid.MM_TO_COORD(3.4),(int)Grid.MM_TO_COORD(0.2),
+                               getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.SILKSCREEN_LAYER_BACK :
+                               Layer.SILKSCREEN_LAYER_FRONT);
+            setContainerCursor(shape);
+            getEventMgr().setEventHandle("cursor", shape);
             break;
         case Mode.ARC_MODE:
-//            shape =
-//                new PCBArc(0, 0, Grid.MM_TO_COORD(7), Grid.MM_TO_COORD(0.2),
-//                           getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.SILKSCREEN_LAYER_BACK :
-//                           Layer.SILKSCREEN_LAYER_FRONT);
-//            setContainerCursor(shape);
-//            getEventMgr().setEventHandle("cursor", shape);
+            shape =
+                new PCBArc(0,0,Grid.MM_TO_COORD(3.4),60,60,(int)Grid.MM_TO_COORD(0.2),
+                           getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.SILKSCREEN_LAYER_BACK :
+                           Layer.SILKSCREEN_LAYER_FRONT);
+            setContainerCursor(shape);
+            getEventMgr().setEventHandle("cursor", shape);
             break;
         case Mode.LABEL_MODE:
-//            shape =
-//                new PCBLabel(getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.SILKSCREEN_LAYER_BACK :
-//                             Layer.SILKSCREEN_LAYER_FRONT);
-//            setContainerCursor(shape);
-//            getEventMgr().setEventHandle("cursor", shape);
+            shape =
+                new PCBLabel(getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.SILKSCREEN_LAYER_BACK :
+                             Layer.SILKSCREEN_LAYER_FRONT);
+            setContainerCursor(shape);
+            getEventMgr().setEventHandle("cursor", shape);
             break;
         case Mode.RECT_MODE:
-//                shape =
-//                    new PCBRoundRect(0,0,Grid.MM_TO_COORD(4),Grid.MM_TO_COORD(4),Grid.MM_TO_COORD(1),Grid.MM_TO_COORD(0.2),
-//                               getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.SILKSCREEN_LAYER_BACK :
-//                               Layer.SILKSCREEN_LAYER_FRONT);
-//                setContainerCursor(shape);
-//                getEventMgr().setEventHandle("cursor", shape);
+                shape =
+                    new PCBRoundRect(0,0,Grid.MM_TO_COORD(4),Grid.MM_TO_COORD(4),(int)Grid.MM_TO_COORD(1),(int)Grid.MM_TO_COORD(0.2),
+                               getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.SILKSCREEN_LAYER_BACK :
+                               Layer.SILKSCREEN_LAYER_FRONT);
+                setContainerCursor(shape);
+                getEventMgr().setEventHandle("cursor", shape);
                 break;
         case Mode.VIA_MODE:
 //            this.setCursor(Cursor.getDefaultCursor());
@@ -165,7 +175,9 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                         if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
                           getEventMgr().setEventHandle("arc.start.angle",shape);                    
                         }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
-                          getEventMgr().setEventHandle("arc.extend.angle",shape);                      
+                          getEventMgr().setEventHandle("arc.extend.angle",shape); 
+                        }else if(((Arc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                            getEventMgr().setEventHandle("arc.mid.point",shape);                        
                         }else{
                           getEventMgr().setEventHandle("resize",shape);    
                         }
@@ -215,12 +227,29 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
                         return; //***right button click
                     }
-//                    shape =
-//                        new PCBLine(Grid.MM_TO_COORD(0.4),
-//                                    getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ?
-//                                    Layer.SILKSCREEN_LAYER_BACK : Layer.SILKSCREEN_LAYER_FRONT);
-//                    getModel().getUnit().add(shape);
-//                    getEventMgr().setEventHandle("line", shape);
+                    shape =
+                            getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
+                                                  true);
+                   
+                    if ((shape == null) ||(!(shape instanceof Line))) {
+                        shape = new Line((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
+                        getModel().getUnit().add(shape);
+                    }else {
+                        /*Click on a line
+                                    *1.Click at begin or end point - resume
+                                    *2.Click in between - new Wire
+                                    */
+                        Trackable line = (Trackable)shape;
+                        if (line.isEndPoint(scaledEvent.getX(),
+                                            scaledEvent.getY())) {
+                            this.resumeLine(line,"line", scaledEvent.getX(), scaledEvent.getY());
+                            return;
+                        } else {
+                            shape = new Line((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);                        
+                            getModel().getUnit().add(shape);
+                        }
+                    } 
+                    getEventMgr().setEventHandle("line", shape);
                 }
 
                 break;
@@ -374,7 +403,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
         if (reciever == Board.class) {
             getModel().getUnit().clear();
             try {
-                getModel().Parse(result, getModel().getActiveUnitIndex());
+                getModel().parse(result, getModel().getActiveUnitIndex());
                 getModel().getUnit().setSelected(false);
                 getModel().registerInitialState();
             } catch (Exception ioe) {
@@ -397,13 +426,13 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     for (Board board : source.getUnits()) {
                         try {
                             Board copy = board.clone();
-                            this.getModel().Add(copy);
+                            this.getModel().add(copy);
                             copy.notifyListeners(ShapeEvent.ADD_SHAPE);
                         } catch (CloneNotSupportedException f) {
                             f.printStackTrace(System.out);
                         }
                     }
-                    source.Clear();
+                    source.clear();
                 
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace(System.out);

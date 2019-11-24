@@ -5,7 +5,6 @@ import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
-
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Point;
@@ -14,9 +13,7 @@ import com.mynetpcb.pad.shape.RoundRect;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-
 import java.awt.event.ActionEvent;
-
 import java.awt.event.KeyEvent;
 
 import javax.swing.JComboBox;
@@ -30,7 +27,7 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
     private JTextField roundCornerField;
     
     public RectPanelBuilder(UnitComponent component) {
-         super(component,new GridLayout(8,1));
+         super(component,new GridLayout(9,1));
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -47,7 +44,11 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
                 label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 topField=new JTextField("0"); topField.addKeyListener(this); panel.add(topField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
-               
+        //rotate
+                panel=new JPanel(); panel.setLayout(new BorderLayout());
+                label=new JLabel("Rotate"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                rotateField=new JTextField("0");rotateField.addKeyListener(this);  panel.add(rotateField,BorderLayout.CENTER);
+                layoutPanel.add(panel);               
         //***Thickness        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Thickness"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -69,6 +70,7 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void updateUI() {
         RoundRect rect=(RoundRect)getTarget();
+        rotateField.setText(String.valueOf(rect.getRotation()));
         leftField.setEnabled(rect.getResizingPoint()==null?false:true);  
         topField.setEnabled(rect.getResizingPoint()==null?false:true);
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(rect.getThickness())));    
@@ -98,7 +100,9 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
         if(e.getSource()==this.thicknessField){
         getTarget().setThickness((int)Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
         }
-        
+        if(e.getSource()==this.rotateField){
+           rect.setRotation(Double.parseDouble(this.rotateField.getText()),rect.getCenter());            
+        }
         if(e.getSource()==this.roundCornerField){
           rect.setRounding((int)Grid.MM_TO_COORD(Double.parseDouble(roundCornerField.getText())));  
         }

@@ -1,23 +1,18 @@
 package com.mynetpcb.pad.dialog.panel.inspector;
 
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
-
 import com.mynetpcb.core.capi.shape.Shape;
-
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Point;
-import com.mynetpcb.pad.component.FootprintComponent;
-
 import com.mynetpcb.pad.shape.Line;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-
 import java.awt.event.ActionEvent;
-
 import java.awt.event.KeyEvent;
 
 import javax.swing.JComboBox;
@@ -28,7 +23,7 @@ import javax.swing.SwingConstants;
 
 public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
         
-    public LinePanelBuilder(FootprintComponent component) {
+    public LinePanelBuilder(UnitComponent component) {
        super(component,new GridLayout(4,1));
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 

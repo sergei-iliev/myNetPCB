@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
-    private JTextField padNumber,padNetName,padRotate;
+    private JTextField padNumber,padNetName;
         
     private JComboBox padTypeCombo,padShapeCombo;
     
@@ -57,7 +57,7 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         //rotate
         panel=new JPanel(); panel.setLayout(new BorderLayout());
         label=new JLabel("Rotate"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
-        padRotate=new JTextField("0");padRotate.addKeyListener(this);  panel.add(padRotate,BorderLayout.CENTER);
+        rotateField=new JTextField("0");rotateField.addKeyListener(this);  panel.add(rotateField,BorderLayout.CENTER);
         layoutPanel.add(panel);
         //pad type
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
@@ -161,7 +161,7 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void updateUI() {
         Pad pad=(Pad)getTarget();
-        padRotate.setText(String.valueOf(pad.getRotation()));
+        rotateField.setText(String.valueOf(pad.getRotation()));
         
         padNumber.setText(pad.getTextureByTag("number").getText());
         numberSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getSize())));
@@ -230,8 +230,8 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
     public void keyReleased(KeyEvent e){
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
         Pad pad=(Pad)getTarget();
-        if(e.getSource()==this.padRotate){
-           pad.setRotation(Double.parseDouble(this.padRotate.getText())); 
+        if(e.getSource()==this.rotateField){
+           pad.setRotation(Double.parseDouble(this.rotateField.getText())); 
            
         }
         if(e.getSource()==this.widthField){
@@ -247,25 +247,25 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         if(e.getSource()==this.numberSize){
            pad.getTextureByTag("number").setSize((int)Grid.MM_TO_COORD(Double.parseDouble(numberSize.getText())));
         }
-//        if(e.getSource()==this.numberX){
-//           pad.getChipText().getTextureByTag("number").getAnchorPoint().x= fromUnitX(numberX.getText());
-//        }
-//        if(e.getSource()==this.numberY){
-//           pad.getChipText().getTextureByTag("number").getAnchorPoint().y= fromUnitY(numberY.getText());
-//        }
-//        
+        if(e.getSource()==this.numberX){
+           pad.getTextureByTag("number").getAnchorPoint().x= fromUnitX(numberX.getText());
+        }
+        if(e.getSource()==this.numberY){
+           pad.getTextureByTag("number").getAnchorPoint().y= fromUnitY(numberY.getText());
+        }
+        
         if(e.getSource()==this.padNetName){
            pad.getTextureByTag("netvalue").setText(padNetName.getText());
         }
         if(e.getSource()==this.netvalueSize){
            pad.getTextureByTag("netvalue").setSize((int)Grid.MM_TO_COORD(Double.parseDouble(netvalueSize.getText())));
         }        
-//        if(e.getSource()==this.netvalueX){
-//           pad.getChipText().getTextureByTag("netvalue").getAnchorPoint().x= fromUnitX(netvalueX.getText());
-//        }
-//        if(e.getSource()==this.netvalueY){
-//           pad.getChipText().getTextureByTag("netvalue").getAnchorPoint().y= fromUnitY(netvalueY.getText());
-//        }
+        if(e.getSource()==this.netvalueX){
+           pad.getTextureByTag("netvalue").getAnchorPoint().x= fromUnitX(netvalueX.getText());
+        }
+        if(e.getSource()==this.netvalueY){
+           pad.getTextureByTag("netvalue").getAnchorPoint().y= fromUnitY(netvalueY.getText());
+        }
 //        
 //        if(e.getSource()==this.drillOffsetX){
 //           pad.getOffset().x=(Grid.MM_TO_COORD(Double.parseDouble(drillOffsetX.getText()))); 

@@ -119,7 +119,7 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     public double getRotation(){
         return rotate;
     }
-    public void setRotation(double alpha){
+    public void setRotation(double alpha,Point origin){
         
     }
     public Fill getFill(){

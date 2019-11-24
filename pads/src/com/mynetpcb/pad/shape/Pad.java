@@ -8,6 +8,7 @@ import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.pad.shape.PadShape.Shape;
@@ -446,7 +447,7 @@ public class Pad extends PadShape{
         }
 
         @Override
-        public boolean isSameState(Footprint unit) {
+        public boolean isSameState(Unit unit) {
             Pad pad = (Pad) unit.getShape(getUUID());
             return (pad.getState(getMementoType()).equals(this));
         }

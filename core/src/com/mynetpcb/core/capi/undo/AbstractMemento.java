@@ -6,7 +6,6 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.unit.Unit;
 
-
 import java.util.UUID;
 
 
@@ -98,7 +97,7 @@ public abstract class AbstractMemento<U extends Unit,S extends Shape> {
     }
     
 
-    public boolean isSameState(U unit) {
+    public boolean isSameState(Unit unit) {
         Shape other=unit.getShape(getUUID());              
         return (other.getThickness()==this.thickness&&other.getFill().ordinal()==this.fill&&other.getCopper().ordinal()==this.layerindex);                                
     }

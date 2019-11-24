@@ -1,8 +1,12 @@
 package com.mynetpcb.board.shape;
 
+import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,19 +22,20 @@ public class BoardShapeFactory implements AbstractShapeFactory{{
 //        if(element.getTagName().equals("footprint")){
 //            shape = new PCBFootprint(0);            
 //        }
-//        if(element.getTagName().equals("label")){
-//            shape = new PCBLabel(0); 
-//        }   
-//        if(element.getTagName().equals("rectangle")){
-//             shape = new PCBRoundRect(0,0,0,0,0,0,0);
-// 
-//        }
-//        if(element.getTagName().equals("ellipse")){
-//             shape = new PCBCircle(0,0,0,0,0);
-//        }      
-//        if(element.getTagName().equals("arc")){
-//            shape = new PCBArc(0,0,0,0,0);
-//        }   
+        if(element.getTagName().equals("label")){
+            shape = new PCBLabel(0); 
+        }   
+        if(element.getTagName().equals("rectangle")){
+             shape = new PCBRoundRect(0,0,0,0,0,0,0);
+ 
+        }
+        if(element.getTagName().equals("ellipse")||element.getTagName().equals("circle")){
+             shape = new PCBCircle(0,0,0,0,0);
+        }      
+        
+        if(element.getTagName().equals("arc")){
+            shape = new PCBArc(0,0,0,0,0,0,0);
+        }   
 //        if(element.getTagName().equals("wire")||element.getTagName().equals("track")){
 //            shape = new PCBTrack(0,0);  
 //        }   
@@ -46,13 +51,13 @@ public class BoardShapeFactory implements AbstractShapeFactory{{
 //        if(element.getTagName().equals("copperarea")){
 //            shape = new PCBCopperArea(0);   
 //        }  
-//        if(shape!=null){
-//            try {
-//                ((Externalizable) shape).fromXML(node);
-//            } catch (ParserConfigurationException | XPathExpressionException e) {
-//                 e.printStackTrace(System.out);
-//            }
-//        }
+        if(shape!=null){
+            try {
+                ((Externalizable) shape).fromXML(node);
+            } catch (ParserConfigurationException | XPathExpressionException e) {
+                 e.printStackTrace(System.out);
+            }
+        }
         return shape;
     }
 

@@ -287,7 +287,7 @@ public class FootprintsPanel extends JPanel implements
             selectionPanel.Clear();
             try {
                 UnitContainer model= new FootprintContainer();
-                model.Parse(result);
+                model.parse(result);
                 selectionPanel.getSelectionGrid().setModel(model);
             } catch (Exception e) {
                 e.printStackTrace(System.out);            

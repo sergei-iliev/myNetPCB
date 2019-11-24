@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
@@ -202,7 +203,7 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
           return hash;
         }        
         @Override
-        public boolean isSameState(Footprint unit) {
+        public boolean isSameState(Unit unit) {
             GlyphLabel label=(GlyphLabel)unit.getShape(getUUID());
             return (label.getState(getMementoType()).equals(this)); 
         }

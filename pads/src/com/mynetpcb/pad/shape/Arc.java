@@ -9,6 +9,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
@@ -343,7 +344,7 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
         }
         
         @Override
-        public boolean isSameState(Footprint unit) {
+        public boolean isSameState(Unit unit) {
                         
             boolean flag = super.isSameState(unit);
             Arc other=(Arc)unit.getShape(getUUID());  

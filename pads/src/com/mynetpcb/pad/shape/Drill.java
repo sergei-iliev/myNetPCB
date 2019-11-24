@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
@@ -139,7 +140,7 @@ public class Drill extends Shape implements Externalizable{
             return hash;
         }
         @Override
-        public boolean isSameState(Footprint unit) {
+        public boolean isSameState(Unit unit) {
              throw new IllegalStateException("Drill can not exist by iself");
         }
     

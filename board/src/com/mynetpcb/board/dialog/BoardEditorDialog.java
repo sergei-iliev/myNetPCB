@@ -109,6 +109,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
     private JToggleButton SnapToGridButton = new JToggleButton();
     private JToggleButton CoordButton = new JToggleButton();
     private JToggleButton MeasureButton = new JToggleButton();
+    private JToggleButton SolidRegionButton = new JToggleButton();
     private ButtonGroup group = new ButtonGroup();
     
     private JPopupButton AddBoardButton=new JPopupButton(this);
@@ -221,6 +222,11 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         RectButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rect.png"));
         RectButton.setPreferredSize(new Dimension(35, 35));
         
+        SolidRegionButton.addActionListener(this);
+        SolidRegionButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/solid_region.png"));
+        SolidRegionButton.setToolTipText("Add Solid Region");
+        SolidRegionButton.setPreferredSize(new Dimension(35, 35));
+        
         ViaButton.addActionListener(this);
         ViaButton.setToolTipText("Add Via");
         ViaButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/pad.png"));
@@ -329,6 +335,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         group.add(TrackButton);
         group.add(LineButton);
         group.add(RectButton);
+        group.add(SolidRegionButton);   
         group.add(ViaButton);
         group.add(HoleButton);
         group.add(LabelButton);
@@ -366,6 +373,8 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         leftButtonGroupPanel.add(LineButton);
         leftButtonGroupPanel.add(javax.swing.Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(RectButton);
+        leftButtonGroupPanel.add(javax.swing.Box.createRigidArea(new Dimension(5, 5)));
+        leftButtonGroupPanel.add(SolidRegionButton);                
         leftButtonGroupPanel.add(javax.swing.Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(TrackButton);
         leftButtonGroupPanel.add(javax.swing.Box.createRigidArea(new Dimension(5, 5)));
@@ -437,7 +446,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
                 boardComponent.getModel().getUnit().setScrollPositionValue((int)boardComponent.getViewportWindow().getX(),(int)boardComponent.getViewportWindow().getY());                      
             }
             Board board  = new Board((int)Grid.MM_TO_COORD(100),(int)Grid.MM_TO_COORD(100));
-            boardComponent.getModel().Add(board);
+            boardComponent.getModel().add(board);
             boardComponent.getModel().setActiveUnit(board.getUUID());
             boardComponent.componentResized(null);
             boardComponent.getModel().fireUnitEvent(new UnitEvent(board, UnitEvent.SELECT_UNIT));
@@ -525,7 +534,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             if (!Configuration.get().isIsApplet()) {
 
                 Command writer =
-                    new WriteUnitLocal(this, boardComponent.getModel().Format(),
+                    new WriteUnitLocal(this, boardComponent.getModel().format(),
                                        Configuration.get().getBoardsRoot(),
                                        boardComponent.getModel().getLibraryName(), null,
                                        boardComponent.getModel().getFileName(), true, BoardComponent.class);
@@ -533,7 +542,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             } else {
 
                 Command writer =
-                    new WriteConnector(this, boardComponent.getModel().Format(),
+                    new WriteConnector(this, boardComponent.getModel().format(),
                                        new RestParameterMap.ParameterBuilder("/boards").addURI(boardComponent.getModel().getLibraryName()).addURI(boardComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
                                                                                                                                                                                                                       String.valueOf(true)).build(),
                                        BoardComponent.class);
@@ -702,13 +711,13 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             
             if(source==null){
                 Board board=new Board((int)Grid.MM_TO_COORD(100),(int)Grid.MM_TO_COORD(100)); 
-                boardComponent.getModel().Add(board);
+                boardComponent.getModel().add(board);
             }else{
             for (Board board : source.getUnits()) {
                 try {
                     Board copy = board.clone();
                     copy.getScalableTransformation().Reset(0.5,10,3,13);
-                    boardComponent.getModel().Add(copy);
+                    boardComponent.getModel().add(copy);
                     copy.notifyListeners(ShapeEvent.ADD_SHAPE);
                 } catch (CloneNotSupportedException f) {
                     f.printStackTrace(System.out);
@@ -748,7 +757,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         Configuration.get().read();
         //*****************Footprint editor
         final BoardEditorDialog f = new BoardEditorDialog(null, "Board Editor");
-        f.setPreferredSize(new Dimension(730, 700));
+        f.setPreferredSize(new Dimension(730, 800));
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);

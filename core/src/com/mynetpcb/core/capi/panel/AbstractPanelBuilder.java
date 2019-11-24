@@ -7,7 +7,6 @@ import com.mynetpcb.core.capi.SortedList;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.tree.AttachedItem;
 
 import java.awt.Component;
@@ -21,7 +20,6 @@ import java.lang.ref.WeakReference;
 
 import java.util.Collection;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,7 +31,7 @@ import javax.swing.JTextField;
  * Use the builder pattern to construct,show dynamically target properties in XXXInspector
  */
 public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter implements ActionListener{
-  protected JTextField netField,topField,leftField,widthField,heightField,clearanceField,thicknessField;
+  protected JTextField netField,topField,leftField,widthField,heightField,clearanceField,thicknessField,rotateField;
 
   protected JLabel label;
   

@@ -18,6 +18,7 @@ import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.event.UnitEventHandle;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.pad.event.ArcExtendAngleEventHandler;
+import com.mynetpcb.pad.event.ArcMidPointEventHandle;
 import com.mynetpcb.pad.event.ArcStartAngleEventHandle;
 
 public class BoardEventMgr extends EventMgr<BoardComponent,Shape> {
@@ -49,6 +50,7 @@ public class BoardEventMgr extends EventMgr<BoardComponent,Shape> {
     protected void Initialize(BoardComponent component) {
      hash.put("arc.start.angle",new ArcStartAngleEventHandle<BoardComponent,Shape>(component));
      hash.put("arc.extend.angle",new ArcExtendAngleEventHandler<BoardComponent,Shape>(component));
+     hash.put("arc.mid.point",new ArcMidPointEventHandle<BoardComponent,Shape>(component));
      hash.put("origin",new OriginEventHandle<BoardComponent,Shape>(component));
      hash.put("texture",new TextureEventHandle<BoardComponent,Shape>(component));
      hash.put("move",new MoveEventHandle<BoardComponent,Shape>(component));

@@ -29,7 +29,7 @@ public class BoardContainer extends UnitContainer<Board, Shape>{
     }
 
     @Override
-    public StringBuffer Format() {
+    public StringBuffer format() {
         //***go through all circuits and invoke format on them
         StringBuffer xml = new StringBuffer();
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<boards identity=\"board\" designer=\"" +
@@ -43,7 +43,7 @@ public class BoardContainer extends UnitContainer<Board, Shape>{
     }
 
     @Override
-    public void Parse(String xml) throws XPathExpressionException,
+    public void parse(String xml) throws XPathExpressionException,
                                          ParserConfigurationException,
                                          SAXException, IOException {
 
@@ -88,13 +88,13 @@ public class BoardContainer extends UnitContainer<Board, Shape>{
             }  
             Board board =new Board(1,1);
             board.parse(node);
-            Add(board);
+            add(board);
             board.notifyListeners(ShapeEvent.ADD_SHAPE);
         }         
     }
 
     @Override
-    public void Parse(String xml, int index) throws ParserConfigurationException, SAXException, IOException,
+    public void parse(String xml, int index) throws ParserConfigurationException, SAXException, IOException,
                                                 XPathExpressionException {
         Document document = Utilities.buildDocument(xml);
 
