@@ -10,6 +10,7 @@ import com.mynetpcb.board.dialog.print.BoardPrintDialog;
 import com.mynetpcb.board.dialog.save.BoardImageExportDialog;
 import com.mynetpcb.board.dialog.save.BoardSaveDialog;
 import com.mynetpcb.board.dialog.save.GerberExportDialog;
+import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.core.capi.DialogFrame;
@@ -38,6 +39,7 @@ import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.pad.dialog.FootprintLoadDialog;
+import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -563,14 +565,14 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             }
             boardComponent.setMode(Mode.FOOTPRINT_MODE);
 
-//            Footprint footprint = (Footprint) symbolLoadDialog.getSelectedModel().getUnit();
-//            PCBFootprint pcbfootprint = BoardMgr.getInstance().createPCBFootprint(footprint,boardComponent.getModel().getUnit().getActiveSide());
-//            //            //***set chip cursor
-//            pcbfootprint.Move(-1 * (int) pcbfootprint.getBoundingShape().getBounds().getCenterX(),
-//                           -1 * (int) pcbfootprint.getBoundingShape().getBounds().getCenterY());
-//
-//            boardComponent.setContainerCursor(pcbfootprint);
-//            boardComponent.getEventMgr().setEventHandle("cursor", pcbfootprint);
+            Footprint footprint = (Footprint) symbolLoadDialog.getSelectedModel().getUnit();
+            PCBFootprint pcbfootprint = BoardMgr.getInstance().createPCBFootprint(footprint,boardComponent.getModel().getUnit().getActiveSide());
+            //            //***set chip cursor
+            pcbfootprint.move(-1 * (int) pcbfootprint.getBoundingShape().getCenter().x,
+                           -1 * (int) pcbfootprint.getBoundingShape().getCenter().y);
+pcbfootprint.setRotation(60, pcbfootprint.getBoundingShape().getCenter());
+            boardComponent.setContainerCursor(pcbfootprint);
+            boardComponent.getEventMgr().setEventHandle("cursor", pcbfootprint);
 
             symbolLoadDialog.dispose();
             symbolLoadDialog = null;
@@ -626,6 +628,9 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         if (e.getSource()==RectButton) {
             boardComponent.setMode(Mode.RECT_MODE);
         }
+        if (e.getSource()==SolidRegionButton) {
+            boardComponent.setMode(Mode.SOLID_REGION);
+        }        
         if (e.getSource()==LabelButton) {
             boardComponent.setMode(Mode.LABEL_MODE);
         }

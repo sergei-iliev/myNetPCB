@@ -10,8 +10,12 @@ import com.mynetpcb.board.line.BoardBendingProcessorFactory;
 import com.mynetpcb.board.popup.BoardPopupMenu;
 import com.mynetpcb.board.shape.PCBArc;
 import com.mynetpcb.board.shape.PCBCircle;
+import com.mynetpcb.board.shape.PCBCopperArea;
+import com.mynetpcb.board.shape.PCBHole;
 import com.mynetpcb.board.shape.PCBLabel;
 import com.mynetpcb.board.shape.PCBRoundRect;
+import com.mynetpcb.board.shape.PCBTrack;
+import com.mynetpcb.board.shape.PCBVia;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.core.capi.DialogFrame;
@@ -40,8 +44,10 @@ import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.pad.event.SolidRegionEventHandle;
 import com.mynetpcb.pad.shape.Arc;
 import com.mynetpcb.pad.shape.Line;
+import com.mynetpcb.pad.shape.SolidRegion;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -80,10 +86,9 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
         super.setMode(mode);
         Shape shape = null;
         Cursor cursor = null;
+        this.setCursor(Cursor.getDefaultCursor());
         this.requestFocusInWindow(); //***for the cancel button
-        switch (getMode()) {
-            case Mode.SOLID_REGION:
-            break;        
+        switch (getMode()) {       
         case Mode.ELLIPSE_MODE:
             shape =
                 new PCBCircle(0,0,Grid.MM_TO_COORD(3.4),(int)Grid.MM_TO_COORD(0.2),
@@ -115,17 +120,15 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                 setContainerCursor(shape);
                 getEventMgr().setEventHandle("cursor", shape);
                 break;
-        case Mode.VIA_MODE:
-//            this.setCursor(Cursor.getDefaultCursor());
-//            shape = new PCBVia();
-//            setContainerCursor(shape);
-//            getEventMgr().setEventHandle("cursor", shape);
+        case Mode.VIA_MODE:            
+            shape = new PCBVia();
+            setContainerCursor(shape);
+            getEventMgr().setEventHandle("cursor", shape);
             break;
         case Mode.HOLE_MODE:
-//            this.setCursor(Cursor.getDefaultCursor());
-//            shape = new PCBHole();
-//            setContainerCursor(shape);
-//            getEventMgr().setEventHandle("cursor", shape);
+            shape = new PCBHole();
+            setContainerCursor(shape);
+            getEventMgr().setEventHandle("cursor", shape);
             break;
         case Mode.ORIGIN_SHIFT_MODE:
             getEventMgr().setEventHandle("origin", null);
@@ -138,7 +141,6 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
 //            this.setCursor(cursor);
             break;
         default:
-            this.setCursor(Cursor.getDefaultCursor());
             this.Repaint();
         }
         //        if(shape!=null){
@@ -210,12 +212,12 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
                         return; //***right button click
                     }
-//                    shape =
-//                        new PCBTrack(Grid.MM_TO_COORD(0.4),
-//                                     getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.LAYER_BACK :
-//                                     Layer.LAYER_FRONT);
-//                    getModel().getUnit().add(shape);
-//                    getEventMgr().setEventHandle("track", shape);
+                    shape =
+                        new PCBTrack((int)Grid.MM_TO_COORD(0.4),
+                                     getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.LAYER_BACK :
+                                     Layer.LAYER_FRONT);
+                    getModel().getUnit().add(shape);
+                    getEventMgr().setEventHandle("track", shape);
                 }
 
                 break;
@@ -253,6 +255,18 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                 }
 
                 break;
+                case Mode.SOLID_REGION:
+                    //is this a new copper area
+                    if ((this.getEventMgr().getTargetEventHandle() == null) ||
+                        !(this.getEventMgr().getTargetEventHandle() instanceof SolidRegionEventHandle)) {
+                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
+                        return; //***right button click
+                    }
+                        shape =new SolidRegion(Layer.LAYER_FRONT);
+                        this.getModel().getUnit().add(shape);
+                        this.getEventMgr().setEventHandle("solidregion", shape);
+                    }                   
+                    break;              
             case Mode.COPPERAREA_MODE:
                 //is this a new copper area
                 if ((getEventMgr().getTargetEventHandle() == null) ||
@@ -260,11 +274,11 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
                         return; //***right button click
                     }
-//                    shape =
-//                        new PCBCopperArea(getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.LAYER_BACK :
-//                                          Layer.LAYER_FRONT);
-//                    getModel().getUnit().Add(shape);
-//                    getEventMgr().setEventHandle("copperarea", shape);
+                    shape =
+                        new PCBCopperArea(getModel().getUnit().getActiveSide() == Layer.Side.BOTTOM ? Layer.LAYER_BACK :
+                                          Layer.LAYER_FRONT);
+                    getModel().getUnit().add(shape);
+                    getEventMgr().setEventHandle("copperarea", shape);
                 }
                 break;
             case Mode.DRAGHEAND_MODE:

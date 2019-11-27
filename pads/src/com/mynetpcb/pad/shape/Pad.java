@@ -153,17 +153,18 @@ public class Pad extends PadShape{
     public void setHeight(double height){
                     this.height=height;
                     this.shape.setSize(width,height);   
-    }    
-    public void setRotation(double rotate){
-        double alpha=rotate-this.rotate;   
+    }   
+    @Override
+    public void setRotation(double rotate,Point center){
+          double alpha=rotate-this.rotate;   
         
-          this.shape.rotate(alpha,this.shape.getCenter());
+          this.shape.rotate(alpha,center);
           
-          this.number.setRotation(rotate,this.shape.getCenter());
-          this.netvalue.setRotation(rotate,this.shape.getCenter());
+          this.number.setRotation(rotate,center);
+          this.netvalue.setRotation(rotate,center);
           
           if(this.drill!=null){
-                this.drill.rotate(alpha,this.shape.getCenter());
+                this.drill.rotate(alpha,center);
           }               
         
         this.rotate=rotate;        

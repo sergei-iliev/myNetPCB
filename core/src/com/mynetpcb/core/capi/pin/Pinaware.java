@@ -1,4 +1,5 @@
-package com.mynetpcb.core.capi;
+package com.mynetpcb.core.capi.pin;
+
 
 import java.awt.Rectangle;
 

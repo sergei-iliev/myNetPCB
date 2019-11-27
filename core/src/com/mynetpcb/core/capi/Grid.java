@@ -191,7 +191,7 @@ public class Grid implements Cloneable{
 //        
 //     }
 //    }
-    public Point positionOnGrid(double x, double y)throws ArrayIndexOutOfBoundsException {        
+    public Point positionOnGrid(double x, double y) {        
         double  ftmp     = x / gridPointToPoint;
         int xx = ( (int) Math.round( ftmp ) ) * gridPointToPoint;
 
@@ -200,17 +200,17 @@ public class Grid implements Cloneable{
         return new Point(xx,yy);        
     }   
     
-    public int lengthOnGrid(double length)throws ArrayIndexOutOfBoundsException {        
+    public int lengthOnGrid(double length) {        
         double  ftmp     = length / gridPointToPoint;
         int xx = ( (int) Math.round( ftmp ) ) * gridPointToPoint;        
         return xx;        
     }
     
-    public Point positionOnGrid(Point p)throws ArrayIndexOutOfBoundsException {        
+    public Point positionOnGrid(Point p) {        
          return positionOnGrid(p.x,p.y);      
     } 
     
-    public void snapToGrid(Point p)throws ArrayIndexOutOfBoundsException {                
+    public void snapToGrid(Point p) {                
         p.set(lengthOnGrid(p.x), lengthOnGrid(p.y));
     } 
     

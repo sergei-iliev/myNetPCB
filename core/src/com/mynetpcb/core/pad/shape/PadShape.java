@@ -1,7 +1,7 @@
 package com.mynetpcb.core.pad.shape;
 
 import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Pinable;
+import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.CompositeTextable;

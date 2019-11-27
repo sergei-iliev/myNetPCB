@@ -578,7 +578,7 @@ public class GlyphTexture implements Texture {
 //            return id;
 //        }
         
-        public void Clear() {
+        public void clear() {
             this.glyphs.clear();
         }
 

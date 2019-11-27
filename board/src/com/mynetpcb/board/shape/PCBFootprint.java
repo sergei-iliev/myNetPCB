@@ -1,0 +1,421 @@
+package com.mynetpcb.board.shape;
+
+import com.mynetpcb.board.unit.Board;
+import com.mynetpcb.core.board.PCBShape;
+import com.mynetpcb.core.board.shape.FootprintShape;
+import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.Texture;
+import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
+import com.mynetpcb.core.capi.undo.AbstractMemento;
+import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.pad.shape.FootprintShapeFactory;
+
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+public class PCBFootprint extends FootprintShape implements PCBShape{
+    private List<Shape> shapes;
+    
+    private GlyphTexture reference,value; 
+    
+    private String footprintName;    
+    
+    private Grid.Units units;
+    
+    //mm/inch value
+    private double val;
+    
+    private int clearance;
+    
+    public PCBFootprint(int layermask) {
+        super(layermask);
+        this.shapes=new ArrayList<Shape>();
+        reference=new GlyphTexture("", "reference", 0, 0, (int)Grid.MM_TO_COORD(1.2));
+        value=new GlyphTexture("", "value", 8, 8, (int)Grid.MM_TO_COORD(1.2));
+        
+        units=Grid.Units.MM;
+        val=2.54;
+    }
+    @Override
+    public PCBFootprint clone() throws CloneNotSupportedException {
+        PCBFootprint copy=(PCBFootprint)super.clone();
+        copy.reference =reference.clone();
+        copy.value=value.clone();
+        copy.shapes=new ArrayList<Shape>();
+        copy.units=this.units;
+        for(Shape shape:this.shapes){ 
+          copy.shapes.add(shape.clone());  
+        }
+        return copy;    
+    }
+    @Override
+    public void clear() {    
+          this.shapes.forEach(shape->{
+                      shape.setOwningUnit(null);
+                      shape.clear();
+                      shape=null;
+         });
+         this.shapes.clear();    
+         this.value.clear();
+         this.reference.clear();
+    }
+    public void add(Shape shape){
+      if (shape == null)
+            return;   
+      shapes.add(shape);  
+    }    
+    public Grid.Units getGridUnits(){
+      return units;
+    }
+    public void setGridUnits(Grid.Units units){
+      this.units=units;
+    }     
+    /*
+    public void setSide(Layer.Side side){
+        //mirror footprint
+        Box r=getBoundingShape();
+        Point p=new Point((int)r.getCenterX(),(int)r.getCenterY()); 
+        Mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10));
+        
+        for(Shape shape:shapes){
+            shape.setCopper(Layer.Side.change(shape.getCopper()));
+        }
+        Layer.Copper copper=Layer.Side.change(this.getCopper());
+        //convert text layer
+        for(Texture texture:text.getChildren()){          
+          texture.setLayermaskId(Layer.Side.change(Layer.Copper.resolve(texture.getLayermaskId())).getLayerMaskID());                   
+        }        
+        this.setCopper(copper);
+    }
+    */
+    public Layer.Side getSide(){
+        return Layer.Side.resolve(getCopper().getLayerMaskID());       
+    }
+    @Override
+    public Box getBoundingShape() {
+
+            Box r = new Box();
+            double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+
+            //***empty schematic,element,package
+            if (shapes.size() == 0) {
+                return r;
+            }
+
+            for (Shape shape : shapes) {
+                Box tmp = shape.getBoundingShape();
+                if (tmp != null) {
+                    x1 = Math.min(x1, tmp.min.x);
+                    y1 = Math.min(y1, tmp.min.y);
+                    x2 = Math.max(x2, tmp.max.x);
+                    y2 = Math.max(y2, tmp.max.y);
+                }
+            }
+            r.setRect(x1, y1, x2 - x1, y2 - y1);
+            return r; 
+        
+    }
+    @Override
+    public Point getCenter() {        
+        return this.getBoundingShape().getCenter();
+    }
+    @Override
+    public void move(double xoffset, double yoffset) {
+        for(Shape shape:shapes){
+            shape.move(xoffset,yoffset);
+        }        
+        //***move module text
+         value.move(xoffset,yoffset);
+         reference.move(xoffset,yoffset);
+    }
+    
+    @Override
+    public void setRotation(double rotate,Point center){   
+        
+        for(Shape shape:this.shapes){                    
+            shape.setRotation(rotate,center);  
+        }       
+        this.value.setRotation(rotate,center);
+        this.reference.setRotation(rotate,center);
+        this.rotate=rotate;
+    }
+    
+    @Override
+    public void rotate(double angle, Point center) {            
+    //fix angle
+       double alpha=this.rotate+angle;
+       if(alpha>=360){
+             alpha-=360;
+       }
+       if(alpha<0){
+             alpha+=360; 
+       }
+
+        for(Shape shape:this.shapes){                    
+           shape.rotate(angle,center);  
+        }
+        this.value.rotate(angle,center);
+        this.reference.rotate(angle,center);
+        
+        this.rotate=alpha;
+    }
+    public void setDisplayName(String footprintName){
+        this.footprintName=footprintName; 
+    }
+    
+    @Override
+    public String getDisplayName() {
+        return footprintName;
+    }
+    public double getGridValue(){
+       return val; 
+    }    
+    public void setGridValue(double val){
+       this.val=val; 
+    }    
+    @Override
+    public <T extends ClearanceSource> void drawClearence(Graphics2D graphics2D, ViewportWindow viewportWindow,
+                                                          AffineTransform affineTransform, T clearanceSource) {
+        // TODO Implement this method
+
+    }
+
+    @Override
+    public <T extends ClearanceSource> void printClearence(Graphics2D graphics2D, PrintContext printContext,
+                                                           T clearanceSource) {
+        // TODO Implement this method
+
+    }
+
+    @Override
+    public void setClearance(int clearance) {
+        this.clearance=clearance;
+    }
+
+    @Override
+    public int getClearance() {
+    
+        return clearance;
+    }
+
+    @Override
+    public Collection<Point> getPinPoints() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public String toXML() {
+        // TODO Implement this method
+        return null;
+    }
+
+    @Override
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+        Element  element= (Element)node;
+        this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
+        
+        
+        Node n=element.getElementsByTagName("units").item(0);
+        this.setGridUnits(Grid.Units.MM);
+        if(n!=null){
+           this.val=Double.parseDouble(((Element)n).getAttribute("raster"));
+        }else{
+           this.val=0.8; 
+        }
+        n=element.getElementsByTagName("name").item(0);
+        
+        if(n!=null){
+          this.footprintName=n.getTextContent();  
+        }       
+        
+        n=element.getElementsByTagName("reference").item(0);           
+        reference.fromXML(n);
+       
+
+        n=element.getElementsByTagName("value").item(0);
+        value.fromXML(n);  
+  
+        
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xpath = factory.newXPath();
+        try{
+        NodeList nodelist = (NodeList) xpath.evaluate("./shapes/*", node, XPathConstants.NODESET);
+        AbstractShapeFactory shapeFactory=new FootprintShapeFactory();
+        for(int i=0;i<nodelist.getLength();i++){
+              n=nodelist.item(i);
+              Shape shape = shapeFactory.createShape(n);
+              this.add(shape);
+        }       
+        }catch(XPathExpressionException e){
+            e.printStackTrace(System.out);
+        }   
+
+    }
+
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {
+        Box rect = this.getBoundingShape();             
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+         return;
+        }
+                
+        for(Shape shape:this.shapes){   
+          shape.paint(g2,viewportWindow,scale,layersmask);  
+        }
+        
+        value.paint(g2, viewportWindow, scale, layersmask);
+        reference.paint(g2, viewportWindow, scale, layersmask);
+    }
+    
+    @Override
+    public AbstractMemento getState(MementoType operationType) {
+        AbstractMemento memento = new Memento(operationType);
+        memento.saveStateFrom(this);
+        return memento;
+    }
+    @Override
+    public Texture getTextureByTag(String tag) {
+        if(tag.equals("value")){
+          return value;  
+        }else{
+          return reference;
+        }
+    }
+    @Override
+    public Texture getClickedTexture(int x, int y) {
+        // TODO Implement this method
+        return null;
+    }
+
+    @Override
+    public boolean isClickedTexture(int x, int y) {
+        // TODO Implement this method
+        return false;
+    }
+
+    static class Memento extends AbstractMemento<Board,PCBFootprint>{
+        
+        private final List<AbstractMemento> mementoList;
+        
+        private GlyphTexture.Memento value,reference;
+        
+        private double val;
+        
+        
+        
+        public Memento(MementoType operationType){
+           super(operationType);
+           mementoList=new LinkedList<AbstractMemento>();
+           value=new GlyphTexture.Memento();
+           reference=new GlyphTexture.Memento();           
+        }
+        
+        public void loadStateTo(PCBFootprint symbol) {
+          super.loadStateTo(symbol);
+          value.loadStateTo(symbol.value); 
+          reference.loadStateTo(symbol.reference);
+          
+          symbol.val=this.val;
+          /*
+           * Symbol is recreated with empty shapes in it
+           */
+          if(symbol.shapes.size()==0){
+            //***fill elements
+            AbstractShapeFactory shapeFactory=new FootprintShapeFactory();
+            for(AbstractMemento elementMemento:mementoList){
+               Shape shape=shapeFactory.createShape(elementMemento); 
+               symbol.add(shape);               
+            } 
+          }
+          for(int i=0;i<mementoList.size();i++){
+              AbstractMemento memento=mementoList.get(i);
+              symbol.shapes.get(i).setState(memento);
+          }
+        }
+        
+        public void saveStateFrom(PCBFootprint symbol) {
+            super.saveStateFrom(symbol);
+            this.value.saveStateFrom(symbol.value);
+            this.reference.saveStateFrom(symbol.reference);
+            
+            for(Shape ashape:symbol.shapes){
+                mementoList.add(ashape.getState(mementoType));     
+            }            
+                        
+            this.val=symbol.val;
+        }
+        @Override
+        public void clear() {
+            super.clear();
+            for(AbstractMemento memento:mementoList){
+              memento.clear();  
+            }
+            mementoList.clear();
+            value.clear();
+            reference.clear();
+        }
+
+        @Override
+        public boolean equals(Object obj){
+            if(this==obj){
+              return true;  
+            }
+            if(!(obj instanceof Memento)){
+              return false;  
+            }
+            
+            Memento other=(Memento)obj;
+            
+    
+            return  super.equals(obj)&&Double.compare(val, other.val)==0&&                
+                   mementoList.equals(other.mementoList)&&
+                   reference.equals(other.reference)&&
+                   value.equals(other.value);         
+        }
+
+        
+        @Override
+        public int hashCode(){
+            int hash=super.hashCode(); 
+            hash+=this.mementoList.hashCode();
+            hash+=Double.hashCode(this.val);
+            hash+=this.value.hashCode()+this.reference.hashCode();
+            return hash;  
+        }        
+        
+        @Override
+        public boolean isSameState(Unit unit) {
+            PCBFootprint shape=(PCBFootprint)unit.getShape(getUUID());            
+            if(shape==null){
+                throw new IllegalStateException("shape uuid="+getUUID()+" does not exist");
+            }
+            return (shape.getState(getMementoType()).equals(this));  
+        }
+    }
+}

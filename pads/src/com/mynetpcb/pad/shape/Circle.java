@@ -59,6 +59,14 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
     public double getRadius(){
        return circle.r;    
     }
+    
+    @Override
+    public void setRotation(double rotate, Point center) {
+        double alpha=rotate-this.rotate;
+        this.circle.rotate(alpha,center);                       
+        this.rotate=rotate;     
+    }
+    
     @Override
     public void rotate(double angle, Point origin) {        
         //fix angle

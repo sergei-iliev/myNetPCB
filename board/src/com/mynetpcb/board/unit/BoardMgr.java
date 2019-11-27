@@ -1,6 +1,11 @@
 package com.mynetpcb.board.unit;
 
+import com.mynetpcb.board.shape.PCBFootprint;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.UnitMgr;
+import com.mynetpcb.pad.shape.GlyphLabel;
+import com.mynetpcb.pad.unit.Footprint;
 
 public final class BoardMgr extends UnitMgr {
     private static BoardMgr circuitMgr;
@@ -16,40 +21,40 @@ public final class BoardMgr extends UnitMgr {
         }
         return circuitMgr;
     }
-//    public PCBFootprint createPCBFootprint(Footprint footprint,Layer.Side activeSide) {
-//        PCBFootprint pcbfootprint = new PCBFootprint(Layer.LAYER_FRONT);
-//        this.createPCBFootprint(footprint,pcbfootprint);
-//        //default side is TOP 
-//        if(pcbfootprint.getSide()!=activeSide){
-//           pcbfootprint.setSide(activeSide);
-//        }
-//        return pcbfootprint;
-//    }
-//    private void createPCBFootprint(Footprint footprint,PCBFootprint pcbfootprint) {
-//        for (Shape shape : footprint.getShapes()) {
-//            if (shape instanceof GlyphLabel) {
-//                if (((GlyphLabel)shape).getTexture().getTag().equals("value")) {
-//                    pcbfootprint.getChipText().getTextureByTag("value").copy(((GlyphLabel)shape).getTexture());
-//                    pcbfootprint.getChipText().getTextureByTag("value").setLayermaskId(shape.getCopper().getLayerMaskID());
-//                    continue;
-//                }
-//                if (((GlyphLabel)shape).getTexture().getTag().equals("reference")) {
-//                    pcbfootprint.getChipText().getTextureByTag("reference").copy(((GlyphLabel)shape).getTexture());
-//                    pcbfootprint.getChipText().getTextureByTag("reference").setLayermaskId(shape.getCopper().getLayerMaskID());
-//                    continue;
-//                }
-//            }
-//            try {
-//                pcbfootprint.Add(shape.clone());
-//            } catch (CloneNotSupportedException e) {
-//                e.printStackTrace(System.out);
-//            }
-//        }
-//        pcbfootprint.setDisplayName(footprint.getUnitName());
-//        pcbfootprint.setGridUnits(footprint.getGrid().getGridUnits());
-//        pcbfootprint.setGridValue(footprint.getGrid().getGridValue());
-//    } 
-//    
+    public PCBFootprint createPCBFootprint(Footprint footprint,Layer.Side activeSide) {
+        PCBFootprint pcbfootprint = new PCBFootprint(Layer.LAYER_FRONT);
+        this.createPCBFootprint(footprint,pcbfootprint);
+        //default side is TOP 
+        //if(pcbfootprint.getSide()!=activeSide){
+        //   pcbfootprint.setSide(activeSide);
+        //}
+        return pcbfootprint;
+    }
+    private void createPCBFootprint(Footprint footprint,PCBFootprint pcbfootprint) {
+        for (Shape shape : footprint.getShapes()) {
+            if (shape instanceof GlyphLabel) {
+                if (((GlyphLabel)shape).getTexture().getTag().equals("value")) {
+                    pcbfootprint.getTextureByTag("value").copy(((GlyphLabel)shape).getTexture());
+                    //pcbfootprint.getTextureByTag("value").setLayermaskId(shape.getCopper().getLayerMaskID());
+                    continue;
+                }
+                if (((GlyphLabel)shape).getTexture().getTag().equals("reference")) {
+                    pcbfootprint.getTextureByTag("reference").copy(((GlyphLabel)shape).getTexture());
+                    //pcbfootprint.getTextureByTag("reference").setLayermaskId(shape.getCopper().getLayerMaskID());
+                    continue;
+                }
+            }
+            try {
+                pcbfootprint.add(shape.clone());
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace(System.out);
+            }
+        }
+        pcbfootprint.setDisplayName(footprint.getUnitName());
+        pcbfootprint.setGridUnits(footprint.getGrid().getGridUnits());
+        pcbfootprint.setGridValue(footprint.getGrid().getGridValue());
+    } 
+    
 //    public Footprint createFootprint(PCBFootprint pcbfootprint) {
 //        Footprint footprint = new Footprint(Grid.MM_TO_COORD(100),Grid.MM_TO_COORD(100));
 //        //1.shapes

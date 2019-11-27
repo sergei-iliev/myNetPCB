@@ -1,17 +1,19 @@
-package com.mynetpcb.pad.shape;
+package com.mynetpcb.board.shape;
 
-import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.board.unit.Board;
+import com.mynetpcb.core.board.PCBShape;
+import com.mynetpcb.core.board.shape.TrackShape;
 import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
-import com.mynetpcb.pad.unit.Footprint;
+import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -19,24 +21,30 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.Collections;
+import java.util.Set;
 
-import org.w3c.dom.Element;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.w3c.dom.Node;
 
-public class Line extends AbstractLine implements Externalizable{
-    public Line(int thickness,int layermaskId) {
-        super(thickness, layermaskId);
+public class PCBTrack extends TrackShape implements PCBShape{
+    
+    private int clearance;
+    
+    public PCBTrack(int thickness,int layermaskId){
+        super(thickness,layermaskId);
     }
-
-    public Line clone() throws CloneNotSupportedException {
-        Line copy = (Line) super.clone();
-        copy.floatingStartPoint = new Point();
-        copy.floatingMidPoint = new Point();
-        copy.floatingEndPoint = new Point();
-        copy.resizingPoint=null;
-        copy.polyline=this.polyline.clone();
-        return copy;
+    
+    public PCBTrack clone()throws CloneNotSupportedException{
+            PCBTrack copy = (PCBTrack) super.clone();
+            copy.floatingStartPoint = new Point();
+            copy.floatingMidPoint = new Point();
+            copy.floatingEndPoint = new Point();
+            copy.resizingPoint=null;
+            copy.polyline=this.polyline.clone();
+            return copy;        
     }
 
 
@@ -67,29 +75,61 @@ public class Line extends AbstractLine implements Externalizable{
         double wireWidth = thickness * scale.getScaleX();
         g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
 
-        //transparent rect
         r.paint(g2, false);
-      
+        
         if (this.isSelected()) {
-            //polyline.points.forEach(p->Utilities.drawCrosshair(g2, viewportWindow, scale,  resizingPoint,selectionRectWidth,(Point)p));
             r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),(Point)p)); 
         }
-        
+
     }
 
     @Override
-    public void print(Graphics2D g2,PrintContext printContext,int layermask) {
-        if((this.getCopper().getLayerMaskID()&layermask)==0){
-            return;
-        }
+    public <T extends ClearanceSource> void drawClearence(Graphics2D graphics2D, ViewportWindow viewportWindow,
+                                                          AffineTransform affineTransform, T clearanceSource) {
+        // TODO Implement this method
 
-        g2.setStroke(new BasicStroke(thickness,1,1));    
-        g2.setPaint(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());        
-        
-        this.polyline.paint(g2, false);      
-        
-    
     }
+
+    @Override
+    public <T extends ClearanceSource> void printClearence(Graphics2D graphics2D, PrintContext printContext,
+                                                           T clearanceSource) {
+        // TODO Implement this method
+
+    }
+
+    @Override
+    public void setClearance(int clearance) {
+        this.clearance=clearance;
+    }
+
+    @Override
+    public int getClearance() {    
+        return clearance;
+    }
+
+    @Override
+    public boolean isSublineSelected() {
+        // TODO Implement this method
+        return false;
+    }
+
+    @Override
+    public boolean isSublineInRect(Rectangle rectangle) {
+        // TODO Implement this method
+        return false;
+    }
+
+    @Override
+    public void setSublineSelected(Rectangle rectangle, boolean b) {
+        // TODO Implement this method
+
+    }
+
+    @Override
+    public Set<LinePoint> getSublinePoints() {
+        return Collections.emptySet();
+    }
+
     @Override
     public String toXML() {
         // TODO Implement this method
@@ -97,17 +137,8 @@ public class Line extends AbstractLine implements Externalizable{
     }
 
     @Override
-    public void fromXML(Node node) {
-        Element element = (Element) node;        
-        this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));
-        
-        StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
-
-        while (st.hasMoreTokens()) {
-           this.add(new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
-        }
-        
-        this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+        // TODO Implement this method
 
     }
     
@@ -117,21 +148,22 @@ public class Line extends AbstractLine implements Externalizable{
         memento.saveStateFrom(this);
         return memento;
     }
-    
-    public static class Memento extends AbstractMemento<Footprint, Line> {
+
+    static class Memento extends AbstractMemento<Board, PCBTrack> {
 
         private double Ax[];
 
         private double Ay[];
-        private double rotate;
+
+        private int clearance;
         
         public Memento(MementoType mementoType) {
             super(mementoType);
 
         }
-
+        
         @Override
-        public void loadStateTo(Line shape) {
+        public void loadStateTo(PCBTrack shape) {
             super.loadStateTo(shape);
             shape.polyline.points.clear();
             for (int i = 0; i < Ax.length; i++) {
@@ -139,21 +171,22 @@ public class Line extends AbstractLine implements Externalizable{
             }
             //***reset floating start point
             if (shape.polyline.points.size() > 0) {
-                shape.floatingStartPoint.set((Point)shape.polyline.points.get(shape.polyline.points.size() - 1));
+                shape.floatingStartPoint.set(shape.polyline.points.get(shape.polyline.points.size() - 1));
                 shape.reset();
             }
+            shape.clearance=clearance;
         }
-
+        
         @Override
-        public void saveStateFrom(Line shape) {
+        public void saveStateFrom(PCBTrack shape) {
             super.saveStateFrom(shape);
             Ax = new double[shape.polyline.points.size()];
             Ay = new double[shape.polyline.points.size()];
             for (int i = 0; i < shape.polyline.points.size(); i++) {
-                Ax[i] = ((Point)shape.polyline.points.get(i)).x;
-                Ay[i] = ((Point)shape.polyline.points.get(i)).y;
+                Ax[i] = (shape.polyline.points.get(i)).x;
+                Ay[i] = (shape.polyline.points.get(i)).y;
             }
-            this.rotate=shape.rotate;
+            this.clearance=shape.clearance;
         }
 
         @Override
@@ -171,22 +204,23 @@ public class Line extends AbstractLine implements Externalizable{
             if (!(obj instanceof Memento)) {
                 return false;
             }
-            Memento other = (Memento) obj;
-            return (super.equals(obj)&&
+            Memento other = (Memento)obj;
+            
+            return (super.equals(obj)&&this.clearance==other.clearance&&
                     Arrays.equals(Ax, other.Ax) && Arrays.equals(Ay, other.Ay));
 
         }
 
         @Override
         public int hashCode() {
-            int  hash = super.hashCode();
+            int  hash = super.hashCode()+this.clearance;
             hash += Arrays.hashCode(Ax);
             hash += Arrays.hashCode(Ay);
             return hash;
         }
 
-        public boolean isSameState(Footprint unit) {
-            Line line = (Line) unit.getShape(getUUID());
+        public boolean isSameState(Board unit) {
+            PCBTrack line = (PCBTrack) unit.getShape(getUUID());
             return (line.getState(getMementoType()).equals(this));
         }
     }    

@@ -294,11 +294,8 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
         return memento;
     }
     public static class Memento extends AbstractMemento<Footprint, SolidRegion> {
-
         private double Ax[];
-
         private double Ay[];
-        private double rotate;
         
         public Memento(MementoType mementoType) {
             super(mementoType);
@@ -325,10 +322,9 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
             Ax = new double[shape.polygon.points.size()];
             Ay = new double[shape.polygon.points.size()];
             for (int i = 0; i < shape.polygon.points.size(); i++) {
-                Ax[i] = ((Point)shape.polygon.points.get(i)).x;
-                Ay[i] = ((Point)shape.polygon.points.get(i)).y;
+                Ax[i] = (shape.polygon.points.get(i)).x;
+                Ay[i] = (shape.polygon.points.get(i)).y;
             }
-            this.rotate=shape.rotate;
         }
 
         @Override

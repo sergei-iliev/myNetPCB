@@ -6,7 +6,7 @@ import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.Frameable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.PinLineable;
+import com.mynetpcb.core.capi.pin.PinLineable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.Ruler;
 import com.mynetpcb.core.capi.ScalableTransformation;

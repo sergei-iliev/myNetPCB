@@ -178,6 +178,15 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
     public void setResizingPoint(Point point) {
         this.resizingPoint=point;
     }
+    
+        
+    @Override
+    public void setRotation(double rotate, Point center) {
+        double alpha=rotate-this.rotate;
+        this.arc.rotate(alpha,center);          
+        
+        this.rotate=rotate;        
+    }
     @Override
     public void rotate(double angle, Point origin) {   
             //fix angle

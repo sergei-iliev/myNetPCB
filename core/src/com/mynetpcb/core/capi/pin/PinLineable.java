@@ -1,4 +1,4 @@
-package com.mynetpcb.core.capi;
+package com.mynetpcb.core.capi.pin;
 
 
 import com.mynetpcb.core.capi.text.Texture;

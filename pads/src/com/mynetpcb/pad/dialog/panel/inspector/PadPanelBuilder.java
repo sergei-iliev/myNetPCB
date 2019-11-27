@@ -231,7 +231,7 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
         Pad pad=(Pad)getTarget();
         if(e.getSource()==this.rotateField){
-           pad.setRotation(Double.parseDouble(this.rotateField.getText())); 
+           pad.setRotation(Double.parseDouble(this.rotateField.getText()),pad.getCenter()); 
            
         }
         if(e.getSource()==this.widthField){
