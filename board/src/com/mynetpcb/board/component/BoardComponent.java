@@ -11,6 +11,7 @@ import com.mynetpcb.board.popup.BoardPopupMenu;
 import com.mynetpcb.board.shape.PCBArc;
 import com.mynetpcb.board.shape.PCBCircle;
 import com.mynetpcb.board.shape.PCBCopperArea;
+import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.board.shape.PCBHole;
 import com.mynetpcb.board.shape.PCBLabel;
 import com.mynetpcb.board.shape.PCBRoundRect;
@@ -40,6 +41,7 @@ import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
@@ -191,12 +193,12 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                            null) {
                     if ((BoardMgr.getInstance().isBlockSelected(getModel().getUnit()) && shape.isSelected())|| (event.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
                         getEventMgr().setEventHandle("block", shape);
-//                    } else if (!(shape instanceof PCBLabel) && (shape instanceof Textable) &&
-//                               (((Textable) shape).getChipText().getClickedTexture(scaledEvent.getX(),
-//                                                                                   scaledEvent.getY()) != null)) {
-//                        getEventMgr().setEventHandle("texture", shape);
-//                    } else if (shape instanceof PCBFootprint) {
-//                        getEventMgr().setEventHandle("symbol", shape);
+                    } else if (!(shape instanceof PCBLabel) && (shape instanceof Textable) &&
+                               (((Textable) shape).getClickedTexture(scaledEvent.getX(),
+                                                                                   scaledEvent.getY()) != null)) {
+                        getEventMgr().setEventHandle("texture", shape);
+                    } else if (shape instanceof PCBFootprint) {
+                        getEventMgr().setEventHandle("symbol", shape);
                     } else
                         getEventMgr().setEventHandle("move", shape);
                 } else {

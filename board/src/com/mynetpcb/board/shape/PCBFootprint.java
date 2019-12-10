@@ -16,6 +16,7 @@ import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.shape.FootprintShapeFactory;
 
@@ -95,26 +96,34 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     public void setGridUnits(Grid.Units units){
       this.units=units;
     }     
-    /*
+
     public void setSide(Layer.Side side){
         //mirror footprint
         Box r=getBoundingShape();
-        Point p=new Point((int)r.getCenterX(),(int)r.getCenterY()); 
-        Mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10));
+        Point p=r.getCenter();
+        Line line= new Line(p.x,p.y-10,p.x,p.y+10);
         
         for(Shape shape:shapes){
-            shape.setCopper(Layer.Side.change(shape.getCopper()));
-        }
-        Layer.Copper copper=Layer.Side.change(this.getCopper());
-        //convert text layer
-        for(Texture texture:text.getChildren()){          
-          texture.setLayermaskId(Layer.Side.change(Layer.Copper.resolve(texture.getLayermaskId())).getLayerMaskID());                   
-        }        
-        this.setCopper(copper);
+            shape.setSide(side,line);
+        }  
+        this.reference.setSide(side,line);       
+        this.value.setSide(side,line);       
+        
+        this.setCopper(Layer.Side.change(this.getCopper()));
+        this.rotate=360-this.rotate;
     }
-    */
+    
     public Layer.Side getSide(){
         return Layer.Side.resolve(getCopper().getLayerMaskID());       
+    }
+    @Override
+    public void setSelected (boolean selection) {
+            super.setSelected(selection);
+            this.shapes.forEach(shape->{   
+                      shape.setSelected(selection);                             
+            });  
+            this.value.setSelected(selection);
+            this.reference.setSelected(selection);
     }
     @Override
     public Box getBoundingShape() {
@@ -145,6 +154,11 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         return this.getBoundingShape().getCenter();
     }
     @Override
+    public void mirror(Line line) {
+     
+    }
+    
+    @Override
     public void move(double xoffset, double yoffset) {
         for(Shape shape:shapes){
             shape.move(xoffset,yoffset);
@@ -156,12 +170,19 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     
     @Override
     public void setRotation(double rotate,Point center){   
-        
-        for(Shape shape:this.shapes){                    
-            shape.setRotation(rotate,center);  
-        }       
-        this.value.setRotation(rotate,center);
-        this.reference.setRotation(rotate,center);
+        if(this.getSide()==Layer.Side.BOTTOM){
+            for(Shape shape:this.shapes){                    
+                shape.setRotation(360-rotate,center);  
+            }       
+            this.value.setRotation(360-rotate,center);
+            this.reference.setRotation(360-rotate,center);
+        }else{
+            for(Shape shape:this.shapes){                    
+              shape.setRotation(rotate,center);  
+            }       
+            this.value.setRotation(rotate,center);
+            this.reference.setRotation(rotate,center);
+        }
         this.rotate=rotate;
     }
     
@@ -303,20 +324,24 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     public Texture getTextureByTag(String tag) {
         if(tag.equals("value")){
           return value;  
-        }else{
+        }else if(tag.equals("reference")){
           return reference;
-        }
+        }else
+          return null;
     }
     @Override
     public Texture getClickedTexture(int x, int y) {
-        // TODO Implement this method
+        if(this.reference.isClicked(x, y))
+            return this.reference;
+        else if(this.value.isClicked(x, y))
+            return this.value;
+        else
         return null;
     }
 
     @Override
     public boolean isClickedTexture(int x, int y) {
-        // TODO Implement this method
-        return false;
+        return this.getClickedTexture(x, y)!=null;
     }
 
     static class Memento extends AbstractMemento<Board,PCBFootprint>{

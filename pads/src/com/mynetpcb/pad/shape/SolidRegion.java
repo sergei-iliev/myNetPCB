@@ -9,6 +9,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
@@ -112,6 +113,11 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
         this.polygon.move(xoffset,yoffset);        
     }
     @Override
+    public void setSide(Layer.Side side, com.mynetpcb.d2.shapes.Line line) {
+        this.setCopper(Layer.Side.change(this.getCopper()));
+        this.mirror(line);
+    }    
+    @Override
     public void mirror(Line line) {
             this.polygon.mirror(line);
     }
@@ -186,8 +192,13 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
     }
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb = new StringBuffer();
+        sb.append("<solidregion copper=\"" + getCopper().getName() + "\" thickness=\"" + this.getThickness() + "\">");
+        for (Point point : this.polygon.points) {
+            sb.append(Utilities.roundDouble(point.x) + "," + Utilities.roundDouble(point.y) + ",");
+        }
+        sb.append("</line>\r\n");
+        return sb.toString();
     }
 
     @Override
@@ -355,8 +366,8 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
             hash += Arrays.hashCode(Ay);
             return hash;
         }
-
-        public boolean isSameState(Footprint unit) {
+        @Override
+        public boolean isSameState(Unit unit) {
             SolidRegion polygon = (SolidRegion) unit.getShape(getUUID());
             return (polygon.getState(getMementoType()).equals(this));
         }

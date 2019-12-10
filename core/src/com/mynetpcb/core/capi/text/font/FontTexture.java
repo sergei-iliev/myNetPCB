@@ -123,8 +123,9 @@ public class FontTexture implements Texture{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        return (this.shape.text=="" ? "" :
+            this.shape.text + "," + this.shape.anchorPoint.x + "," + this.shape.anchorPoint.y +
+            ",,,"+this.shape.fontSize+"," +this.shape.rotate);
     }
 
     @Override

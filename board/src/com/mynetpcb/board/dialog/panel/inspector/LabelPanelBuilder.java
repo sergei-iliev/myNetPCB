@@ -1,6 +1,7 @@
 package com.mynetpcb.board.dialog.panel.inspector;
 
 import com.mynetpcb.board.component.BoardComponent;
+import com.mynetpcb.board.shape.PCBLabel;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -25,6 +26,11 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
 
     public LabelPanelBuilder(BoardComponent component) {
          super(component,new GridLayout(10,1));
+        //layer
+                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+                label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                layerCombo=new JComboBox(new Layer.Copper[]{Layer.Copper.FCu,Layer.Copper.BCu,Layer.Copper.FSilkS,Layer.Copper.BSilkS});layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
+                layoutPanel.add(panel);
         //***X        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -36,16 +42,17 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
                 label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 topField=new JTextField("0"); topField.addKeyListener(this); panel.add(topField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
-        //layer
-                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                layerCombo=new JComboBox(new Layer.Copper[]{Layer.Copper.FCu,Layer.Copper.BCu,Layer.Copper.FSilkS,Layer.Copper.BSilkS});layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
-                layoutPanel.add(panel);
+
                 
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("Text"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 textField=new JTextField("???"); textField.addKeyListener(this); panel.add(textField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
+        
+                panel=new JPanel(); panel.setLayout(new BorderLayout());
+                label=new JLabel("Rotate"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,24)); panel.add(label,BorderLayout.WEST);
+                rotateField=new JTextField(); rotateField.addKeyListener(this); panel.add(rotateField,BorderLayout.CENTER);
+                layoutPanel.add(panel);  
         
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("Size"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -63,37 +70,32 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
                 clearanceField=new JTextField(); clearanceField.addKeyListener(this); panel.add(clearanceField,BorderLayout.CENTER);
                 layoutPanel.add(panel);  
                 
-                panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("Orientation"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                textOrientationCombo=new JComboBox();textOrientationCombo.addActionListener(this);  panel.add(textOrientationCombo,BorderLayout.CENTER);
-                layoutPanel.add(panel);
+//                panel=new JPanel(); panel.setLayout(new BorderLayout());
+//                label=new JLabel("Orientation"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+//                textOrientationCombo=new JComboBox();textOrientationCombo.addActionListener(this);  panel.add(textOrientationCombo,BorderLayout.CENTER);
+//                layoutPanel.add(panel);
+//                
+//                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+//                label=new JLabel("Text Alignment"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+//                textAlignmentCombo=new JComboBox();textAlignmentCombo.addActionListener(this);  panel.add(textAlignmentCombo,BorderLayout.CENTER);
+//                layoutPanel.add(panel);
                 
-                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Text Alignment"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                textAlignmentCombo=new JComboBox();textAlignmentCombo.addActionListener(this);  panel.add(textAlignmentCombo,BorderLayout.CENTER);
-                layoutPanel.add(panel);
-                
-        //****Owner        
-                panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("Owner"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                parentCombo=new JComboBox();parentCombo.addActionListener(this);  panel.add(parentCombo,BorderLayout.CENTER);
-                layoutPanel.add(panel);
 
     }
 
     @Override
     public void updateUI() {                   
-//        PCBLabel label=(PCBLabel)getTarget();        
-//        setSelectedIndex(textOrientationCombo,(label.getTexture().getAlignment().getOrientation().ordinal()));    
-//        textField.setText(label.getTexture().getText());
-//        leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x ));
-//        topField.setText(toUnitY(label.getTexture().getAnchorPoint().y));
+        PCBLabel label=(PCBLabel)getTarget();        
+        textField.setText(label.getTexture().getText());
+        leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x ));
+        topField.setText(toUnitY(label.getTexture().getAnchorPoint().y));
+        rotateField.setText(String.valueOf(label.getRotation()));
 //        heightField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getSize())));
 //        thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getThickness())));
 //        clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(label.getClearance())));
-//        validateAlignmentComboText(textAlignmentCombo,label.getTexture());            
-//        setSelectedItem(layerCombo, label.getCopper());
-//        this.fillParentCombo(PCBShape.class);
+
+        setSelectedItem(layerCombo, label.getCopper());
+
     }
 
     @Override
@@ -124,7 +126,11 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void keyReleased(KeyEvent e){
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
-//        PCBLabel label=(PCBLabel)getTarget();     
+        PCBLabel label=(PCBLabel)getTarget();     
+        
+        if(e.getSource()==this.rotateField){
+           label.setRotation(Double.parseDouble(this.rotateField.getText()),label.getCenter()); 
+        }
 //        
 //        if(e.getSource()==textField&&textField.getText().length()>0){
 //            label.getTexture().setText(textField.getText());

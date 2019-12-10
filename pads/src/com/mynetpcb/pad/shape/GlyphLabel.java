@@ -177,7 +177,7 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         @Override
         public void clear(){
           super.clear();
-          memento.Clear();
+          memento.clear();
         }
         @Override
         public boolean equals(Object obj){

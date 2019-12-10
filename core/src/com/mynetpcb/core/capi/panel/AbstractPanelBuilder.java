@@ -31,7 +31,7 @@ import javax.swing.JTextField;
  * Use the builder pattern to construct,show dynamically target properties in XXXInspector
  */
 public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter implements ActionListener{
-  protected JTextField netField,topField,leftField,widthField,heightField,clearanceField,thicknessField,rotateField;
+  protected JTextField netField,topField,leftField,widthField,heightField,clearanceField,thicknessField,nameField,rotateField;
 
   protected JLabel label;
   
@@ -57,7 +57,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
   
   protected JComboBox fillCombo,parentCombo,layerCombo;
   
-  protected JComboBox textOrientationCombo,textAlignmentCombo,styleCombo;  
+  protected JComboBox styleCombo;  
     
     public AbstractPanelBuilder(UnitComponent component,LayoutManager layoutManager) {
        layoutPanel=new JPanel(layoutManager);

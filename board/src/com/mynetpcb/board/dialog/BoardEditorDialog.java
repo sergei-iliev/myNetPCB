@@ -499,18 +499,18 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             if(shapes.size()==0){
                return; 
             }   
+            
             //***notify undo manager                    
             boardComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-//            Rectangle r=boardComponent.getModel().getUnit().getShapesRect(shapes);  
-//
-//            BoardMgr.getInstance().rotateBlock(shapes,
-//                                   AffineTransform.getRotateInstance((e.getSource()==RotateLeft?
-//                                                                      -1 :
-//                                                                      1) *(Math.PI /2),
-//                                                                     r.getCenterX(),
-//                                                                     r.getCenterY())); 
+            com.mynetpcb.d2.shapes.Box r=boardComponent.getModel().getUnit().getShapesRect(shapes);  
+            
+            BoardMgr.getInstance().rotateBlock(shapes,
+                                   ((e.getActionCommand().equals("RotateLeft")?
+                                                                      -1 :
+                                                                      1) *90),
+                                                                     r.getCenter()); 
             BoardMgr.getInstance().alignBlock(boardComponent.getModel().getUnit().getGrid(),shapes);                     
-            //CircuitMgr.getInstance().normalizePinText(shapes);
+
             //***notify undo manager
             boardComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
             boardComponent.Repaint();
@@ -570,7 +570,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             //            //***set chip cursor
             pcbfootprint.move(-1 * (int) pcbfootprint.getBoundingShape().getCenter().x,
                            -1 * (int) pcbfootprint.getBoundingShape().getCenter().y);
-pcbfootprint.setRotation(60, pcbfootprint.getBoundingShape().getCenter());
+            //pcbfootprint.setRotation(60, pcbfootprint.getBoundingShape().getCenter());
             boardComponent.setContainerCursor(pcbfootprint);
             boardComponent.getEventMgr().setEventHandle("cursor", pcbfootprint);
 

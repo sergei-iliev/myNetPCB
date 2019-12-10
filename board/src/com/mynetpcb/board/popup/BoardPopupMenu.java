@@ -1,7 +1,6 @@
 package com.mynetpcb.board.popup;
 
 import com.mynetpcb.board.component.BoardComponent;
-import com.mynetpcb.core.capi.Pinaware;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
@@ -130,17 +129,17 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
         }
         if (e.getActionCommand().equalsIgnoreCase("disconnectwires")) {
             Shape shape=getUnitComponent().getModel().getUnit().getClickedShape(x,y,false);
-            if(shape instanceof Pinaware){
+            //if(shape instanceof Pinaware){
                 //BoardMgr.getInstance().bindChipWirePoints(getUnitComponent().getModel().getUnit(),(Pinaware)shape,false);
-            }  
+            //}  
             getUnitComponent().Repaint(); 
         }
         if (e.getActionCommand().equalsIgnoreCase("connectwires")) {
             //***sure ->it is a Pinable!!!!!
             Shape shape=getUnitComponent().getModel().getUnit().getClickedShape(x,y,false);
-            if(shape instanceof Pinaware){
+            //if(shape instanceof Pinaware){
                 //BoardMgr.getInstance().bindChipWirePoints(getUnitComponent().getModel().getUnit(),(Pinaware)shape,true);
-            }
+            //}
             getUnitComponent().Repaint(); 
         }
         if(e.getActionCommand().equals("EditFootprint")){

@@ -10,7 +10,6 @@ import com.mynetpcb.core.capi.pin.PinLineable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.Ruler;
 import com.mynetpcb.core.capi.ScalableTransformation;
-import com.mynetpcb.core.capi.SortedList;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.Event;
@@ -122,7 +121,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
       copy.grid=this.grid.clone();
       copy.ruler=new Ruler();
       copy.coordinateSystem =new CoordinateSystem(copy);
-      copy.shapes=new SortedList<S>();
+      copy.shapes=new LinkedList<S>();
       UnitMgr unitMgr=new UnitMgr();
       unitMgr.cloneBlock(this, copy);
       

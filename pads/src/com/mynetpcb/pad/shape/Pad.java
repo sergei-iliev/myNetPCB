@@ -12,7 +12,9 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.pad.shape.PadShape.Shape;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.shape.pad.CircularShape;
@@ -170,23 +172,25 @@ public class Pad extends PadShape{
         this.rotate=rotate;        
     }
     @Override
-    public void rotate(double rotate, Point pt) {
+    public void rotate(double angle, Point pt) {
         //fix angle
-        double alpha=this.rotate+rotate;
+        double alpha=this.rotate+angle;
         if(alpha>=360){
                 alpha-=360;
         }
-        if(alpha<0){
-         alpha+=360; 
-        }       
-        this.rotate=alpha;
-        //rotate anchor point
-        this.shape.rotate(rotate,pt);
-                 
+         if(alpha<0){
+                 alpha+=360; 
+         }
+        this.shape.rotate(angle,pt);      
         if(this.drill!=null){
-         this.drill.rotate(rotate,pt);
+           this.drill.rotate(angle,pt);
         }
+        this.number.setRotation(alpha,pt);
+        this.netvalue.setRotation(alpha,pt);
+        this.rotate=alpha;
     }
+  
+    
     public void move(double xoffset,double yoffset){
                this.shape.move(xoffset, yoffset);
                
@@ -297,8 +301,21 @@ public class Pad extends PadShape{
     }
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb=new StringBuffer();
+        sb.append("<pad copper=\"" + getCopper().getName() + "\" type=\"" + getType() + "\" shape=\"" + getShape() +
+                      "\" x=\"" + Utilities.roundDouble(shape.getCenter().x) + "\" y=\"" + Utilities.roundDouble(shape.getCenter().y) + "\" width=\"" + getWidth() + "\" height=\"" +
+                      getHeight() + "\" rt=\"" + this.rotate + "\">\r\n");
+       // sb.append("<offset x=\"" + offset.x + "\" y=\"" + offset.y + "\" />\r\n");
+
+        if (!number.isEmpty())
+            sb.append("<number>" + number.toXML() + "</number>\r\n");
+        if (!netvalue.isEmpty())
+            sb.append("<netvalue>" + netvalue.toXML() + "</netvalue>\r\n");
+        if (drill != null) {
+            sb.append(drill.toXML() + "\r\n");
+        }
+        sb.append("</pad>\r\n");        
+        return sb.toString();
     }
 
     @Override
@@ -382,7 +399,7 @@ public class Pad extends PadShape{
             pad.width=width;
             pad.height=height;
             pad.rotate=rotate;
-            pad.type=Type.values()[type];
+            pad.setType(Type.values()[type]);
 
             //could be different shape
             if(drawing.getClass()!=pad.shape.getClass()){

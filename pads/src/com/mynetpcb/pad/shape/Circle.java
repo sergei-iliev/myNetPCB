@@ -104,6 +104,11 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
             return false;                
     }
     @Override
+    public void setSide(Layer.Side side, Line line) {
+        this.setCopper(Layer.Side.change(this.getCopper()));
+        this.mirror(line);
+    }
+    @Override
     public void mirror(Line line){
        this.circle.mirror(line);    
     }
@@ -202,8 +207,8 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        return "<ellipse copper=\""+getCopper().getName()+"\" x=\""+(this.circle.pc.x)+"\" y=\""+(this.circle.pc.y)+"\" radius=\""+(this.circle.r)+"\"  thickness=\""+this.getThickness()+"\" fill=\""+this.getFill().ordinal()+"\"/>\r\n";
+
     }
 
     @Override
@@ -313,10 +318,8 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
         
         @Override
         public boolean isSameState(Unit unit) {
-            boolean flag = super.isSameState(unit);
-            Circle other=(Circle)unit.getShape(getUUID());
-            return flag&&Utils.EQ(this.x,other.circle.pc.x)&&Utils.EQ(this.y,other.circle.pc.y)&&Utils.EQ(this.r,other.circle.r);
-                        
+            Circle other = (Circle) unit.getShape(getUUID());
+            return (other.getState(getMementoType()).equals(this));            
         }
         
         @Override

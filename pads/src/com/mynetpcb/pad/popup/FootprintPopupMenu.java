@@ -111,6 +111,11 @@ public class FootprintPopupMenu extends AbstractPopupItemsContainer<FootprintCom
            getUnitComponent().Repaint();            
            return;
         }
+        if(e.getActionCommand().equalsIgnoreCase("bringtofront")){
+           FootprintMgr.getInstance().bringToFront(getUnitComponent().getModel().getUnit().getShapes(),getTarget());
+           getUnitComponent().Repaint();            
+           return;
+        }
         if (e.getActionCommand().equalsIgnoreCase("Resume")) {
             getUnitComponent().getDialogFrame().setButtonGroup(Mode.LINE_MODE);
             getUnitComponent().setMode(Mode.LINE_MODE);         

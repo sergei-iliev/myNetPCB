@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
@@ -39,7 +40,11 @@ public class Line extends AbstractLine implements Externalizable{
         return copy;
     }
 
-
+    @Override
+    public void setSide(Layer.Side side, com.mynetpcb.d2.shapes.Line line) {
+        this.setCopper(Layer.Side.change(this.getCopper()));
+        this.mirror(line);
+    }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         if((this.getCopper().getLayerMaskID()&layermask)==0){
@@ -92,8 +97,13 @@ public class Line extends AbstractLine implements Externalizable{
     }
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb = new StringBuffer();
+        sb.append("<line copper=\"" + getCopper().getName() + "\" thickness=\"" + this.getThickness() + "\">");
+        for (Point point : this.polyline.points) {
+            sb.append(Utilities.roundDouble(point.x) + "," + Utilities.roundDouble(point.y) + ",");
+        }
+        sb.append("</line>\r\n");
+        return sb.toString();
     }
 
     @Override
@@ -184,8 +194,8 @@ public class Line extends AbstractLine implements Externalizable{
             hash += Arrays.hashCode(Ay);
             return hash;
         }
-
-        public boolean isSameState(Footprint unit) {
+        @Override
+        public boolean isSameState(Unit unit) {
             Line line = (Line) unit.getShape(getUUID());
             return (line.getState(getMementoType()).equals(this));
         }

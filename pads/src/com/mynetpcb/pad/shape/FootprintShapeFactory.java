@@ -82,6 +82,11 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
                 pad.setState(memento);
                 return pad;               
             }
+            if(memento instanceof SolidRegion.Memento){
+                SolidRegion region = new SolidRegion(0);
+                region.setState(memento);
+                return region;   
+            }
             if(memento instanceof RoundRect.Memento){
                 RoundRect roundRect=new RoundRect();  
                 roundRect.setState(memento);

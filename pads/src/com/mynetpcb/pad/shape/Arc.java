@@ -44,6 +44,13 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
         copy.arc=this.arc.clone();
         return copy;
     }
+    
+    @Override
+    public void setSide(Layer.Side side, Line line) {
+        this.setCopper(Layer.Side.change(this.getCopper()));
+        this.mirror(line);
+    }
+    
     @Override
     public void mirror(Line line) {
       this.arc.mirror(line);
@@ -218,8 +225,7 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        return "<arc copper=\""+getCopper().getName()+"\" type=\"0\" x=\""+(this.arc.pc.x)+"\" y=\""+(this.arc.pc.y)+"\" radius=\""+(this.arc.r)+"\"  thickness=\""+this.getThickness()+"\" start=\""+this.arc.startAngle+"\" extend=\""+this.arc.endAngle+"\" fill=\""+this.getFill().ordinal()+"\" />\r\n";
     }
 
     @Override
@@ -354,10 +360,8 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
         
         @Override
         public boolean isSameState(Unit unit) {
-                        
-            boolean flag = super.isSameState(unit);
-            Arc other=(Arc)unit.getShape(getUUID());  
-            return flag&&Utils.EQ(this.x,other.arc.pc.x)&&Utils.EQ(this.y,other.arc.pc.y)&&Utils.EQ(this.r,other.arc.r)&&Utils.EQ(this.startAngle,other.arc.startAngle)&&Utils.EQ(this.endAngle,other.arc.endAngle);                 
+            Arc arc = (Arc) unit.getShape(getUUID());
+            return (arc.getState(getMementoType()).equals(this));
         }
     }    
 }

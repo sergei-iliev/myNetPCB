@@ -72,8 +72,7 @@ public class Drill extends Shape implements Externalizable{
     
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        return "<drill type=\"CIRCULAR\" x=\""+this.circle.pc.x+"\" y=\""+this.circle.pc.y+"\" width=\""+2*this.circle.r+"\" />";      
     }
 
     @Override

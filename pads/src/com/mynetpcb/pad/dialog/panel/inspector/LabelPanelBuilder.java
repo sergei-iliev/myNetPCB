@@ -24,7 +24,7 @@ import javax.swing.SwingConstants;
 
 public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{     
     
-    private JTextField textField,rotateField;
+    private JTextField textField;
 
     public LabelPanelBuilder(FootprintComponent component) {
          super(component,new GridLayout(7,1));

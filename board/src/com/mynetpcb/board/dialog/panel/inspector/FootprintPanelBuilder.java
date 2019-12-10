@@ -1,9 +1,11 @@
 package com.mynetpcb.board.dialog.panel.inspector;
 
 import com.mynetpcb.board.component.BoardComponent;
+import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.undo.MementoType;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -20,129 +22,74 @@ import javax.swing.SwingConstants;
 public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
     private JComboBox chipUnitOrientationCombo, chipUnitAlignmentCombo, chipReferenceOrientationCombo, chipReferenceAlignmentCombo;
 
-    private JTextField chipNameField, chipReferenceField, chipUnitField;
+    private JTextField  referenceField, valueField;
     
     public FootprintPanelBuilder(BoardComponent component) {
-        super(component,new GridLayout(9, 1));
+        super(component,new GridLayout(5, 1));
         
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
         label=new JLabel("Side"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(100,label.getHeight())); panel.add(label,BorderLayout.WEST);
         layerCombo=new JComboBox(Layer.Side.values());layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
         layoutPanel.add(panel);
         
-        //***Chip Name
+        //***Name
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
         label = new JLabel("Name");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setPreferredSize(new Dimension(100, label.getHeight()));
         panel.add(label, BorderLayout.WEST);
-        chipNameField = new JTextField("");
-        chipNameField.addKeyListener(this);
-        panel.add(chipNameField, BorderLayout.CENTER);
+        nameField = new JTextField("");
+        nameField.addKeyListener(this);
+        panel.add(nameField, BorderLayout.CENTER);
         layoutPanel.add(panel);
-        //***Reference Name
+        
+        //***Reference
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
         label = new JLabel("Reference");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setPreferredSize(new Dimension(100, label.getHeight()));
         panel.add(label, BorderLayout.WEST);
-        chipReferenceField = new JTextField("");
-        chipReferenceField.addKeyListener(this);
-        panel.add(chipReferenceField, BorderLayout.CENTER);
+        referenceField = new JTextField("");
+        referenceField.addKeyListener(this);
+        panel.add(referenceField, BorderLayout.CENTER);
         layoutPanel.add(panel);
 
-        panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        label = new JLabel("Text Orientation");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setPreferredSize(new Dimension(100, label.getHeight()));
-        panel.add(label, BorderLayout.WEST);
-        chipReferenceOrientationCombo = new JComboBox();
-        chipReferenceOrientationCombo.addActionListener(this);
-        panel.add(chipReferenceOrientationCombo, BorderLayout.CENTER);
-        layoutPanel.add(panel);
-        //alignment
-        panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        label = new JLabel("Text Alignment");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setPreferredSize(new Dimension(100, label.getHeight()));
-        panel.add(label, BorderLayout.WEST);
-        chipReferenceAlignmentCombo = new JComboBox();
-        chipReferenceAlignmentCombo.addActionListener(this);
-        panel.add(chipReferenceAlignmentCombo, BorderLayout.CENTER);
-        layoutPanel.add(panel);
+
         
-        //***Unit
+        //***Value
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        label = new JLabel("Unit");
+        label = new JLabel("Value");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setPreferredSize(new Dimension(100, label.getHeight()));
         panel.add(label, BorderLayout.WEST);
-        chipUnitField = new JTextField();
-        chipUnitField.addKeyListener(this);
-        panel.add(chipUnitField, BorderLayout.CENTER);
+        valueField = new JTextField();
+        valueField.addKeyListener(this);
+        panel.add(valueField, BorderLayout.CENTER);
         layoutPanel.add(panel);
 
-        panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        label = new JLabel("Text Orientation");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setPreferredSize(new Dimension(100, label.getHeight()));
-        panel.add(label, BorderLayout.WEST);
-        chipUnitOrientationCombo = new JComboBox();
-        chipUnitOrientationCombo.addActionListener(this);
-        panel.add(chipUnitOrientationCombo, BorderLayout.CENTER);
+        //rotate
+        panel=new JPanel(); panel.setLayout(new BorderLayout());
+        label=new JLabel("Rotate"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(100,label.getHeight())); panel.add(label,BorderLayout.WEST);
+        rotateField=new JTextField(); rotateField.addKeyListener(this); panel.add(rotateField,BorderLayout.CENTER);
         layoutPanel.add(panel);
         
-        //alignment
-        panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        label = new JLabel("Text Alignment");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setPreferredSize(new Dimension(100, label.getHeight()));
-        panel.add(label, BorderLayout.WEST);
-        chipUnitAlignmentCombo = new JComboBox();
-        chipUnitAlignmentCombo.addActionListener(this);
-        panel.add(chipUnitAlignmentCombo, BorderLayout.CENTER);
-        layoutPanel.add(panel);
+
    
     }
 
     @Override
     public void updateUI() {
-//        PCBFootprint symbol = (PCBFootprint)getTarget();
-//            //fix empty labels
-//        Rectangle r= symbol.calculateShape();
-// 
-//        if(symbol.getChipText().getTextureByTag("value").isEmpty()){
-//             symbol.getChipText().getTextureByTag("value"). getAnchorPoint().setLocation(r.getX()-10,r.getY()-10);
-//         }
-//         if(symbol.getChipText().getTextureByTag("reference").isEmpty()){
-//             symbol.getChipText().getTextureByTag("reference").getAnchorPoint().setLocation(r.getX(),r.getY());
-//         }
-//        chipUnitField.setText((symbol.getChipText().getTextureByTag("value").getText() ==
-//                               null ? "" :
-//                               symbol.getChipText().getTextureByTag("value").getText()));
-//        chipNameField.setText(symbol.getDisplayName());
-//        chipReferenceField.setText((symbol.getChipText().getTextureByTag("reference").getText() ==
-//                                    null ? "" :
-//                                    symbol.getChipText().getTextureByTag("reference").getText()));
-//
-//        //packageNameField.setText(symbol.getPackaging()==null?"": symbol.getPackaging().getFootprintName());
-//        
-//        validateAlignmentComboText(chipUnitAlignmentCombo,symbol.getChipText().getTextureByTag("value")); 
-//
-//        setSelectedIndex(chipUnitOrientationCombo,(symbol.getChipText().getTextureByTag("value").getAlignment().getOrientation().ordinal()));
-//
-//        setSelectedIndex(chipReferenceOrientationCombo,(symbol.getChipText().getTextureByTag("reference").getAlignment().getOrientation().ordinal()));
-//        
-//        validateAlignmentComboText(chipReferenceAlignmentCombo,symbol.getChipText().getTextureByTag("reference")); 
-//        
-//        setSelectedItem(layerCombo, symbol.getSide());
+        PCBFootprint symbol = (PCBFootprint)getTarget();
+            //fix empty labels
+        referenceField.setText(symbol.getTextureByTag("reference").getText());
+        valueField.setText(symbol.getTextureByTag("value").getText());
+        rotateField.setText(String.valueOf(symbol.getRotation()));
+        //packageNameField.setText(symbol.getPackaging()==null?"": symbol.getPackaging().getFootprintName());
+
+        setSelectedItem(layerCombo, symbol.getSide());
         }
 
     public void actionPerformed(ActionEvent e) {
@@ -170,10 +117,10 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
 //            text.setAlignment(Text.Alignment.valueOf((String)chipUnitAlignmentCombo.getSelectedItem()));
 //            getComponent().Repaint();
 //        } 
-//        if(e.getSource()==layerCombo){
-//            ((PCBFootprint)getTarget()).setSide((Layer.Side)layerCombo.getSelectedItem()); 
-//            getComponent().Repaint();
-//        }
+        if(e.getSource()==layerCombo){
+            ((PCBFootprint)getTarget()).setSide((Layer.Side)layerCombo.getSelectedItem()); 
+            getComponent().Repaint();
+        }
     }
     
     @Override
@@ -181,7 +128,12 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
         if (e.getKeyCode() != KeyEvent.VK_ENTER) {
             return;
         }
-//        PCBFootprint symbol=(PCBFootprint)getTarget();
+        PCBFootprint symbol=(PCBFootprint)getTarget();
+        if(e.getSource()==this.rotateField){
+           symbol.setRotation(Double.parseDouble(this.rotateField.getText()),symbol.getCenter()); 
+           getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
+           getComponent().Repaint();
+        }
 //        //****chip handling
 //        if (e.getSource() == chipUnitField) {
 //            Texture texture=symbol.getChipText().getTextureByTag("value");                       

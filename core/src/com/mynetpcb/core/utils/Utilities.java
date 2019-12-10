@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import java.math.BigDecimal;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -100,7 +102,7 @@ public final class Utilities {
     }
 
     public static double roundDouble(double number){
-         return Math.round(number*10000)/10000 ;
+         return BigDecimal.valueOf(number).setScale(5, BigDecimal.ROUND_HALF_EVEN).doubleValue();
     }
     
 

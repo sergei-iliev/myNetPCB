@@ -62,7 +62,8 @@ import javax.xml.bind.annotation.XmlTransient;
             
             circuitRoot=new File(workspace,this.CIRCUITS_FOLDER_NAME).toURI();      
             
-            boardRoot=new File(workspace,this.BOARDS_FOLDER_NAME).toURI(); 
+            //boardRoot=new File(workspace,this.BOARDS_FOLDER_NAME).toURI(); 
+            boardRoot=new File("C:/sergei/java/myNetPCB/deploy/workspace",this.BOARDS_FOLDER_NAME).toURI(); 
             
             File library=new File(r,this.LIBRARY_FOLDER_NAME);  
             libraryRoot  =library.toURI();

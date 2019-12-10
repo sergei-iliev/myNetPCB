@@ -127,7 +127,7 @@ public class GlyphTexture implements Texture {
             if(glyph.character==' '){
                 xoffset += glyph.delta;
                 this.width += glyph.delta;
-                return;
+                continue;
             }
             //calculate its width
             glyph.resize();
@@ -207,6 +207,7 @@ public class GlyphTexture implements Texture {
     public long getOrderWeight() {
         return 0;
     }
+
     public void mirror(boolean mirrored,Line line){
             this.mirrored=mirrored;
             
@@ -216,21 +217,46 @@ public class GlyphTexture implements Texture {
         this.glyphs.forEach(glyph->{
             glyph.setSize(Grid.COORD_TO_MM(this.size));
         });        
-        
+        this.anchorPoint.mirror(line);
         //arrange it according to anchor point
         this.resetGlyphsLine();
-        
-        this.anchorPoint.mirror(line);
+
+         //mirror text around anchor point
+        Line ln=new Line(anchorPoint.x,anchorPoint.y-20, anchorPoint.x,anchorPoint.y+20);
         this.glyphs.forEach(glyph->{
+
            if(this.mirrored){
-            glyph.mirror(line);             
-           } 
-           glyph.rotate(this.rotate,this.anchorPoint);
-            
+               glyph.mirror(ln);                        
+           }
+           glyph.rotate(this.rotate,this.anchorPoint);            
+           
         });
             
     }
+    public void setSide(Layer.Side side, Line line) {
+        this.mirrored=side==Layer.Side.BOTTOM;
+        //reset original text
+        this.text = this.resetGlyphText(this.text);
+        //reset size
+        this.glyphs.forEach(glyph->{
+            glyph.setSize(Grid.COORD_TO_MM(this.size));
+        });        
+        this.anchorPoint.mirror(line);
+        //arrange it according to anchor point
+        this.resetGlyphsLine();
 
+         //mirror text around anchor point
+        Line ln=new Line(anchorPoint.x,anchorPoint.y-20, anchorPoint.x,anchorPoint.y+20);
+        this.glyphs.forEach(glyph->{
+
+           if(this.mirrored){
+               glyph.mirror(ln);             
+               glyph.rotate(360-this.rotate,this.anchorPoint);            
+           }else{ 
+               glyph.rotate(this.rotate,this.anchorPoint);            
+           }
+        });
+    }
     @Override
     public Box getBoundingShape() {
        if (this.text == null || this.text.length() == 0) {
@@ -428,9 +454,20 @@ public class GlyphTexture implements Texture {
     
     
     public String toXML() {
-        return (text.equals("") ? "" :
-                text + "," + anchorPoint.x + "," + anchorPoint.y +
-                ",,"+this.thickness+","+this.size);
+           
+        if(text.isEmpty()){
+            return "";
+        }else{
+            StringBuilder sb=new StringBuilder();
+            sb.append(this.text);sb.append(",");
+            sb.append(Utilities.roundDouble(this.anchorPoint.x));sb.append(",");
+            sb.append(Utilities.roundDouble(this.anchorPoint.y));            
+            sb.append(",,");
+            sb.append(this.thickness);sb.append(",");
+            sb.append(this.size);sb.append(",");
+            sb.append(this.rotate);
+            return sb.toString();
+        }
     }
     public void fromXML(Node node) {
         
@@ -448,8 +485,8 @@ public class GlyphTexture implements Texture {
         String[] st=node.getTextContent().split(",");
 
         this.text=st[0];
-        anchorPoint.set(Integer.parseInt(st[1]),
-                                Integer.parseInt(st[2]));        
+        anchorPoint.set(Double.parseDouble(st[1]),
+                                Double.parseDouble(st[2]));        
         //st.nextToken();
         try{
           this.thickness=Integer.parseInt(st[4] );        
@@ -464,7 +501,7 @@ public class GlyphTexture implements Texture {
         }
         this.rotate=0;
         try{
-           this.rotate=(Integer.parseInt(st[6]));
+           this.rotate=(Double.parseDouble(st[6]));
         }catch(Exception e){        
             
         }        
@@ -493,15 +530,14 @@ public class GlyphTexture implements Texture {
         
     }
     
-//    @Override
-//    public int getLayermaskId(){
-//        return layermaskId;
-//    }
-//    
-//    @Override
-//    public void setLayermaskId(int layermaskId){
-//        this.layermaskId=layermaskId;
-//    }
+ 
+    public int getLayermaskId(){
+        return layermaskId;
+    }
+    
+    public void setLayermaskId(int layermaskId){
+        this.layermaskId=layermaskId;
+    }
     
     @Override
     public Texture.Memento createMemento() {
