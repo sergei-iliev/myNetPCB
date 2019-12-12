@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
 
@@ -75,7 +76,10 @@ public class OvalShape implements PadDrawing {
         this.obround.setSize(width,height);        
         this.obround.rotate(this.padRef.get().getRotation());
     }
-
+    @Override
+    public void mirror(Line line) {
+        this.obround.mirror(line);
+    }
     @Override
     public void move(double xoffset, double yoffset) {
         obround.move(xoffset, yoffset);

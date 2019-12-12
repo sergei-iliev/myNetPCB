@@ -44,7 +44,10 @@ public class Drill extends Shape implements Externalizable{
     public void set(double x,double y){
         this.circle.pc.set(x,y); 
     }
-    
+    @Override
+    public void mirror(com.mynetpcb.d2.shapes.Line line) {
+        this.circle.mirror(line);
+    }
     @Override
     public void move(double xoffset,double yoffset) {
         this.circle.move(xoffset,yoffset);

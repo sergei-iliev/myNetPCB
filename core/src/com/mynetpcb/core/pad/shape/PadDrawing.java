@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.print.Printable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.Graphics2D;
@@ -35,6 +36,8 @@ public interface PadDrawing extends Printable {
 
     public void rotate(double rotate, Point pt);
 
+    public void mirror(Line line);
+    
     public Memento getState();
      
     

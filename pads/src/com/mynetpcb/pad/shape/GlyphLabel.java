@@ -42,6 +42,11 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         return copy;
     }
     @Override
+    public void setSide(Layer.Side side, Line line,double angle) {
+        this.setCopper(Layer.Side.change(this.getCopper().getLayerMaskID()));
+        this.texture.setSide(side, line, angle);
+    }
+    @Override
     public Box getBoundingShape() {
           return this.texture.getBoundingShape();
     }

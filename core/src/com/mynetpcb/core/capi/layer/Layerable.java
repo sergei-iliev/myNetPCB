@@ -33,6 +33,6 @@ public interface Layerable {
      * Sets the viewing side {TOP,BOTTOM}
      * Mirroring happens around the line
      */
-    public default void setSide(Layer.Side side, Line line) {
+    public default void setSide(Layer.Side side, Line line,double angle) {
     }
 }

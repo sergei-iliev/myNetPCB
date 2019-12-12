@@ -104,9 +104,10 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
             return false;                
     }
     @Override
-    public void setSide(Layer.Side side, Line line) {
-        this.setCopper(Layer.Side.change(this.getCopper()));
+    public void setSide(Layer.Side side, Line line,double angle) {
+        this.setCopper(Layer.Side.change(this.getCopper().getLayerMaskID()));
         this.mirror(line);
+        this.rotate=angle;
     }
     @Override
     public void mirror(Line line){

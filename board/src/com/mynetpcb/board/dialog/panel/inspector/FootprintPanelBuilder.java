@@ -5,6 +5,7 @@ import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.undo.MementoType;
 
 import java.awt.BorderLayout;
@@ -93,30 +94,7 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
         }
 
     public void actionPerformed(ActionEvent e) {
-//        if (e.getSource() == chipReferenceOrientationCombo) {
-//            Texture text =
-//                ((Textable)getTarget()).getChipText().getTextureByTag("reference");
-//            text.setOrientation((text.getAlignment().getOrientation() == Text.Orientation. HORIZONTAL ? Text.Orientation.VERTICAL : Text.Orientation.HORIZONTAL));
-//            validateAlignmentComboText(chipReferenceAlignmentCombo,text);
-//            getComponent().Repaint();
-//        }
-//        if(e.getSource()==chipReferenceAlignmentCombo){
-//            Texture text=((Textable)getTarget()).getChipText().getTextureByTag("reference");  
-//            text.setAlignment(Text.Alignment.valueOf((String)chipReferenceAlignmentCombo.getSelectedItem()));
-//            getComponent().Repaint();
-//        }  
-//        if (e.getSource() == chipUnitOrientationCombo) {
-//            Texture text =
-//                ((Textable)getTarget()).getChipText().getTextureByTag("value");
-//            text.setOrientation((text.getAlignment().getOrientation() == Text.Orientation.HORIZONTAL ? Text.Orientation.VERTICAL : Text.Orientation.HORIZONTAL));
-//            validateAlignmentComboText(chipUnitAlignmentCombo,text);
-//            getComponent().Repaint();
-//        }
-//        if(e.getSource()==chipUnitAlignmentCombo){
-//            Texture text=((Textable)getTarget()).getChipText().getTextureByTag("value");  
-//            text.setAlignment(Text.Alignment.valueOf((String)chipUnitAlignmentCombo.getSelectedItem()));
-//            getComponent().Repaint();
-//        } 
+ 
         if(e.getSource()==layerCombo){
             ((PCBFootprint)getTarget()).setSide((Layer.Side)layerCombo.getSelectedItem()); 
             getComponent().Repaint();
@@ -131,8 +109,6 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
         PCBFootprint symbol=(PCBFootprint)getTarget();
         if(e.getSource()==this.rotateField){
            symbol.setRotation(Double.parseDouble(this.rotateField.getText()),symbol.getCenter()); 
-           getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
-           getComponent().Repaint();
         }
 //        //****chip handling
 //        if (e.getSource() == chipUnitField) {
@@ -145,10 +121,15 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
 //            texture.setText(chipReferenceField.getText());          
 //            getComponent().Repaint();
 //        }
-//        if (e.getSource() == chipNameField) {
-//            symbol.setDisplayName(chipNameField.getText());
-//            getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.RENAME_SHAPE));
-//        }
-
+        if (e.getSource() == valueField) {
+             Texture texture=symbol.getTextureByTag("value");                       
+             texture.setText(valueField.getText());  
+        }
+        if (e.getSource() == referenceField) {
+             Texture texture=symbol.getTextureByTag("reference");                       
+             texture.setText(referenceField.getText());  
+        }
+        getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
+        getComponent().Repaint();
     }
 }

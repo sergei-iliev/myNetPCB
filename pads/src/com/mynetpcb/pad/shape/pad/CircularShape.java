@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.Color;
@@ -81,7 +82,10 @@ public class CircularShape implements PadDrawing {
                                                                          .getColor());
         this.circle.paint(g2, true);
     }
-
+    @Override
+    public void mirror(Line line) {
+        this.circle.mirror(line);
+    }
     @Override
     public void rotate(double alpha, Point pt) {
         this.circle.rotate(alpha, pt);

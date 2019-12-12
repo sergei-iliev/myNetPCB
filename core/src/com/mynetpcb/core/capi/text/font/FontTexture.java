@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.text.font;
 
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.d2.shapes.Box;
@@ -69,13 +70,17 @@ public class FontTexture implements Texture{
     
     public void setRotation(double alpha,Point pt){ 
       this.shape.rotate(alpha,pt);
+        System.out.println(alpha);
     }
     
     @Override
     public void mirror(Line line) {
-
+       
     }
-
+    public void setSide(Layer.Side side, Line line, double angle) { 
+        this.shape.mirror(line); 
+        this.shape.rotate=angle;
+    }
     @Override
     public Box getBoundingShape() {
         return this.shape.box();
@@ -83,7 +88,7 @@ public class FontTexture implements Texture{
 
     @Override
     public void clear() {
-        // TODO Implement this method
+
     }
 
     @Override

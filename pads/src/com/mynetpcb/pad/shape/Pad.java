@@ -3,6 +3,7 @@ package com.mynetpcb.pad.shape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.layer.Layer.Side;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.font.FontTexture;
@@ -190,7 +191,17 @@ public class Pad extends PadShape{
         this.rotate=alpha;
     }
   
-    
+    @Override
+    public void setSide(Layer.Side side, Line line, double angle) {
+        this.setCopper(Layer.Side.change(this.getCopper().getLayerMaskID()));
+        this.netvalue.setSide(side,line,angle);
+        this.number.setSide(side,line,angle);
+        this.shape.mirror(line);
+        if(this.drill!=null){
+           this.drill.mirror(line);
+        }
+        this.rotate=angle;
+    }
     public void move(double xoffset,double yoffset){
                this.shape.move(xoffset, yoffset);
                

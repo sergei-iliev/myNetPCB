@@ -8,6 +8,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Texture;
@@ -18,6 +19,8 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polygon;
+import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.shape.FootprintShapeFactory;
 
 import java.awt.Graphics2D;
@@ -104,12 +107,12 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         Line line= new Line(p.x,p.y-10,p.x,p.y+10);
         
         for(Shape shape:shapes){
-            shape.setSide(side,line);
+            shape.setSide(side,line,(360-this.rotate));
         }  
-        this.reference.setSide(side,line);       
-        this.value.setSide(side,line);       
+        this.reference.setSide(side,line,(360-this.rotate));       
+        this.value.setSide(side,line,(360-this.rotate));       
         
-        this.setCopper(Layer.Side.change(this.getCopper()));
+        this.setCopper(Layer.Side.change(this.getCopper().getLayerMaskID()));
         this.rotate=360-this.rotate;
     }
     
@@ -150,6 +153,53 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         
     }
     @Override
+    public boolean isClicked(int x, int y) {
+        Box r=this.getBoundingShape();
+        if(!r.contains(x,y)){
+             return false;
+        }
+        Polygon ps=new Polygon();
+        boolean result=false;
+
+        for(Shape shape:this.shapes){
+           if(!(shape instanceof AbstractLine)){ 
+               if(shape.isClicked(x,y)){
+                  result=true; 
+                  break;
+               }
+           }else{
+                ps.points.addAll(((AbstractLine)shape).getLinePoints());  //line vertices                   
+           }
+        };             
+        if(result){
+            return true;//click on a anything but a Line
+        }
+        
+        this.sortPolygon(ps.points);  //line only
+        return ps.contains(x,y);
+    }
+    
+    private Point getPolygonCentroid(Collection<Point> points){
+        double x=0,y=0;
+        for(Point p:points){
+                x+=p.x;
+                y+=p.y;
+        };
+        return new Point(x/points.size(),y/points.size());
+    }
+    
+    private void  sortPolygon(List<Point> points){
+        Point center=this.getPolygonCentroid(points);
+        
+    
+        points.sort((a,b)->{
+         double a1=(Utils.degrees(Math.atan2(a.x-center.x,a.y-center.y))+360)%360;
+         double a2=(Utils.degrees(Math.atan2(b.x-center.x,b.y-center.y))+360)%360;
+         return ((int)a1-(int)a2);
+        });
+    }
+    
+    @Override
     public Point getCenter() {        
         return this.getBoundingShape().getCenter();
     }
@@ -170,20 +220,13 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     
     @Override
     public void setRotation(double rotate,Point center){   
-        if(this.getSide()==Layer.Side.BOTTOM){
-            for(Shape shape:this.shapes){                    
-                shape.setRotation(360-rotate,center);  
-            }       
-            this.value.setRotation(360-rotate,center);
-            this.reference.setRotation(360-rotate,center);
-        }else{
             for(Shape shape:this.shapes){                    
               shape.setRotation(rotate,center);  
             }       
             this.value.setRotation(rotate,center);
             this.reference.setRotation(rotate,center);
-        }
-        this.rotate=rotate;
+        
+            this.rotate=rotate;
     }
     
     @Override

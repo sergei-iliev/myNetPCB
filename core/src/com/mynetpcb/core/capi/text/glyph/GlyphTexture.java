@@ -233,8 +233,8 @@ public class GlyphTexture implements Texture {
         });
             
     }
-    public void setSide(Layer.Side side, Line line) {
-        this.mirrored=side==Layer.Side.BOTTOM;
+    public void setSide(Layer.Side side, Line line,double angle) {
+        this.mirrored=(side==Layer.Side.BOTTOM);
         //reset original text
         this.text = this.resetGlyphText(this.text);
         //reset size
@@ -250,12 +250,15 @@ public class GlyphTexture implements Texture {
         this.glyphs.forEach(glyph->{
 
            if(this.mirrored){
-               glyph.mirror(ln);             
-               glyph.rotate(360-this.rotate,this.anchorPoint);            
-           }else{ 
-               glyph.rotate(this.rotate,this.anchorPoint);            
+               glyph.mirror(ln);                        
            }
+           glyph.rotate(angle,this.anchorPoint);            
+           
         });
+        Layer.Copper copper=Layer.Side.change(this.layermaskId);
+        this.fillColor=copper.getColor();
+        this.layermaskId=copper.getLayerMaskID();
+        this.rotate=angle;
     }
     @Override
     public Box getBoundingShape() {
@@ -325,13 +328,7 @@ public class GlyphTexture implements Texture {
     }
     @Override
     public void mirror(Line line) {
-//        Utilities.mirrorPoint(A,B, anchorPoint);
-//                
-//        if (A.x ==B.x) { //right-left mirroring
-//            this.alignment = this.alignment.Mirror(true);            
-//        } else { //***top-botom mirroring
-//            this.alignment = this.alignment.Mirror(false);          
-//        }                
+               
     }
 
 

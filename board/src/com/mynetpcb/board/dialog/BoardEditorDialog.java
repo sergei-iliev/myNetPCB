@@ -505,9 +505,9 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             com.mynetpcb.d2.shapes.Box r=boardComponent.getModel().getUnit().getShapesRect(shapes);  
             
             BoardMgr.getInstance().rotateBlock(shapes,
-                                   ((e.getActionCommand().equals("RotateLeft")?
-                                                                      -1 :
-                                                                      1) *90),
+                                   ((e.getSource()==RotateLeft?
+                                                                      1 :
+                                                                      -1) *90),
                                                                      r.getCenter()); 
             BoardMgr.getInstance().alignBlock(boardComponent.getModel().getUnit().getGrid(),shapes);                     
 

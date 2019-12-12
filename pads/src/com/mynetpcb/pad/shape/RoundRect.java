@@ -97,9 +97,10 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         this.roundRect.move(xoffset,yoffset);
     }
     @Override
-    public void setSide(Layer.Side side, com.mynetpcb.d2.shapes.Line line) {
-        this.setCopper(Layer.Side.change(this.getCopper()));
+    public void setSide(Layer.Side side, com.mynetpcb.d2.shapes.Line line,double angle) {
+        this.setCopper(Layer.Side.change(this.getCopper().getLayerMaskID()));
         this.mirror(line);
+        this.rotate=angle;
     }    
     @Override
     public void mirror(Line line) {        

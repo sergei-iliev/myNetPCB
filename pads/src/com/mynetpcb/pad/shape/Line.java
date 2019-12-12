@@ -41,9 +41,10 @@ public class Line extends AbstractLine implements Externalizable{
     }
 
     @Override
-    public void setSide(Layer.Side side, com.mynetpcb.d2.shapes.Line line) {
-        this.setCopper(Layer.Side.change(this.getCopper()));
+    public void setSide(Layer.Side side, com.mynetpcb.d2.shapes.Line line,double angle) {
+        this.setCopper(Layer.Side.change(this.getCopper().getLayerMaskID()));
         this.mirror(line);
+        this.rotate=angle;
     }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {

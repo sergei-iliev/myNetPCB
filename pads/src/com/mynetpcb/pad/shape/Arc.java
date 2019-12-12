@@ -46,9 +46,10 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
     }
     
     @Override
-    public void setSide(Layer.Side side, Line line) {
-        this.setCopper(Layer.Side.change(this.getCopper()));
+    public void setSide(Layer.Side side, Line line,double angle) {
+        this.setCopper(Layer.Side.change(this.getCopper().getLayerMaskID()));
         this.mirror(line);
+        this.rotate=angle;
     }
     
     @Override
@@ -191,7 +192,6 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
     public void setRotation(double rotate, Point center) {
         double alpha=rotate-this.rotate;
         this.arc.rotate(alpha,center);          
-        
         this.rotate=rotate;        
     }
     @Override

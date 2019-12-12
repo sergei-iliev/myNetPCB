@@ -288,23 +288,40 @@ public class Layer {
         TOP,
         BOTTOM;
 
-        public static Copper change(Copper copper) {
-            if (copper.getLayerMaskID() == LAYER_FRONT) {
+        public static Copper change(int layermaskId) {
+            if (layermaskId == LAYER_FRONT) {
                 return Copper.BCu;
-            } else if (copper.getLayerMaskID() == SILKSCREEN_LAYER_FRONT) {
+            } else if (layermaskId == SILKSCREEN_LAYER_FRONT) {
                 return Copper.BSilkS;
-            } else if (copper.getLayerMaskID() == SOLDERMASK_LAYER_FRONT) {
+            } else if (layermaskId == SOLDERMASK_LAYER_FRONT) {
                 return Copper.BMask;
-            } else if (copper.getLayerMaskID() == LAYER_BACK) {
+            } else if (layermaskId == LAYER_BACK) {
                 return Copper.FCu;
-            } else if (copper.getLayerMaskID() == SILKSCREEN_LAYER_BACK) {
+            } else if (layermaskId == SILKSCREEN_LAYER_BACK) {
                 return Copper.FSilkS;
-            } else if (copper.getLayerMaskID() == SOLDERMASK_LAYER_BACK) {
+            } else if (layermaskId == SOLDERMASK_LAYER_BACK) {
                 return Copper.FMask;
             }
 
-            return copper;
+            return Copper.All;
         }
+//        public static Copper change(Copper copper) {
+//            if (copper.getLayerMaskID() == LAYER_FRONT) {
+//                return Copper.BCu;
+//            } else if (copper.getLayerMaskID() == SILKSCREEN_LAYER_FRONT) {
+//                return Copper.BSilkS;
+//            } else if (copper.getLayerMaskID() == SOLDERMASK_LAYER_FRONT) {
+//                return Copper.BMask;
+//            } else if (copper.getLayerMaskID() == LAYER_BACK) {
+//                return Copper.FCu;
+//            } else if (copper.getLayerMaskID() == SILKSCREEN_LAYER_BACK) {
+//                return Copper.FSilkS;
+//            } else if (copper.getLayerMaskID() == SOLDERMASK_LAYER_BACK) {
+//                return Copper.FMask;
+//            }
+//
+//            return copper;
+//        }
 
         public static Side resolve(int layermask) {
             if (layermask == LAYER_BACK) {

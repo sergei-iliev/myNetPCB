@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Hexagon;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.Color;
@@ -72,7 +73,11 @@ public class PolygonShape implements PadDrawing {
         this.hexagon.rotate(this.padRef.get().getRotation());
     }
 
-
+    @Override
+    public void mirror(Line line) {
+        hexagon.mirror(line);
+    }
+    
     @Override
     public void move(double xoffset, double yoffset) {
        hexagon.move(xoffset, yoffset);

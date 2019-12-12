@@ -245,13 +245,11 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
 
         RotateLeft.addActionListener(this);
         RotateLeft.setToolTipText("Rotate Left");
-        RotateLeft.setActionCommand("RotateLeft");
         RotateLeft.setPreferredSize(new Dimension(35, 35));
         RotateLeft.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_left.png"));
 
         RotateRight.addActionListener(this);
         RotateRight.setToolTipText("Rotate Right");
-        RotateRight.setActionCommand("RotateRight");
         RotateRight.setPreferredSize(new Dimension(35, 35));
         RotateRight.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_right.png"));
 
@@ -457,9 +455,9 @@ exit();
             com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getShapesRect(shapes);  
             
             FootprintMgr.getInstance().rotateBlock(shapes,
-                                   ((e.getActionCommand().equals("RotateLeft")?
-                                                                      -1 :
-                                                                      1) *90),
+                                   ((e.getSource()==RotateLeft?
+                                                                      1 :
+                                                                      -1) *90),
                                                                      r.getCenter()); 
             FootprintMgr.getInstance().alignBlock(footprintComponent.getModel().getUnit().getGrid(),shapes);                     
 
