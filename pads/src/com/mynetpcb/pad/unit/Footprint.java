@@ -54,7 +54,7 @@ public class Footprint extends Unit<Shape> {
 
     public Footprint clone() throws CloneNotSupportedException {
         Footprint copy = (Footprint) super.clone();
-        //copy.shapeFactory = new FootprintShapeFactory();
+        copy.shapeFactory = new FootprintShapeFactory();
         return copy;
     }
 

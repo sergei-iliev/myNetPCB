@@ -3,7 +3,7 @@ package com.mynetpcb.core.capi.panel;
 
 import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.SortedList;
+import com.mynetpcb.core.capi.layer.LayerOrderedList;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -215,7 +215,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==layerCombo){
             getTarget().setCopper((Layer.Copper)layerCombo.getSelectedItem());
-            ((SortedList)getComponent().getModel().getUnit().getShapes()).reorder();
+            ((LayerOrderedList)getComponent().getModel().getUnit().getShapes()).reorder();
         }
     }
 }

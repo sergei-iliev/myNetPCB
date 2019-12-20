@@ -1,4 +1,4 @@
-package com.mynetpcb.core.capi;
+package com.mynetpcb.core.capi.layer;
 
 import com.mynetpcb.core.capi.shape.Shape;
 
@@ -6,9 +6,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-public class SortedList<S extends Shape> extends LinkedList<S> {
+public class LayerOrderedList<S extends Shape> extends LinkedList<S> implements OrderedList<S> {
 
-
+    @Override
+    public OrderedList<S> clone() {
+        return new LayerOrderedList<>();
+    }
+    
     private final Comparator<S> comparator = new Comparator<S>() {
         @Override
         public int compare(S s1, S s2) {
@@ -26,7 +30,7 @@ public class SortedList<S extends Shape> extends LinkedList<S> {
         if (this.size() == 0) {
             return super.add(shape);
         } else {
-            for (Shape s : this) {              
+            for (Shape s : this) {
                 if (s.getDrawingOrder() >= shape.getDrawingOrder()) {
                     super.add(this.indexOf(s), shape);
                     return true;

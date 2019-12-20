@@ -4,11 +4,11 @@ import com.mynetpcb.board.shape.BoardShapeFactory;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.SortedList;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.CompositeLayer;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.layer.LayerOrderedList;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -51,12 +51,11 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
     private CompositeLayerable compositeLayer;
 
     public Board(int width, int height) {
-        super(width, height);
+        super(width, height,new LayerOrderedList<>());
         this.shapeFactory = new BoardShapeFactory();
         this.grid.setGridUnits(0.8, Grid.Units.MM);
         this.grid.setPointsColor(Color.WHITE);
         this.frame.setFillColor(Color.WHITE);
-        //this.frame.setOffset(Grid.MM_TO_COORD(1));
         scalableTransformation.Reset(0.5, 10, 3, 13);
         this.getCoordinateSystem().setSelectionRectWidth(3000);
         this.compositeLayer = new CompositeLayer();
@@ -114,7 +113,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
                                     Grid.Units.MM);
         
         parseSymbols(node , false);
-        ((SortedList) this.getShapes()).reorder();
+        this.getShapes().reorder();
     }
 
     private void parseSymbols(Node node, boolean selection) throws XPathExpressionException,
@@ -315,7 +314,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
     @Override
     public void setActiveSide(Layer.Side side) {
         this.compositeLayer.setActiveSide(side);
-        ((SortedList) this.shapes).reorder();
+        this.shapes.reorder();
     }
 
     @Override

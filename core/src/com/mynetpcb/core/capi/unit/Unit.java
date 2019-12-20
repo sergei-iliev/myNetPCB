@@ -18,7 +18,9 @@ import com.mynetpcb.core.capi.event.ShapeEventDispatcher;
 import com.mynetpcb.core.capi.event.ShapeListener;
 import com.mynetpcb.core.capi.layer.CompositeLayer;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
+import com.mynetpcb.core.capi.layer.DefaultOrderedList;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.layer.OrderedList;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.print.PrintCallable;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -36,6 +38,8 @@ import com.mynetpcb.core.capi.undo.Undoable;
 
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Rectangle;
+
+import com.sun.jmx.remote.util.OrderClassLoaders;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -76,7 +80,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
 
     protected Grid grid;
     
-    protected List<S> shapes;
+    protected OrderedList<S> shapes;
 
     protected String unitName;
 
@@ -97,8 +101,12 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
     protected Frameable frame;
     
     public Unit(int width, int height) {
+        this(width,height,new DefaultOrderedList<>());
+    }
+    
+    public Unit(int width, int height,OrderedList<S> list) {
         uuid = UUID.randomUUID();
-        shapes = new LinkedList<S>();
+        shapes = list;
         scalableTransformation = new ScalableTransformation();
         shapeListeners = new EventListenerList();
         this.grid = new Grid(0.8, Grid.Units.MM);
@@ -110,6 +118,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         this.frame=new UnitFrame(width,height);
         this.ruler=new Ruler();
     }
+    
     public Object clone() throws CloneNotSupportedException { 
       Unit copy=(Unit)super.clone();
       copy.frame=new UnitFrame(this.width,this.height);
@@ -121,14 +130,18 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
       copy.grid=this.grid.clone();
       copy.ruler=new Ruler();
       copy.coordinateSystem =new CoordinateSystem(copy);
-      copy.shapes=new LinkedList<S>();
-      UnitMgr unitMgr=new UnitMgr();
-      unitMgr.cloneBlock(this, copy);
-      
+      copy.shapes=this.shapes.clone();         
+            for (S shape : shapes) {
+                    try {
+                        copy.add(shape.clone());
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace(System.out);
+                    }      
+            }
       copy.scalableTransformation=this.scalableTransformation.clone();
-      copy.unitName=this.unitName;
       return copy;
     }
+    
     public void setScrollPositionValue(int scrollPositionXValue, int scrollPositionYValue) {
         this.scrollPositionXValue = scrollPositionXValue;
         this.scrollPositionYValue = scrollPositionYValue;
@@ -288,7 +301,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         }
     }
 
-    public List<S> getShapes() {
+    public OrderedList<S> getShapes() {
         return shapes;
     }
     public <M extends Drawable> List<M> getShapes(Class<?> clazz,int layermask) {
