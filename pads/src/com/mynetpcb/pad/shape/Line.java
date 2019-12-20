@@ -77,8 +77,15 @@ public class Line extends AbstractLine implements Externalizable{
         r.paint(g2, false);
       
         if (this.isSelected()) {
-            //polyline.points.forEach(p->Utilities.drawCrosshair(g2, viewportWindow, scale,  resizingPoint,selectionRectWidth,(Point)p));
-            r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),(Point)p)); 
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            for(Object p:r.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+            }
         }
         
     }

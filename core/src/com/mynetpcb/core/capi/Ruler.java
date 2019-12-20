@@ -36,7 +36,7 @@ public class Ruler extends Shape implements Resizeable{
             return;
         }
         
-        text.setText(String.valueOf(Grid.COORD_TO_MM(Utilities.roundDouble(resizingPoint.distanceTo(x,y))))+" "+Grid.Units.MM);
+        text.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(resizingPoint.distanceTo(x,y))))+" "+Grid.Units.MM);
         text.paint(g2, viewportWindow, scale, layermask);
         
         line.setLine(x, y, resizingPoint.x, resizingPoint.y);

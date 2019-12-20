@@ -14,6 +14,7 @@ import com.mynetpcb.board.shape.PCBCopperArea;
 import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.board.shape.PCBHole;
 import com.mynetpcb.board.shape.PCBLabel;
+import com.mynetpcb.board.shape.PCBLine;
 import com.mynetpcb.board.shape.PCBRoundRect;
 import com.mynetpcb.board.shape.PCBTrack;
 import com.mynetpcb.board.shape.PCBVia;
@@ -47,8 +48,6 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.event.SolidRegionEventHandle;
-import com.mynetpcb.pad.shape.Arc;
-import com.mynetpcb.pad.shape.Line;
 import com.mynetpcb.pad.shape.SolidRegion;
 
 import java.awt.Color;
@@ -175,12 +174,12 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                 Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
 
                 if (shape != null) {                    
-                    if(shape instanceof Arc){
-                        if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
+                    if(shape instanceof PCBArc){
+                        if(((PCBArc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
                           getEventMgr().setEventHandle("arc.start.angle",shape);                    
-                        }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                        }else if(((PCBArc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
                           getEventMgr().setEventHandle("arc.extend.angle",shape); 
-                        }else if(((Arc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                        }else if(((PCBArc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
                             getEventMgr().setEventHandle("arc.mid.point",shape);                        
                         }else{
                           getEventMgr().setEventHandle("resize",shape);    
@@ -235,8 +234,8 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                             getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
                                                   true);
                    
-                    if ((shape == null) ||(!(shape instanceof Line))) {
-                        shape = new Line((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
+                    if ((shape == null) ||(!(shape instanceof PCBLine))) {
+                        shape = new PCBLine((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
                         getModel().getUnit().add(shape);
                     }else {
                         /*Click on a line
@@ -249,7 +248,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                             this.resumeLine(line,"line", scaledEvent.getX(), scaledEvent.getY());
                             return;
                         } else {
-                            shape = new Line((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);                        
+                            shape = new PCBLine((int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);                        
                             getModel().getUnit().add(shape);
                         }
                     } 

@@ -5,6 +5,7 @@ import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.board.shape.TrackShape;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -23,10 +24,12 @@ import java.awt.geom.AffineTransform;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class PCBTrack extends TrackShape implements PCBShape{
@@ -78,7 +81,15 @@ public class PCBTrack extends TrackShape implements PCBShape{
         r.paint(g2, false);
         
         if (this.isSelected()) {
-            r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),(Point)p)); 
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            for(Object p:r.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+            }
         }
 
     }
@@ -138,7 +149,16 @@ public class PCBTrack extends TrackShape implements PCBShape{
 
     @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
+        Element  element= (Element)node;
+        
+        this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+        this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
+        this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));
+        //this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");   
+        StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
+        while(st.hasMoreTokens()){
+          this.add(new Point(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())));  
+        }   
 
     }
     
