@@ -10,14 +10,9 @@ import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.utils.Utilities;
-import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
-import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -48,50 +43,6 @@ public class PCBTrack extends TrackShape implements PCBShape{
             copy.resizingPoint=null;
             copy.polyline=this.polyline.clone();
             return copy;        
-    }
-
-
-    @Override
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
-        if((this.getCopper().getLayerMaskID()&layermask)==0){
-            return;
-        }
-        
-        Box rect = this.polyline.box();
-        rect.scale(scale.getScaleX());           
-        if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
-                return;
-        }
-        g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
-        
-        Polyline r=this.polyline.clone();   
-        
-        // draw floating point
-        if (this.isFloating()) {
-            Point p = this.floatingEndPoint.clone();                              
-            r.add(p); 
-        }
-        
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        double wireWidth = thickness * scale.getScaleX();
-        g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-
-        r.paint(g2, false);
-        
-        if (this.isSelected()) {
-            Point pt=null;
-            if(resizingPoint!=null){
-                pt=resizingPoint.clone();
-                pt.scale(scale.getScaleX());
-                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-            }
-            for(Object p:r.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
-            }
-        }
-
     }
 
     @Override

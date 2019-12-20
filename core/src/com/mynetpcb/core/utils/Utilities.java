@@ -26,7 +26,6 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 
 import javax.swing.ImageIcon;
@@ -234,27 +233,6 @@ public final class Utilities {
         DOMSource source = new DOMSource(doc);
         transformer.transform(source, result);
         return result.getWriter().toString();
-    }
-    
-    public static void drawCrosshair(Graphics2D g2,
-                                     Point resizingPoint, int length, Collection<Point> points) {
-        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
-        Line2D line = (Line2D) provider.getShape();
-
-        g2.setStroke(new BasicStroke(1));
-
-        for (Point point : points) {
-            if (resizingPoint != null && resizingPoint.equals(point))
-                g2.setColor(Color.YELLOW);
-            else
-                g2.setColor(Color.BLUE);
-            line.setLine(point.x- length, point.y, point.x + length, point.y);
-            g2.draw(line);
-
-            line.setLine(point.x, point.y - length, point.x, point.y + length);
-            g2.draw(line);
-        }
-        provider.reset();
     }
     
     public static void drawCrosshair(Graphics2D g2,

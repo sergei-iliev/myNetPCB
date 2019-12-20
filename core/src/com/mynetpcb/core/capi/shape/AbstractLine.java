@@ -1,14 +1,21 @@
 package com.mynetpcb.core.capi.shape;
 
 import com.mynetpcb.core.capi.Resizeable;
+import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -294,24 +301,49 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
       return (!(floatingStartPoint.equals(floatingEndPoint) &&
               floatingStartPoint.equals(floatingMidPoint)));  
     }
-//
-//    @Override
-//    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-//        if((this.copper.getLayerMaskID()&layermask)==0){
-//            return;
-//        }
-//        GeneralPath line=null;
-//        line = new GeneralPath(GeneralPath.WIND_EVEN_ODD,points.size());      
-//        line.moveTo((float)points.get(0).getX(),(float)points.get(0).getY());
-//         for(int i=1;i<points.size();i++){            
-//             line.lineTo((float)points.get(i).getX(),(float)points.get(i).getY());       
-//         } 
-//        g2.setStroke(new BasicStroke(thickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal()));
-//        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());
-//        
-//        g2.draw(line);
-//    }
-//
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
+        if((this.getCopper().getLayerMaskID()&layermask)==0){
+            return;
+        }
+        
+        Box rect = this.polyline.box();
+        rect.scale(scale.getScaleX());           
+        if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
+                return;
+        }
+        g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
+        
+        Polyline r=this.polyline.clone();   
+        
+        // draw floating point
+        if (this.isFloating()) {
+            Point p = this.floatingEndPoint.clone();                              
+            r.add(p); 
+        }
+        
+        r.scale(scale.getScaleX());
+        r.move(-viewportWindow.getX(),- viewportWindow.getY());
+        
+        double wireWidth = thickness * scale.getScaleX();
+        g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+
+        //transparent rect
+        r.paint(g2, false);
+      
+        if (this.isSelected()) {
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            for(Object p:r.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+            }
+        }
+        
+    }
     @Override
     public void resize(int xoffset, int yoffset, Point clickedPoint) {
         clickedPoint.set(clickedPoint.x+xoffset, clickedPoint.y+yoffset);
