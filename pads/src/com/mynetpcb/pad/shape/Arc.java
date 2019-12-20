@@ -232,15 +232,15 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
     public void fromXML(Node node)  {
         Element  element= (Element)node;        
         this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));    
-        int xx=(Integer.parseInt(element.getAttribute("x")));
-        int yy=(Integer.parseInt(element.getAttribute("y")));  
+        double xx=(Double.parseDouble(element.getAttribute("x")));
+        double yy=(Double.parseDouble(element.getAttribute("y")));  
         
         if(element.getAttribute("width").length()>0){      
             int diameter=(Integer.parseInt(element.getAttribute("width")));           
             this.arc.pc.set(xx+((diameter/2)),yy+((diameter/2)));
             this.arc.r=diameter/2;                            
         }else{
-            int radius=(Integer.parseInt(element.getAttribute("radius"))); 
+            double radius=(Double.parseDouble(element.getAttribute("radius"))); 
             this.arc.pc.set(xx,yy);
             this.arc.r=radius;                                      
         } 

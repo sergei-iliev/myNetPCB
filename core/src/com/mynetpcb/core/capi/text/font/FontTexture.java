@@ -70,7 +70,6 @@ public class FontTexture implements Texture{
     
     public void setRotation(double alpha,Point pt){ 
       this.shape.rotate(alpha,pt);
-        System.out.println(alpha);
     }
     
     @Override

@@ -5,6 +5,7 @@ import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.board.shape.TrackShape;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -58,7 +59,21 @@ public class PCBTrack extends TrackShape implements PCBShape{
         // TODO Implement this method
 
     }
-
+    @Override
+    public int getDrawingOrder() {
+        int order=super.getDrawingOrder();
+        if(getOwningUnit()==null){            
+            return order;
+        }
+        
+        
+         if(((CompositeLayerable)getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())){
+           order= 4;
+         }else{
+           order= 3; 
+         }  
+        return order;     
+    }
     @Override
     public void setClearance(int clearance) {
         this.clearance=clearance;

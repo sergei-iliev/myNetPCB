@@ -75,7 +75,7 @@ public class Line extends AbstractLine implements Externalizable{
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
 
         while (st.hasMoreTokens()) {
-           this.add(new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+           this.add(new Point(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())));
         }
         
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));

@@ -145,8 +145,10 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
     public void paint(Graphics2D g2, ViewportWindow viewportWindow) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for (Shape shape : shapes) {
+        System.out.println("paint"+shape);
             shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),
                         compositeLayer.getLayerMaskID());
+        
         }
 //        for (Shape shape : shapes) {
 //            if (shape instanceof PCBTrack || shape instanceof PCBCopperArea) {

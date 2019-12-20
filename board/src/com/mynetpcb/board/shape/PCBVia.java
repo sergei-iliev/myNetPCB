@@ -6,6 +6,8 @@ import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -22,6 +24,7 @@ import java.awt.geom.AffineTransform;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class PCBVia extends ViaShape implements PCBShape{
@@ -78,6 +81,22 @@ public class PCBVia extends ViaShape implements PCBShape{
         // TODO Implement this method
 
     }
+    
+    @Override
+    public int getDrawingOrder() {
+        int order=super.getDrawingOrder();
+        if(getOwningUnit()==null){            
+            return order;
+        }
+        
+        if(((CompositeLayerable)getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())){
+          order= 4;
+        }else{
+          order= 3; 
+        }  
+        return order;
+    }
+    
     @Override
     public Point getCenter() {
         return this.circle.pc;
@@ -100,8 +119,15 @@ public class PCBVia extends ViaShape implements PCBShape{
 
     @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
-
+        Element element=(Element)node;
+        double x=(Double.parseDouble(element.getAttribute("x")));
+        double y=(Double.parseDouble(element.getAttribute("y")));
+        diameter=Double.parseDouble(element.getAttribute("width"));
+        
+        this.circle.pc.set(x, y);
+        this.circle.r=(Double.parseDouble(element.getAttribute("drill")))/2;
+        this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));        
+        //this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");  
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.shape.PadShape;
@@ -58,6 +60,18 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         copy.resizingPoint=null;
         copy.polygon=this.polygon.clone();  
         return copy;        
+    }
+    @Override
+    public int getDrawingOrder() {
+        if(getOwningUnit()==null){            
+            return super.getDrawingOrder();
+        }
+        
+        if(((CompositeLayerable)getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())){
+           return 2;
+        }else{
+           return 1; 
+        }
     }
     @Override
     public Box getBoundingShape() {        
