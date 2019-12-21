@@ -215,9 +215,9 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
                 //***kill strong references
                 shape.setOwningUnit(null);
                 //***kill strong references
-                if (shape instanceof Ownerable) {
-                    ((Ownerable)shape).setOwner(null);
-                }
+//                if (shape instanceof Ownerable) {
+//                    ((Ownerable)shape).setOwner(null);
+//                }
                 shape.clear();
                 shape = null;
                 return;
@@ -246,9 +246,9 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
     public Collection<S> getSelectedShapes(boolean parentsOnly) {
         Collection<S> v = new ArrayList<S>(20);
         for (S shape : shapes) {
-            if (parentsOnly && shape instanceof Ownerable && ((Ownerable)shape).getOwner() != null) {
-                continue;
-            }
+//            if (parentsOnly && shape instanceof Ownerable && ((Ownerable)shape).getOwner() != null) {
+//                continue;
+//            }
             if (shape.isSelected()) {
                 v.add(shape);
             }

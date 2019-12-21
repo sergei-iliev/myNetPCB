@@ -1,6 +1,8 @@
 package com.mynetpcb.board.dialog.panel.inspector;
 
 import com.mynetpcb.board.component.BoardComponent;
+import com.mynetpcb.board.shape.PCBVia;
+import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -55,13 +57,14 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
 
     @Override
     public void updateUI() {
-//        PCBVia via=(PCBVia)getTarget(); 
-//        leftField.setText(toUnitX(via.getX()));
-//        topField.setText(toUnitY(via.getY()));
-//        netField.setText(via.getNetName());
-//        thicknessField.setText(toUnit(via.getThickness()));
-//        widthField.setText(toUnit(via.getWidth()));
-//        clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(via.getClearance())));
+        PCBVia via=(PCBVia)getTarget(); 
+        leftField.setText(toUnitX(via.getInner().pc.x));
+        topField.setText(toUnitY(via.getInner().pc.y));
+        netField.setText(via.getNetName());
+        
+        thicknessField.setText(toUnit(via.getOuter().r*2));
+        widthField.setText(toUnit(via.getInner().r*2));
+        clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(via.getClearance())));
     }
 
     @Override
@@ -72,26 +75,24 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void keyReleased(KeyEvent e){
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
-//        PCBVia via=(PCBVia)getTarget();
-//        if(e.getSource()==this.leftField){
-//           via.setX(fromUnit(this.leftField.getText())); 
-//        }
-//        
-//        if(e.getSource()==this.topField){
-//            via.setY(fromUnit(this.topField.getText())); 
-//        }
-//        if(e.getSource()==this.thicknessField){
-//           via.setThickness(fromUnit(this.thicknessField.getText()));
-//        }
-//        if(e.getSource()==this.widthField){
-//           via.setWidth(fromUnit(this.widthField.getText()));
-//        }
-//        if(e.getSource()==this.netField){
-//           via.setNetName(this.netField.getText());
-//        }
-//        if(e.getSource()==this.clearanceField){
-//           via.setClearance(Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
-//        }
+        PCBVia via=(PCBVia)getTarget();
+        if(e.getSource()==this.leftField || e.getSource()==this.topField){
+           via.getInner().pc.set(fromUnitX(this.leftField.getText()),fromUnitY(this.topField.getText()));
+           via.getOuter().pc.set(via.getInner().pc.x,via.getInner().pc.y);
+        }
+
+        if(e.getSource()==this.thicknessField){
+           via.getOuter().r=(fromUnit(this.thicknessField.getText())/2);
+        }
+        if(e.getSource()==this.widthField){
+           via.getInner().r=fromUnit(this.widthField.getText())/2;
+        }
+        if(e.getSource()==this.netField){
+           via.setNetName(this.netField.getText());
+        }
+        if(e.getSource()==this.clearanceField){
+           via.setClearance((int)Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
+        }
         
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint(); 

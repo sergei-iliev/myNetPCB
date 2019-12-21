@@ -256,7 +256,15 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         g2.setComposite(originalComposite);
         
         if (this.isSelected()) {
-            r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p));        
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            for(Object p:r.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+            }
         }  
     }
     /*

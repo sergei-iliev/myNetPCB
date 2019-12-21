@@ -1,11 +1,14 @@
 package com.mynetpcb.board.dialog.panel.inspector;
 
 import com.mynetpcb.board.component.BoardComponent;
+import com.mynetpcb.board.shape.PCBCopperArea;
+import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.pad.shape.PadShape;
+import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -66,30 +69,30 @@ public class CopperAreaPanelBuilder extends AbstractPanelBuilder<Shape>{
 
     @Override
     public void updateUI() {
-//        PCBCopperArea area=(PCBCopperArea)getTarget();
-//        Point p=area.getResizingPoint();
-//        leftField.setEnabled(p==null?false:true);  
-//        topField.setEnabled(p==null?false:true);
-//        leftField.setText(toUnitX(p==null?0:p.x));
-//        topField.setText(toUnitY(p==null?0:p.y));
-//        netField.setText(area.getNetName());
-//        
-//        setSelectedItem(padConnnectionCombo, area.getPadConnection());
-//        setSelectedItem(layerCombo, area.getCopper());
-//        setSelectedIndex(fillCombo,(area.getFill()==Shape.Fill.EMPTY?0:1)); 
-//        clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(area.getClearance())));
+        PCBCopperArea area=(PCBCopperArea)getTarget();
+        Point p=area.getResizingPoint();
+        leftField.setEnabled(p==null?false:true);  
+        topField.setEnabled(p==null?false:true);
+        leftField.setText(toUnitX(p==null?0:p.x));
+        topField.setText(toUnitY(p==null?0:p.y));
+        netField.setText(area.getNetName());
+        
+        setSelectedItem(padConnnectionCombo, area.getPadConnection());
+        setSelectedItem(layerCombo, area.getCopper());
+        setSelectedIndex(fillCombo,(area.getFill()==Shape.Fill.EMPTY?0:1)); 
+        clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(area.getClearance())));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-//        PCBCopperArea area=(PCBCopperArea)getTarget();
-//        if(e.getSource()==fillCombo){
-//           getTarget().setFill(Shape.Fill.values()[fillCombo.getSelectedIndex()]);                
-//        }
-//        if(e.getSource()==padConnnectionCombo){
-//           area.setPadConnection((PadShape.PadConnection)padConnnectionCombo.getSelectedItem());                
-//        }
+        PCBCopperArea area=(PCBCopperArea)getTarget();
+        if(e.getSource()==fillCombo){
+           getTarget().setFill(Shape.Fill.values()[fillCombo.getSelectedIndex()]);                
+        }
+        if(e.getSource()==padConnnectionCombo){
+           //area.setPadConnection((PadShape.PadConnection)padConnnectionCombo.getSelectedItem());                
+        }
         
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));         
         getComponent().Repaint();
@@ -98,22 +101,22 @@ public class CopperAreaPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void keyReleased(KeyEvent e){
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
-//        PCBCopperArea area=(PCBCopperArea)getTarget();
-//        if(e.getSource()==this.clearanceField){
-//           area.setClearance(Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
-//        }
-//        if(e.getSource()==this.leftField){
-//           Point p=area.getResizingPoint(); 
-//           p.x=fromUnitX(leftField.getText()); 
-//        }
-//        
-//        if(e.getSource()==this.topField){
-//           Point p=area.getResizingPoint();
-//           p.y= fromUnitY(topField.getText());  
-//        }
-//        if(e.getSource()==this.netField){
-//           area.setNetName(this.netField.getText());
-//        }
+        PCBCopperArea area=(PCBCopperArea)getTarget();
+        if(e.getSource()==this.clearanceField){
+           area.setClearance((int)Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
+        }
+        if(e.getSource()==this.leftField){
+           Point p=area.getResizingPoint(); 
+           p.x=fromUnitX(leftField.getText()); 
+        }
+        
+        if(e.getSource()==this.topField){
+           Point p=area.getResizingPoint();
+           p.y= fromUnitY(topField.getText());  
+        }
+        if(e.getSource()==this.netField){
+           area.setNetName(this.netField.getText());
+        }
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint(); 
     }

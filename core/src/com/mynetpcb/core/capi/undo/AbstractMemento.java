@@ -1,6 +1,5 @@
 package com.mynetpcb.core.capi.undo;
 
-import com.mynetpcb.core.capi.Ownerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.shape.Shape.Fill;
@@ -64,10 +63,10 @@ public abstract class AbstractMemento<U extends Unit,S extends Shape> {
             uuid = UUID.fromString(shape.getUUID().toString());
         }
 
-        if (shape instanceof Ownerable&&((Ownerable)shape).getOwner()!=null){
-            parentUUID =
-                    UUID.fromString(((Ownerable)shape).getOwner().getUUID().toString());
-        }
+//        if (shape instanceof Ownerable&&((Ownerable)shape).getOwner()!=null){
+//            parentUUID =
+//                    UUID.fromString(((Ownerable)shape).getOwner().getUUID().toString());
+//        }
 
     }
     

@@ -12,6 +12,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 
@@ -27,20 +28,23 @@ import org.w3c.dom.Node;
 
 public class PCBHole extends HoleShape implements PCBShape{
     private int clearance;    
-    private com.mynetpcb.d2.shapes.Circle circle;
+    private Circle circle;
     
     public PCBHole() {
         this.fillColor=Color.WHITE; 
         this.displayName="Hole";
         this.thickness=1000;
         this.selectionRectWidth=3000;
-        this.circle=new com.mynetpcb.d2.shapes.Circle(new Point(0,0),Grid.MM_TO_COORD(0.8));
+        this.circle=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.8));
     }
     @Override
     public PCBHole clone() throws CloneNotSupportedException {
         PCBHole copy = (PCBHole)super.clone();
         copy.circle=this.circle.clone();
         return copy;
+    }
+    public Circle getInner(){
+        return circle;
     }
     @Override
     public long getOrderWeight() {
@@ -124,7 +128,7 @@ public class PCBHole extends HoleShape implements PCBShape{
         }
         g2.setColor(isSelected() ? Color.GRAY : fillColor);
         
-        com.mynetpcb.d2.shapes.Circle  c=this.circle.clone();
+        Circle  c=this.circle.clone();
         c.scale(scale.getScaleX());
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
 

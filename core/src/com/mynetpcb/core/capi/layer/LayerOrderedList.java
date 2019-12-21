@@ -31,8 +31,6 @@ public class LayerOrderedList<S extends Shape> extends LinkedList<S> implements 
             return super.add(shape);
         } else {
             for (Shape s : this) {
-                System.out.println(s+"::"+shape);
-                System.out.println(s.getDrawingOrder()+"::"+shape.getDrawingOrder());
                 if (s.getDrawingOrder() >= shape.getDrawingOrder()) {
                     super.add(this.indexOf(s), shape);
                     return true;

@@ -56,17 +56,17 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         Collection<T> shapes = from.getShapes();
         for (T shape : shapes) {
             //***isolate owned children
-            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
-                continue;
-            }
+//            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
+//                continue;
+//            }
 
             T copyShape = (T) shape.clone();
-            Collection<T> children = getChildrenByParent(from.getShapes(), shape);
-            for (T child : children) {
-                T childCopy = (T) child.clone();
-                ((Ownerable) childCopy).setOwner(copyShape);
-                to.add(childCopy);
-            }
+//            Collection<T> children = getChildrenByParent(from.getShapes(), shape);
+//            for (T child : children) {
+//                T childCopy = (T) child.clone();
+//                ((Ownerable) childCopy).setOwner(copyShape);
+//                to.add(childCopy);
+//            }
             to.add(copyShape);
         }
         to.setUnitName(from.getUnitName());
@@ -146,11 +146,11 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         Collection<T> selectedShapes = unit.getSelectedShapes(true);
         for (T shape : selectedShapes) {
             shape.mirror(line);
-            //***align attached labels
-            Collection<T> children = this.getChildrenByParent(unit.getShapes(), shape);
-            for (T child : children) {
-                child.mirror(line);
-            }
+//            //***align attached labels
+//            Collection<T> children = this.getChildrenByParent(unit.getShapes(), shape);
+//            for (T child : children) {
+//                child.mirror(line);
+//            }
         }
 
     }
@@ -213,10 +213,10 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 
     public void deleteBlock(U unit, Collection<T> shapes) {
         for (Shape shape : shapes) {
-            Collection<T> children = getChildrenByParent(unit.getShapes(), shape);
-            for (Shape child : children) {
-                unit.delete(child.getUUID());
-            }
+//            Collection<T> children = getChildrenByParent(unit.getShapes(), shape);
+//            for (Shape child : children) {
+//                unit.delete(child.getUUID());
+//            }
 
             unit.delete(shape.getUUID());
         }
@@ -250,14 +250,14 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         return count > 1;
     }
 
-    public Collection<T> getChildrenByParent(Collection<T> childrenSet, Shape parent) {
-        Collection<T> children = new HashSet<T>(50);
-        for (T shape : childrenSet) {
-            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() == parent)
-                children.add(shape);
-        }
-        return children;
-    }
+//    public Collection<T> getChildrenByParent(Collection<T> childrenSet, Shape parent) {
+//        Collection<T> children = new HashSet<T>(50);
+//        for (T shape : childrenSet) {
+//            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() == parent)
+//                children.add(shape);
+//        }
+//        return children;
+//    }
 
     /*
      * Normalize the pin text when chip is rotated or mirrored

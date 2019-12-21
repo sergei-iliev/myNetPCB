@@ -3,7 +3,6 @@ package com.mynetpcb.board.unit;
 import com.mynetpcb.board.shape.BoardShapeFactory;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Ownerable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.CompositeLayer;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
@@ -90,9 +89,9 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         xml.append("<symbols>\r\n");
 
         for (Shape shape : shapes) {
-            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
-                continue;
-            }
+//            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
+//                continue;
+//            }
             xml.append(((Externalizable) shape).toXML());
 
         }
@@ -135,7 +134,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
                 Node subitem = subnodelist.item(j);
                 Shape child = this.shapeFactory.createShape(subitem);
                 child.setSelected(selection);
-                ((Ownerable) child).setOwner(shape);
+                //((Ownerable) child).setOwner(shape);
                 this.add(child);
             }
         }

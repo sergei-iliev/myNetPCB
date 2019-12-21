@@ -2,12 +2,10 @@ package com.mynetpcb.core.capi.panel;
 
 
 import com.mynetpcb.core.capi.CoordinateSystem;
-import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.layer.LayerOrderedList;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.layer.LayerOrderedList;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.tree.AttachedItem;
 
 import java.awt.Component;
 import java.awt.LayoutManager;
@@ -17,8 +15,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import java.lang.ref.WeakReference;
-
-import java.util.Collection;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -104,34 +100,34 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
       return layoutPanel;  
     }
     
-    protected void fillParentCombo(Class<?> clazz){
-        //***disconnect from listener
-        this.parentCombo.removeActionListener(this);
-        parentCombo.removeAllItems();
-        parentCombo.addItem(new AttachedItem.Builder("none").setUUID(null).build());
-        
-        Shape parent=((Ownerable)getTarget()).getOwner();
-        Collection<S> shapes=getComponent().getModel().getUnit().getShapes(clazz);
-        //***get could be Owners list      
-        for(S shape:shapes){
-            //if(symbol instanceof Chip){
-             AttachedItem item=new AttachedItem.Builder(shape.getDisplayName()).setUUID(shape.getUUID()).build();  
-             parentCombo.addItem(item);  
-             if(parent!=null){
-               if(parent.getUUID().equals(item.getUUID()))
-                 parentCombo.setSelectedItem(item);  
-             }    
-            }
-        //***reconnect
-        this.parentCombo.addActionListener(this);       
-    }
+//    protected void fillParentCombo(Class<?> clazz){
+//        //***disconnect from listener
+//        this.parentCombo.removeActionListener(this);
+//        parentCombo.removeAllItems();
+//        parentCombo.addItem(new AttachedItem.Builder("none").setUUID(null).build());
+//        
+//        Shape parent=((Ownerable)getTarget()).getOwner();
+//        Collection<S> shapes=getComponent().getModel().getUnit().getShapes(clazz);
+//        //***get could be Owners list      
+//        for(S shape:shapes){
+//            //if(symbol instanceof Chip){
+//             AttachedItem item=new AttachedItem.Builder(shape.getDisplayName()).setUUID(shape.getUUID()).build();  
+//             parentCombo.addItem(item);  
+//             if(parent!=null){
+//               if(parent.getUUID().equals(item.getUUID()))
+//                 parentCombo.setSelectedItem(item);  
+//             }    
+//            }
+//        //***reconnect
+//        this.parentCombo.addActionListener(this);       
+//    }
     
     /**
      *Convert internal units value to user unit
      * @param value
      * @return
      */
-    protected String toUnit(int value){
+    protected String toUnit(double value){
        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value));  
     }
     
