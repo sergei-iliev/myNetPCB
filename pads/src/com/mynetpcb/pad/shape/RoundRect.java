@@ -139,8 +139,16 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
 
         
         if (this.isSelected()) {
-            //Utilities.drawCrosshair(g2, viewportWindow, scale,resizingPoint,this.selectionRectWidth,this.roundRect.points.get(0),this.roundRect.points.get(1),this.roundRect.points.get(2),this.roundRect.points.get(3));
-            r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p)); 
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            for(Object p:r.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+            }
+  
         }
     }
 

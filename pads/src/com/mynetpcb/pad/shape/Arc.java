@@ -210,7 +210,8 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
     
     @Override
     public void resize(int xoffset, int yoffset, Point point) {
-        Point pt=this.calculateResizingMidPoint(xoffset,yoffset);    
+        Point pt=this.calculateResizingMidPoint(xoffset,yoffset);  
+        this.resizingPoint=pt;
         double r=this.arc.pc.distanceTo(pt);
         this.arc.r=r;
     }

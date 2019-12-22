@@ -1,5 +1,6 @@
 package com.mynetpcb.pad.event;
 
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
@@ -55,7 +56,7 @@ public class ArcMidPointEventHandle<U extends UnitComponent,S extends Shape>  ex
 
     @Override
     protected void clear() {
-
+        ((Resizeable)getTarget()).setResizingPoint(null);
     }
 }
 

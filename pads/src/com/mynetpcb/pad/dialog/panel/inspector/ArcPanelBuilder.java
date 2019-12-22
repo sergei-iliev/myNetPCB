@@ -5,19 +5,14 @@ import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
-
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.shape.Arc;
 
-import com.mynetpcb.pad.shape.Circle;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-
 import java.awt.event.ActionEvent;
-
 import java.awt.event.KeyEvent;
 
 import javax.swing.JComboBox;
@@ -87,7 +82,7 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
 
         
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(arc.getThickness())));    
-        widthField.setText(String.valueOf(Grid.COORD_TO_MM(arc.getRadius())));
+        widthField.setText(toUnit(arc.getRadius()));
         
         setSelectedItem(layerCombo, (getTarget()).getCopper());
         setSelectedIndex(fillCombo,(getTarget().getFill()==Shape.Fill.EMPTY?0:1)); 
