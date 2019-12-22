@@ -260,7 +260,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                 if (e.getKeyCode() == KeyEvent.VK_Q ||
                     e.getKeyCode() == KeyEvent.VK_A) {
                     
-                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes(false);
+                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes();
                     if(shapes.size()==0){
                        return true; 
                     }   
@@ -287,7 +287,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
             if (e.getModifiers() == ActionEvent.SHIFT_MASK) {
                 if (e.getKeyCode() == KeyEvent.VK_Q ||
                     e.getKeyCode() == KeyEvent.VK_A) {
-                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes(false);
+                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes();
                     if(shapes.size()==0){
                        return true; 
                     } 
@@ -297,11 +297,11 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     Point center=r.getCenter();
                     Point p=getModel().getUnit().getGrid().positionOnGrid(center); 
                     if(e.getKeyCode() == KeyEvent.VK_Q){
-                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),new com.mynetpcb.d2.shapes.Line(new Point(p.x - 10, p.y),
+                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit().getSelectedShapes(),new com.mynetpcb.d2.shapes.Line(new Point(p.x - 10, p.y),
                                                               new Point(p.x + 10, p.y)));
                                            
                     }else{
-                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit(),new com.mynetpcb.d2.shapes.Line(
+                        FootprintMgr.getInstance().mirrorBlock(getModel().getUnit().getSelectedShapes(),new com.mynetpcb.d2.shapes.Line(
                                 new Point(p.x, p.y - 10),
                                           new Point(p.x, p.y + 10)));
                     }

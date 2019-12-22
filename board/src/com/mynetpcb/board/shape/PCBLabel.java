@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.layer.ClearanceTarget;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.pad.shape.GlyphLabel;
 
 import java.awt.Graphics2D;
@@ -18,7 +19,12 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget{
     public PCBLabel(int layermaskId) {
         super("Label",(int)Grid.MM_TO_COORD(0.3),layermaskId);
     }
-
+    
+    @Override
+    public void mirror(Line line) {
+        texture.mirror(line);
+    }
+    
     @Override
     public <T extends ClearanceSource> void drawClearence(Graphics2D graphics2D, ViewportWindow viewportWindow,
                                                           AffineTransform affineTransform, T clearanceSource) {

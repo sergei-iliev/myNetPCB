@@ -81,11 +81,9 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==layerCombo){
-           getTarget().setCopper((Layer.Copper)layerCombo.getSelectedItem());
-        }
+        super.actionPerformed(e);
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
-        getComponent().Repaint();
+        getComponent().Repaint();  
     }
     
     @Override

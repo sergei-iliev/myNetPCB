@@ -9,11 +9,15 @@ import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -47,9 +51,36 @@ public class PCBTrack extends TrackShape implements PCBShape{
     }
 
     @Override
-    public <T extends ClearanceSource> void drawClearence(Graphics2D graphics2D, ViewportWindow viewportWindow,
-                                                          AffineTransform affineTransform, T clearanceSource) {
-        // TODO Implement this method
+    public <T extends ClearanceSource> void drawClearence(Graphics2D g2, ViewportWindow viewportWindow,
+                                                          AffineTransform scale, T source) {
+//        if(Utilities.isSameNet(source, this)){
+//            return;
+//        }       
+        
+        Shape shape=(Shape)source;
+        if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
+             return;  //not on the same layer
+        }
+        if(!shape.getBoundingShape().intersects(this.getBoundingShape())){
+           return; 
+        }
+                
+        double lineThickness=(thickness+2*(this.clearance!=0?this.getClearance():source.getClearance())) *scale.getScaleX();            
+        
+        Polyline r=this.polyline.clone();   
+        
+        
+        r.scale(scale.getScaleX());
+        r.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+        g2.setStroke(new BasicStroke((float) lineThickness, 1, 1));
+
+        g2.setColor(Color.BLACK);        
+         
+        g2.setClip(source.getClippingRegion());
+        r.paint(g2, false);
+        g2.setClip(null);
+
 
     }
 
@@ -59,6 +90,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
         // TODO Implement this method
 
     }
+    
     @Override
     public int getDrawingOrder() {
         int order=super.getDrawingOrder();

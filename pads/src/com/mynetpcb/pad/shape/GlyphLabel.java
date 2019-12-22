@@ -71,7 +71,7 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
 
     @Override
     public void mirror(Line line) {
-        texture.mirror(line);
+        
     }
     
     @Override

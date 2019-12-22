@@ -5,6 +5,7 @@ import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.ClearanceTarget;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -26,6 +27,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -253,6 +255,14 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
           r.paint(g2, true);  
         }
         
+        if(this.fill==Fill.FILLED){
+        //draw clearence background
+         Collection<ClearanceTarget> targets=getOwningUnit().getShapes(ClearanceTarget.class);
+         this.prepareClippingRegion(viewportWindow, scale);
+         for(ClearanceTarget target:targets){              
+              target.drawClearence(g2, viewportWindow, scale, this);
+         }
+        }
         g2.setComposite(originalComposite);
         
         if (this.isSelected()) {
@@ -265,7 +275,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
             for(Object p:r.points){
               Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
             }
-        }  
+        }         
     }
     /*
      * Local cache
@@ -279,7 +289,12 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
 
     @Override
     public void prepareClippingRegion(ViewportWindow viewportWindow, AffineTransform scale) {
-
+        clip.reset();
+        for(Point point:polygon.points){
+            java.awt.Point position=new java.awt.Point();
+            position.setLocation(point.x*scale.getScaleX(),point.y*scale.getScaleX());            
+            clip.addPoint(position.x-(int)viewportWindow.getX(),position.y-(int)viewportWindow.getY());
+        }
     }
 
     @Override

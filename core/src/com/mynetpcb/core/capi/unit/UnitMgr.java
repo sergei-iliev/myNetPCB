@@ -134,26 +134,21 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         }
     }
 
-    public void mirrorBlock(Collection<T> shapes, Point A,Point B) {
+    public void mirrorBlock(Collection<T> shapes, Line line) {
         for (T shape : shapes) {
-            //shape.Mirror(A,B);
+            shape.mirror(line);
         }
     }
     /*
      * Block mirror(mind parent child attachments,circuitlabels only)
      */
-    public void mirrorBlock(U unit, Line line) {
-        Collection<T> selectedShapes = unit.getSelectedShapes(true);
-        for (T shape : selectedShapes) {
-            shape.mirror(line);
-//            //***align attached labels
-//            Collection<T> children = this.getChildrenByParent(unit.getShapes(), shape);
-//            for (T child : children) {
-//                child.mirror(line);
-//            }
-        }
-
-    }
+//    public void mirrorBlock(U unit, Line line) {
+//        Collection<T> selectedShapes = unit.getSelectedShapes(true);
+//        for (T shape : selectedShapes) {
+//            shape.mirror(line);
+//        }
+//
+//    }
 
     public void moveBlock(Collection<T> shapes, double xoffset, double yoffset) {
         for (Shape shape : shapes) {

@@ -2,11 +2,11 @@ package com.mynetpcb.board.dialog.panel.inspector;
 
 import com.mynetpcb.board.component.BoardComponent;
 import com.mynetpcb.board.shape.PCBLabel;
+import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.pad.shape.GlyphLabel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,7 +25,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
     private JTextField textField;
 
     public LabelPanelBuilder(BoardComponent component) {
-         super(component,new GridLayout(10,1));
+         super(component,new GridLayout(8,1));
         //layer
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -70,15 +70,6 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
                 clearanceField=new JTextField(); clearanceField.addKeyListener(this); panel.add(clearanceField,BorderLayout.CENTER);
                 layoutPanel.add(panel);  
                 
-//                panel=new JPanel(); panel.setLayout(new BorderLayout());
-//                label=new JLabel("Orientation"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-//                textOrientationCombo=new JComboBox();textOrientationCombo.addActionListener(this);  panel.add(textOrientationCombo,BorderLayout.CENTER);
-//                layoutPanel.add(panel);
-//                
-//                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-//                label=new JLabel("Text Alignment"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-//                textAlignmentCombo=new JComboBox();textAlignmentCombo.addActionListener(this);  panel.add(textAlignmentCombo,BorderLayout.CENTER);
-//                layoutPanel.add(panel);
                 
 
     }
@@ -100,27 +91,9 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        GlyphLabel label=(GlyphLabel)getTarget(); 
-//        if(e.getSource()==textOrientationCombo){ 
-//            label.getTexture().setOrientation((Text.Orientation)textOrientationCombo.getSelectedItem());
-//            validateAlignmentComboText(textAlignmentCombo,label.getTexture());
-//        } 
-//        if(e.getSource()==textAlignmentCombo){;  
-//            label.getTexture().setAlignment(Text.Alignment.valueOf((String)textAlignmentCombo.getSelectedItem()));
-//        }
-//        if(e.getSource()==layerCombo){
-//           getTarget().setCopper((Layer.Copper)layerCombo.getSelectedItem());
-//        }
-//        if(e.getSource()==parentCombo){
-//             Shape parent=getComponent().getModel().getUnit().getShape(((AttachedItem)parentCombo.getSelectedItem()).getUUID());
-//            ((Ownerable) getTarget()).setOwner(parent);  
-//             getComponent().getModel().getUnit().setSelected(false);
-//             if(parent!=null){
-//                parent.setSelected(true);
-//             }   
-//        }
+        super.actionPerformed(e);        
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
-        getComponent().Repaint();
+        getComponent().Repaint();  
     }
     
     @Override
@@ -131,24 +104,23 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
         if(e.getSource()==this.rotateField){
            label.setRotation(Double.parseDouble(this.rotateField.getText()),label.getCenter()); 
         }
-//        
-//        if(e.getSource()==textField&&textField.getText().length()>0){
-//            label.getTexture().setText(textField.getText());
-//        }
-//          
-//        if(e.getSource()==this.heightField){
-//           label.getTexture().setSize(Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));  
-//        }
-//        if(e.getSource()==this.thicknessField){
-//           label.getTexture().setThickness(Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
-//        }
-//        if(e.getSource()==this.leftField){           
-//           label.getTexture().getAnchorPoint().x=fromUnitX(leftField.getText());
-//        }
-//        
-//        if(e.getSource()==this.topField){
-//           label.getTexture().getAnchorPoint().y=fromUnitY(topField.getText());
-//        }
+        if(e.getSource()==textField&&textField.getText().length()>0){
+            label.getTexture().setText(textField.getText());
+        }
+        if(e.getSource()==rotateField&&rotateField.getText().length()>0){
+            label.setRotation(Double.parseDouble(rotateField.getText()),null);
+        }  
+        if(e.getSource()==this.heightField){
+           label.getTexture().setSize((int)Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));  
+        }
+        if(e.getSource()==this.thicknessField){
+           label.getTexture().setThickness((int)Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
+        }        
+        if((e.getSource()==this.topField)||(e.getSource()==this.leftField)){            
+           label.getTexture().setLocation(fromUnitX(leftField.getText()),fromUnitY(topField.getText()));
+        }
+        getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
+        getComponent().Repaint();  
 //        if(e.getSource()==this.clearanceField){
 //           label.setClearance(Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
 //        }

@@ -103,7 +103,7 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
         else
             this.setEnabled(unitMenu, "Paste", false);
 
-        if (getUnitComponent().getModel().getUnit().getSelectedShapes(true).size() > 0)
+        if (getUnitComponent().getModel().getUnit().getSelectedShapes().size() > 0)
             this.setEnabled(unitMenu, "Copy", true);
         else
             this.setEnabled(unitMenu, "Copy", false);

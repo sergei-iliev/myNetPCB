@@ -326,9 +326,15 @@ public class GlyphTexture implements Texture {
             });  
                     
     }
+    /*
+     * WARNING PRINT only solution
+     */
     @Override
-    public void mirror(Line line) {
-               
+    public void mirror(Line line) {        
+        this.anchorPoint.mirror(line);
+        this.glyphs.forEach(glyph->{
+           glyph.mirror(line);   
+        });
     }
 
 
@@ -387,21 +393,18 @@ public class GlyphTexture implements Texture {
                                                                              .ordinal(), Trackable.EndType
                                                                                                   .CAP_ROUND
                                                                                                   .ordinal()));
-        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(GeneralPath.class);
-        GeneralPath temporal = (GeneralPath) provider.getShape();
-        temporal.reset();
+
         this.glyphs.forEach(glyph->{
                 for(int i=0;i<glyph.segments.length;i++){    
                      if(glyph.character==' '){
                          continue;
-                     }             
-                     temporal.moveTo(glyph.segments[i].ps.x,glyph.segments[i].ps.y);
-                     temporal.lineTo(glyph.segments[i].pe.x,glyph.segments[i].pe.y);                     
+                     } 
+                    glyph.segments[i].paint(g2, false);                    
                 }
         });
 
-        g2.draw(temporal);        
-        provider.reset();
+        
+           
         
     } 
     

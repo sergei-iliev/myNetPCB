@@ -243,12 +243,9 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
      * exclude those that are owned by others,count parents only
      */
 
-    public Collection<S> getSelectedShapes(boolean parentsOnly) {
+    public Collection<S> getSelectedShapes() {
         Collection<S> v = new ArrayList<S>(20);
         for (S shape : shapes) {
-//            if (parentsOnly && shape instanceof Ownerable && ((Ownerable)shape).getOwner() != null) {
-//                continue;
-//            }
             if (shape.isSelected()) {
                 v.add(shape);
             }
@@ -739,7 +736,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
     public Transferable createClipboardContent() {         
             StringBuffer xml=new StringBuffer();        
             xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
-            Collection<S> list=this.getSelectedShapes(false);
+            Collection<S> list=this.getSelectedShapes();
             if(list.size()>0){
                xml.append("<clipboard>");
                xml.append(format(list));

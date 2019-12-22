@@ -525,15 +525,15 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
           return;
         }
         if(e.getActionCommand().equalsIgnoreCase("topbottom")||e.getActionCommand().equalsIgnoreCase("leftright")){   
-            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
+            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes();
             Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
             getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
             Point p=getUnitComponent().getModel().getUnit().getGrid().positionOnGrid(r.getCenter());      
             UnitMgr unitMgr = new UnitMgr();
             if(e.getActionCommand().equalsIgnoreCase("topbottom")){
-                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Line(new Point(p.x-10,p.y),new Point(p.x+10,p.y)));
+                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit().getSelectedShapes(),new Line(new Point(p.x-10,p.y),new Point(p.x+10,p.y)));
             }else{
-                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Line(new Point(p.x,p.y-10),new Point(p.x,p.y+10)));
+                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit().getSelectedShapes(),new Line(new Point(p.x,p.y-10),new Point(p.x,p.y+10)));
             }
             
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);
@@ -542,7 +542,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().Repaint();
         } 
         if(e.getActionCommand().equalsIgnoreCase("rotateleft")||e.getActionCommand().equalsIgnoreCase("rotateright")){ 
-            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
+            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes();
             getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
             Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);  
             UnitMgr unitMgr = new UnitMgr();
@@ -594,8 +594,8 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }   
         if (e.getActionCommand().equalsIgnoreCase("delete")) {
               UnitMgr unitMgr=new UnitMgr();
-              getUnitComponent().getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).add(getUnitComponent().getModel().getUnit().getSelectedShapes(false)));
-              unitMgr.deleteBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(false));
+              getUnitComponent().getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).add(getUnitComponent().getModel().getUnit().getSelectedShapes()));
+              unitMgr.deleteBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes());
               getUnitComponent().Repaint();            
        
         }        
@@ -603,7 +603,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         if(e.getActionCommand().equalsIgnoreCase("clone")){  
             UnitMgr unitMgr = new UnitMgr();
            // unitMgr.cloneBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(true));
-            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false); 
+            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(); 
             Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
             unitMgr.moveBlock(shapes,
                                  r.getWidth(),r.getHeight());
@@ -628,11 +628,11 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().getModel().getUnit().setSelected(false);
             getUnitComponent().getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.LOCAL));
             unitMgr.locateBlock(getUnitComponent().getModel().getUnit(),
-                                                 getUnitComponent().getModel().getUnit().getSelectedShapes(false),
+                                                 getUnitComponent().getModel().getUnit().getSelectedShapes(),
                                                  x, y);
 
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),
-                                                getUnitComponent().getModel().getUnit().getSelectedShapes(false));
+                                                getUnitComponent().getModel().getUnit().getSelectedShapes());
             getUnitComponent().Repaint();            
         } 
         if(e.getActionCommand().equals("positiontocenter")){

@@ -753,12 +753,12 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                 }    
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                     UnitMgr unitMgr = new UnitMgr();
-                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(getModel().getUnit().getSelectedShapes(false)));
-                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).add(getModel().getUnit().getSelectedShapes(false)));
+                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(getModel().getUnit().getSelectedShapes()));
+                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).add(getModel().getUnit().getSelectedShapes()));
                     //reset event handle
                     getEventMgr().resetEventHandle();
                     this.getPopupMenu().setVisible(false);
-                    unitMgr.deleteBlock(getModel().getUnit(), getModel().getUnit().getSelectedShapes(true));
+                    unitMgr.deleteBlock(getModel().getUnit(), getModel().getUnit().getSelectedShapes());
                     Repaint();
                     return true;
                 }
@@ -788,13 +788,13 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                                                                                                                    (int)(getViewportWindow().getY() +
                                                                                                                    getHeight()/2)));
             UnitMgr unitMgr = new UnitMgr();
-            Collection<Shape> shapes=this.getModel().getUnit().getSelectedShapes(false);
+            Collection<Shape> shapes=this.getModel().getUnit().getSelectedShapes();
             Box r=this.getModel().getUnit().getShapesRect(shapes);                                                      
             //move to screen center
             unitMgr.moveBlock(shapes,point.x-(int)r.min.x,point.y-(int)r.min.y);
 
             //register with Do/Undo Mgr
-            getModel().getUnit().registerMemento(new CompositeMemento(MementoType.CREATE_MEMENTO).add(getModel().getUnit().getSelectedShapes(false)));
+            getModel().getUnit().registerMemento(new CompositeMemento(MementoType.CREATE_MEMENTO).add(getModel().getUnit().getSelectedShapes()));
             
             Repaint();
             //***emit property event change

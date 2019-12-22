@@ -11,7 +11,7 @@ import com.mynetpcb.core.capi.layer.LayerOrderedList;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Line;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -144,7 +144,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
     public void paint(Graphics2D g2, ViewportWindow viewportWindow) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for (Shape shape : shapes) {
-        System.out.println("paint"+shape);
+        //System.out.println("paint"+shape);
             shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),
                         compositeLayer.getLayerMaskID());
         
@@ -218,7 +218,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         }
         if (this.context.get().isMirrored()) {
             //mirror
-            BoardMgr.getInstance().mirrorBlock(printboard.getShapes(), new Point(0, -10),new Point( 0, +10));
+            BoardMgr.getInstance().mirrorBlock(printboard.getShapes(),new Line(0, -10, 0, +10));
             BoardMgr.getInstance().moveBlock(printboard.getShapes(), this.getWidth(), 0);
         }
     }
