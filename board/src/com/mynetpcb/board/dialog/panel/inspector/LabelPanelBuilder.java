@@ -81,9 +81,9 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
         leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x ));
         topField.setText(toUnitY(label.getTexture().getAnchorPoint().y));
         rotateField.setText(String.valueOf(label.getRotation()));
-//        heightField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getSize())));
-//        thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getThickness())));
-//        clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(label.getClearance())));
+        heightField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getSize())));
+        thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getThickness())));
+        clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(label.getClearance())));
 
         setSelectedItem(layerCombo, label.getCopper());
 

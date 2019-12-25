@@ -62,8 +62,8 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
         topField.setText(toUnitY(via.getInner().pc.y));
         netField.setText(via.getNetName());
         
-        thicknessField.setText(toUnit(via.getOuter().r*2));
-        widthField.setText(toUnit(via.getInner().r*2));
+        thicknessField.setText(toUnit(via.getInner().r*2));
+        widthField.setText(toUnit(via.getOuter().r*2));
         clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(via.getClearance())));
     }
 
@@ -82,10 +82,10 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
         }
 
         if(e.getSource()==this.thicknessField){
-           via.getOuter().r=(fromUnit(this.thicknessField.getText())/2);
+           via.getInner().r=(fromUnit(this.thicknessField.getText())/2);
         }
         if(e.getSource()==this.widthField){
-           via.getInner().r=fromUnit(this.widthField.getText())/2;
+           via.getOuter().r=fromUnit(this.widthField.getText())/2;
         }
         if(e.getSource()==this.netField){
            via.setNetName(this.netField.getText());

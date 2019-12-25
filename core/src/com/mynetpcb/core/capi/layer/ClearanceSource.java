@@ -3,6 +3,7 @@ package com.mynetpcb.core.capi.layer;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.pad.Net;
 import com.mynetpcb.core.pad.shape.PadShape;
+import com.mynetpcb.d2.shapes.Box;
 
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
@@ -23,4 +24,7 @@ public interface ClearanceSource extends Clearanceaware,Net{
    public PadShape.PadConnection getPadConnection(); 
    
    public boolean isSelected();
+   
+   public Box getBoundingShape();
+   
 }

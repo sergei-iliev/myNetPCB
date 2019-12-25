@@ -68,15 +68,22 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     protected Layer.Copper copper;
     
     
+    protected boolean isControlPointVisible;
+    
     public Shape(int thickness,int layermask) {
       this.uuid = UUID.randomUUID(); 
-
+      this.isControlPointVisible=true;
       this.thickness=thickness;
       this.fill=Fill.EMPTY;
       this.copper=Layer.Copper.resolve(layermask);
       this.selectionRectWidth=4;
     }
-
+    /**
+     * Board does not need to see control points of shapes
+     */
+    public void setControlPointVisibility(boolean isControlPointVisible){
+        this.isControlPointVisible=isControlPointVisible;
+    }
     public String getDisplayName() {
         return displayName;
     }

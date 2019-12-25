@@ -160,10 +160,10 @@ public class FontTexture implements Texture{
         t.move(-viewportWindow.getX(),- viewportWindow.getY());     
         t.paint(g2,true);
 
-        if(this.isSelected){
-            g2.setColor(Color.BLUE);
-            t.anchorPoint.paint(g2,false);            
-        }
+        //if(this.isSelected){
+        //    g2.setColor(Color.BLUE);
+        //    t.anchorPoint.paint(g2,false);            
+        //}
         
     }
     

@@ -232,7 +232,10 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
     @Override
     public void fromXML(Node node)  {
         Element  element= (Element)node;        
-        this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));    
+        
+        if(element.hasAttribute("copper")){
+          this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));    
+        } 
         double xx=(Double.parseDouble(element.getAttribute("x")));
         double yy=(Double.parseDouble(element.getAttribute("y")));  
         
@@ -280,7 +283,7 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
             g2.setComposite(originalComposite); 
         }
         
-        if(this.isSelected()){            
+        if(this.isSelected()&&isControlPointVisible){            
             Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),a.getStart(),a.getEnd(),a.getMiddle());
         } 
     }

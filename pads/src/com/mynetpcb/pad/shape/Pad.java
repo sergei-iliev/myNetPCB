@@ -211,6 +211,17 @@ public class Pad extends PadShape{
                this.number.move(xoffset,yoffset);
                this.netvalue.move(xoffset,yoffset);
     }
+    
+    @Override
+    public void mirror(Line line) {
+        this.netvalue.mirror(line);
+        this.number.mirror(line);
+        this.shape.mirror(line);
+        if(this.drill!=null){
+           this.drill.mirror(line);
+        }                
+    }
+    
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {
         switch (type) {

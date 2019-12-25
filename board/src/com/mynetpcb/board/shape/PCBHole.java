@@ -13,6 +13,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 
@@ -33,7 +34,7 @@ public class PCBHole extends HoleShape implements PCBShape{
     public PCBHole() {
         this.fillColor=Color.WHITE; 
         this.displayName="Hole";
-        this.thickness=1000;
+        this.thickness=2000;
         this.selectionRectWidth=3000;
         this.circle=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.8));
     }
@@ -78,7 +79,11 @@ public class PCBHole extends HoleShape implements PCBShape{
     @Override
     public void move(double xoffset,double yoffset) {
         this.circle.move(xoffset,yoffset);
-    }     
+    }   
+    @Override
+    public void mirror(Line line) {
+        this.circle.mirror(line);        
+    }
     @Override
     public <T extends ClearanceSource> void drawClearence(Graphics2D graphics2D, ViewportWindow viewportWindow,
                                                           AffineTransform affineTransform, T clearanceSource) {
@@ -134,11 +139,16 @@ public class PCBHole extends HoleShape implements PCBShape{
 
         g2.setStroke(new BasicStroke((float)(thickness*scale.getScaleX())));            
         c.paint(g2, false);
+        
         Utilities.drawCrosshair(g2,  null,(int)(selectionRectWidth*scale.getScaleX()),c.getCenter());
         
 
     }
-    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {        
+        g2.setStroke(new BasicStroke((float)(thickness)));      
+        this.circle.paint(g2, false);
+    }
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);

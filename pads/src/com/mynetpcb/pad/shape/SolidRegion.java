@@ -174,7 +174,7 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
         
         g2.setComposite(originalComposite);
         
-        if (this.isSelected()) {
+        if (this.isSelected()&&isControlPointVisible) {
             r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p));        
         }            
         

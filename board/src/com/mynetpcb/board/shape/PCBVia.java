@@ -5,6 +5,8 @@ import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
+import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -12,12 +14,14 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -49,6 +53,10 @@ public class PCBVia extends ViaShape implements PCBShape{
         return copy;
     }
     @Override
+    public int getDrawingOrder() {        
+        return 101;
+    }
+    @Override
     public Point alignToGrid(boolean isRequired) {
         if(isRequired){
             Point point=getOwningUnit().getGrid().positionOnGrid(inner.pc.x, inner.pc.y);
@@ -70,10 +78,43 @@ public class PCBVia extends ViaShape implements PCBShape{
         this.outer.move(xoffset,yoffset);
     }
     @Override
-    public <T extends ClearanceSource> void drawClearence(Graphics2D graphics2D, ViewportWindow viewportWindow,
-                                                          AffineTransform affineTransform, T clearanceSource) {
-        // TODO Implement this method
+    public void mirror(Line line) {
+        this.inner.mirror(line);
+        this.outer.mirror(line);        
+    }
+    @Override
+    public <T extends ClearanceSource> void drawClearence(Graphics2D g2, ViewportWindow viewportWindow,
+                                                          AffineTransform scale, T source) {
+        
+        
+//        if(Utilities.isSameNet(source, this)){
+//            return;
+//        } 
+        
+        Box rect = this.outer.box();
+        rect.grow(this.clearance!=0?this.clearance:source.getClearance());        
+        
+        //is via within copper area
+        if(!(source.getBoundingShape().intersects(rect))){
+           System.out.println("No intersect");
+           return; 
+        }
+        
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)){
+                return;
+        }
+        
+        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
+        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
+        
+        ellipse.setFrame(rect.getX() - viewportWindow.getX(), rect.getY() - viewportWindow.getY(),
+                         rect.getWidth(), rect.getHeight());
+        
+        g2.setColor(Color.BLACK);                
+        g2.fill(ellipse);
 
+        ellipseProvider.reset();
     }
 
     @Override
@@ -121,7 +162,7 @@ public class PCBVia extends ViaShape implements PCBShape{
         this.inner.pc.set(x,y);
         this.outer.pc.set(x,y);
         
-        this.inner.r=(Double.parseDouble(element.getAttribute("width")))/2;
+        this.outer.r=(Double.parseDouble(element.getAttribute("width")))/2;
         this.inner.r=(Double.parseDouble(element.getAttribute("drill")))/2;
         
         this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));        
@@ -156,11 +197,19 @@ public class PCBVia extends ViaShape implements PCBShape{
         c.scale(scale.getScaleX());
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
         c.paint(g2, true);
-                          
-        Utilities.drawCrosshair(g2,  null,(int)(selectionRectWidth*scale.getScaleX()),c.getCenter());
+        if(this.isSelected()){                          
+           Utilities.drawCrosshair(g2,  null,(int)(selectionRectWidth*scale.getScaleX()),c.getCenter());
+        }
 
     }
-    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+          g2.setColor(printContext.getBackgroundColor()==Color.BLACK?Color.WHITE:Color.BLACK);                
+          this.outer.paint(g2, true); 
+          
+          g2.setColor(printContext.getBackgroundColor()); 
+          this.inner.paint(g2, true);
+    }
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);

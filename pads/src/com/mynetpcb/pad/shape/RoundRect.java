@@ -138,7 +138,7 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
         }
 
         
-        if (this.isSelected()) {
+        if (this.isSelected()&&isControlPointVisible) {
             Point pt=null;
             if(resizingPoint!=null){
                 pt=resizingPoint.clone();

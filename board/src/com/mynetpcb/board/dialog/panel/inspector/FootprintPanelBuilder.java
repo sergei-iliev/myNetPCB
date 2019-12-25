@@ -110,17 +110,6 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
         if(e.getSource()==this.rotateField){
            symbol.setRotation(Double.parseDouble(this.rotateField.getText()),symbol.getCenter()); 
         }
-//        //****chip handling
-//        if (e.getSource() == chipUnitField) {
-//            Texture texture=symbol.getChipText().getTextureByTag("value");                       
-//            texture.setText(chipUnitField.getText());            
-//            getComponent().Repaint();
-//        }
-//        if (e.getSource() == chipReferenceField) {
-//            Texture texture=symbol.getChipText().getTextureByTag("reference");                       
-//            texture.setText(chipReferenceField.getText());          
-//            getComponent().Repaint();
-//        }
         if (e.getSource() == valueField) {
              Texture texture=symbol.getTextureByTag("value");                       
              texture.setText(valueField.getText());  

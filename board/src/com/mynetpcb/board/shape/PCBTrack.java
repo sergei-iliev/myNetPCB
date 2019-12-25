@@ -87,7 +87,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
     @Override
     public <T extends ClearanceSource> void printClearence(Graphics2D graphics2D, PrintContext printContext,
                                                            T clearanceSource) {
-        // TODO Implement this method
+       
 
     }
     

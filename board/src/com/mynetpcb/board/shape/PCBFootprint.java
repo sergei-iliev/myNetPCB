@@ -23,6 +23,7 @@ import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.shape.FootprintShapeFactory;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -91,6 +92,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     public void add(Shape shape){
       if (shape == null)
             return;   
+      shape.setControlPointVisibility(false);
       shapes.add(shape);  
     }    
     public Grid.Units getGridUnits(){
@@ -205,7 +207,11 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     }
     @Override
     public void mirror(Line line) {
-     
+        for(Shape shape:shapes){
+            shape.mirror(line);       
+        }
+        value.mirror(line);
+        reference.mirror(line);  
     }
     
     @Override
@@ -356,7 +362,24 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         value.paint(g2, viewportWindow, scale, layersmask);
         reference.paint(g2, viewportWindow, scale, layersmask);
     }
-    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        for(Shape shape:shapes){
+          if((shape.getCopper().getLayerMaskID()&layermask)!=0)
+            shape.print(g2,printContext,layermask);
+        }
+
+         if((value.getLayermaskId()&layermask)!=0){            
+          value.setFillColor((printContext.isBlackAndWhite()?Color.BLACK:Layer.Copper.resolve(value.getLayermaskId()).getColor()));
+          value.print(g2,printContext,layermask);
+         }
+         if((reference.getLayermaskId()&layermask)!=0){            
+             reference.setFillColor((printContext.isBlackAndWhite()?Color.BLACK:Layer.Copper.resolve(value.getLayermaskId()).getColor()));
+             reference.print(g2,printContext,layermask);
+         }         
+         
+             
+    }
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);

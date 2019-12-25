@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
@@ -331,7 +332,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         //transparent rect
         r.paint(g2, false);
       
-        if (this.isSelected()) {
+        if (this.isSelected()&&isControlPointVisible) {
             Point pt=null;
             if(resizingPoint!=null){
                 pt=resizingPoint.clone();
@@ -344,6 +345,16 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         }
         
     }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        if((this.copper.getLayerMaskID()&layermask)==0){
+            return;
+        }
+        g2.setStroke(new BasicStroke(thickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal()));
+        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());
+        this.polyline.paint(g2,false);
+    }
+    
     @Override
     public void resize(int xoffset, int yoffset, Point clickedPoint) {
         clickedPoint.set(clickedPoint.x+xoffset, clickedPoint.y+yoffset);

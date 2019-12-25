@@ -265,7 +265,7 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
             g2.setComposite(originalComposite);
         }
                 
-        if(this.isSelected()){            
+        if(this.isSelected()&&isControlPointVisible){            
             Point[] points=c.vertices();
             for(Point p:points){
                 Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p);
