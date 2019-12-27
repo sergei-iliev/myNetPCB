@@ -200,7 +200,10 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
          return ((int)a1-(int)a2);
         });
     }
-    
+    @Override
+    public int getDrawingOrder() {        
+        return 101;
+    }
     @Override
     public Point getCenter() {        
         return this.getBoundingShape().getCenter();

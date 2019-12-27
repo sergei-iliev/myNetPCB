@@ -96,7 +96,6 @@ public class PCBVia extends ViaShape implements PCBShape{
         
         //is via within copper area
         if(!(source.getBoundingShape().intersects(rect))){
-           System.out.println("No intersect");
            return; 
         }
         
