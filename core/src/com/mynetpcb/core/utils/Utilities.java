@@ -137,16 +137,16 @@ public final class Utilities {
 //        else
 //            return QUADRANT.FORTH;
 //    }
-//    public static QUADRANT getQuadrantLocation(Point origin, Point B) {
-//        if (B.getX() >= origin.getX() && B.getY() <= origin.getY())
-//            return QUADRANT.FIRST;
-//        else if (B.getX() <= origin.getX() && B.getY() <= origin.getY())
-//            return QUADRANT.SECOND;
-//        else if (B.getX() <= origin.getX() && B.getY() >= origin.getY())
-//            return QUADRANT.THIRD;
-//        else
-//            return QUADRANT.FORTH;
-//    }
+    public static QUADRANT getQuadrantLocation(Point origin, Point B) {
+        if (B.x >= origin.x && B.y <= origin.y)
+            return QUADRANT.FIRST;
+        else if (B.x <= origin.x && B.y <= origin.y)
+            return QUADRANT.SECOND;
+        else if (B.x <= origin.x && B.y >= origin.y)
+            return QUADRANT.THIRD;
+        else
+            return QUADRANT.FORTH;
+    }
 
     public static Document buildDocument(String xml) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();

@@ -80,7 +80,7 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
         return arc.pc;
     }
     public double getExtendAngle(){
-        return arc.getSweep();
+        return arc.endAngle;
     }
 
 
@@ -108,27 +108,48 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
     }
 
     @Override
-    public int getI() {
-        // TODO Implement this method
-        return 0;
+    public double getI() {
+        double i=0;
+        //loss of pressiosion!!!!!!!!!!!!!!!
+        Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation(arc.pc,getStartPoint());
+       
+            switch(quadrant){
+             case SECOND:case THIRD:
+                i=arc.pc.x-getStartPoint().x;
+                break;
+             case FIRST:case FORTH:
+                //convert to -
+                i=arc.pc.x-getStartPoint().x;
+             break;
+            }        
+        return i;
     }
 
     @Override
-    public int getJ() {
-        // TODO Implement this method
-        return 0;
+    public double getJ() {
+        double j=0;
+        Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation(arc.pc,getStartPoint());
+        //if(isSingleQuadrant()){
+            switch(quadrant){
+             case FIRST:case SECOND:
+                j=arc.pc.y-getStartPoint().y;
+                break;
+             case THIRD:case FORTH:
+                //convert to -
+                j=arc.pc.y-getStartPoint().y;
+             break;
+            }        
+        return j;
     }
 
     @Override
     public boolean isSingleQuadrant() {
-        // TODO Implement this method
-        return false;
+        return Math.abs(arc.endAngle)<=90;
     }
 
     @Override
     public boolean isClockwise() {
-        // TODO Implement this method
-        return false;
+        return arc.endAngle <0;
     }
 
     public Point isControlRectClicked(int x,int y) {

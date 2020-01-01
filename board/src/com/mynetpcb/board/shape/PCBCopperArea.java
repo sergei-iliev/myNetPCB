@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
@@ -17,7 +18,6 @@ import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.pad.shape.SolidRegion;
-import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -64,9 +64,9 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         return copy;        
     }
     @Override
-    public int getDrawingOrder() {
+    public int getDrawingLayerPriority() {
         if(getOwningUnit()==null){            
-            return super.getDrawingOrder();
+            return super.getDrawingLayerPriority();
         }
         
         if(((CompositeLayerable)getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())){
@@ -416,8 +416,9 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
             hash += Arrays.hashCode(Ay);
             return hash;
         }
-
-        public boolean isSameState(Footprint unit) {
+        
+        @Override
+        public boolean isSameState(Unit unit) {
             SolidRegion polygon = (SolidRegion) unit.getShape(getUUID());
             return (polygon.getState(getMementoType()).equals(this));
         }

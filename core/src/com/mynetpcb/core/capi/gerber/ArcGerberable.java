@@ -15,9 +15,9 @@ public interface ArcGerberable {
     
     public Point getCenter();
     
-    public int getI();
+    public double getI();
     
-    public int getJ();
+    public double getJ();
     
     public boolean isSingleQuadrant();
 

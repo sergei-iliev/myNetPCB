@@ -12,6 +12,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
@@ -38,6 +39,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
     
     public PCBTrack(int thickness,int layermaskId){
         super(thickness,layermaskId);
+        this.displayName="Track"; 
     }
     
     public PCBTrack clone()throws CloneNotSupportedException{
@@ -92,8 +94,8 @@ public class PCBTrack extends TrackShape implements PCBShape{
     }
     
     @Override
-    public int getDrawingOrder() {
-        int order=super.getDrawingOrder();
+    public int getDrawingLayerPriority() {
+        int order=super.getDrawingLayerPriority();
         if(getOwningUnit()==null){            
             return order;
         }
@@ -236,8 +238,8 @@ public class PCBTrack extends TrackShape implements PCBShape{
             hash += Arrays.hashCode(Ay);
             return hash;
         }
-
-        public boolean isSameState(Board unit) {
+        @Override
+        public boolean isSameState(Unit unit) {
             PCBTrack line = (PCBTrack) unit.getShape(getUUID());
             return (line.getState(getMementoType()).equals(this));
         }

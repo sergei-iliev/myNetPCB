@@ -229,7 +229,7 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     }    
     
     @Override
-    public int getDrawingOrder() {
+    public int getDrawingLayerPriority() {
         return 100;
     }  
     /*

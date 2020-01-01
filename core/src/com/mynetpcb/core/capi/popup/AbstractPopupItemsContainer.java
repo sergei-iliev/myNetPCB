@@ -602,7 +602,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         
         if(e.getActionCommand().equalsIgnoreCase("clone")){  
             UnitMgr unitMgr = new UnitMgr();
-           // unitMgr.cloneBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(true));
+            unitMgr.cloneBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes());
             Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(); 
             Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
             unitMgr.moveBlock(shapes,

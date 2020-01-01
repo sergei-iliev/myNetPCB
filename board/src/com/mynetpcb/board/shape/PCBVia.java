@@ -11,6 +11,7 @@ import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
@@ -53,7 +54,7 @@ public class PCBVia extends ViaShape implements PCBShape{
         return copy;
     }
     @Override
-    public int getDrawingOrder() {        
+    public int getDrawingLayerPriority() {        
         return 101;
     }
     @Override
@@ -272,7 +273,8 @@ public class PCBVia extends ViaShape implements PCBShape{
                     Double.hashCode(this.y)+Double.hashCode(this.rin);
             return hash;
         }        
-        public boolean isSameState(Board unit) {
+        @Override
+        public boolean isSameState(Unit unit) {
             boolean flag = super.isSameState(unit);
             PCBVia other=(PCBVia)unit.getShape(getUUID());
             return flag&&Utils.EQ(this.x,other.inner.pc.x)&&Utils.EQ(this.y,other.inner.pc.y)&&Utils.EQ(this.rin,other.inner.r)&&Utils.EQ(this.rout,other.outer.r);

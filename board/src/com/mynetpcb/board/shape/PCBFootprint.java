@@ -16,12 +16,14 @@ import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.shape.FootprintShapeFactory;
+import com.mynetpcb.pad.shape.Pad;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -32,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -94,7 +97,11 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
             return;   
       shape.setControlPointVisibility(false);
       shapes.add(shape);  
-    }    
+    }
+    @Override
+    public Collection<PadShape> getPads(){
+       return shapes.stream().filter(s->s instanceof PadShape).map(s->(Pad)s).collect(Collectors.toList());        
+    }
     public Grid.Units getGridUnits(){
       return units;
     }
@@ -201,7 +208,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         });
     }
     @Override
-    public int getDrawingOrder() {        
+    public int getDrawingLayerPriority() {        
         return 101;
     }
     @Override
@@ -362,7 +369,9 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
           shape.paint(g2,viewportWindow,scale,layersmask);  
         }
         
+        value.setFillColor(Layer.Copper.resolve(value.getLayermaskId()).getColor());
         value.paint(g2, viewportWindow, scale, layersmask);
+        reference.setFillColor(Layer.Copper.resolve(reference.getLayermaskId()).getColor());
         reference.paint(g2, viewportWindow, scale, layersmask);
     }
     @Override

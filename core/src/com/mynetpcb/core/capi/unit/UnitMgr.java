@@ -103,30 +103,23 @@ public class UnitMgr<U extends Unit, T extends Shape> {
      * Block clone(mind parent child attachments,circuitlabels only)
      */
 
-//    public void cloneBlock(U unit, Collection<Shape> selectedShapes) {
-//        //***disselect old block
-//        unit.setSelected(false);
-//
-//        //***clone each element in the block
-//        for (Shape shape : selectedShapes) {
-//            try {
-//                Shape clonning = shape.clone();
-//                Collection<T> children = this.getChildrenByParent(unit.getShapes(), shape);
-//                for (Shape child : children) {
-//                    Shape childCopy = child.clone();
-//                    ((Ownerable) childCopy).setOwner(clonning);
-//                    childCopy.setSelected(true);
-//                    unit.add(childCopy);
-//                }
-//                clonning.setSelected(true);
-//                //***tweak naming
-//                //CircuitMgr.getInstance().symbolNaming(circuit,clonning);
-//                unit.add(clonning);
-//            } catch (CloneNotSupportedException cne) {
-//                cne.printStackTrace(System.out);
-//            }
-//        }
-//    }
+    public void cloneBlock(U unit, Collection<Shape> selectedShapes) {
+        //***disselect old block
+        unit.setSelected(false);
+
+        //***clone each element in the block
+        for (Shape shape : selectedShapes) {
+            try {
+                Shape clonning = shape.clone();                
+                clonning.setSelected(true);
+                //***tweak naming
+                //CircuitMgr.getInstance().symbolNaming(circuit,clonning);
+                unit.add(clonning);
+            } catch (CloneNotSupportedException cne) {
+                cne.printStackTrace(System.out);
+            }
+        }
+    }
 
     public void rotateBlock(Collection<T> shapes, double angle,Point origin) {
         for (T shape : shapes) {

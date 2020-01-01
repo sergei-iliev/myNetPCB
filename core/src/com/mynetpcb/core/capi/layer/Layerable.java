@@ -20,7 +20,7 @@ public interface Layerable {
      * calculate the drawing position in regard to layer position
      * @return
      */
-    public int getDrawingOrder();
+    public int getDrawingLayerPriority();
 
     /**
      *Check if shape belongs to one of currently visible layers

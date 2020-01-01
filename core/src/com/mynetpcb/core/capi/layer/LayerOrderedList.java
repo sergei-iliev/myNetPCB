@@ -16,7 +16,7 @@ public class LayerOrderedList<S extends Shape> extends LinkedList<S> implements 
     private final Comparator<S> comparator = new Comparator<S>() {
         @Override
         public int compare(S s1, S s2) {
-            return s1.getDrawingOrder() - s2.getDrawingOrder();
+            return s1.getDrawingLayerPriority() - s2.getDrawingLayerPriority();
         }
     };
 
@@ -31,7 +31,7 @@ public class LayerOrderedList<S extends Shape> extends LinkedList<S> implements 
             return super.add(shape);
         } else {
             for (Shape s : this) {
-                if (s.getDrawingOrder() >= shape.getDrawingOrder()) {
+                if (s.getDrawingLayerPriority() >= shape.getDrawingLayerPriority()) {
                     super.add(this.indexOf(s), shape);
                     return true;
                 }

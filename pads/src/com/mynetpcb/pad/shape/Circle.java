@@ -130,13 +130,13 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
     }
 
     @Override
-    public int getI() {
+    public double getI() {
         // TODO Implement this method
         return 0;
     }
 
     @Override
-    public int getJ() {
+    public double getJ() {
         // TODO Implement this method
         return 0;
     }

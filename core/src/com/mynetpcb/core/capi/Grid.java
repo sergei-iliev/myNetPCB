@@ -216,7 +216,8 @@ public class Grid implements Cloneable{
     
     //must be 10000 for printing
     public static double MM_TO_COORD(double mm){
-      return Math.floor(mm*10000);
+      //return Math.floor(mm*10000);
+      return (mm*10000);
     }
  
     public static double COORD_TO_MM(double coord){
