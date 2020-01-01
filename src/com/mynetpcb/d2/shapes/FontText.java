@@ -42,6 +42,9 @@ public class FontText extends Shape {
             this.anchorPoint.rotate((angle-this.rotate),center);
             this.rotate=angle;
     }
+    public void mirror(Line line){
+       this.anchorPoint.mirror(line); 
+    }
     public void move(double offsetX,double offsetY){
             this.anchorPoint.move(offsetX,offsetY);
     }
@@ -120,7 +123,7 @@ public class FontText extends Shape {
         double y = r.getY() + ((r.getHeight() - metrics.height) / 2) + metrics.ascent;
         // Draw the String
         g2.drawString(text, (float)x, (float)y);
-               
+            
         g2.setTransform(saved);
     }
 

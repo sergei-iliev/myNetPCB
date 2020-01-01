@@ -8,8 +8,8 @@ import java.util.List;
 
 public class RoundRectangle extends Rectangle {
     public int rounding;
-    private Segment[] segments={new Segment(),new Segment(),new Segment(),new Segment()};
-    private Arc[] arcs={new Arc(),new Arc(),new Arc(),new Arc()};
+    public Segment[] segments={new Segment(),new Segment(),new Segment(),new Segment()};
+    public Arc[] arcs={new Arc(),new Arc(),new Arc(),new Arc()};
 
     public RoundRectangle(double x, double y, double width, double height, int rounding) {
         super(x, y, width, height);

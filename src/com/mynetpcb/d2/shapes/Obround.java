@@ -117,6 +117,11 @@ public class Obround extends Shape {
         return this.pc;
     }
 
+    public void mirror(Line line){
+        this.pc.mirror(line);
+        this.ps.mirror(line);
+        this.pe.mirror(line);        
+    }
     @Override
     public void rotate(double angle, Point center) {
         this.pc.rotate(angle, center);

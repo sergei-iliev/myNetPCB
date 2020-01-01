@@ -70,11 +70,6 @@ public class d2 extends  JFrame {
            angle.addChangeListener((e) -> {t1.rotate(angle.getValue(),t1.anchorPoint);
                                               d2Component.repaint(); }); 
            
-           //Point p1=new Point(100,100);                    
-           //d2Component.add(p1);
-           //Point p2=p1.clone();
-           //p2.rotate(90, new Point(10,100));
-           //d2Component.add(p2);
            
            Circle circle=new Circle(new Point(100,100),20);
            d2Component.add(circle);
@@ -178,7 +173,8 @@ public class d2 extends  JFrame {
             
             g2.setColor(Color.WHITE);
             g2.fillRect(0, 0, this.getWidth(), this.getHeight());
- 
+            
+            g2.setColor(Color.BLUE);
             for(Shape shape:shapes){
                 shape.paint(g2,false);
             }
