@@ -98,10 +98,16 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
       shape.setControlPointVisibility(false);
       shapes.add(shape);  
     }
+    
     @Override
     public Collection<PadShape> getPads(){
        return shapes.stream().filter(s->s instanceof PadShape).map(s->(Pad)s).collect(Collectors.toList());        
     }
+    
+    @Override
+    public Collection<? extends Shape> getShapes() {
+        return this.shapes;
+    }    
     public Grid.Units getGridUnits(){
       return units;
     }
@@ -421,6 +427,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     public boolean isClickedTexture(int x, int y) {
         return this.getClickedTexture(x, y)!=null;
     }
+
 
     static class Memento extends AbstractMemento<Board,PCBFootprint>{
         

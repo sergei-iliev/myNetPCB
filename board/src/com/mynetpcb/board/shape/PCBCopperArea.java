@@ -30,10 +30,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class PCBCopperArea extends CopperAreaShape implements PCBShape{
@@ -43,6 +45,8 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     private Point floatingEndPoint;
     private Point resizingPoint;   
     private int clearance;
+    private String net;
+    private PadShape.PadConnection padConnection;
     
     public PCBCopperArea(int layermaskId) {
         super(layermaskId);
@@ -52,7 +56,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         floatingEndPoint=new Point();
         this.polygon = new Polygon(); 
         this.selectionRectWidth=3000;
-        //this.padConnection=PadShape.PadConnection.DIRECT;
+        this.padConnection=PadShape.PadConnection.DIRECT;
         this.fill=Fill.FILLED;
     }
     public PCBCopperArea clone() throws CloneNotSupportedException{
@@ -340,8 +344,17 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
 
     @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
-
+        Element  element= (Element)node;
+        
+        this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
+        this.clearance=Integer.parseInt(element.getAttribute("clearance"));
+        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");         
+        this.padConnection=element.getAttribute("padconnect").isEmpty()?PadShape.PadConnection.DIRECT:PadShape.PadConnection.valueOf(element.getAttribute("padconnect"));
+        
+        StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
+        while(st.hasMoreTokens()){
+          this.add(new Point(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())));  
+        } 
     }
     
     @Override

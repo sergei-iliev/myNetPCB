@@ -194,11 +194,11 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
     @Override
     public String toXML() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<solidregion copper=\"" + getCopper().getName() + "\" thickness=\"" + this.getThickness() + "\">");
+        sb.append("<solidregion copper=\"" + getCopper().getName() + "\">");
         for (Point point : this.polygon.points) {
             sb.append(Utilities.roundDouble(point.x) + "," + Utilities.roundDouble(point.y) + ",");
         }
-        sb.append("</line>\r\n");
+        sb.append("</solidregion>\r\n");
         return sb.toString();
     }
 
@@ -209,7 +209,7 @@ public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Ex
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
 
         while (st.hasMoreTokens()) {
-           this.add(new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+           this.add(new Point(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())));
         }
 
     }

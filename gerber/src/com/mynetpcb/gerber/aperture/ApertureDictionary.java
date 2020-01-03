@@ -70,6 +70,16 @@ public class ApertureDictionary  implements Printable{
         }
         return null;
     }
+    
+    public ApertureDefinition findCircle(double diameter){
+        Optional<ApertureDefinition> o= repository.get(null).stream().filter(d->{if(d instanceof CircleAperture&&(Utils.EQ(((CircleAperture)d).getDiameter(),diameter)))
+                                                                                                                       return true;
+                                                                                                               else
+                                                                                                                       return false;}).findFirst();        
+        
+        return o.orElse(null);   
+    }
+    
     /*
      * get apperture by its code
      */
@@ -134,14 +144,6 @@ public class ApertureDictionary  implements Printable{
         return null;
     }
     
-    public ApertureDefinition findCircle(int size){
-        Optional<ApertureDefinition> o= repository.get(null).stream().filter(d->{if(d instanceof CircleAperture&&((CircleAperture)d).getDiameter()==size)
-                                                                                                                       return true;
-                                                                                                               else
-                                                                                                                       return false;}).findFirst();        
-        
-        return o.orElse(null);   
-    }
     public ApertureDefinition findRectangle(int x,int y){
         Optional<ApertureDefinition> o= this.repository.get(null).stream().filter(d->{if(d instanceof RectangleAperture&&((RectangleAperture)d).getX()==x&&((RectangleAperture)d).getY()==y)
                                                                                                                        return true;

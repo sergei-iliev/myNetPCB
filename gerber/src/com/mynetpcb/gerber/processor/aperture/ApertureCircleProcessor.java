@@ -7,44 +7,43 @@ import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
-import com.mynetpcb.pad.shape.Arc;
+import com.mynetpcb.pad.shape.Circle;
 
-public class ApertureArcProcessor implements Processor{
+public class ApertureCircleProcessor implements Processor{
     private final ApertureDictionary dictionary;
     
-    public ApertureArcProcessor(ApertureDictionary dictionary) {
+    public ApertureCircleProcessor(ApertureDictionary dictionary) {
         this.dictionary = dictionary;
     }
 
     @Override
-    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {          
-        //arcs
-        for(Arc arc:board.<Arc>getShapes(Arc.class,layermask)){                        
-            processArc(arc);
+    public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {  
+        //circles
+        for(Circle circle:board.<Circle>getShapes(Circle.class,layermask)){
+            processCircle(circle);
         }
-        //arcs in footprints
-        if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){
+        //circles if footprints
+        if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){        
          for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
             for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
                 }
-                if(shape.getClass()== Arc.class){
-                    processArc((Arc)shape);
+                if(shape.getClass()== Circle.class){
+                    processCircle((Circle)shape);
                 }
             }
-         }
-        }
-    }
-    
-    private void processArc(Arc arc){
-        if(arc.getFill()==Shape.Fill.FILLED){
-            return;
+         }        
         }
         
+    }
+    
+    private void processCircle(Circle circle){
+        if(circle.getFill()==Shape.Fill.FILLED){
+            return;
+        }
         CircleAperture aperture=new CircleAperture();
-        aperture.setDiameter(arc.getThickness());
-        dictionary.add(aperture);
+        aperture.setDiameter(circle.getThickness());
+        dictionary.add(aperture);         
     }
 }
-

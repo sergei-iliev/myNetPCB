@@ -69,6 +69,10 @@ public class RoundRect extends Shape implements Resizeable,Externalizable{
                     return null;
     }
     
+    public RoundRectangle getShape(){
+        return roundRect;
+    }
+    
     @Override
     public Box getBoundingShape(){
         return this.roundRect.box();              

@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
@@ -75,7 +76,7 @@ public class Drill extends Shape implements Externalizable{
     
     @Override
     public String toXML() {
-        return "<drill type=\"CIRCULAR\" x=\""+this.circle.pc.x+"\" y=\""+this.circle.pc.y+"\" width=\""+2*this.circle.r+"\" />";      
+        return "<drill type=\"CIRCULAR\" x=\""+Utilities.roundDouble(this.circle.pc.x)+"\" y=\""+Utilities.roundDouble(this.circle.pc.y)+"\" width=\""+Utilities.roundDouble(2*this.circle.r)+"\" />";      
     }
 
     @Override

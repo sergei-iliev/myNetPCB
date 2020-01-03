@@ -2,6 +2,7 @@ package com.mynetpcb.gerber.processor.command;
 
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.gerber.ArcGerberable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Point;
@@ -28,7 +29,9 @@ public class CommandArcProcessor implements Processor {
 
         List<Arc> arcs = board.getShapes(Arc.class, layermask);
         for (Arc arc : arcs) {
-            processArc(arc,board.getHeight());
+            if(arc.getFill()==Shape.Fill.EMPTY){ 
+              processArc(arc,board.getHeight());
+            }
         }
         
         //do arcs in footprints
@@ -41,7 +44,10 @@ public class CommandArcProcessor implements Processor {
                     continue;
                 }
                 if(shape.getClass()== Arc.class){
-                    processArc((Arc)shape,board.getHeight());                    
+                    if(shape.getFill()==Shape.Fill.EMPTY){
+                        processArc((Arc)shape,board.getHeight());                        
+                    }
+                    
                 }
             }
          }
@@ -49,15 +55,16 @@ public class CommandArcProcessor implements Processor {
     }
 
     protected void processArc(Arc arc,int height){
-        processArc(arc,height,null);
+        processArc(arc,arc.getThickness(),height,null);
     }
     
-    protected void processArc(Arc arc,int height,AbstractAttribute.Type attributeType){
+    protected void processArc(ArcGerberable arc,double thickness,int height,AbstractAttribute.Type attributeType){
+              
         ApertureDefinition aperture;
         if(attributeType==null){
-          aperture = context.getApertureDictionary().findCircle(arc.getThickness());
+          aperture = context.getApertureDictionary().findCircle(thickness);
         }else{
-          aperture = context.getApertureDictionary().findCircle(attributeType,arc.getThickness());  
+          aperture = context.getApertureDictionary().findCircle(attributeType,thickness);  
         }
         //set aperture if not same
         context.resetAperture(aperture);
@@ -69,7 +76,7 @@ public class CommandArcProcessor implements Processor {
         }        
     }
     
-    private void singleQuadrentMode(Arc arc,int height) {
+    protected void singleQuadrentMode(ArcGerberable arc,int height) {
         //set single quadrant mode if not set
         context.resetCommand(AbstractCommand.Type.SINGLE_QUADRENT_MODE);
         //set start point
@@ -107,7 +114,7 @@ public class CommandArcProcessor implements Processor {
 
     }
 
-    private void multiQuadrantMode(Arc arc,int height) {
+    protected void multiQuadrantMode(ArcGerberable arc,int height) {
         //set multi quadrant mode if not set
         context.resetCommand(AbstractCommand.Type.MULTI_QUADRENT_MODE);
         //set start point

@@ -119,38 +119,32 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
     } 
     @Override
     public Point getStartPoint() {
-        // TODO Implement this method
-        return null;
+        return new Point(circle.pc.x-circle.r,circle.pc.y);
     }
 
     @Override
     public Point getEndPoint() {
-        // TODO Implement this method
-        return null;
+        return getStartPoint();
     }
 
     @Override
-    public double getI() {
-        // TODO Implement this method
+    public double getI() {        
+        return circle.r;
+    }
+
+    @Override
+    public double getJ() {       
         return 0;
     }
 
     @Override
-    public double getJ() {
-        // TODO Implement this method
-        return 0;
-    }
-
-    @Override
-    public boolean isSingleQuadrant() {
-        // TODO Implement this method
+    public boolean isSingleQuadrant() {     
         return false;
     }
 
     @Override
     public boolean isClockwise() {
-        // TODO Implement this method
-        return false;
+        return true;
     }
 
     @Override
@@ -208,7 +202,7 @@ public class Circle  extends Shape implements ArcGerberable,Resizeable,Externali
 
     @Override
     public String toXML() {
-        return "<ellipse copper=\""+getCopper().getName()+"\" x=\""+(this.circle.pc.x)+"\" y=\""+(this.circle.pc.y)+"\" radius=\""+(this.circle.r)+"\"  thickness=\""+this.getThickness()+"\" fill=\""+this.getFill().ordinal()+"\"/>\r\n";
+        return "<ellipse copper=\""+getCopper().getName()+"\" x=\""+Utilities.roundDouble(this.circle.pc.x)+"\" y=\""+Utilities.roundDouble(this.circle.pc.y)+"\" radius=\""+Utilities.roundDouble(this.circle.r)+"\"  thickness=\""+this.getThickness()+"\" fill=\""+this.getFill().ordinal()+"\"/>\r\n";
 
     }
 

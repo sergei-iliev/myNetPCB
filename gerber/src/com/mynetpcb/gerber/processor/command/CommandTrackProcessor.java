@@ -28,14 +28,14 @@ public class CommandTrackProcessor  implements Processor{
         
         List<TrackShape> tracks= board.getShapes(TrackShape.class, layermask);              
         for(TrackShape track:tracks){
-            int size=track.getThickness();
+            int thickness=track.getThickness();
             double lastX=-1,lastY=-1;
             boolean firstPoint=true;
 
             //set linear mode if not set
             context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
                         
-            ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.Conductor,size);
+            ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.Conductor,thickness);
             //set aperture if not same
             context.resetAperture(aperture);
             

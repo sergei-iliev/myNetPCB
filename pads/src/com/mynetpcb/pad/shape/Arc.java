@@ -109,36 +109,34 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
 
     @Override
     public double getI() {
-        double i=0;
-        //loss of pressiosion!!!!!!!!!!!!!!!
-        Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation(arc.pc,getStartPoint());
+        double i=0;        
+        //Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation(arc.pc,getStartPoint());
        
-            switch(quadrant){
-             case SECOND:case THIRD:
+        //    switch(quadrant){
+        //     case SECOND:case THIRD:
                 i=arc.pc.x-getStartPoint().x;
-                break;
-             case FIRST:case FORTH:
+        //        break;
+        //     case FIRST:case FORTH:
                 //convert to -
-                i=arc.pc.x-getStartPoint().x;
-             break;
-            }        
+       //         i=arc.pc.x-getStartPoint().x;
+       //      break;
+       //     }        
         return i;
     }
 
     @Override
     public double getJ() {
         double j=0;
-        Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation(arc.pc,getStartPoint());
-        //if(isSingleQuadrant()){
-            switch(quadrant){
-             case FIRST:case SECOND:
+        //Utilities.QUADRANT quadrant= Utilities.getQuadrantLocation(arc.pc,getStartPoint());        
+        //    switch(quadrant){
+        //     case FIRST:case SECOND:
                 j=arc.pc.y-getStartPoint().y;
-                break;
-             case THIRD:case FORTH:
+        //        break;
+        //     case THIRD:case FORTH:
                 //convert to -
-                j=arc.pc.y-getStartPoint().y;
-             break;
-            }        
+         //       j=arc.pc.y-getStartPoint().y;
+        //     break;
+        //    }        
         return j;
     }
 
@@ -247,7 +245,7 @@ public class Arc  extends Shape implements ArcGerberable, Resizeable,Externaliza
 
     @Override
     public String toXML() {
-        return "<arc copper=\""+getCopper().getName()+"\" type=\"0\" x=\""+(this.arc.pc.x)+"\" y=\""+(this.arc.pc.y)+"\" radius=\""+(this.arc.r)+"\"  thickness=\""+this.getThickness()+"\" start=\""+this.arc.startAngle+"\" extend=\""+this.arc.endAngle+"\" fill=\""+this.getFill().ordinal()+"\" />\r\n";
+        return "<arc copper=\""+getCopper().getName()+"\"  x=\""+Utilities.roundDouble(this.arc.pc.x)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y)+"\" radius=\""+Utilities.roundDouble(this.arc.r)+"\"  thickness=\""+this.getThickness()+"\" start=\""+Utilities.roundDouble(this.arc.startAngle)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle)+"\" fill=\""+this.getFill().ordinal()+"\" />\r\n";
     }
 
     @Override

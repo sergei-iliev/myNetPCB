@@ -16,6 +16,7 @@ import com.mynetpcb.board.shape.PCBHole;
 import com.mynetpcb.board.shape.PCBLabel;
 import com.mynetpcb.board.shape.PCBLine;
 import com.mynetpcb.board.shape.PCBRoundRect;
+import com.mynetpcb.board.shape.PCBSolidRegion;
 import com.mynetpcb.board.shape.PCBTrack;
 import com.mynetpcb.board.shape.PCBVia;
 import com.mynetpcb.board.unit.Board;
@@ -48,7 +49,6 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.event.SolidRegionEventHandle;
-import com.mynetpcb.pad.shape.SolidRegion;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -263,7 +263,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
                         return; //***right button click
                     }
-                        shape =new SolidRegion(Layer.LAYER_FRONT);
+                        shape =new PCBSolidRegion(Layer.LAYER_FRONT);
                         this.getModel().getUnit().add(shape);
                         this.getEventMgr().setEventHandle("solidregion", shape);
                     }                   
