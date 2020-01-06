@@ -242,14 +242,16 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     }
     
     @Override
-    public void setRotation(double rotate,Point center){   
+    public void setRotation(double angle,Point center){ 
+            angle=Math.abs(angle);
+            double alpha=angle-this.rotate;
             for(Shape shape:this.shapes){                    
-              shape.setRotation(rotate,center);  
+              shape.rotate(alpha,center);  
             }       
-            this.value.setRotation(rotate,center);
-            this.reference.setRotation(rotate,center);
+            this.value.rotate(alpha,center);
+            this.reference.rotate(alpha,center);
         
-            this.rotate=rotate;
+            this.rotate=angle;
     }
     
     @Override
@@ -271,14 +273,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         
         this.rotate=alpha;
     }
-//    public void setDisplayName(String footprintName){
-//        this.displa=footprintName; 
-//    }
-//    
-//    @Override
-//    public String getDisplayName() {
-//        return footprintName;
-//    }
+
     public double getGridValue(){
        return val; 
     }    

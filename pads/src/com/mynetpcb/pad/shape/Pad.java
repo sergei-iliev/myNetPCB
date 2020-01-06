@@ -166,7 +166,7 @@ public class Pad extends PadShape{
     @Override
     public void setRotation(double angle,Point center){
           double alpha=angle-this.rotate;   
-        
+        System.out.println(alpha+"::"+angle+"::"+this.rotate);
           this.shape.rotate(alpha,center);
           
           this.number.setRotation(angle,center);
@@ -185,9 +185,9 @@ public class Pad extends PadShape{
         if(alpha>=360){
                 alpha-=360;
         }
-         if(alpha<0){
-                 alpha+=360; 
-         }
+        if(alpha<0){
+           alpha+=360; 
+        }
         this.shape.rotate(angle,pt);      
         if(this.drill!=null){
            this.drill.rotate(angle,pt);
