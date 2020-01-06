@@ -2,6 +2,9 @@ package com.mynetpcb.core.capi;
 
 import com.mynetpcb.d2.shapes.Point;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
 /**
  *In the context of Symbol/Pad construction, shapes can change their size/shape by dragging control points.
  * Like line,rect,ellipse
@@ -38,6 +41,14 @@ public interface Resizeable {
     */
    public void alignResizingPointToGrid(Point targetPoint);
    
-   
+    /**
+       * Draw control resizing points
+       * @param g2
+       * @param viewportWindow
+       * @param scale
+       */
+    public default void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
+        
+    }
 }
 

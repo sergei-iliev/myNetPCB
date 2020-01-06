@@ -8,6 +8,7 @@ import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.gerber.processor.command.CommandArcProcessor;
 import com.mynetpcb.gerber.processor.command.CommandCircleProcessor;
 import com.mynetpcb.gerber.processor.command.CommandFilledContourProcessor;
+import com.mynetpcb.gerber.processor.command.CommandPadProcessor;
 import com.mynetpcb.gerber.processor.command.CommandRectProcessor;
 import com.mynetpcb.gerber.processor.command.CommandTrackProcessor;
 import com.mynetpcb.gerber.processor.command.CommandViaProcessor;
@@ -28,7 +29,7 @@ public class CommandProcessor implements Processor{
       //this.processors.add(new CommandRegionProcessor(context));
       this.processors.add(new CommandTrackProcessor(context));
       this.processors.add(new CommandViaProcessor(context));
-      //this.processors.add(new CommandPadProcessor(context));
+      this.processors.add(new CommandPadProcessor(context));
       this.processors.add(new CommandCircleProcessor(context));
       this.processors.add(new CommandArcProcessor(context));
       //this.processors.add(new CommandLineProcessor(context));

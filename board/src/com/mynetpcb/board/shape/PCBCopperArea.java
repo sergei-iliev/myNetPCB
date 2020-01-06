@@ -268,6 +268,10 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
          }
         }
         g2.setComposite(originalComposite);
+                
+    }
+    @Override
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
         
         if (this.isSelected()) {
             Point pt=null;
@@ -276,10 +280,14 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
                 pt.scale(scale.getScaleX());
                 pt.move(-viewportWindow.getX(),- viewportWindow.getY());
             }
+            Polygon r=this.polygon.clone();   
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(),- viewportWindow.getY());
+            
             for(Object p:r.points){
               Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
             }
-        }         
+        } 
     }
     /*
      * Local cache

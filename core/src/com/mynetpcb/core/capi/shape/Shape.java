@@ -87,7 +87,9 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     public String getDisplayName() {
         return displayName;
     }
-    
+    public void setDisplayName(String displayName){
+        this.displayName=displayName;
+    }
     public UUID getUUID() {
         return uuid;
     }

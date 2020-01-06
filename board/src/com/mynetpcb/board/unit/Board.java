@@ -3,6 +3,7 @@ package com.mynetpcb.board.unit;
 import com.mynetpcb.board.shape.BoardShapeFactory;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.CompositeLayer;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
@@ -89,9 +90,6 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         xml.append("<symbols>\r\n");
 
         for (Shape shape : shapes) {
-//            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
-//                continue;
-//            }
             xml.append(((Externalizable) shape).toXML());
 
         }
@@ -148,12 +146,12 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
                         compositeLayer.getLayerMaskID());
         
         }
-//        for (Shape shape : shapes) {
-//            if (shape instanceof PCBTrack || shape instanceof PCBCopperArea) {
-//                ((Resizeable) shape).drawControlShape(g2, viewportWindow,
-//                                                      scalableTransformation.getCurrentTransformation());
-//            }
-//        }
+        for (Shape shape : shapes) {
+            if (shape instanceof Resizeable) {
+                ((Resizeable) shape).drawControlShape(g2, viewportWindow,
+                                                      scalableTransformation.getCurrentTransformation());
+            }
+        }
         grid.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation());
         //coordinate system
         coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), -1);

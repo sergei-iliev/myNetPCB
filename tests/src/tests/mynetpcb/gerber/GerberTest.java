@@ -60,12 +60,12 @@ public class GerberTest {
             gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN,true);
             
             Gerber gerber=new Gerber(container.getUnit());              
-       //     gerber.build(gerberServiceContext,"d:\\top.gbr",Layer.LAYER_FRONT);
+            gerber.build(gerberServiceContext,"d:\\top.gbr",Layer.LAYER_FRONT);
        //     gerber.build(gerberServiceContext,"d:\\bottom.gbr",Layer.LAYER_BACK);
-            gerber.build(gerberServiceContext,"d:\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
+       //     gerber.build(gerberServiceContext,"d:\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
         //        gerber.build("c:\\sergei\\bottom_silk.gbr",Layer.SILKSCREEN_LAYER_BACK);
         //
-            Excelon drill=new Excelon(container.getUnit());
+        //    Excelon drill=new Excelon(container.getUnit());
         //    drill.build(gerberServiceContext,"d:\\drill_npth.gbr", Layer.NPTH_LAYER_DRILL);
         //    drill.build(gerberServiceContext,"d:\\drill_pth.gbr", Layer.PTH_LAYER_DRILL);
         

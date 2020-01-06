@@ -88,6 +88,12 @@ public class Pad extends PadShape{
     public Point getCenter(){
         return this.shape.getCenter();
     }
+    
+    @Override
+    public PadDrawing getPadDrawing(){
+        return shape;
+    }
+    
     public void setType(PadShape.Type type) {
                     this.type = type;
                     switch(type){
@@ -158,19 +164,19 @@ public class Pad extends PadShape{
                     this.shape.setSize(width,height);   
     }   
     @Override
-    public void setRotation(double rotate,Point center){
-          double alpha=rotate-this.rotate;   
+    public void setRotation(double angle,Point center){
+          double alpha=angle-this.rotate;   
         
           this.shape.rotate(alpha,center);
           
-          this.number.setRotation(rotate,center);
-          this.netvalue.setRotation(rotate,center);
+          this.number.setRotation(angle,center);
+          this.netvalue.setRotation(angle,center);
           
           if(this.drill!=null){
                 this.drill.rotate(alpha,center);
           }               
         
-        this.rotate=rotate;        
+        this.rotate=angle;        
     }
     @Override
     public void rotate(double angle, Point pt) {
@@ -272,7 +278,7 @@ public class Pad extends PadShape{
         this.netvalue.setSelected(selection);
     }
     @Override
-    public PadShape.Shape getShape() {
+    public PadShape.Shape getShapeType() {
 
             if(this.shape instanceof CircularShape)
                 return PadShape.Shape.CIRCULAR;
@@ -324,7 +330,7 @@ public class Pad extends PadShape{
     @Override
     public String toXML() {
         StringBuffer sb=new StringBuffer();
-        sb.append("<pad copper=\"" + getCopper().getName() + "\" type=\"" + getType() + "\" shape=\"" + getShape() +
+        sb.append("<pad copper=\"" + getCopper().getName() + "\" type=\"" + getType() + "\" shape=\"" + getShapeType() +
                       "\" x=\"" + Utilities.roundDouble(shape.getCenter().x) + "\" y=\"" + Utilities.roundDouble(shape.getCenter().y) + "\" width=\"" + getWidth() + "\" height=\"" +
                       getHeight() + "\" rt=\"" + this.rotate + "\">\r\n");
        // sb.append("<offset x=\"" + offset.x + "\" y=\"" + offset.y + "\" />\r\n");
@@ -359,7 +365,6 @@ public class Pad extends PadShape{
         if(element.getAttribute("rt").length()>0){
           this.rotate=Double.parseDouble(element.getAttribute("rt"));
         }
-
         this.setShape(x,y,Pad.Shape.valueOf(element.getAttribute("shape")));
 
         //Element offset = (Element) element.getElementsByTagName("offset").item(0);

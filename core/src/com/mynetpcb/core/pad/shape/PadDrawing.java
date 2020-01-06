@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.print.Printable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
@@ -39,6 +40,8 @@ public interface PadDrawing extends Printable {
     public void mirror(Line line);
     
     public Memento getState();
+    
+    public GeometricFigure getGeometricFigure();
      
     
     public interface Memento<P extends PadDrawing> {

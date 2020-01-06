@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
@@ -35,7 +36,12 @@ public class CircularShape implements PadDrawing {
         copy.circle.r = this.circle.r;
         return copy;
     }
-
+    
+    @Override
+    public GeometricFigure getGeometricFigure(){
+      return circle;  
+    }
+    
     @Override
     public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
 

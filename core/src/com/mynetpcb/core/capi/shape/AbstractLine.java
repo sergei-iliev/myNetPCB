@@ -346,6 +346,11 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         
     }
     @Override
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+        
+
+    }
+    @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {
         if((this.copper.getLayerMaskID()&layermask)==0){
             return;

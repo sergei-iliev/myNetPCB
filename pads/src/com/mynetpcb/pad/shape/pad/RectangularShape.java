@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Rectangle;
@@ -45,7 +46,12 @@ public class RectangularShape implements PadDrawing {
              
          return true;
     }
-
+    
+    @Override
+    public GeometricFigure getGeometricFigure(){
+      return rect;  
+    }
+    
     @Override
     public void drawClearance(Graphics2D graphics2D, ViewportWindow viewportWindow, AffineTransform affineTransform,
                               ClearanceSource clearanceSource) {
@@ -70,7 +76,7 @@ public class RectangularShape implements PadDrawing {
     @Override
     public void setSize(double width,double height){
         this.rect.setSize(width,height);
-        this.rect.rotate(this.padRef.get().getRotation());
+        this.rect.rotate(this.padRef.get().getRotation(), this.getCenter());
     }
 
     @Override

@@ -31,7 +31,10 @@ public abstract class PadShape extends Shape implements Pinable, Net, CompositeT
         super(-1, Layer.LAYER_BACK);
     }
     
-    public abstract PadShape.Shape getShape();
+        
+    public abstract PadDrawing getPadDrawing();
+    
+    public abstract PadShape.Shape getShapeType();
     
     public abstract PadShape.Type getType();
 }

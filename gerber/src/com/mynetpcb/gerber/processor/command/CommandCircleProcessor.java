@@ -2,6 +2,7 @@ package com.mynetpcb.gerber.processor.command;
 
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.gerber.ArcGerberable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Point;
@@ -53,16 +54,16 @@ public class CommandCircleProcessor implements Processor {
          }
         }
     }
-    private void processCircle(Circle circle,int height){
-        processCircle(circle,height,null);
+    protected void processCircle(Circle circle,int height){
+        processCircle(circle,circle.getThickness(), height,null);
     }
     
-    protected void processCircle(Circle circle,int height,AbstractAttribute.Type type){        
+    protected void processCircle(ArcGerberable circle,double thickness,int height,AbstractAttribute.Type type){        
         ApertureDefinition aperture;
         if(type==null){ 
-           aperture = context.getApertureDictionary().findCircle(circle.getThickness());
+           aperture = context.getApertureDictionary().findCircle(thickness);
         }else{
-           aperture = context.getApertureDictionary().findCircle(type,circle.getThickness());  
+           aperture = context.getApertureDictionary().findCircle(type,thickness);  
         }
         //set aperture if not same
         context.resetAperture(aperture);

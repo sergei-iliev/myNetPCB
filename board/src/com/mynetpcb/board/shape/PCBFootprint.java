@@ -3,6 +3,7 @@ package com.mynetpcb.board.shape;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.board.shape.FootprintShape;
+import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
@@ -51,7 +52,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     
     private GlyphTexture reference,value; 
     
-    private String footprintName;    
+    //private String footprintName;    
     
     private Grid.Units units;
     
@@ -270,14 +271,14 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         
         this.rotate=alpha;
     }
-    public void setDisplayName(String footprintName){
-        this.footprintName=footprintName; 
-    }
-    
-    @Override
-    public String getDisplayName() {
-        return footprintName;
-    }
+//    public void setDisplayName(String footprintName){
+//        this.displa=footprintName; 
+//    }
+//    
+//    @Override
+//    public String getDisplayName() {
+//        return footprintName;
+//    }
     public double getGridValue(){
        return val; 
     }    
@@ -316,8 +317,20 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer xml=new StringBuffer();
+               xml.append("<footprint layer=\""+this.copper.getName()+"\" rt=\"" + this.rotate + "\">\r\n");
+               xml.append("<name>"+displayName+"</name>\r\n");
+               xml.append("<units raster=\""+this.getGridValue()+"\">"+this.getGridUnits()+"</units>\r\n"); 
+               xml.append("<reference layer=\""+Layer.Copper.resolve(reference.getLayermaskId()).getName()+"\"  >"+(reference.toXML())+"</reference>\r\n");                           
+               xml.append("<value layer=\""+Layer.Copper.resolve(value.getLayermaskId()).getName()+"\">"+(value.toXML())+"</value>\r\n");              
+                  
+               xml.append("<shapes>\r\n");
+               for(Shape e:shapes){
+                 xml.append(((Externalizable)e).toXML());
+               }
+               xml.append("</shapes>\r\n");
+               xml.append("</footprint>\r\n");                 
+        return xml.toString(); 
     }
 
     @Override
@@ -325,6 +338,9 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         Element  element= (Element)node;
         this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
         
+        if(element.getAttribute("rt").length()>0){
+          this.rotate=Double.parseDouble(element.getAttribute("rt"));
+        }
         
         Node n=element.getElementsByTagName("units").item(0);
         this.setGridUnits(Grid.Units.MM);
@@ -336,7 +352,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         n=element.getElementsByTagName("name").item(0);
         
         if(n!=null){
-          this.footprintName=n.getTextContent();  
+          this.displayName=n.getTextContent();  
         }       
         
         n=element.getElementsByTagName("reference").item(0);           

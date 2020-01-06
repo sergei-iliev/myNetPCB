@@ -523,6 +523,10 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             }
             //could be a freshly imported circuit with no library/project name
             if(e.getActionCommand().equals("Save")){
+              if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
+                   User.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
+                   return;
+              }                
               if (boardComponent.getModel().getLibraryName() == null||boardComponent.getModel().getLibraryName().length()==0) {
                  (new BoardSaveDialog(this, boardComponent,Configuration.get().isIsOnline())).build();
                   return;
@@ -534,7 +538,6 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             
             //save the file
             if (!Configuration.get().isIsApplet()) {
-
                 Command writer =
                     new WriteUnitLocal(this, boardComponent.getModel().format(),
                                        Configuration.get().getBoardsRoot(),
@@ -542,7 +545,6 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
                                        boardComponent.getModel().getFileName(), true, BoardComponent.class);
                 CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
             } else {
-
                 Command writer =
                     new WriteConnector(this, boardComponent.getModel().format(),
                                        new RestParameterMap.ParameterBuilder("/boards").addURI(boardComponent.getModel().getLibraryName()).addURI(boardComponent.getModel().getFormatedFileName()).addAttribute("overwrite",

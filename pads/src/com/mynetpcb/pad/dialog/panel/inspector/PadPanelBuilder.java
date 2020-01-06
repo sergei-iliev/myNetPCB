@@ -174,7 +174,7 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         netvalueY.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getAnchorPoint().y)));
         
         widthField.setText(String.valueOf(Grid.COORD_TO_MM(pad.getWidth())));
-        if(pad.getShape() == Pad.Shape.CIRCULAR||pad.getShape()==Pad.Shape.POLYGON){
+        if(pad.getShapeType() == Pad.Shape.CIRCULAR||pad.getShapeType()==Pad.Shape.POLYGON){
             heightField.setEnabled(false);
         }else{
             heightField.setEnabled(true);
@@ -186,7 +186,7 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         
         setSelectedItem(layerCombo, pad.getCopper());
         setSelectedItem(padTypeCombo, pad.getType());
-        setSelectedItem(padShapeCombo, pad.getShape());
+        setSelectedItem(padShapeCombo, pad.getShapeType());
         
         drillWidth.setText(String.valueOf(Grid.COORD_TO_MM(pad.getDrill()==null?0:pad.getDrill().getWidth())));
         //drillOffsetX.setText(String.valueOf(Grid.COORD_TO_MM(pad.getOffset().x )));

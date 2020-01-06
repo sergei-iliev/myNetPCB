@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
@@ -32,7 +33,10 @@ public class OvalShape implements PadDrawing {
         copy.obround = this.obround.clone();
         return copy;
     }
-
+    @Override
+    public GeometricFigure getGeometricFigure(){
+      return obround;  
+    }
     @Override
     public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
         //check if outside of visible window
