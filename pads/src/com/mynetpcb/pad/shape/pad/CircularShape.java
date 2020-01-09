@@ -67,11 +67,17 @@ public class CircularShape implements PadDrawing {
     }
 
     @Override
-    public void drawClearance(Graphics2D graphics2D, ViewportWindow viewportWindow, AffineTransform affineTransform,
-                              ClearanceSource clearanceSource) {
-        // TODO Implement this method
-
-
+    public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
+                              ClearanceSource source) {
+        Box rect = getBoundingShape();
+        rect.grow(source.getClearance());                                  
+        
+        g2.setColor(Color.BLACK);        
+        Circle c = this.circle.clone();
+        c.r=rect.getWidth()/2;
+        c.scale(scale.getScaleX());
+        c.move(-viewportWindow.getX(), -viewportWindow.getY());
+        c.paint(g2, true);
     }
 
     @Override

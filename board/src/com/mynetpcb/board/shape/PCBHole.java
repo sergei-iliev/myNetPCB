@@ -85,14 +85,14 @@ public class PCBHole extends HoleShape implements PCBShape{
         this.circle.mirror(line);        
     }
     @Override
-    public <T extends ClearanceSource> void drawClearence(Graphics2D graphics2D, ViewportWindow viewportWindow,
+    public <T extends ClearanceSource> void drawClearance(Graphics2D graphics2D, ViewportWindow viewportWindow,
                                                           AffineTransform affineTransform, T clearanceSource) {
         // TODO Implement this method
 
     }
 
     @Override
-    public <T extends ClearanceSource> void printClearence(Graphics2D graphics2D, PrintContext printContext,
+    public <T extends ClearanceSource> void printClearance(Graphics2D graphics2D, PrintContext printContext,
                                                            T clearanceSource) {
         // TODO Implement this method
 

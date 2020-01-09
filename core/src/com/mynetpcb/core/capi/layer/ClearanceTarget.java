@@ -15,10 +15,10 @@ public interface ClearanceTarget extends Clearanceaware,Net{
     /**
        * Copper area initiates clearence drawing on all copper shapes 
        */
-    public <T extends  ClearanceSource> void drawClearence(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale,T source);
+    public <T extends  ClearanceSource> void drawClearance(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale,T source);
     /**
      * Copper area initiates clearence printing on all copper shapes
      */
-    public <T extends  ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext,T source);
+    public <T extends  ClearanceSource> void printClearance(Graphics2D g2,PrintContext printContext,T source);
     
 }

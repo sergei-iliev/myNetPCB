@@ -31,10 +31,10 @@ public class ScalableTransformation implements Cloneable{
     }
     
     public ScalableTransformation(double scaleRatio) {
-          this.Reset(scaleRatio,0,0,DEFAULT_MAX_SCALE_FACTOR);
+          this.reset(scaleRatio,0,0,DEFAULT_MAX_SCALE_FACTOR);
     }   
     
-    public void Reset(double scaleRatio,int scaleFactor,int minScaleFactor,int maxScaleFactor){
+    public void reset(double scaleRatio,int scaleFactor,int minScaleFactor,int maxScaleFactor){
          this.scaleFactor=scaleFactor;
          this.maxScaleFactor=maxScaleFactor;
          this.minScaleFactor=minScaleFactor;
@@ -42,7 +42,7 @@ public class ScalableTransformation implements Cloneable{
          currentTransformation=calculateTransformation();
     }
     
-    public boolean ScaleIn() {              
+    public boolean scaleIn() {              
              scaleFactor++ ;
              if (scaleFactor == maxScaleFactor) {
                  scaleFactor = maxScaleFactor-1;
@@ -62,11 +62,11 @@ public class ScalableTransformation implements Cloneable{
     }
     
     public void setScaleFactor(int newScaleFactor){
-        this.Reset(scaleRatio,newScaleFactor,minScaleFactor,maxScaleFactor); 
+        this.reset(scaleRatio,newScaleFactor,minScaleFactor,maxScaleFactor); 
     }
     
     
-    public boolean ScaleOut() {
+    public boolean scaleOut() {
          scaleFactor --;
          if (scaleFactor == minScaleFactor-1) {
                  scaleFactor = minScaleFactor;

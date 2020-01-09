@@ -47,7 +47,7 @@ public class Footprint extends Unit<Shape> {
         grid.setGridUnits(0.8, Grid.Units.MM);
         this.grid.setPointsColor(Color.WHITE);
         this.frame.setFillColor(Color.WHITE);
-        scalableTransformation.Reset(0.5, 10, 4, 13);
+        scalableTransformation.reset(0.5, 10, 4, 13);
         scalableTransformation.setScaleFactor(10);
         this.getCoordinateSystem().setSelectionRectWidth(3000);
     }

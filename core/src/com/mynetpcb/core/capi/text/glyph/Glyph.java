@@ -1,13 +1,8 @@
 package com.mynetpcb.core.capi.text.glyph;
 
-import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.utils.Utilities;
-
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-
-import java.awt.geom.AffineTransform;
 import com.mynetpcb.d2.shapes.Segment;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -99,6 +94,11 @@ public class Glyph implements Cloneable{
     public char getChar(){
         return character;
     }
+    
+    public Segment[] getSegments(){
+        return segments;
+    }
+    
     public void mirror(Line line){
     for(int i=0;i<this.segments.length;i++){
         this.segments[i].mirror(line);                                          
@@ -135,10 +135,6 @@ public class Glyph implements Cloneable{
           this.segments[i].ps.set(glyph.segments[i].ps);
           this.segments[i].pe.set(glyph.segments[i].pe);
         }
-//        System.out.println(size);
-//        if(size==2.0){
-//            System.out.println(1);
-//        }
         this.scale(size);              
     }
 

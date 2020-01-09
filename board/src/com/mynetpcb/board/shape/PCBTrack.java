@@ -55,13 +55,17 @@ public class PCBTrack extends TrackShape implements PCBShape{
     }
 
     @Override
-    public <T extends ClearanceSource> void drawClearence(Graphics2D g2, ViewportWindow viewportWindow,
+    public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
                                                           AffineTransform scale, T source) {
 //        if(Utilities.isSameNet(source, this)){
 //            return;
 //        }       
         
         Shape shape=(Shape)source;
+        //no need to draw clearance if not on active side
+        if(((CompositeLayerable)getOwningUnit()).getActiveSide()!=Layer.Side.resolve(this.copper.getLayerMaskID())){
+           return;
+        }        
         if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
              return;  //not on the same layer
         }
@@ -89,7 +93,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
     }
 
     @Override
-    public <T extends ClearanceSource> void printClearence(Graphics2D graphics2D, PrintContext printContext,
+    public <T extends ClearanceSource> void printClearance(Graphics2D graphics2D, PrintContext printContext,
                                                            T clearanceSource) {
        
 

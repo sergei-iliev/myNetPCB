@@ -264,7 +264,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
          Collection<ClearanceTarget> targets=getOwningUnit().getShapes(ClearanceTarget.class);
          this.prepareClippingRegion(viewportWindow, scale);
          for(ClearanceTarget target:targets){              
-              target.drawClearence(g2, viewportWindow, scale, this);
+              target.drawClearance(g2, viewportWindow, scale, this);
          }
         }
         g2.setComposite(originalComposite);

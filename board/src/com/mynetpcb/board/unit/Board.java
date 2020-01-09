@@ -56,7 +56,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         this.grid.setGridUnits(0.8, Grid.Units.MM);
         this.grid.setPointsColor(Color.WHITE);
         this.frame.setFillColor(Color.WHITE);
-        scalableTransformation.Reset(0.5, 10, 3, 13);
+        scalableTransformation.reset(0.5, 10, 3, 13);
         this.getCoordinateSystem().setSelectionRectWidth(3000);
         this.compositeLayer = new CompositeLayer();
 

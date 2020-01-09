@@ -47,7 +47,7 @@ public class Excelon implements Gerberable{
     
     
     public void build(GerberServiceContext serviceContext,String fileName,int layermask)throws IOException{
-        this.apertureDictionary.Reset();
+        this.apertureDictionary.reset();
         ApertureDrillProcessor apertureProcessor=new ApertureDrillProcessor(apertureDictionary);
         apertureProcessor.process(serviceContext, board, layermask) ;
         

@@ -129,7 +129,7 @@ public class UnitSelectionGrid {
         Collection<Unit> units=getModel().getUnits();
         //1.set scale factor
         for(Unit unit:units){
-            unit.getScalableTransformation().Reset(scaleRatio,scaleFactor,minScaleFactor,maxScaleFactor);  
+            unit.getScalableTransformation().reset(scaleRatio,scaleFactor,minScaleFactor,maxScaleFactor);  
             width=Math.max(width,(int)Math.round(UnitSelectionCell.CHECKBOX_WIDTH+3 * UnitSelectionCell.OFFSET_X+unit.getBoundingRect().getWidth()*unit.getScalableTransformation().getCurrentTransformation().getScaleX()));
 
         }

@@ -723,7 +723,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             for (Board board : source.getUnits()) {
                 try {
                     Board copy = board.clone();
-                    copy.getScalableTransformation().Reset(0.5,10,3,13);
+                    copy.getScalableTransformation().reset(0.5,10,3,13);
                     boardComponent.getModel().add(copy);
                     copy.notifyListeners(ShapeEvent.ADD_SHAPE);
                 } catch (CloneNotSupportedException f) {

@@ -534,7 +534,7 @@ exit();
         for (Footprint footprint : source.getUnits()) {
             try {
                 Footprint copy = footprint.clone();
-                copy.getScalableTransformation().Reset(0.5,10,4,13);
+                copy.getScalableTransformation().reset(0.5,10,4,13);
                 footprintComponent.getModel().add(copy);
                 copy.notifyListeners(ShapeEvent.ADD_SHAPE);
             } catch (CloneNotSupportedException f) {

@@ -84,7 +84,7 @@ public class PCBVia extends ViaShape implements PCBShape{
         this.outer.mirror(line);        
     }
     @Override
-    public <T extends ClearanceSource> void drawClearence(Graphics2D g2, ViewportWindow viewportWindow,
+    public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
                                                           AffineTransform scale, T source) {
         
         
@@ -118,7 +118,7 @@ public class PCBVia extends ViaShape implements PCBShape{
     }
 
     @Override
-    public <T extends ClearanceSource> void printClearence(Graphics2D graphics2D, PrintContext printContext,
+    public <T extends ClearanceSource> void printClearance(Graphics2D graphics2D, PrintContext printContext,
                                                            T clearanceSource) {
         // TODO Implement this method
 

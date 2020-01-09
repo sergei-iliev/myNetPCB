@@ -1,7 +1,10 @@
 package com.mynetpcb.pad.shape;
 
+import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.layer.Layer.Side;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -166,7 +169,7 @@ public class Pad extends PadShape{
     @Override
     public void setRotation(double angle,Point center){
           double alpha=angle-this.rotate;   
-        System.out.println(alpha+"::"+angle+"::"+this.rotate);
+          
           this.shape.rotate(alpha,center);
           
           this.number.setRotation(angle,center);
@@ -227,7 +230,38 @@ public class Pad extends PadShape{
            this.drill.mirror(line);
         }                
     }
-    
+    @Override
+    public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
+                                                          AffineTransform scale, T source) {
+        
+        //is different layer and SMD -> no clearance
+        if ((source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {           
+               return; //not on the same layer
+        }
+        //no need to draw clearance if not on active side
+        if( ((CompositeLayerable)((CopperAreaShape)source).getOwningUnit()).getActiveSide() !=Layer.Side.resolve(this.copper.getLayerMaskID())){
+           return;
+        }
+        
+        //2. is same net 
+        //if(Utilities.isSameNet(source,this)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
+        //    return false;
+        //}
+        //3. is pad  within copper area
+//        Box rect = getBoundingShape();
+//        rect.grow(source.getClearance());
+//        
+//        if(!source.getBoundingShape().intersects(rect)){
+//          return; 
+//        }  
+        shape.drawClearance(g2, viewportWindow, scale, source);
+    }
+    @Override
+    public <T extends ClearanceSource> void printClearance(Graphics2D g2, PrintContext printContext,
+                                                           T source) {
+        
+
+    }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {
         switch (type) {
@@ -388,9 +422,16 @@ public class Pad extends PadShape{
         }
 
     }
-    
 
-    
+    @Override
+    public void setClearance(int clearance) {        
+    }
+    @Override
+    public int getClearance() {
+        return 0;
+    }
+
+
     public static class Memento extends AbstractMemento<Footprint, Pad> {
 
         private Texture.Memento number,netvalue;

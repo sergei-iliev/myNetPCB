@@ -281,14 +281,29 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
        this.val=val; 
     }    
     @Override
-    public <T extends ClearanceSource> void drawClearence(Graphics2D graphics2D, ViewportWindow viewportWindow,
-                                                          AffineTransform affineTransform, T clearanceSource) {
-        // TODO Implement this method
+    public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
+                                                          AffineTransform scale, T source) {
+        Shape shape=(Shape)source;
+        Box rect=shape.getBoundingShape();
+        if(!rect.intersects(this.getBoundingShape())){
+           return; 
+        }
+        
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+         return;
+        }
+     
+        for(Shape pad:shapes){
+            if(pad instanceof Pad){                                
+                ((Pad)pad).drawClearance(g2,viewportWindow,scale,source);
+            }
+        }        
 
     }
 
     @Override
-    public <T extends ClearanceSource> void printClearence(Graphics2D graphics2D, PrintContext printContext,
+    public <T extends ClearanceSource> void printClearance(Graphics2D graphics2D, PrintContext printContext,
                                                            T clearanceSource) {
         // TODO Implement this method
 

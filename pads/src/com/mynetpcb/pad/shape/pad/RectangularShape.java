@@ -10,6 +10,7 @@ import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Rectangle;
+import com.mynetpcb.pad.shape.Pad;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -53,9 +54,16 @@ public class RectangularShape implements PadDrawing {
     }
     
     @Override
-    public void drawClearance(Graphics2D graphics2D, ViewportWindow viewportWindow, AffineTransform affineTransform,
-                              ClearanceSource clearanceSource) {
-        // TODO Implement this method
+    public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
+                              ClearanceSource source) {
+        Rectangle r=this.rect.clone();
+        r.setSize(((Pad)this.padRef.get()).getWidth()+2*source.getClearance(),((Pad)this.padRef.get()).getHeight()+2*source.getClearance());
+        r.rotate(this.padRef.get().getRotation(), this.getCenter());
+        
+        r.scale(scale.getScaleX());
+        r.move(-viewportWindow.getX(),- viewportWindow.getY());
+        g2.setColor(Color.BLACK);
+        r.paint(g2,true);
 
     }
 

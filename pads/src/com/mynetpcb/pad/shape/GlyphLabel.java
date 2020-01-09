@@ -41,6 +41,17 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         copy.texture = this.texture.clone();        
         return copy;
     }
+    
+    @Override
+    public int getThickness() {        
+        return texture.getThickness();
+    }
+    
+    @Override
+    public void setThickness(int thickness) {        
+        texture.setThickness(thickness);
+    }
+    
     @Override
     public void setSide(Layer.Side side, Line line,double angle) {
         this.setCopper(Layer.Side.change(this.getCopper().getLayerMaskID()));

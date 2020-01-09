@@ -100,28 +100,6 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
       return layoutPanel;  
     }
     
-//    protected void fillParentCombo(Class<?> clazz){
-//        //***disconnect from listener
-//        this.parentCombo.removeActionListener(this);
-//        parentCombo.removeAllItems();
-//        parentCombo.addItem(new AttachedItem.Builder("none").setUUID(null).build());
-//        
-//        Shape parent=((Ownerable)getTarget()).getOwner();
-//        Collection<S> shapes=getComponent().getModel().getUnit().getShapes(clazz);
-//        //***get could be Owners list      
-//        for(S shape:shapes){
-//            //if(symbol instanceof Chip){
-//             AttachedItem item=new AttachedItem.Builder(shape.getDisplayName()).setUUID(shape.getUUID()).build();  
-//             parentCombo.addItem(item);  
-//             if(parent!=null){
-//               if(parent.getUUID().equals(item.getUUID()))
-//                 parentCombo.setSelectedItem(item);  
-//             }    
-//            }
-//        //***reconnect
-//        this.parentCombo.addActionListener(this);       
-//    }
-    
     /**
      *Convert internal units value to user unit
      * @param value

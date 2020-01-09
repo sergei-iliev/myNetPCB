@@ -3,8 +3,6 @@ package com.mynetpcb.gerber.aperture;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
-import com.mynetpcb.gerber.aperture.type.PolygonAperture;
-import com.mynetpcb.gerber.aperture.type.RectangleAperture;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 import com.mynetpcb.gerber.attribute.DeleteAttribute;
 import com.mynetpcb.gerber.capi.Printable;
@@ -25,7 +23,7 @@ public class ApertureDictionary  implements Printable{
        index=10;
    }
    
-   public void Reset(){
+   public void reset(){
        repository.clear();
        index=10;
    }
@@ -95,83 +93,90 @@ public class ApertureDictionary  implements Printable{
         return o.orElse(null);   
        
     }
-    
-    public ApertureDefinition findRectangle(AbstractAttribute.Type type,int x,int y){
-        
-        Optional<Set<ApertureDefinition>> o = repository.entrySet()
-                              .stream()
-                              .filter(e->e.getKey()!=null&&e.getKey().getType()==type )
-                              .map(Map.Entry::getValue)
-                              .findFirst();
-        if(o.isPresent()){
-           Optional<ApertureDefinition> aperture= o.get().stream().filter(d->{if((d instanceof RectangleAperture)&&(((RectangleAperture)d).getX()==x&&((RectangleAperture)d).getY()==y))
-                                          return true;
-                                       else
-                                          return false;}).findFirst();
-            return aperture.orElse(null);   
-        }
-        return null;
-    }
-    public ApertureDefinition findPolygon(AbstractAttribute.Type type,int diameter,int vertices){
-        Optional<Set<ApertureDefinition>> o = repository.entrySet()
-                              .stream()
-                              .filter(e->e.getKey()!=null&&e.getKey().getType()==type )
-                              .map(Map.Entry::getValue)
-                              .findFirst();
-        if(o.isPresent()){
-           Optional<ApertureDefinition> aperture= o.get().stream().filter(d->{if((d instanceof PolygonAperture)&&(((PolygonAperture)d).getDiameter()==diameter&&((PolygonAperture)d).getVerticesNumber()==vertices))
-                                          return true;
-                                       else
-                                          return false;}).findFirst();
-            return aperture.orElse(null);   
-        }
-        return null;       
-    }
-    public ApertureDefinition findObround(AbstractAttribute.Type type,int x,int y){
-        Optional<Set<ApertureDefinition>> o = repository.entrySet()
-                              .stream()
-                              .filter(e->e.getKey()!=null&&e.getKey().getType()==type )
-                              .map(Map.Entry::getValue)
-                              .findFirst();
-        if(o.isPresent()){
-            throw new IllegalStateException();
+/*
+ * Use contour region
+ */
+//    public ApertureDefinition findRectangle(AbstractAttribute.Type type,int x,int y){
+//        
+//        Optional<Set<ApertureDefinition>> o = repository.entrySet()
+//                              .stream()
+//                              .filter(e->e.getKey()!=null&&e.getKey().getType()==type )
+//                              .map(Map.Entry::getValue)
+//                              .findFirst();
+//        if(o.isPresent()){
+//           Optional<ApertureDefinition> aperture= o.get().stream().filter(d->{if((d instanceof RectangleAperture)&&(((RectangleAperture)d).getX()==x&&((RectangleAperture)d).getY()==y))
+//                                          return true;
+//                                       else
+//                                          return false;}).findFirst();
+//            return aperture.orElse(null);   
+//        }
+//        return null;
+//    }
+/*
+ * Use contour region
+ */    
+//    public ApertureDefinition findPolygon(AbstractAttribute.Type type,int diameter,int vertices){
+//        Optional<Set<ApertureDefinition>> o = repository.entrySet()
+//                              .stream()
+//                              .filter(e->e.getKey()!=null&&e.getKey().getType()==type )
+//                              .map(Map.Entry::getValue)
+//                              .findFirst();
+//        if(o.isPresent()){
+//           Optional<ApertureDefinition> aperture= o.get().stream().filter(d->{if((d instanceof PolygonAperture)&&(((PolygonAperture)d).getDiameter()==diameter&&((PolygonAperture)d).getVerticesNumber()==vertices))
+//                                          return true;
+//                                       else
+//                                          return false;}).findFirst();
+//            return aperture.orElse(null);   
+//        }
+//        return null;       
+//    }
+/*
+ * Use line
+ */    
+//    public ApertureDefinition findObround(AbstractAttribute.Type type,int x,int y){
+//        Optional<Set<ApertureDefinition>> o = repository.entrySet()
+//                              .stream()
+//                              .filter(e->e.getKey()!=null&&e.getKey().getType()==type )
+//                              .map(Map.Entry::getValue)
+//                              .findFirst();
+//        if(o.isPresent()){
 //           Optional<ApertureDefinition> aperture= o.get().stream().filter(d->{if((d instanceof ObroundAperture)&&(((ObroundAperture)d).getX()==x&&((ObroundAperture)d).getY()==y))
 //                                          return true;
 //                                       else
 //                                          return false;}).findFirst();
 //            return aperture.orElse(null);   
-        }
-        return null;
-    }
+//        }
+//        return null;
+//    }
     
-    public ApertureDefinition findRectangle(int x,int y){
-        Optional<ApertureDefinition> o= this.repository.get(null).stream().filter(d->{if(d instanceof RectangleAperture&&((RectangleAperture)d).getX()==x&&((RectangleAperture)d).getY()==y)
-                                                                                                                       return true;
-                                                                                                               else
-                                                                                                                       return false;}).findFirst();        
-        
-        return o.orElse(null);
-        
-    }
-    public ApertureDefinition findObround(int x,int y){
+//    public ApertureDefinition findRectangle(int x,int y){
+//        Optional<ApertureDefinition> o= this.repository.get(null).stream().filter(d->{if(d instanceof RectangleAperture&&((RectangleAperture)d).getX()==x&&((RectangleAperture)d).getY()==y)
+//                                                                                                                       return true;
+//                                                                                                               else
+//                                                                                                                       return false;}).findFirst();        
+//        
+//        return o.orElse(null);
+//        
+//    }
+//    public ApertureDefinition findObround(int x,int y){
 //        Optional<ApertureDefinition> o= this.repository.get(null).stream().filter(d->{if(d instanceof ObroundAperture&&((ObroundAperture)d).getX()==x&&((ObroundAperture)d).getY()==y)
 //                                                                                                                       return true;
 //                                                                                                               else
 //                                                                                                                       return false;}).findFirst();        
 //        
 //        return o.orElse(null);
-        throw new IllegalStateException();
-    }   
+//        
+//    }   
     
-    public ApertureDefinition findPolygon(int diameter,int vertices){
-          
-        Optional<ApertureDefinition> o= this.repository.get(null).stream().filter(d->{if(d instanceof PolygonAperture&&((PolygonAperture)d).getDiameter()==diameter&&((PolygonAperture)d).getVerticesNumber()==vertices)
-                                                                                                                       return true;
-                                                                                                               else
-                                                                                                                       return false;}).findFirst();        
-        
-        return o.orElse(null);
-    }
+//    public ApertureDefinition findPolygon(int diameter,int vertices){
+//          
+//        Optional<ApertureDefinition> o= this.repository.get(null).stream().filter(d->{if(d instanceof PolygonAperture&&((PolygonAperture)d).getDiameter()==diameter&&((PolygonAperture)d).getVerticesNumber()==vertices)
+//                                                                                                                       return true;
+//                                                                                                               else
+//                                                                                                                       return false;}).findFirst();        
+//        
+//        return o.orElse(null);
+//    }
     public String print(){        
         AbstractAttribute currentAttribute=new DeleteAttribute();  //default attribute
         StringBuilder sb=new StringBuilder();
