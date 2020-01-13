@@ -32,7 +32,7 @@ import org.w3c.dom.Node;
 
 public class PCBVia extends ViaShape implements PCBShape{
 
-    //private String net;
+    private String net;
     private int clearance;    
     private Circle inner,outer;    
     
@@ -55,7 +55,7 @@ public class PCBVia extends ViaShape implements PCBShape{
     }
     @Override
     public int getDrawingLayerPriority() {        
-        return 101;
+        return 120;
     }
     @Override
     public Point alignToGrid(boolean isRequired) {
@@ -148,8 +148,9 @@ public class PCBVia extends ViaShape implements PCBShape{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb=new StringBuffer(); 
+        sb.append("<via x=\""+Utilities.roundDouble(this.inner.pc.x)+"\" y=\""+Utilities.roundDouble(this.inner.pc.y)+"\" width=\""+this.outer.r*2+"\" drill=\""+this.inner.r*2+"\"   clearance=\""+this.clearance+"\" net=\""+(this.net==null?"":this.net)+"\" />");            
+        return sb.toString();
     }
 
     @Override
@@ -166,7 +167,7 @@ public class PCBVia extends ViaShape implements PCBShape{
         this.inner.r=(Double.parseDouble(element.getAttribute("drill")))/2;
         
         this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));        
-        //this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");  
+        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");  
         
     }
 
@@ -197,9 +198,9 @@ public class PCBVia extends ViaShape implements PCBShape{
         c.scale(scale.getScaleX());
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
         c.paint(g2, true);
-        if(this.isSelected()){                          
-           Utilities.drawCrosshair(g2,  null,(int)(selectionRectWidth*scale.getScaleX()),c.getCenter());
-        }
+        //if(this.isSelected()){                          
+        //   Utilities.drawCrosshair(g2,  null,(int)(selectionRectWidth*scale.getScaleX()),c.getCenter());
+        //}
 
     }
     @Override

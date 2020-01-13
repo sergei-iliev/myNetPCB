@@ -33,9 +33,11 @@ public class LayerOrderedList<S extends Shape> extends LinkedList<S> implements 
             for (Shape s : this) {
                 if (s.getDrawingLayerPriority() >= shape.getDrawingLayerPriority()) {
                     super.add(this.indexOf(s), shape);
+                    System.out.println(this);
                     return true;
                 }
             }
+            System.out.println(this);
             return super.add(shape);
 
         }
@@ -47,6 +49,7 @@ public class LayerOrderedList<S extends Shape> extends LinkedList<S> implements 
 
     public void reorder() {
         Collections.sort(this, comparator);
+        System.out.println(this);
     }
 
 }

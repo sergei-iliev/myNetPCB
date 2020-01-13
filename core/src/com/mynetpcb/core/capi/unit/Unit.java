@@ -5,8 +5,6 @@ import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.Frameable;
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.pin.PinLineable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.Ruler;
 import com.mynetpcb.core.capi.ScalableTransformation;
@@ -16,30 +14,23 @@ import com.mynetpcb.core.capi.event.Event;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeEventDispatcher;
 import com.mynetpcb.core.capi.event.ShapeListener;
-import com.mynetpcb.core.capi.layer.CompositeLayer;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.DefaultOrderedList;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.layer.OrderedList;
-import com.mynetpcb.core.capi.line.Sublineable;
+import com.mynetpcb.core.capi.pin.PinLineable;
 import com.mynetpcb.core.capi.print.PrintCallable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
-import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.capi.undo.Stateable;
 import com.mynetpcb.core.capi.undo.UndoCallback;
 import com.mynetpcb.core.capi.undo.UndoProvider;
 import com.mynetpcb.core.capi.undo.Undoable;
-
 import com.mynetpcb.d2.shapes.Box;
-import com.mynetpcb.d2.shapes.Rectangle;
-
-import com.sun.jmx.remote.util.OrderClassLoaders;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -48,7 +39,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import java.io.IOException;
@@ -58,7 +48,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -271,7 +260,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
             }
         }
     }
-    private boolean isShapeVisibleOnLayers(Shape shape){
+    protected boolean isShapeVisibleOnLayers(Shape shape){
         if(this instanceof CompositeLayerable){
           if(shape.isVisibleOnLayers(((CompositeLayerable)this).getLayerMaskID())){
             return true;
@@ -422,9 +411,10 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
             return Optional.empty();
         }                
     }
+    
     protected List<Shape> buildClickedShapesList(int x, int y, boolean isTextIncluded) {
         List<Shape> orderElements = new ArrayList<>();
-                for (Shape shape : this.<Shape>getShapes()) {
+                for (Shape shape : this.shapes) {
                     if (isTextIncluded && shape instanceof Textable) {                   
                         if(((Textable)shape).isClickedTexture(x, y)){ 
                           orderElements.add(0,shape);
@@ -492,81 +482,6 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         }
         return null;  
     }
-//    protected List<ClickableOrderItem> buildClickableOrderItem(int x, int y, boolean isTextIncluded) {
-//        List<ClickableOrderItem> orderElements = new ArrayList<ClickableOrderItem>();
-//        int index = 0;
-//        for (Shape shape : getShapes()) {
-//            if (isTextIncluded && shape instanceof Textable) {                   
-//                if(((Textable)shape).getChipText().isClicked(x, y)){ 
-//                  orderElements.add(new ClickableOrderItem(index, 0,shape.getCopper().getLayerMaskID()));
-//                }
-//            }
-//            if(!shape.isClicked(x, y)){
-//               index++;
-//               continue; 
-//            }
-//            //***give selected a higher priority
-//            orderElements.add(new ClickableOrderItem(index,
-//                                                     (shape.isSelected() && shape.getOrderWeight() > 1 ? 2 : shape.getOrderWeight()),shape.getCopper().getLayerMaskID()));
-//
-//            index++;
-//        }
-//
-//        return orderElements;
-//    }
-      
-    
-//    public S getClickedShape(int x, int y, boolean isTextIncluded) {
-//        List<ClickableOrderItem> orderedElements = buildClickableOrderItem(x,y,isTextIncluded);
-//        Collections.sort(orderedElements, new Comparator<ClickableOrderItem>() {
-//                public int compare(ClickableOrderItem o1, ClickableOrderItem o2) {
-//                    if(Unit.this instanceof CompositeLayerable){
-//                       //both on same side
-//                        Layer.Side s1=Layer.Side.resolve(o1.getLayerMaskID());
-//                        Layer.Side s2=Layer.Side.resolve(o2.getLayerMaskID());
-//                        Layer.Side active=((CompositeLayerable)Unit.this).getActiveSide();
-//                        //active layer has presedense
-//                        if(s1!=s2){
-//                            if(s1==active){
-//                               return -1;
-//                            }else{
-//                               return 1;
-//                            }
-//                        }
-//                    }
-//                    
-//                    if ((o1.getOrderWeight() - o2.getOrderWeight()) == 0)
-//                        return 0;
-//                    if ((o1.getOrderWeight() - o2.getOrderWeight()) > 0)
-//                        return 1;
-//                    else
-//                        return -1;
-//                }
-//            });
-//
-//        for (ClickableOrderItem orderedElement : orderedElements) {
-//            S shape = shapes.get(orderedElement.getElementIndex());
-//            if(!isShapeVisibleOnLayers(shape)){             
-//                continue;              
-//            }
-//            //***could be textable
-//            if ((shape instanceof Textable) && (orderedElement.getOrderWeight() == 0)) {
-//                Texture texture = ((Textable)shape).getChipText().getClickedTexture(x, y);
-//                if (texture != null) {
-//                    return shape;
-//                }
-//            } else {
-//                /*
-//                buildClickableOrderItem garantees that shape is clicked
-//                */
-//                //if (shape.isClicked(x, y)) {
-//                    return shape;
-//                //}
-//            }
-//        }
-//
-//        return null;
-//    }
 
     public int getWidth() {
         return width;

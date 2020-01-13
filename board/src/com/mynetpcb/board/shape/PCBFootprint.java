@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
@@ -215,8 +216,15 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         });
     }
     @Override
+    public long getOrderWeight(){
+        return (long)getBoundingShape().area();
+    }
+    @Override
     public int getDrawingLayerPriority() {        
-        return 101;
+        if(((CompositeLayerable)getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID()))
+           return 100;
+        else
+           return 99;
     }
     @Override
     public Point getCenter() {        

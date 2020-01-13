@@ -5,6 +5,8 @@ import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.board.shape.HoleShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
+import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -21,6 +23,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -46,6 +49,10 @@ public class PCBHole extends HoleShape implements PCBShape{
     }
     public Circle getInner(){
         return circle;
+    }
+    @Override
+    public int getDrawingLayerPriority() {        
+        return 110;
     }
     @Override
     public long getOrderWeight() {
@@ -85,16 +92,36 @@ public class PCBHole extends HoleShape implements PCBShape{
         this.circle.mirror(line);        
     }
     @Override
-    public <T extends ClearanceSource> void drawClearance(Graphics2D graphics2D, ViewportWindow viewportWindow,
-                                                          AffineTransform affineTransform, T clearanceSource) {
-        // TODO Implement this method
+    public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
+                                                          AffineTransform scale, T source) {
+        Box rect = this.circle.box();
+        rect.grow(this.clearance!=0?this.clearance:source.getClearance());        
+        
+        //is via within copper area
+        if(!(source.getBoundingShape().intersects(rect))){
+           return; 
+        }
+        
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)){
+                return;
+        }
+        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
+        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
+        
+        ellipse.setFrame(rect.getX() - viewportWindow.getX(), rect.getY() - viewportWindow.getY(),
+                         rect.getWidth(), rect.getHeight());
+        
+        g2.setColor(Color.BLACK);                
+        g2.fill(ellipse);
 
+        ellipseProvider.reset();
     }
 
     @Override
-    public <T extends ClearanceSource> void printClearance(Graphics2D graphics2D, PrintContext printContext,
-                                                           T clearanceSource) {
-        // TODO Implement this method
+    public <T extends ClearanceSource> void printClearance(Graphics2D g2, PrintContext printContext,
+                                                           T source) {
+
 
     }
 

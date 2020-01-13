@@ -19,7 +19,7 @@ import org.junit.Test;
 
 public class GerberTest {
         //private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\BlueTooth\\BlueTemp.xml";
-        private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\demo\\proba.xml";
+        private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\demo\\first.xml";
         @Test
         public void testTrackRender()throws Exception{
             Board board=new Board((int)Grid.MM_TO_COORD(100),(int)Grid.MM_TO_COORD(100));   
@@ -60,7 +60,7 @@ public class GerberTest {
             gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_REFERENCE_ON_SILKSCREEN,true);
         
             Gerber gerber=new Gerber(container.getUnit());              
-          //  gerber.build(gerberServiceContext,"d:\\top.gbr",Layer.LAYER_FRONT);
+            gerber.build(gerberServiceContext,"d:\\top.gbr",Layer.LAYER_FRONT);
        //     gerber.build(gerberServiceContext,"d:\\bottom.gbr",Layer.LAYER_BACK);
             gerber.build(gerberServiceContext,"d:\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
         //        gerber.build("c:\\sergei\\bottom_silk.gbr",Layer.SILKSCREEN_LAYER_BACK);

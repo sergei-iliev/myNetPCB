@@ -38,6 +38,7 @@ import org.w3c.dom.Node;
 public class PCBTrack extends TrackShape implements PCBShape{
     
     private int clearance;
+    private String net;
     
     public PCBTrack(int thickness,int layermaskId){
         super(thickness,layermaskId);
@@ -151,12 +152,8 @@ public class PCBTrack extends TrackShape implements PCBShape{
     
     @Override
     public int getDrawingLayerPriority() {
-        int order=super.getDrawingLayerPriority();
-        if(getOwningUnit()==null){            
-            return order;
-        }
-        
-        
+          int order;  
+
          if(((CompositeLayerable)getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())){
            order= 4;
          }else{
@@ -199,8 +196,13 @@ public class PCBTrack extends TrackShape implements PCBShape{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb=new StringBuffer();
+        sb.append("<track layer=\""+this.copper.getName()+"\" thickness=\""+this.getThickness()+"\" clearance=\""+clearance+"\" net=\""+(this.net==null?"":this.net)+"\" >");
+        for(Point point:this.polyline.points){
+            sb.append(Utilities.roundDouble(point.x) + "," + Utilities.roundDouble(point.y) + ",");
+        }        
+        sb.append("</track>\r\n");
+        return sb.toString();
     }
 
     @Override

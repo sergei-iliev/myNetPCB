@@ -21,7 +21,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
-    private JComboBox chipUnitOrientationCombo, chipUnitAlignmentCombo, chipReferenceOrientationCombo, chipReferenceAlignmentCombo;
 
     private JTextField  referenceField, valueField;
     
@@ -97,6 +96,7 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
  
         if(e.getSource()==layerCombo){
             ((PCBFootprint)getTarget()).setSide((Layer.Side)layerCombo.getSelectedItem()); 
+            getComponent().getModel().getUnit().getShapes().reorder();
             getComponent().Repaint();
         }
     }

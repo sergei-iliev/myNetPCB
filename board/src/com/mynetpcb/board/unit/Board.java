@@ -11,6 +11,7 @@ import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.layer.LayerOrderedList;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Line;
 
@@ -28,7 +29,9 @@ import java.io.IOException;
 
 import java.lang.ref.WeakReference;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -69,7 +72,84 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         copy.compositeLayer = new CompositeLayer();
         return copy;
     }
-
+//    private Comparator<Shape> clickedShapesComparator=new Comparator<Shape>(){
+//        @Override
+//        public int compare(Shape o1, Shape o2) {
+//                    if(o1.getOwningUnit() instanceof CompositeLayerable){
+//                         //both on same side
+//                          Layer.Side s1=Layer.Side.resolve(o1.getCopper().getLayerMaskID());
+//                          Layer.Side s2=Layer.Side.resolve(o2.getCopper().getLayerMaskID());
+//                          Layer.Side active=((CompositeLayerable)o1.getOwningUnit()).getActiveSide();
+//                          //active layer has presedense
+//                          if(s1!=s2){
+//                             if(s1==active){
+//                                  return -1;
+//                              }else{
+//                                  return 1;
+//                              }
+//                           }
+//                    }
+//                                
+//                    if ((o1.getOrderWeight() - o2.getOrderWeight()) == 0)
+//                        return 0;
+//                    if ((o1.getOrderWeight() - o2.getOrderWeight()) > 0)
+//                        return 1;
+//                    else
+//                        return -1;
+//        }
+//    };
+    @Override
+    protected List<Shape> buildClickedShapesList(int x, int y, boolean isTextIncluded) {
+        List<Shape> orderElements = new ArrayList<>();
+        
+            for (int i = this.shapes.size(); i-- > 0; ) {            
+                    if (isTextIncluded && shapes.get(i) instanceof Textable) {                   
+                        if(((Textable)shapes.get(i)).isClickedTexture(x, y)){ 
+                          orderElements.add(0,shapes.get(i));
+                          continue;
+                        }
+                    }
+                    if(shapes.get(i).isClicked(x, y)){
+                       orderElements.add(shapes.get(i));
+                       continue; 
+                    }                    
+                    
+                }        
+                return orderElements;
+        
+    }
+    @Override
+    public Shape getClickedShape(int x, int y, boolean isTextIncluded) {
+        List<Shape> clickedShapes = buildClickedShapesList(x,y,isTextIncluded);
+        if(clickedShapes.size()==0){
+            return null;
+        }
+        //Text?
+        if (clickedShapes.get(0) instanceof Textable) {   
+            if(((Textable)clickedShapes.get(0)).isClickedTexture(x, y)){ 
+             if(isShapeVisibleOnLayers(clickedShapes.get(0))){              
+              return clickedShapes.get(0);             
+             }
+            }
+        }
+        
+        //Collections.reverse(clickedShapes);
+        Shape result=null;
+        for(Shape shape:clickedShapes){
+            if(!isShapeVisibleOnLayers(shape)){             
+               continue;              
+            }
+            if(result==null){
+                result=shape;
+            }else if(shape.getDrawingLayerPriority()==result.getDrawingLayerPriority()){
+                if(shape.getOrderWeight()<result.getOrderWeight()){
+                    result=shape;
+                }
+            }
+        
+        }
+        return result;  
+    }
     @Override
     public StringBuffer format() {
         StringBuffer xml = new StringBuffer();

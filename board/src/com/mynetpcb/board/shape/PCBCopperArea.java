@@ -346,8 +346,13 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb=new StringBuffer();
+        sb.append("<copperarea layer=\""+this.copper.getName()+"\" clearance=\""+this.clearance+"\" net=\""+(this.net==null?"":this.net) +"\" padconnect=\""+this.padConnection+"\" >");
+        for(Point point:polygon.points){
+            sb.append(Utilities.roundDouble(point.x) + "," + Utilities.roundDouble(point.y) + ",");
+        }        
+        sb.append("</copperarea>\r\n");
+        return sb.toString();
     }
 
     @Override

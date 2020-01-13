@@ -1,21 +1,15 @@
 package com.mynetpcb.core.capi;
 
 
-import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
-import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.utils.Utilities;
-
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-
-import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
 
 
 /**
@@ -25,12 +19,13 @@ import java.awt.geom.Line2D;
  * @author Sergey Iliev
  */
 public class CoordinateSystem extends Shape {
-
+    private final Line line;
     private final Point origin;
 
     public CoordinateSystem(Unit owningUnit) {
         super(0,0);
         this.origin=new Point(0,0);
+        this.line=new Line(0, 0, 0, 0);
         setOwningUnit(owningUnit);
     }
     
@@ -95,34 +90,20 @@ public class CoordinateSystem extends Shape {
         if (origin.x == 0 && origin.y == 0) {
             return;
         }
-//        FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Line2D.class);
-//        Line2D horizontalLine = (Line2D)provider.getShape();
-//        Line2D verticalLine = (Line2D)provider.getShape();
-//        
-//        g2.setColor(Color.BLUE);
-//        
-//        //horizontal
-//        horizontalLine.setLine(0, origin.x, getOwningUnit().getWidth(), origin.y);
-//        Utilities.setScaleLine(horizontalLine, horizontalLine, scale);
-//        //vertical
-//        verticalLine.setLine(origin.x, 0, origin.x, getOwningUnit().getHeight());
-//        Utilities.setScaleLine(verticalLine, verticalLine, scale);
-//        
-//        if ((!horizontalLine.intersects(viewportWindow))&&(!verticalLine.intersects(viewportWindow))) {
-//            provider.reset();
-//            return;
-//        }
-//        
-//        horizontalLine.setLine(horizontalLine.getX1() - viewportWindow.x, horizontalLine.getY1() - viewportWindow.y,
-//                       horizontalLine.getX2() - viewportWindow.x, horizontalLine.getY2() - viewportWindow.y);
-//        g2.draw(horizontalLine);
-//
-//    
-//        verticalLine.setLine(verticalLine.getX1() - viewportWindow.x, verticalLine.getY1() - viewportWindow.y,
-//                       verticalLine.getX2() - viewportWindow.x, verticalLine.getY2() - viewportWindow.y);
-//        g2.draw(verticalLine);
-//
-//        provider.reset();
+        g2.setColor(Color.BLUE);
+        
+        line.setLine(0, this.origin.y, this.getOwningUnit().getWidth(),
+                        this.origin.y);
+        line.scale(scale.getScaleX());
+        line.move(-viewportWindow.getX(),- viewportWindow.getY());
+        line.paint(g2,true);
+        
+        
+        line.setLine(this.origin.x, 0, this.origin.x, this.getOwningUnit().getHeight());
+        line.scale(scale.getScaleX());
+        line.move(-viewportWindow.getX(),- viewportWindow.getY());                
+        line.paint(g2,true);
+
     }
 
 }
