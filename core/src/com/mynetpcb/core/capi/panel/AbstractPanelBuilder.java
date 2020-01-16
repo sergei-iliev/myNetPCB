@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 
 import java.lang.ref.WeakReference;
 
+import java.util.Objects;
+
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -124,7 +126,11 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      */
     protected String toUnitX(double value){        
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().x));      
+        if(Objects.isNull(coordinateSystem))
+           return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value));      
+        else    
+           return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().x));      
+
     }
     /**
      *Convert internal unit values in pixel to user unit,taking care of coordinate shift
@@ -133,7 +139,10 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      */
     protected String toUnitY(double value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().y));
+        if(Objects.isNull(coordinateSystem))
+            return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value));
+        else    
+            return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().y));
     }
     /**
      *Convert from unit coordinate to internal one,taking care of coordinate shift
@@ -142,7 +151,10 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      */
     protected double fromUnitX(String value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().x;  
+        if(Objects.isNull(coordinateSystem))
+           return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value));  
+        else    
+           return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().x;  
     }
     /**
      *Convert from unit coordinate to internal one,taking care of coordinate shift
@@ -151,24 +163,14 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      */    
     protected double fromUnitY(String value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().y;         
+        if(Objects.isNull(coordinateSystem))
+            return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value));
+        else
+            return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().y;         
+        
+        
     }
     public abstract void updateUI();
-    
-    //***common text alignment code
-//    protected void validateAlignmentComboText(JComboBox combo,Texture text){
-//        if(text==null)
-//            return;
-//        combo.removeActionListener(this);
-//        if(text.getAlignment().getOrientation() == Text.Orientation.HORIZONTAL){
-//            combo.setModel(new DefaultComboBoxModel(textAlignmentHorizontal));            
-//            combo.setSelectedIndex(text.getAlignment() == Text.Alignment.LEFT?0:1);
-//        }else{
-//            combo.setModel(new DefaultComboBoxModel(textAlignmentVertical));
-//            combo.setSelectedIndex(text.getAlignment() == Text.Alignment.BOTTOM?0:1);        
-//        }        
-//        combo.addActionListener(this);          
-//    }
     
     protected void setSelectedIndex(JComboBox combo,int index){
         //***disconnect from listener

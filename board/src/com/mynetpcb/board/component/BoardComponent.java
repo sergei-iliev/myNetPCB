@@ -166,11 +166,12 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                 * 2.Control rect/reshape point
                 * 3.selected shapes comes before control points
                 */
+                if(getModel().getUnit().getCoordinateSystem()!=null){
                 if (getModel().getUnit().getCoordinateSystem().isClicked(scaledEvent.getX(), scaledEvent.getY())) {
                     getEventMgr().setEventHandle("origin", null);
                     break;
                 }
-
+                }
                 Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
 
                 if (shape != null) {                    

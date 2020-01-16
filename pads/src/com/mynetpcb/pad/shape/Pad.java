@@ -239,10 +239,11 @@ public class Pad extends PadShape{
                return; //not on the same layer
         }
         //no need to draw clearance if not on active side
-        if( ((CompositeLayerable)((CopperAreaShape)source).getOwningUnit()).getActiveSide() !=Layer.Side.resolve(this.copper.getLayerMaskID())){
+        if(this.copper.getLayerMaskID()!=Layer.Copper.Cu.getLayerMaskID()){
+         if( ((CompositeLayerable)((CopperAreaShape)source).getOwningUnit()).getActiveSide() !=Layer.Side.resolve(this.copper.getLayerMaskID())){
            return;
+         }
         }
-        
         //2. is same net 
         //if(Utilities.isSameNet(source,this)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
         //    return false;

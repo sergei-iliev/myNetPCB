@@ -285,7 +285,6 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         group.add(PadButton);
         group.add(LabelButton);
         group.add(DragHeand);
-        group.add(CoordButton);
         group.add(MeasureButton);
         
         EastPanel.setLayout(new BorderLayout());
@@ -510,7 +509,13 @@ exit();
             footprintComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
         }
         if(e.getSource()==CoordButton){ 
-            footprintComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+            if(CoordButton.getModel().isSelected()){
+                footprintComponent.getModel().getUnit().createCoordinateSystem();
+               footprintComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+            }else{
+               footprintComponent.getModel().getUnit().deleteCoordinateSystem(); 
+               footprintComponent.setMode(Mode.COMPONENT_MODE); 
+            }
         }
         if (e.getSource()==SelectionButton) {
             footprintComponent.setMode(Mode.COMPONENT_MODE);

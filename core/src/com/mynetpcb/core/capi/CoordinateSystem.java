@@ -27,19 +27,20 @@ public class CoordinateSystem extends Shape {
         this.origin=new Point(0,0);
         this.line=new Line(0, 0, 0, 0);
         setOwningUnit(owningUnit);
+        this.selectionRectWidth=3000;
     }
     
     @Override
     public Point alignToGrid(boolean isRequired) {
         if(isRequired){
-           return super.alignToGrid(isRequired);
-        }else{
-            return null;
+           this.getOwningUnit().getGrid().snapToGrid(origin);        
         }
+        return null;
+        
     }
     @Override
     public Box getBoundingShape() {
-        return new Box(origin.x-this.selectionRectWidth/2,origin.y-this.selectionRectWidth/2,this.selectionRectWidth,this.selectionRectWidth);        
+        return Box.fromRect(origin.x-this.selectionRectWidth/2,origin.y-this.selectionRectWidth/2,this.selectionRectWidth,this.selectionRectWidth);        
     }
     public Point getOrigin(){
         return origin;

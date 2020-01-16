@@ -131,9 +131,10 @@ public class FootprintPanelBuilder extends AbstractPanelBuilder<Shape>{
         valueCombo.addActionListener(this);
 
         setSelectedItem(gridCombo,getComponent().getModel().getUnit().getGrid().getGridValue());
-        
-        originX.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().x)));
-        originY.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().y)));
+        if(getComponent().getModel().getUnit().getCoordinateSystem()!=null){
+          originX.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().x)));
+          originY.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().y)));
+        }
     }
 
     @Override

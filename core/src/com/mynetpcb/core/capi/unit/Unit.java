@@ -103,7 +103,6 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         this.height = height;
         this.unitName = "Uknown";
         undoProvider = new UndoProvider();
-        coordinateSystem=new CoordinateSystem(this);
         this.frame=new UnitFrame(width,height);
         this.ruler=new Ruler();
     }
@@ -118,7 +117,6 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
       copy.undoProvider = new UndoProvider();
       copy.grid=this.grid.clone();
       copy.ruler=new Ruler();
-      copy.coordinateSystem =new CoordinateSystem(copy);
       copy.shapes=this.shapes.clone();         
             for (S shape : shapes) {
                     try {
@@ -157,6 +155,14 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
     public CoordinateSystem getCoordinateSystem(){
         return coordinateSystem;
     }
+    public void createCoordinateSystem(){
+        coordinateSystem=new CoordinateSystem(this);  
+    }
+    public void deleteCoordinateSystem(){
+        coordinateSystem.clear();
+        coordinateSystem=null;
+    }
+    
     
     public UUID getUUID() {
         return uuid;
@@ -586,7 +592,9 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         }
         grid.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation());
         //coordinate system
-        coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        if(this.coordinateSystem!=null){
+           coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        }
         //ruler
         ruler.paint(g2, viewportWindow,  scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
         //frame

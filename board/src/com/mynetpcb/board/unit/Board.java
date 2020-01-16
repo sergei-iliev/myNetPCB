@@ -60,7 +60,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         this.grid.setPointsColor(Color.WHITE);
         this.frame.setFillColor(Color.WHITE);
         scalableTransformation.reset(0.5, 10, 3, 13);
-        this.getCoordinateSystem().setSelectionRectWidth(3000);
+       // this.getCoordinateSystem().setSelectionRectWidth(3000);
         this.compositeLayer = new CompositeLayer();
 
     }
@@ -234,7 +234,9 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         }
         grid.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation());
         //coordinate system
-        coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), -1);
+        if(coordinateSystem!=null){
+           coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), -1);
+        }
         //ruler
         ruler.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),
                     Layer.Copper.All.getLayerMaskID());

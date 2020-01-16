@@ -48,8 +48,7 @@ public class Footprint extends Unit<Shape> {
         this.grid.setPointsColor(Color.WHITE);
         this.frame.setFillColor(Color.WHITE);
         scalableTransformation.reset(0.5, 10, 4, 13);
-        scalableTransformation.setScaleFactor(10);
-        this.getCoordinateSystem().setSelectionRectWidth(3000);
+        scalableTransformation.setScaleFactor(10);        
     }
 
     public Footprint clone() throws CloneNotSupportedException {

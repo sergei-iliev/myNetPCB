@@ -109,6 +109,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
              getEventMgr().setEventHandle("cursor",shape);   
              break;
             case Mode.ORIGIN_SHIFT_MODE:  
+             
              getEventMgr().setEventHandle("origin",null);   
              break;      
             case Mode.DRAGHEAND_MODE:
@@ -143,12 +144,12 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                  * 3.Shape(Text) clicked                      
                  * 4.Footprint
                  */
-                
-                if(getModel().getUnit().getCoordinateSystem().isClicked(scaledEvent.getX(), scaledEvent.getY())){
+                if(this.getModel().getUnit().getCoordinateSystem()!=null){ 
+                 if(getModel().getUnit().getCoordinateSystem().isClicked(scaledEvent.getX(), scaledEvent.getY())){
                     getEventMgr().setEventHandle("origin",null); 
                     break;
+                 }
                 }
-                
                 Shape shape=getModel().getUnit().isControlRectClicked(scaledEvent.getX() , scaledEvent.getY());
                 
                 if(shape!=null){

@@ -4,10 +4,6 @@ import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 
-import java.awt.event.KeyEvent;
-
-import javax.swing.SwingUtilities;
-
 
 public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends EventHandle<U,S>{
     public OriginEventHandle(U component) {
@@ -20,24 +16,13 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if(SwingUtilities.isRightMouseButton(e)){ 
-            //escape
-            getComponent().getModel().getUnit().getCoordinateSystem().reset(0,0);    
-            getComponent().getModel().fireUnitEvent(new UnitEvent(null, UnitEvent.PROPERTY_CHANGE));
-            getComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
-            getComponent().setMode(Mode.COMPONENT_MODE);
-            getComponent().Repaint();
-            return;
-        }else{
-            getComponent().getModel().getUnit().getCoordinateSystem().reset(e.getX(),e.getY()); 
-        }
-
         mx = e.getX();
         my = e.getY(); 
-        
+            
+        getComponent().getModel().getUnit().getCoordinateSystem().reset(e.getX(),e.getY());   
         getComponent().getModel().getUnit().setSelected(false);
         getComponent().getModel().fireUnitEvent(new UnitEvent(null, UnitEvent.PROPERTY_CHANGE));
-
+        getComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
     }
 
     @Override
@@ -71,12 +56,6 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
 
     @Override
     public void doubleScaledClick(MouseScaledEvent e) {
-    }
-
-    @Override
-    public boolean forwardKeyPress(KeyEvent e){
-      getComponent().getModel().getUnit().getCoordinateSystem().reset(0,0); 
-      return false;  
     }
     public void Attach() {
         super.attach();
