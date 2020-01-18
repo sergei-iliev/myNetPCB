@@ -3,6 +3,8 @@ package com.mynetpcb.board.line;
 import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
 import com.mynetpcb.core.capi.line.DefaultLineBendingProcessor;
 import com.mynetpcb.core.capi.line.LineBendingProcessor;
+import com.mynetpcb.core.capi.line.LineSlopeBendingProcessor;
+import com.mynetpcb.core.capi.line.SlopeLineBendingProcessor;
 
 
 public class BoardBendingProcessorFactory extends AbstractBendingProcessorFactory{
@@ -15,9 +17,9 @@ public class BoardBendingProcessorFactory extends AbstractBendingProcessorFactor
         if(name.equals("defaultbend")){            
                 next= new  DefaultLineBendingProcessor();
         }else if(name.equals("slopelinebend")){
-               // next= new SlopeLineBendingProcessor(); 
+                next= new SlopeLineBendingProcessor(); 
         }else if(name.equals("lineslopebend")){
-               // next=new  LineSlopeBendingProcessor();                
+                next=new  LineSlopeBendingProcessor();                
         }else
                 throw new IllegalStateException("Unknown Symbol line processor name-> "+name);               
         if(current!=null){
@@ -37,11 +39,11 @@ public class BoardBendingProcessorFactory extends AbstractBendingProcessorFactor
         LineBendingProcessor next=null;
             
         if(current.getClass()==DefaultLineBendingProcessor.class){
-//            next =new SlopeLineBendingProcessor(); 
-//        }else if(current.getClass()==SlopeLineBendingProcessor.class){
-//            next =new LineSlopeBendingProcessor(); 
-//        }else if(current.getClass()==LineSlopeBendingProcessor.class){
-//            next =new DefaultLineBendingProcessor();  
+            next =new SlopeLineBendingProcessor(); 
+        }else if(current.getClass()==SlopeLineBendingProcessor.class){
+            next =new LineSlopeBendingProcessor(); 
+        }else if(current.getClass()==LineSlopeBendingProcessor.class){
+            next =new DefaultLineBendingProcessor();  
         }else
             throw new IllegalStateException("Unknown Symbol line processor class-> "+current.getClass());    
         

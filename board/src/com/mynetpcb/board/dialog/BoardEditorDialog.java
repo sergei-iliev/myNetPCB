@@ -342,7 +342,6 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         group.add(HoleButton);
         group.add(LabelButton);
         group.add(CopperAreaButton);
-        group.add(CoordButton);
         group.add(DragHeand);
         group.add(MeasureButton);
         
@@ -645,8 +644,14 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         if (e.getSource()==SnapToGridButton) {
             boardComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
         }
-        if (e.getSource()==CoordButton) {
-            boardComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+        if(e.getSource()==CoordButton){ 
+            if(CoordButton.getModel().isSelected()){
+               boardComponent.getModel().getUnit().createCoordinateSystem();
+               boardComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+            }else{
+               boardComponent.getModel().getUnit().deleteCoordinateSystem(); 
+               boardComponent.setMode(Mode.COMPONENT_MODE); 
+            }
         }
         if (e.getSource()==MeasureButton) {
             boardComponent.setMode(Mode.MEASUMENT_MODE);

@@ -16,9 +16,8 @@ public class DefaultLineBendingProcessor extends LineBendingProcessor {
        return result;
     }
 
-    public void moveLinePoint(int x, int y) {
+    public void moveLinePoint(double x, double y) {
       getLine().getFloatingEndPoint().set(x,y); 
       getLine().getFloatingMidPoint().set(x,y);
     }
-
 }

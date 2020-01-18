@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.gui.filter.ImpexFileFilter;
+import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -470,8 +471,8 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
     public void actionPerformed(ActionEvent e) {
         
         if (e.getActionCommand().endsWith("bend")){            
-            //LineBendingProcessor lineBendingProcessor=getUnitComponent().getBendingProcessorFactory().resolve(e.getActionCommand(), getUnitComponent().getLineBendingProcessor());
-            //getUnitComponent().setLineBendingProcessor(lineBendingProcessor);
+            LineBendingProcessor lineBendingProcessor=getUnitComponent().getBendingProcessorFactory().resolve(e.getActionCommand(), getUnitComponent().getLineBendingProcessor());
+            getUnitComponent().setLineBendingProcessor(lineBendingProcessor);
             return;
         }
         if (e.getActionCommand().equalsIgnoreCase("deleteline")) {

@@ -159,7 +159,9 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         coordinateSystem=new CoordinateSystem(this);  
     }
     public void deleteCoordinateSystem(){
-        coordinateSystem.clear();
+        if(coordinateSystem!=null){ 
+          coordinateSystem.clear();
+        }
         coordinateSystem=null;
     }
     

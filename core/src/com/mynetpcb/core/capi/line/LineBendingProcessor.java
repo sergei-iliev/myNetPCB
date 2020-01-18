@@ -2,7 +2,6 @@ package com.mynetpcb.core.capi.line;
 
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.d2.shapes.Point;
-
 import com.mynetpcb.d2.shapes.Utils;
 
 import java.lang.ref.WeakReference;
@@ -18,7 +17,6 @@ public abstract class LineBendingProcessor {
     
     protected boolean isGridAlignable;
     
-    protected boolean isNew;
     public void setGridAlignable(boolean isGridAlignable){
        this.isGridAlignable=isGridAlignable; 
     }
@@ -32,7 +30,6 @@ public abstract class LineBendingProcessor {
           this.weakLineRef.clear();  
       }
       this.weakLineRef=new WeakReference<Trackable>(line);  
-      this.isNew=true; 
     }
     
     /*
@@ -42,7 +39,7 @@ public abstract class LineBendingProcessor {
      */    
     public abstract boolean addLinePoint(Point point);   
     
-    public abstract void moveLinePoint(int x,int y);
+    public abstract void moveLinePoint(double x,double y);
     
     /**
      *Used for popup UI check box selected/uselected
@@ -70,7 +67,7 @@ public abstract class LineBendingProcessor {
         if(getLine().getLinePoints().size()>0){
           Point lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1); 
             //***is this the same point as last one?   
-          if(pointToAdd.equals(lastPoint))
+          if(Utils.EQ(pointToAdd.x,lastPoint.x)&&Utils.EQ(pointToAdd.y,lastPoint.y))
             return true;    
         }
         return false;
@@ -95,10 +92,12 @@ public abstract class LineBendingProcessor {
             }                    
          }
          return false;
+         
     }
     
     public boolean isSlopeInterval(Point p1,Point p2){
         return (!Utils.EQ(p1.x,p2.x)&&!Utils.EQ(p1.y,p2.y));
     }
+    
 }
 

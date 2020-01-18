@@ -130,10 +130,11 @@ public class BoardPanelBuilder extends AbstractPanelBuilder< Shape> {
 
         setSelectedItem(gridCombo,getComponent().getModel().getUnit().getGrid().getGridValue());
         
-        //originX.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getX())));
-        //originY.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getY())));
+        if(getComponent().getModel().getUnit().getCoordinateSystem()!=null){
+          originX.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().x)));
+          originY.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().y)));
+        }
 
-        //setSelectedItem(layerCombo,getComponent().getModel().getUnit().getCopper());
     }
 
     @Override
@@ -141,10 +142,6 @@ public class BoardPanelBuilder extends AbstractPanelBuilder< Shape> {
         if(e.getSource()==gridCombo){
             getComponent().getModel().getUnit().getGrid().setGridValue((Double)gridCombo.getSelectedItem());
         }
-        
-//        if(e.getSource()==layerCombo){
-//            getComponent().getModel().getUnit().setCopper((Layer.Copper)layerCombo.getSelectedItem());
-//        }
         
         getComponent().Repaint();
 

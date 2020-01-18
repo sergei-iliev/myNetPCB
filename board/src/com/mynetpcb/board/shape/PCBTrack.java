@@ -116,8 +116,11 @@ public class PCBTrack extends TrackShape implements PCBShape{
         
         // draw floating point
         if (this.isFloating()) {
-            Point p = this.floatingEndPoint.clone();                              
+            Point p = this.floatingMidPoint.clone();                              
             r.add(p); 
+            
+            p = this.floatingEndPoint.clone();
+            r.add(p);                                     
         }
         
         r.scale(scale.getScaleX());
