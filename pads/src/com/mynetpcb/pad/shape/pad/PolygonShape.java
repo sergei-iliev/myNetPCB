@@ -74,7 +74,7 @@ public class PolygonShape implements PadDrawing {
     @Override
     public void setSize(double width,double height){
         this.hexagon.setWidth(width);
-        this.hexagon.rotate(this.padRef.get().getRotation());
+        this.hexagon.rotate(this.padRef.get().getRotate());
     }
 
     @Override

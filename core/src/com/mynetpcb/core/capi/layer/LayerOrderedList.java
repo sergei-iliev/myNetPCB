@@ -49,6 +49,7 @@ public class LayerOrderedList<S extends Shape> extends LinkedList<S> implements 
 
     public void reorder() {
         Collections.sort(this, comparator);
+        System.out.println(this);
     }
 
 }

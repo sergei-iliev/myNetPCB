@@ -20,7 +20,7 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
         my = e.getY(); 
             
         getComponent().getModel().getUnit().getCoordinateSystem().reset(e.getX(),e.getY());   
-        getComponent().getModel().getUnit().setSelected(false);
+        //getComponent().getModel().getUnit().setSelected(false);
         getComponent().getModel().fireUnitEvent(new UnitEvent(null, UnitEvent.PROPERTY_CHANGE));
         getComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
     }

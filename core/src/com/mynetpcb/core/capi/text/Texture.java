@@ -51,7 +51,9 @@ public interface Texture extends Drawable,Printable,Cloneable{
     
     public String toXML();
     
-    //public int getLayermaskId();
+    public default int getLayermaskId(){
+        return -1;
+    }
     
     //public void setLayermaskId(int layermaskId);
         

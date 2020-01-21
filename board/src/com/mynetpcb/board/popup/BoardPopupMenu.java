@@ -1,6 +1,8 @@
 package com.mynetpcb.board.popup;
 
 import com.mynetpcb.board.component.BoardComponent;
+import com.mynetpcb.board.shape.PCBFootprint;
+import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
@@ -143,7 +145,7 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
             getUnitComponent().Repaint(); 
         }
         if(e.getActionCommand().equals("EditFootprint")){
-            //BoardMgr.getInstance().openFootprintInlineEditorDialog(getUnitComponent(), (PCBFootprint) getTarget());
+            BoardMgr.getInstance().openFootprintInlineEditorDialog(getUnitComponent(), (PCBFootprint) getTarget());
             getUnitComponent().Repaint();
             return;
         }

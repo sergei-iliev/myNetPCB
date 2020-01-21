@@ -58,7 +58,7 @@ public class RectangularShape implements PadDrawing {
                               ClearanceSource source) {
         Rectangle r=this.rect.clone();
         r.setSize(((Pad)this.padRef.get()).getWidth()+2*source.getClearance(),((Pad)this.padRef.get()).getHeight()+2*source.getClearance());
-        r.rotate(this.padRef.get().getRotation(), this.getCenter());
+        r.rotate(this.padRef.get().getRotate(), this.getCenter());
         
         r.scale(scale.getScaleX());
         r.move(-viewportWindow.getX(),- viewportWindow.getY());
@@ -84,7 +84,7 @@ public class RectangularShape implements PadDrawing {
     @Override
     public void setSize(double width,double height){
         this.rect.setSize(width,height);
-        this.rect.rotate(this.padRef.get().getRotation(), this.getCenter());
+        this.rect.rotate(this.padRef.get().getRotate(), this.getCenter());
     }
 
     @Override

@@ -86,7 +86,7 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
             //fix empty labels
         referenceField.setText(symbol.getTextureByTag("reference").getText());
         valueField.setText(symbol.getTextureByTag("value").getText());
-        rotateField.setText(String.valueOf(symbol.getRotation()));
+        rotateField.setText(String.valueOf(symbol.getRotate()));
         //packageNameField.setText(symbol.getPackaging()==null?"": symbol.getPackaging().getFootprintName());
 
         setSelectedItem(layerCombo, symbol.getSide());

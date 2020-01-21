@@ -161,7 +161,7 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void updateUI() {
         Pad pad=(Pad)getTarget();
-        rotateField.setText(String.valueOf(pad.getRotation()));
+        rotateField.setText(String.valueOf(pad.getRotate()));
         
         padNumber.setText(pad.getTextureByTag("number").getText());
         numberSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getSize())));

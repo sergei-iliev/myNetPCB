@@ -70,7 +70,7 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void updateUI() {
         RoundRect rect=(RoundRect)getTarget();
-        rotateField.setText(String.valueOf(rect.getRotation()));
+        rotateField.setText(String.valueOf(rect.getRotate()));
         leftField.setEnabled(rect.getResizingPoint()==null?false:true);  
         topField.setEnabled(rect.getResizingPoint()==null?false:true);
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(rect.getThickness())));    

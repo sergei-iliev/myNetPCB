@@ -1,9 +1,14 @@
 package com.mynetpcb.board.unit;
 
+import com.mynetpcb.board.component.BoardComponent;
+import com.mynetpcb.board.dialog.FootprintInlineEditorDialog;
 import com.mynetpcb.board.shape.PCBFootprint;
+import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.UnitMgr;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.pad.container.FootprintContainer;
 import com.mynetpcb.pad.shape.GlyphLabel;
 import com.mynetpcb.pad.unit.Footprint;
 
@@ -55,87 +60,100 @@ public final class BoardMgr extends UnitMgr {
         pcbfootprint.setGridValue(footprint.getGrid().getGridValue());
     } 
     
-//    public Footprint createFootprint(PCBFootprint pcbfootprint) {
-//        Footprint footprint = new Footprint(Grid.MM_TO_COORD(100),Grid.MM_TO_COORD(100));
-//        //1.shapes
-//        for (Shape shape : pcbfootprint.getShapes()) {
-//            try {
-//                Shape copy=shape.clone();        
-//                footprint.Add(copy);
-//            } catch (CloneNotSupportedException e) {
-//                e.printStackTrace(System.out);
-//            }
-//        }
-//        //2.text
-//            if (pcbfootprint.getChipText().getTextureByTag("value") != null&&! pcbfootprint.getChipText().getTextureByTag("value").isEmpty() ) {
-//                GlyphLabel value=new GlyphLabel();
-//                value.getTexture().copy(pcbfootprint.getChipText().getTextureByTag("value"));
-//                value.setCopper(Layer.Copper.resolve(pcbfootprint.getChipText().getTextureByTag("value").getLayermaskId()));
-//                footprint.Add(value);
-//            }
-//            if (pcbfootprint.getChipText().getTextureByTag("reference") != null && ! pcbfootprint.getChipText().getTextureByTag("reference").isEmpty()) {
-//                GlyphLabel value=new GlyphLabel();
-//                value.getTexture().copy(pcbfootprint.getChipText().getTextureByTag("reference"));
-//                value.setCopper(Layer.Copper.resolve(pcbfootprint.getChipText().getTextureByTag("reference").getLayermaskId()));
-//                footprint.Add(value);
-//            }
-//
-//        //3.name
-//        footprint.setUnitName(pcbfootprint.getDisplayName());
-//        //4.grid
-//        footprint.getGrid().setGridUnits(pcbfootprint.getGridValue(), pcbfootprint.getGridUnits());
-//        
-//        return footprint;
-//    } 
-//    public void openFootprintInlineEditorDialog(BoardComponent unitComponent,PCBFootprint pcbfootprint){
-//        
-//        //create Footprint
-//        FootprintContainer copy=new FootprintContainer();
-//        copy.Add(createFootprint(pcbfootprint));
-//
-//        //center the copy
-//        int x=(int)copy.getUnit().getBoundingRect().getCenterX();
-//        int y=(int)copy.getUnit().getBoundingRect().getCenterY();
-//        moveBlock(copy.getUnit().getShapes(), (copy.getUnit().getWidth()/2)-x, (copy.getUnit().getHeight()/2)-y);
-//        alignBlock(copy.getUnit().getGrid(),copy.getUnit().getShapes());
-//        
-//        FootprintInlineEditorDialog footprintEditorDialog =
-//            new FootprintInlineEditorDialog(unitComponent.getDialogFrame().getParentFrame(), "Footprint Inline Editor",copy);
-//        footprintEditorDialog.pack();
-//        footprintEditorDialog.setLocationRelativeTo(null); //centers on screen
-//        footprintEditorDialog.setFocusable(true);
-//        footprintEditorDialog.setVisible(true);
-//        BoardComponent.getUnitKeyboardListener().setComponent(unitComponent);            
-//        
-//        if(footprintEditorDialog.getResult()!=null){
-//            BoardMgr.getInstance().switchFootprint(footprintEditorDialog.getResult().getUnit(),pcbfootprint);
-//            footprintEditorDialog.getResult().Release();
-//        }    
-//        copy.Release();        
-//        footprintEditorDialog.dispose();        
-//    }
-//    /**
-//     *Equalize inline changed footprint with in board positioned pcbfootprint
-//     * @param footprint - edited footprint
-//     * @param pcbfootprint - pcb one that needs to be equalized
-//     */
-//    
-//    public void switchFootprint(Footprint footprint,PCBFootprint pcbfootprint){
-//        //1.unselect
-//        footprint.setSelected(false);
-//        //2.get current position
-//        Rectangle rsrc=pcbfootprint.getPinsRect();        
-//        //3.clear pcbfootprint
-//        pcbfootprint.Clear();
-//        pcbfootprint.getChipText().Add(new GlyphTexture("","reference", 0, 0, Grid.MM_TO_COORD(2)));
-//        pcbfootprint.getChipText().Add(new GlyphTexture("","value",8, 8, Grid.MM_TO_COORD(2))); 
-//        //4.transfer
-//        createPCBFootprint(footprint, pcbfootprint);
-//        //5.get new position
-//        Rectangle rdst=pcbfootprint.getPinsRect();
-//        //6.go to new position
-//        pcbfootprint.Move(rsrc.x-rdst.x,rsrc.y-rdst.y);
-//    }
+    private Footprint createFootprint(PCBFootprint pcbfootprint) {
+        
+        pcbfootprint.setRotation(0,pcbfootprint.getCenter());
+        Footprint footprint = new Footprint((int)Grid.MM_TO_COORD(100),(int)Grid.MM_TO_COORD(100));
+        
+        //1.shapes
+        for (Shape shape : pcbfootprint.getShapes()) {
+            try {
+                Shape copy=shape.clone();        
+                footprint.add(copy);
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace(System.out);
+            }
+        }
+        //2.text
+            if (pcbfootprint.getTextureByTag("value") != null&&! pcbfootprint.getTextureByTag("value").isEmpty() ) {
+                GlyphLabel value=new GlyphLabel();
+                value.getTexture().copy(pcbfootprint.getTextureByTag("value"));
+                value.setCopper(Layer.Copper.resolve(pcbfootprint.getTextureByTag("value").getLayermaskId()));
+                footprint.add(value);
+            }
+            if (pcbfootprint.getTextureByTag("reference") != null && ! pcbfootprint.getTextureByTag("reference").isEmpty()) {
+                GlyphLabel value=new GlyphLabel();
+                value.getTexture().copy(pcbfootprint.getTextureByTag("reference"));
+                value.setCopper(Layer.Copper.resolve(pcbfootprint.getTextureByTag("reference").getLayermaskId()));
+                footprint.add(value);
+            }
+
+        //3.name
+        footprint.setUnitName(pcbfootprint.getDisplayName());
+        //4.grid
+        footprint.getGrid().setGridUnits(pcbfootprint.getGridValue(), pcbfootprint.getGridUnits());
+        
+        return footprint;
+    } 
+    public void openFootprintInlineEditorDialog(BoardComponent unitComponent,PCBFootprint pcbfootprint){
+        //clone
+        PCBFootprint clone=null;
+        try {
+            clone = pcbfootprint.clone();
+        } catch (CloneNotSupportedException e) {
+          e.printStackTrace(); 
+        }
+        //create Footprint
+        FootprintContainer copy=new FootprintContainer();
+        copy.add(createFootprint(clone));
+
+        //center the copy
+        double x=copy.getUnit().getBoundingRect().getCenter().x;
+        double y=copy.getUnit().getBoundingRect().getCenter().y;
+        moveBlock(copy.getUnit().getShapes(), (copy.getUnit().getWidth()/2)-x, (copy.getUnit().getHeight()/2)-y);
+        alignBlock(copy.getUnit().getGrid(),copy.getUnit().getShapes());
+        
+        FootprintInlineEditorDialog footprintEditorDialog =
+            new FootprintInlineEditorDialog(unitComponent.getDialogFrame().getParentFrame(), "Footprint Inline Editor",copy);
+        footprintEditorDialog.pack();
+        footprintEditorDialog.setLocationRelativeTo(null); //centers on screen
+        footprintEditorDialog.setFocusable(true);
+        footprintEditorDialog.setVisible(true);
+        BoardComponent.getUnitKeyboardListener().setComponent(unitComponent);            
+        
+        if(footprintEditorDialog.getResult()!=null){
+            BoardMgr.getInstance().switchFootprint(footprintEditorDialog.getResult().getUnit(),pcbfootprint);
+            footprintEditorDialog.getResult().release();
+        } 
+        clone.clear();
+        copy.release();        
+        footprintEditorDialog.dispose();        
+    }
+    /**
+     *Equalize inline changed footprint with in board positioned pcbfootprint
+     * @param footprint - edited footprint
+     * @param pcbfootprint - pcb one that needs to be equalized
+     */
+    
+    public void switchFootprint(Footprint footprint,PCBFootprint pcbfootprint){
+        double rotate=pcbfootprint.getRotate();
+        //1.unselect
+        footprint.setSelected(false);
+        pcbfootprint.setSelected(false);
+        //2.get current position
+        Point rsrc=pcbfootprint.getCenter();
+        //3.clear pcbfootprint
+        pcbfootprint.clear();
+        //pcbfootprint.getChipText().Add(new GlyphTexture("","reference", 0, 0, Grid.MM_TO_COORD(2)));
+        //pcbfootprint.getChipText().Add(new GlyphTexture("","value",8, 8, Grid.MM_TO_COORD(2))); 
+        //4.transfer
+        createPCBFootprint(footprint, pcbfootprint);
+        //5.get new position
+        Point rdst=pcbfootprint.getCenter();
+        //6.go to new position
+        pcbfootprint.move(rsrc.x-rdst.x,rsrc.y-rdst.y);
+        pcbfootprint.setRotation(rotate, pcbfootprint.getCenter());
+    }
 //    
 //   /**
 //     * Align wire end to pad drill center

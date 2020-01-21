@@ -78,7 +78,7 @@ public class OvalShape implements PadDrawing {
     @Override
     public void setSize(double width, double height) {        
         this.obround.setSize(width,height);        
-        this.obround.rotate(this.padRef.get().getRotation());
+        this.obround.rotate(this.padRef.get().getRotate());
     }
     @Override
     public void mirror(Line line) {

@@ -93,6 +93,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
          this.shapes.clear();    
          this.value.clear();
          this.reference.clear();
+         this.rotate=0;
     }
     public void add(Shape shape){
       if (shape == null)
@@ -477,14 +478,13 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
            super(operationType);
            mementoList=new LinkedList<AbstractMemento>();
            value=new GlyphTexture.Memento();
-           reference=new GlyphTexture.Memento();           
+           reference=new GlyphTexture.Memento();              
         }
         
         public void loadStateTo(PCBFootprint symbol) {
           super.loadStateTo(symbol);
           value.loadStateTo(symbol.value); 
-          reference.loadStateTo(symbol.reference);
-          
+          reference.loadStateTo(symbol.reference);        
           symbol.val=this.val;
           /*
            * Symbol is recreated with empty shapes in it
