@@ -13,7 +13,7 @@ import java.awt.geom.Line2D;
  * @input height - relative but still height
  * @warning obround may change its width and height - it should recalculate its size
  */
-public class Obround extends Shape {
+public class Obround extends GeometricFigure {
     public Point pc;
     public double width;
     public double height;
@@ -64,15 +64,6 @@ public class Obround extends Shape {
         }
     }
 
-//    public void setWidth(double width) {
-//        this.width = width;
-//        this.reset();
-//    }
-//
-//    public void setHeight(double height) {
-//        this.height = height;
-//        this.reset();
-//    }
     public void setSize(double width,double height){
       this.height = height;
       this.width=width;
@@ -156,16 +147,18 @@ public class Obround extends Shape {
             this.width += 2 * offset;
         }
     }
-
+    public double getDiameter(){
+        if(Utils.GE(width,height))
+          return this.height;
+        else
+          return this.width;        
+    }
+    
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         Stroke s=g2.getStroke();
-        double lineWidth;
-        if(this.width>=this.height)
-          lineWidth =this.height;
-        else
-          lineWidth =this.width;
         
+        double lineWidth=this.getDiameter();
         cache.setLine(this.ps.x, this.ps.y,this.pe.x, this.pe.y);       
         g2.setStroke(new BasicStroke((float) lineWidth,BasicStroke.JOIN_ROUND, BasicStroke.CAP_ROUND));
    

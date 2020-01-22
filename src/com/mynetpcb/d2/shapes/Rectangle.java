@@ -121,7 +121,7 @@ public class Rectangle extends Polygon {
     
     }    
     public void reset(double width,double height){
-            Point pc=this.box().getCenter();                 
+            Point pc=this.box().getCenter();        
             this.points.clear();
             this.points.add(new Point(pc.x-(width/2),pc.y-(height/2)));     //topleft point
             this.points.add(new Point(pc.x+(width/2),pc.y-(height/2)));

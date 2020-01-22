@@ -6,7 +6,7 @@ import java.awt.geom.Arc2D;
 
 import java.util.Arrays;
 
-public class Arc  extends Shape{
+public class Arc  extends GeometricFigure{
     public Point pc;
     public double r ;
     public double startAngle ;

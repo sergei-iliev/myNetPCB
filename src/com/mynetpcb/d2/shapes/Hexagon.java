@@ -38,6 +38,22 @@ public class Hexagon extends Polygon {
         return copy;
     }
     
+    public void grow(double offset) {
+            this.width += 2 * offset;
+            double a =Math.sqrt(2*offset*offset);
+
+            Vector v=new Vector(0,0);
+        
+            for(int i=0;i<this.points.size();i++){
+                v.set(this.pc, this.points.get(i));
+                Vector norm = v.normalize();
+                double x = this.points.get(i).x + a * norm.x;
+                double y = this.points.get(i).y + a * norm.y;
+        
+                this.points.get(i).set(x, y);
+            }
+    }
+    
     public void scale(double alpha){
             this.pc.scale(alpha);
             this.width*=alpha;  

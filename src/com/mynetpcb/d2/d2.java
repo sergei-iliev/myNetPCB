@@ -9,7 +9,7 @@ import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.RoundRectangle;
-import com.mynetpcb.d2.shapes.Shape;
+import com.mynetpcb.d2.shapes.GeometricFigure;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -127,7 +127,7 @@ public class d2 extends  JFrame {
        }
        
        private static class D2Component extends JComponent{
-           Collection<Shape> shapes=new ArrayList<>();
+           Collection<GeometricFigure> shapes=new ArrayList<>();
            
            D2Component(){
                addMouseListener(new MouseListener(){
@@ -162,7 +162,7 @@ public class d2 extends  JFrame {
                 }
             });
            }
-           void add(Shape shape){
+           void add(GeometricFigure shape){
                shapes.add(shape);
            }
            @Override
@@ -175,7 +175,7 @@ public class d2 extends  JFrame {
             g2.fillRect(0, 0, this.getWidth(), this.getHeight());
             
             g2.setColor(Color.BLUE);
-            for(Shape shape:shapes){
+            for(GeometricFigure shape:shapes){
                 shape.paint(g2,false);
             }
             

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Polygon extends Shape{
+public class Polygon extends GeometricFigure{
     public List<Point> points=new LinkedList<>();
     public GeneralPath polygon=new GeneralPath();
 

@@ -3,7 +3,7 @@ package com.mynetpcb.d2.shapes;
 
 import java.awt.Graphics2D;
 
-public class Point extends Shape{
+public class Point extends GeometricFigure{
     public double x;
     public double y;
 
@@ -73,7 +73,7 @@ public class Point extends Shape{
         double dy = y - this.y;
         return Math.sqrt(dx*dx + dy*dy);      
     }
-    public double distanceTo(Shape shape) {
+    public double distanceTo(GeometricFigure shape) {
         if (shape instanceof Point) {
                 double dx = ((Point)shape).x - this.x;
                 double dy = ((Point)shape).y - this.y;

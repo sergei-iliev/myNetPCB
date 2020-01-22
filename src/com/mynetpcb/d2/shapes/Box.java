@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 
 import java.util.Collection;
 
-public class Box extends Shape {
+public class Box extends GeometricFigure {
     private Rectangle rect=new Rectangle();
     public Point min,max;
     
@@ -28,22 +28,7 @@ public class Box extends Shape {
             }  
             this.max=new Point(x,y);       
         } 
-//    public Box(Point[] points){
-//        double x=Integer.MAX_VALUE,y=Integer.MAX_VALUE;
-//        for(int i = 0; i < points.length ; ++ i){
-//           x=Math.min(x,points[i].x);
-//           y=Math.min(y,points[i].y);
-//        }  
-//        this.min=new Point(x,y);
-//
-//        x=Integer.MIN_VALUE;
-//        y=Integer.MIN_VALUE;
-//        for(int i = 0; i < points.length; ++ i){
-//           x=Math.max(x,points[i].x);
-//           y=Math.max(y,points[i].y);
-//        }  
-//        this.max=new Point(x,y);       
-//    }    
+   
     public Box(double x1,double y1,double x2,double y2) {
         this.min = new Point(x1,y1);
         this.max = new Point(x2,y2);
@@ -69,7 +54,10 @@ public class Box extends Shape {
         this.max.x+=offset;
         this.max.y+=offset;
 
-    }  
+    }
+    public double area(){
+        return this.getWidth()*this.getHeight();
+    }
     public Point getCenter() {
         return new Point( (this.min.x + this.max.x)/2, (this.min.y + this.max.y)/2 );
     }

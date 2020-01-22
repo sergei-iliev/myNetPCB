@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Circle extends Shape{
+public class Circle extends GeometricFigure{
     public Point pc;
     public double r;
     private Ellipse2D cache=new Ellipse2D.Double();

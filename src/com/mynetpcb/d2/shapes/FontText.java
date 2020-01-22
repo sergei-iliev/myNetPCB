@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class FontText extends Shape {
+public class FontText extends GeometricFigure {
     private static final BufferedImage bi=new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_INDEXED);  
         
     public Point anchorPoint;

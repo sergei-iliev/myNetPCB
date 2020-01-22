@@ -3,7 +3,7 @@ package com.mynetpcb.d2.shapes;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
-public class Segment extends Shape {
+public class Segment extends GeometricFigure {
     public Point ps,pe;
     private Line2D cache = new Line2D.Double();
     

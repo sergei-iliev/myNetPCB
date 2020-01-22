@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Polyline<P extends Point> extends Shape{
+public class Polyline<P extends Point> extends GeometricFigure{
     public List<P> points=new LinkedList<>();
     public GeneralPath polyline=new GeneralPath();    
     public Polyline() {
