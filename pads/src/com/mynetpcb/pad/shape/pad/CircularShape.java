@@ -4,7 +4,9 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.pad.Net;
 import com.mynetpcb.core.pad.shape.PadDrawing;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.GeometricFigure;
@@ -78,6 +80,35 @@ public class CircularShape implements PadDrawing {
         c.scale(scale.getScaleX());
         c.move(-viewportWindow.getX(), -viewportWindow.getY());
         c.paint(g2, true);
+        
+        //1. THERMAL makes sense if pad has copper on source layer
+        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+            return; //not on the same layer
+        }
+
+        if(source.isSameNet(source,(Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){
+            System.out.println(111);
+//           //draw thermal
+//            g2.setClip(ellipse);                              
+//            FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Line2D.class);
+//            Line2D temporal=(Line2D)provider.getShape(); 
+//            //radius of outer whole
+//            g2.setStroke(new BasicStroke((float)((Pad.this.getWidth()/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));            
+//            g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
+//        
+//
+//            
+//            temporal.setLine((scaledRect.getMinX()+(scaledRect.getHeight()/2))-viewportWindow.x, scaledRect.getMinY()-viewportWindow.y,(scaledRect.getMinX()+(scaledRect.getHeight()/2))-viewportWindow.x, scaledRect.getMaxY()-viewportWindow.y);            
+//            g2.draw(temporal);
+//
+//            temporal.setLine(scaledRect.getMinX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getWidth()/2))-viewportWindow.y,scaledRect.getMaxX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getWidth()/2))-viewportWindow.y);            
+//            g2.draw(temporal);
+//        
+//            g2.setClip(null);
+//            
+//            provider.reset();
+        }
+        
     }
 
     @Override

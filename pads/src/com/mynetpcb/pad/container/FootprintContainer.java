@@ -4,6 +4,7 @@ package com.mynetpcb.pad.container;
 import com.mynetpcb.core.capi.container.UnitContainer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.core.utils.VersionUtils;
 import com.mynetpcb.pad.unit.Footprint;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class FootprintContainer extends UnitContainer<Footprint,Shape>{
     public StringBuffer format() {
         StringBuffer xml=new StringBuffer();
         xml.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n"); 
-        xml.append("<footprints identity=\"Footprint\" version=\"1.0\">\r\n");
+        xml.append("<footprints identity=\"Footprint\" version=\""+VersionUtils.FOOTPRINT_VERSION+"\">\r\n");
         for(Footprint footprint:getUnits()){
           xml.append(footprint.format());
           xml.append("\r\n");

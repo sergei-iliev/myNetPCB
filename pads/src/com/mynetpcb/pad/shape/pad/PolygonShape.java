@@ -53,10 +53,15 @@ public class PolygonShape implements PadDrawing {
     }
 
     @Override
-    public void drawClearance(Graphics2D graphics2D, ViewportWindow viewportWindow, AffineTransform affineTransform,
-                              ClearanceSource clearanceSource) {
-        // TODO Implement this method
-
+    public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
+                              ClearanceSource source) {
+        g2.setColor(Color.BLACK); 
+        Hexagon h = this.hexagon.clone();
+        h.grow(source.getClearance());
+        h.scale(scale.getScaleX());
+        h.move(-viewportWindow.getX(), -viewportWindow.getY());
+        h.paint(g2, true);
+        
     }
 
     @Override

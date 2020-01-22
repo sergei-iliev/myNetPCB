@@ -61,11 +61,15 @@ public class OvalShape implements PadDrawing {
     }
 
     @Override
-    public void drawClearance(Graphics2D graphics2D, ViewportWindow viewportWindow, AffineTransform affineTransform,
-                              ClearanceSource clearanceSource) {
-        // TODO Implement this method
-
-
+    public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
+                              ClearanceSource source) {
+                                       
+        g2.setColor(Color.BLACK);        
+        Obround o=this.obround.clone();
+        o.grow(source.getClearance());
+        o.scale(scale.getScaleX());
+        o.move(-viewportWindow.getX(), -viewportWindow.getY());
+        o.paint(g2, true);
     }
 
     @Override

@@ -91,7 +91,7 @@ public class CopperAreaPanelBuilder extends AbstractPanelBuilder<Shape>{
            getTarget().setFill(Shape.Fill.values()[fillCombo.getSelectedIndex()]);                
         }
         if(e.getSource()==padConnnectionCombo){
-           //area.setPadConnection((PadShape.PadConnection)padConnnectionCombo.getSelectedItem());                
+           area.setPadConnection((PadShape.PadConnection)padConnnectionCombo.getSelectedItem());                
         }
         
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));         

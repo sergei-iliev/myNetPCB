@@ -58,15 +58,15 @@ public class PCBTrack extends TrackShape implements PCBShape{
     @Override
     public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
                                                           AffineTransform scale, T source) {
-//        if(Utilities.isSameNet(source, this)){
-//            return;
-//        }       
+        if(isSameNet(source, this)){
+            return;
+        }       
         
         Shape shape=(Shape)source;
         //no need to draw clearance if not on active side
-        if(((CompositeLayerable)getOwningUnit()).getActiveSide()!=Layer.Side.resolve(this.copper.getLayerMaskID())){
-           return;
-        }        
+        //if(((CompositeLayerable)getOwningUnit()).getActiveSide()!=Layer.Side.resolve(this.copper.getLayerMaskID())){
+        //   return;
+        //}        
         if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
              return;  //not on the same layer
         }
@@ -173,7 +173,13 @@ public class PCBTrack extends TrackShape implements PCBShape{
     public int getClearance() {    
         return clearance;
     }
-
+    public String getNetName(){
+        return net;
+    }
+    
+    public void setNetName(String net){
+        this.net=net;
+    }
     @Override
     public boolean isSublineSelected() {
         // TODO Implement this method
@@ -215,7 +221,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
         this.copper=Layer.Copper.valueOf(element.getAttribute("layer"));
         this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));
-        //this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");   
+        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");   
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
         while(st.hasMoreTokens()){
           this.add(new Point(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())));  

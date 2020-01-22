@@ -244,10 +244,11 @@ public class Pad extends PadShape{
            return;
          }
         }
+        
         //2. is same net 
-        //if(Utilities.isSameNet(source,this)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
-        //    return false;
-        //}
+        if(isSameNet(source,this)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
+            return;
+        }
         //3. is pad  within copper area
 //        Box rect = getBoundingShape();
 //        rect.grow(source.getClearance());
@@ -430,6 +431,10 @@ public class Pad extends PadShape{
     @Override
     public int getClearance() {
         return 0;
+    }
+    @Override
+    public String getNetName() {
+        return netvalue.getText();
     }
 
 

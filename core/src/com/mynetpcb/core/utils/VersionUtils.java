@@ -24,8 +24,8 @@ public class VersionUtils {
     public static final double CIRCUIT_VERSION=1.2; 
     
     
-    public static final double FOOTPRINT_VERSION=1.0; 
+    public static final double FOOTPRINT_VERSION=2.0; 
  
-    public static final double BOARD_VERSION=2.0; 
+    public static final double BOARD_VERSION=3.0; 
 }
 

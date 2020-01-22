@@ -310,10 +310,10 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     }
 
     @Override
-    public PadShape.PadConnection getPadConnection() {
-        // TODO Implement this method
-        return null;
+    public PadShape.PadConnection getPadConnection() {        
+        return padConnection;
     }
+    
     @Override
     public void setClearance(int clearance) {
         this.clearance=clearance;
@@ -322,6 +322,16 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     @Override
     public int getClearance() {    
         return clearance;
+    }
+    public String getNetName(){
+        return net;
+    }
+    
+    public void setNetName(String net){
+        this.net=net;
+    }
+    public void setPadConnection(PadShape.PadConnection padConnection) {
+        this.padConnection = padConnection;
     }
 
     @Override
