@@ -204,7 +204,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return bendingProcessorFactory;
     }
     
-    public void resumeLine(Trackable line,String handleKey, int x, int y) {
+    public void resumeLine(Trackable line,String handleKey, double x, double y) {
         line.reset(x,y);
         //***do we need to reorder
         line.reverse(x,y);

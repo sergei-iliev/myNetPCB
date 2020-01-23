@@ -264,7 +264,26 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     public Point getResizingPoint(){
         return resizingPoint;
     }
-    
+    @Override
+    public Point getEndPoint(double x, double y) {
+        if (polyline.points.size() ==0) {
+            return null;
+        }
+        Point point=isBendingPointClicked(x, y);
+        if(point==null){
+            return null;
+        }
+        //***head point
+        if (polyline.points.get(0).x==point.x&&polyline.points.get(0).y==point.y) {
+            return polyline.points.get(0);
+        }
+        //***tail point
+        if ((polyline.points.get(polyline.points.size() - 1)).x==point.x&& (polyline.points.get(polyline.points.size() - 1)).y==point.y) {
+            return (polyline.points.get(polyline.points.size() - 1));
+        }
+        
+        return null;
+    }
     @Override
     public void setResizingPoint(Point point) {
         this.resizingPoint=point;

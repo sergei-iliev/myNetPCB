@@ -299,11 +299,11 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
 
         initializePopupMenu(e, target, lineSelectMenu);
 
-        Trackable wire = (Trackable)target;
+        Trackable trackable = (Trackable)target;
         //***insert logic behind menu options availability
-        if (wire.isBendingPointClicked(e.getX(), e.getY())!= null) {
+        if (trackable.isBendingPointClicked(e.getX(), e.getY())!= null) {
             //***is this an end point
-            if (wire.isEndPoint(e.getX(), e.getY())) {
+            if (trackable.isEndPoint(e.getX(), e.getY())) {
                 this.setEnabled(lineSelectMenu, "Resume", true);
             } else {
                 this.setEnabled(lineSelectMenu, "Resume", false);

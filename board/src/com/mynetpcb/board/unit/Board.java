@@ -110,8 +110,9 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
                         }
                     }
                     if(shapes.get(i).isClicked(x, y)){
-                       orderElements.add(shapes.get(i));
-                       continue; 
+                        if(isShapeVisibleOnLayers(shapes.get(i))){
+                         orderElements.add(shapes.get(i));                         
+                        }
                     }                    
                     
                 }        
@@ -127,18 +128,13 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         //Text?
         if (clickedShapes.get(0) instanceof Textable) {   
             if(((Textable)clickedShapes.get(0)).isClickedTexture(x, y)){ 
-             if(isShapeVisibleOnLayers(clickedShapes.get(0))){              
               return clickedShapes.get(0);             
-             }
             }
         }
-        
+        System.out.println(clickedShapes);
         //Collections.reverse(clickedShapes);
         Shape result=null;
         for(Shape shape:clickedShapes){
-            if(!isShapeVisibleOnLayers(shape)){             
-               continue;              
-            }
             if(result==null){
                 result=shape;
             }else if(shape.getDrawingLayerPriority()==result.getDrawingLayerPriority()){

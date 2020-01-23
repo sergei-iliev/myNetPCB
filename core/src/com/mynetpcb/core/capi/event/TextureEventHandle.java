@@ -70,7 +70,16 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
     }
 
     public void mouseScaledReleased(MouseScaledEvent e) {
-        getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
+        if(getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)==Boolean.TRUE){
+            getTarget().getOwningUnit().getGrid().snapToGrid(texture.get().getAnchorPoint()); 
+        }
+        //***update PropertiesPanel           
+        getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
+        
+        
+        //***Undo processor
+        getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));           
+        getComponent().Repaint();            
     }
 
     public void mouseScaledDragged(MouseScaledEvent e) {       

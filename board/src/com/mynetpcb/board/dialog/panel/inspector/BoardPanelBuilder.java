@@ -155,7 +155,7 @@ public class BoardPanelBuilder extends AbstractPanelBuilder< Shape> {
            getComponent().getModel().fireUnitEvent(new UnitEvent(getComponent().getModel().getUnit(), UnitEvent.RENAME_UNIT));
         }
         if(e.getSource()==this.heightField||e.getSource()==this.widthField){            
-           // getComponent().getModel().getUnit().setSize(Grid.MM_TO_COORD(Double.parseDouble(widthField.getText())),Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));
+            getComponent().getModel().getUnit().setSize((int)Grid.MM_TO_COORD(Double.parseDouble(widthField.getText())),(int)Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));
             //***refresh scrollbars
             getComponent().componentResized(null);                
             getComponent().Repaint();
