@@ -97,7 +97,12 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     public void add(double x, double y) {
         this.polygon.points.add(new Point(x,y));
     }
-
+    
+    @Override
+    public void rotate(double angle, Point point) {        
+        this.polygon.rotate(angle,point);
+    }
+    
     @Override
     public void insertPoint(double x, double y) {        
 

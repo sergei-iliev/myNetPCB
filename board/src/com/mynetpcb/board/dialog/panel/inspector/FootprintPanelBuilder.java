@@ -88,7 +88,7 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
         valueField.setText(symbol.getTextureByTag("value").getText());
         rotateField.setText(String.valueOf(symbol.getRotate()));
         //packageNameField.setText(symbol.getPackaging()==null?"": symbol.getPackaging().getFootprintName());
-
+        nameField.setText(symbol.getDisplayName()); 
         setSelectedItem(layerCombo, symbol.getSide());
         }
 
@@ -110,6 +110,9 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
         if(e.getSource()==this.rotateField){
            symbol.setRotation(Double.parseDouble(this.rotateField.getText()),symbol.getCenter()); 
         }
+        if(e.getSource()==this.nameField){
+           symbol.setDisplayName(nameField.getText()); 
+        }        
         if (e.getSource() == valueField) {
              Texture texture=symbol.getTextureByTag("value");   
              boolean empty=texture.isEmpty();

@@ -7,6 +7,7 @@ import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Hexagon;
@@ -67,7 +68,10 @@ public class CommandRegionProcessor implements Processor {
                continue; 
             }
             Collection<Pad> pads=(Collection<Pad>)footprint.getPads();
-            for(Pad pad:pads){            
+            for(Pad pad:pads){ 
+                if(pad.isSameNet(source)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
+                    continue;
+                }
                 // is pad  within copper area
                 Box rect = pad.getBoundingShape();
                 rect.grow(source.getClearance());

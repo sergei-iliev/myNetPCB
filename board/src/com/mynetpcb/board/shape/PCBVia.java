@@ -79,6 +79,12 @@ public class PCBVia extends ViaShape implements PCBShape{
         this.outer.move(xoffset,yoffset);
     }
     @Override
+    public void rotate(double angle, Point center) {
+        this.inner.rotate(angle,center);
+        this.outer.rotate(angle,center);
+    }
+    
+    @Override
     public void mirror(Line line) {
         this.inner.mirror(line);
         this.outer.mirror(line);        

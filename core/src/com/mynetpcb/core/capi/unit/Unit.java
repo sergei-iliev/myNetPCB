@@ -312,7 +312,6 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
     public <M extends Drawable> List<M> getShapes(Class<?> clazz) {
         ArrayList<M> list = new ArrayList<M>();
         for (S s : shapes) {
-            
             if (clazz.isAssignableFrom(s.getClass())) {
                 list.add((M)s);
             }
