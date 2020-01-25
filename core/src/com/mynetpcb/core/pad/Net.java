@@ -13,8 +13,8 @@ public interface Net {
         
     }
     
-    public default boolean isSameNet(Net source,Net target){
-        if(Objects.equals(source.getNetName(), target.getNetName())&&(!("".equals(target.getNetName())))&&(!(null==(target.getNetName())))){
+    public default boolean isSameNet(Net source){
+        if(Objects.equals(source.getNetName(), this.getNetName())&&(!("".equals(this.getNetName())))&&(!(null==(this.getNetName())))){
             return true;
         }
         return false;

@@ -24,7 +24,7 @@ public class BoardPrintDialog extends PrintDialog {
     protected JCheckBox mirrorcb;
     
     public BoardPrintDialog(Window owner, UnitComponent unitComponent,String caption) {
-        super(owner, unitComponent,caption);        
+        super(owner, unitComponent,caption,"d:\\sergei");        
     }
 
     protected JPanel initDialogContent(){

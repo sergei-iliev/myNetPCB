@@ -58,7 +58,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
     @Override
     public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
                                                           AffineTransform scale, T source) {
-        if(isSameNet(source, this)){
+        if(isSameNet(source)){
             return;
         }       
         

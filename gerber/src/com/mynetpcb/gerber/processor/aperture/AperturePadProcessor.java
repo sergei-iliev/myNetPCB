@@ -13,6 +13,7 @@ import com.mynetpcb.gerber.attribute.aperture.SMDPadAttribute;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.pad.shape.Pad;
+import com.mynetpcb.pad.shape.pad.CircularShape;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,24 +38,19 @@ public class AperturePadProcessor implements Processor{
                     switch(pad.getShapeType()){
                     case CIRCULAR:
                         apperture=new CircleAperture();
-                        ((CircleAperture)apperture).setDiameter(pad.getWidth());
+                        diameter=((CircularShape)pad.getPadDrawing()).getDiameter();
+                        ((CircleAperture)apperture).setDiameter(diameter);
                         break;
                     case OVAL:
                         apperture=new CircleAperture();  
                         diameter=((Obround)pad.getPadDrawing().getGeometricFigure()).getDiameter();
                         ((CircleAperture)apperture).setDiameter(diameter);                          
                         break;
-                    case RECTANGULAR:
+                    case RECTANGULAR:case POLYGON:
                             //add default
                             CircleAperture circle=new CircleAperture();
                             circle.setDiameter(Grid.MM_TO_COORD(1));
-                            dictionary.add(circle);                          
-                        break;
-                    case POLYGON:
-                            //add default
-                            circle=new CircleAperture();
-                            circle.setDiameter(Grid.MM_TO_COORD(1));
-                            dictionary.add(circle);                                               
+                            dictionary.add(circle);                                                                        
                     }
                     if(apperture!=null){   //not all pads produce apperture(rect and polygon)
                       if(pad.getType()==Pad.Type.SMD){

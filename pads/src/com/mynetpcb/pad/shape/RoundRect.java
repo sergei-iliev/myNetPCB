@@ -3,6 +3,7 @@ package com.mynetpcb.pad.shape;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.gerber.Fillable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -27,7 +28,7 @@ import java.util.StringTokenizer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class RoundRect extends Shape implements Resizeable,Externalizable{
+public class RoundRect extends Shape implements Resizeable,Fillable, Externalizable{
   
     private Point resizingPoint;
     private RoundRectangle roundRect;

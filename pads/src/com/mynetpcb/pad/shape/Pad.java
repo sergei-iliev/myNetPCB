@@ -246,16 +246,16 @@ public class Pad extends PadShape{
         //}
         
         //2. is same net 
-        if(isSameNet(source,this)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
+        if(isSameNet(source)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
             return;
         }
         //3. is pad  within copper area
-//        Box rect = getBoundingShape();
-//        rect.grow(source.getClearance());
-//        
-//        if(!source.getBoundingShape().intersects(rect)){
-//          return; 
-//        }  
+        Box rect = getBoundingShape();
+        rect.grow(source.getClearance());
+        
+        if(!source.getBoundingShape().intersects(rect)){
+          return; 
+        }  
         shape.drawClearance(g2, viewportWindow, scale, source);
     }
     @Override

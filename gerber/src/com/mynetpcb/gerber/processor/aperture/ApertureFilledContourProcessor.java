@@ -1,6 +1,7 @@
 package com.mynetpcb.gerber.processor.aperture;
 
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.gerber.Fillable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
@@ -22,7 +23,7 @@ public class ApertureFilledContourProcessor implements Processor{
             if(!shape.isVisibleOnLayers(layermask)){
                 continue;
             }
-            if(shape.getFill()==Shape.Fill.FILLED){ 
+            if(shape instanceof Fillable){ 
                 //add default
                 CircleAperture circle=new CircleAperture();
                 circle.setDiameter(Grid.MM_TO_COORD(1));

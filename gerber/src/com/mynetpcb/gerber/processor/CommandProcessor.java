@@ -10,6 +10,7 @@ import com.mynetpcb.gerber.processor.command.CommandCircleProcessor;
 import com.mynetpcb.gerber.processor.command.CommandFilledContourProcessor;
 import com.mynetpcb.gerber.processor.command.CommandPadProcessor;
 import com.mynetpcb.gerber.processor.command.CommandRectProcessor;
+import com.mynetpcb.gerber.processor.command.CommandRegionProcessor;
 import com.mynetpcb.gerber.processor.command.CommandTextProcessor;
 import com.mynetpcb.gerber.processor.command.CommandTrackProcessor;
 import com.mynetpcb.gerber.processor.command.CommandViaProcessor;
@@ -26,8 +27,8 @@ public class CommandProcessor implements Processor{
    public CommandProcessor(GraphicsStateContext context){
       this.context=context;
       this.processors=new ArrayList(15);
-       this.processors.add(new CommandFilledContourProcessor(context));
-      //this.processors.add(new CommandRegionProcessor(context));
+      this.processors.add(new CommandFilledContourProcessor(context));
+      this.processors.add(new CommandRegionProcessor(context));
       this.processors.add(new CommandTrackProcessor(context));
       this.processors.add(new CommandViaProcessor(context));
       this.processors.add(new CommandPadProcessor(context));

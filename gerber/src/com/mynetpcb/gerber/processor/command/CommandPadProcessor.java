@@ -4,6 +4,8 @@ import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.pad.shape.PadShape;
+import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Hexagon;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
@@ -46,33 +48,37 @@ public class CommandPadProcessor implements Processor{
                 
                 switch(pad.getShapeType()){
                 case CIRCULAR:
-                    processCircle(pad,board.getHeight());  
+                    processCircle((Circle)pad.getPadDrawing().getGeometricFigure(),pad.getType(),board.getHeight());  
                     break;
                 case RECTANGULAR:
-                    processRectangle(pad,board.getHeight());           
+                    processRectangle((Rectangle)pad.getPadDrawing().getGeometricFigure(),board.getHeight());           
                     break;
                 case OVAL:
-                    processOval(pad,board.getHeight());
+                    processOval((Obround)pad.getPadDrawing().getGeometricFigure(),pad.getType(),board.getHeight());
                     break;
                 case POLYGON:
-                    processPolygon(pad,board.getHeight());  
+                    processPolygon( (Hexagon)pad.getPadDrawing().getGeometricFigure(),board.getHeight());  
                     break;
                 }
             }
             
         }
     }
-    private void processCircle(Pad pad,int height){
+    protected void processCircle(Circle shape,PadShape.Type type,int height){
         context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
-        
-        ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.resolvePad(pad.getType()),pad.getWidth());
+        ApertureDefinition aperture;
+        if(type!=null){
+           aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.resolvePad(type),shape.r*2);
+        }else{
+           aperture=context.getApertureDictionary().findCircle(shape.r*2); 
+        }
         //set aperture if not same
         context.resetAperture(aperture);
         
         StringBuffer commandLine=new StringBuffer();
         //flash the pad!!!
-        commandLine.append("X"+context.getFormatter().format(Grid.COORD_TO_MM(pad.getCenter().x)*100000));
-        commandLine.append("Y"+context.getFormatter().format(Grid.COORD_TO_MM(height-pad.getCenter().y)*100000));
+        commandLine.append("X"+context.getFormatter().format(Grid.COORD_TO_MM(shape.getCenter().x)*100000));
+        commandLine.append("Y"+context.getFormatter().format(Grid.COORD_TO_MM(height-shape.getCenter().y)*100000));
           
         commandLine.append("D03*");                               
         context.getOutput().append(commandLine);   
@@ -81,8 +87,7 @@ public class CommandPadProcessor implements Processor{
     /*
      * Process rect as region /contour
      */
-    private void processPolygon(Pad pad,int height){
-        Hexagon hexagon= (Hexagon)pad.getPadDrawing().getGeometricFigure();
+    protected void processPolygon(Hexagon hexagon,int height){
         //set region on
         AbstractCommand command=context.getCommandDictionary().get(AbstractCommand.Type.REGION_MODE_ON, FunctionCommand.class);
         context.getOutput().append(command.print());
@@ -101,9 +106,7 @@ public class CommandPadProcessor implements Processor{
     /*
      * Process rect as region /contour
      */
-    private void processRectangle(Pad pad,int height){
-        Rectangle rect= (Rectangle)pad.getPadDrawing().getGeometricFigure();
-
+    protected void processRectangle(Rectangle rect,int height){
         //set region on
         AbstractCommand command=context.getCommandDictionary().get(AbstractCommand.Type.REGION_MODE_ON, FunctionCommand.class);
         context.getOutput().append(command.print());
@@ -119,15 +122,10 @@ public class CommandPadProcessor implements Processor{
         command=context.getCommandDictionary().get(AbstractCommand.Type.REGION_MODE_OFF, FunctionCommand.class);
         context.getOutput().append(command.print());  
     }
-    private void processOval(Pad pad,int height){
-      
-        Obround obround= (Obround)pad.getPadDrawing().getGeometricFigure();
-        double diameter=((Obround)pad.getPadDrawing().getGeometricFigure()).getDiameter();
+    protected void processOval(Obround obround,PadShape.Type type,int height){
+        double diameter=obround.getDiameter();
         
         CommandLineProcessor lineProcessor=new CommandLineProcessor(context);
-        lineProcessor.processLine(Arrays.asList(obround.ps,obround.pe),diameter, height,AbstractAttribute.Type.resolvePad(pad.getType())); 
-       
-          
-        
+        lineProcessor.processLine(Arrays.asList(obround.ps,obround.pe),diameter, height,type==null?null:AbstractAttribute.Type.resolvePad(type)); 
     }
 }

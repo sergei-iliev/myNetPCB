@@ -3,6 +3,7 @@ package com.mynetpcb.pad.shape;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.gerber.Fillable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -32,7 +33,7 @@ import java.util.StringTokenizer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class SolidRegion extends Shape implements Resizeable,Trackable<Point>,Externalizable{
+public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable<Point>,Externalizable{
     private Polygon polygon;
     private Point floatingStartPoint; //***mid 90 degree forming
     private Point floatingEndPoint;
