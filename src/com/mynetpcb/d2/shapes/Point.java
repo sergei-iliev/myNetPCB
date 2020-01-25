@@ -24,6 +24,10 @@ public class Point extends GeometricFigure{
            this.y += vec.y;
     }
     
+    public Point middleOf(Point other){
+        return new Point((this.x+other.x)/2,(this.y+other.y)/2); 
+    }
+    
     public void scale(double alpha){
            this.x *=alpha;
            this.y *=alpha;                          

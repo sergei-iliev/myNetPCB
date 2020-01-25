@@ -40,7 +40,8 @@ public class Hexagon extends Polygon {
     
     public void grow(double offset) {
             this.width += 2 * offset;
-            double a =Math.sqrt(2*offset*offset);
+            double a =(2*offset)/Math.sqrt(3);
+            
 
             Vector v=new Vector(0,0);
         
@@ -52,6 +53,8 @@ public class Hexagon extends Polygon {
         
                 this.points.get(i).set(x, y);
             }
+            
+            
     }
     
     public void scale(double alpha){
