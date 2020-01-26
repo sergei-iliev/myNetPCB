@@ -20,7 +20,9 @@ public class Vector{
     public void set(Point a1,Point a2){
         this.set((a2.x - a1.x),(a2.y - a1.y));         
     }
-    
+    public void set(double x1,double y1,double x2,double y2){
+        this.set((x2 - x1),(y2 - y1));         
+    }    
     public Vector clone() {
         return new Vector(this.x, this.y);
     }

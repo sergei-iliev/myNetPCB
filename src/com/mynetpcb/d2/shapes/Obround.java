@@ -141,10 +141,10 @@ public class Obround extends GeometricFigure {
     }
 
     public void grow(double offset) {
-        if (this.width >= this.height) {
-            this.height += 2 * offset;
+        if(Utils.GE(width,height)){
+            this.height +=  2*offset;
         } else {
-            this.width += 2 * offset;
+            this.width +=  2*offset;
         }
     }
     public double getDiameter(){

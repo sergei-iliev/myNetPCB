@@ -141,21 +141,6 @@ public class Rectangle extends Polygon {
         x = this.points.get(1).x + offset * norm.x;
         y = this.points.get(1).y + offset * norm.y;
         this.points.get(1).set(x, y);
-//point 1;index 0        
-        v.set(this.points.get(1) ,this.points.get(0));
-        norm = v.normalize();         
-        x = this.points.get(0).x + offset * norm.x;
-        y = this.points.get(0).y + offset * norm.y;
-        this.points.get(0).set(x, y);
-               
-//point 2;index 1
-        v.set(this.points.get(0) ,this.points.get(1));
-        norm = v.normalize();         
-        x = this.points.get(1).x + offset * norm.x;
-        y = this.points.get(1).y + offset * norm.y;
-        this.points.get(1).set(x, y);
-        
-        
 //help point
         v.set(this.points.get(0) ,this.points.get(3));
         norm = v.normalize();            
@@ -167,20 +152,42 @@ public class Rectangle extends Polygon {
         norm = v.normalize();                
         x = this.points.get(2).x + offset * norm.x;
         y = this.points.get(2).y + offset * norm.y;
-        this.points.get(2).set(x, y);
+        this.points.get(2).set(x, y);   
+        
+//point 1;index 0        
+        v.set(this.points.get(1) ,this.points.get(0));
+        norm = v.normalize();         
+        double x1 = this.points.get(0).x + offset * norm.x;
+        double y1 = this.points.get(0).y + offset * norm.y;
+        //this.points.get(0).set(x, y);
+               
+//point 2;index 1
+        v.set(this.points.get(0) ,this.points.get(1));
+        norm = v.normalize();         
+        double x2 = this.points.get(1).x + offset * norm.x;
+        double y2 = this.points.get(1).y + offset * norm.y;
+        //this.points.get(1).set(x, y);
+        
+        
+
 //point 3;index 2                
         v.set(this.points.get(3) ,this.points.get(2));
         norm = v.normalize();                 
-        x = this.points.get(2).x + offset * norm.x;
-        y = this.points.get(2).y + offset * norm.y;
-        this.points.get(2).set(x, y);
+        double x3 = this.points.get(2).x + offset * norm.x;
+        double y3 = this.points.get(2).y + offset * norm.y;
+        //this.points.get(2).set(x, y);
                        
 //point 4;index 3 
         v.set(this.points.get(2) ,this.points.get(3));
         norm = v.normalize();                 
-        x = this.points.get(3).x + offset * norm.x;
-        y = this.points.get(3).y + offset * norm.y;
-        this.points.get(3).set(x, y);        
+        double x4 = this.points.get(3).x + offset * norm.x;
+        double y4 = this.points.get(3).y + offset * norm.y;
+        //this.points.get(3).set(x, y);        
+        
+        this.points.get(0).set(x1, y1);
+        this.points.get(1).set(x2, y2);
+        this.points.get(2).set(x3, y3);
+        this.points.get(3).set(x4, y4);
     }
     
     public double area(){
