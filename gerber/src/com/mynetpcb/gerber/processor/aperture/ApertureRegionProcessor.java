@@ -104,7 +104,6 @@ public class ApertureRegionProcessor implements Processor{
                     case OVAL:                         
                         apperture=new CircleAperture();  
                         diameter=((Obround)pad.getPadDrawing().getGeometricFigure()).getDiameter();
-                        System.out.println(diameter+(2*source.getClearance()));
                         ((CircleAperture)apperture).setDiameter(diameter+(2*source.getClearance())); 
                         break;
                     case RECTANGULAR:case POLYGON:

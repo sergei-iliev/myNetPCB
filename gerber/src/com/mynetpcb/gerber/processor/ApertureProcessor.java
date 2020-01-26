@@ -8,6 +8,7 @@ import com.mynetpcb.gerber.capi.Processor;
 import com.mynetpcb.gerber.processor.aperture.ApertureArcProcessor;
 import com.mynetpcb.gerber.processor.aperture.ApertureCircleProcessor;
 import com.mynetpcb.gerber.processor.aperture.ApertureFilledContourProcessor;
+import com.mynetpcb.gerber.processor.aperture.ApertureLineProcessor;
 import com.mynetpcb.gerber.processor.aperture.AperturePadProcessor;
 import com.mynetpcb.gerber.processor.aperture.ApertureRectProcessor;
 import com.mynetpcb.gerber.processor.aperture.ApertureRegionProcessor;
@@ -37,7 +38,7 @@ public class ApertureProcessor implements Processor{
         processors.add(new ApertureViaProcessor(dictionary));   
         processors.add(new ApertureCircleProcessor(dictionary)); 
         processors.add(new ApertureArcProcessor(dictionary)); 
-        //processors.add(new ApertureLineProcessor(dictionary)); 
+        processors.add(new ApertureLineProcessor(dictionary)); 
         processors.add(new ApertureRectProcessor(dictionary)); 
         processors.add(new ApertureTextProcessor(dictionary)); 
     }

@@ -38,9 +38,8 @@ public class CommandCircleProcessor implements Processor {
             }
         }
         //do circles in footprints
-        if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){        
-        List<FootprintShape> footprints = board.getShapes(FootprintShape.class, layermask);
-         for (FootprintShape footprint : footprints) {
+       if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){              
+          for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
             for(Shape shape:footprint.getShapes()){
                 if(!shape.isVisibleOnLayers(layermask)){
                     continue;
@@ -51,8 +50,8 @@ public class CommandCircleProcessor implements Processor {
                     }
                 }
             }
-         }
-        }
+          }
+       }
     }
     protected void processCircle(Circle circle,int height){
         processCircle(circle,circle.getThickness(), height,null);
