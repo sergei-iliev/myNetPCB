@@ -65,8 +65,11 @@ public class PolygonShape implements PadDrawing {
     }
 
     @Override
-    public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource clearanceSource) {
-        // TODO Implement this method
+    public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
+        g2.setColor(printContext.getBackgroundColor());       
+        Hexagon h = this.hexagon.clone();
+        h.grow(source.getClearance());                
+        h.paint(g2, true);
 
     }
     @Override

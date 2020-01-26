@@ -67,16 +67,19 @@ public class OvalShape implements PadDrawing {
         g2.setColor(Color.BLACK);        
         Obround o=this.obround.clone();
         o.grow(source.getClearance());
+
+        
         o.scale(scale.getScaleX());
         o.move(-viewportWindow.getX(), -viewportWindow.getY());
         o.paint(g2, true);
     }
 
     @Override
-    public void printClearance(Graphics2D graphics2D, PrintContext printContext, ClearanceSource clearanceSource) {
-        // TODO Implement this method
-
-
+    public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
+        Obround o=this.obround.clone();
+        g2.setColor(printContext.getBackgroundColor());          
+        o.grow(source.getClearance());
+        o.paint(g2, true);
     }
 
     @Override

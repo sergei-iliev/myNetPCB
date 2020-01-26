@@ -8,6 +8,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceTarget;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -227,6 +228,21 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         }
         return true;
         
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layersmask) {
+        if((layersmask&this.copper.getLayerMaskID())==0){        
+             return;
+        }
+
+        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:this.copper.getColor());   
+        polygon.paint(g2, true);  
+           
+        //print clearence background
+        Collection<ClearanceTarget> targets=getOwningUnit().getShapes(ClearanceTarget.class);
+        for(ClearanceTarget target:targets){
+            target.printClearance(g2,printContext, this);
+        }             
     }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {

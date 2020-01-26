@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.ClearanceTarget;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -312,9 +313,21 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     }
 
     @Override
-    public <T extends ClearanceSource> void printClearance(Graphics2D graphics2D, PrintContext printContext,
-                                                           T clearanceSource) {
-        // TODO Implement this method
+    public <T extends ClearanceSource> void printClearance(Graphics2D g2, PrintContext printContext,
+                                                           T source) {
+        Shape shape=(Shape)source;
+        Box rect=getBoundingShape();
+        
+        if(!shape.getBoundingShape().intersects(rect)){
+           return; 
+        }
+        
+        
+        for(Shape s:shapes){
+            if(s instanceof ClearanceTarget){
+                ((ClearanceTarget)s).printClearance(g2,printContext,source);
+            }
+        }
 
     }
 

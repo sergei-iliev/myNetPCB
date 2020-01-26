@@ -112,9 +112,18 @@ public class CircularShape implements PadDrawing {
     }
 
     @Override
-    public void printClearance(Graphics2D graphics2D, PrintContext printContext, ClearanceSource clearanceSource) {
-        // TODO Implement this method
-
+    public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
+                               
+        
+        g2.setColor(printContext.getBackgroundColor());      
+        Circle c=circle.clone();
+        c.grow(source.getClearance());                
+        c.paint(g2, true);
+        
+        //1. THERMAL makes sense if pad has copper on source layer
+        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+            return; //not on the same layer
+        }
 
     }
 

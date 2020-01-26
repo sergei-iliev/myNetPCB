@@ -65,9 +65,11 @@ public class RectangularShape implements PadDrawing {
     }
 
     @Override
-    public void printClearance(Graphics2D graphics2D, PrintContext printContext, ClearanceSource clearanceSource) {
-        // TODO Implement this method
-
+    public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
+        g2.setColor(printContext.getBackgroundColor());  
+        Rectangle rect=this.rect.clone();
+        rect.grow(source.getClearance());                 
+        rect.paint(g2,true);
     }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {

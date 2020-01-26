@@ -76,28 +76,43 @@ public class PCBTrack extends TrackShape implements PCBShape{
                 
         double lineThickness=(thickness+2*(this.clearance!=0?this.getClearance():source.getClearance())) *scale.getScaleX();            
         
-        Polyline r=this.polyline.clone();   
+        Polyline polyline=this.polyline.clone();   
         
         
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
+        polyline.scale(scale.getScaleX());
+        polyline.move(-viewportWindow.getX(),- viewportWindow.getY());
 
         g2.setStroke(new BasicStroke((float) lineThickness, 1, 1));
 
         g2.setColor(Color.BLACK);        
          
         g2.setClip(source.getClippingRegion());
-        r.paint(g2, false);
+        polyline.paint(g2, false);
         g2.setClip(null);
 
 
     }
 
     @Override
-    public <T extends ClearanceSource> void printClearance(Graphics2D graphics2D, PrintContext printContext,
-                                                           T clearanceSource) {
-       
-
+    public <T extends ClearanceSource> void printClearance(Graphics2D g2, PrintContext printContext,
+                                                           T source) {
+        if(isSameNet(source)){
+            return;
+        } 
+        Shape shape=(Shape)source;
+        if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
+             return;  //not on the same layer
+        } 
+        if(!shape.getBoundingShape().intersects(this.getBoundingShape())){
+           return; 
+        }
+        
+        double lineThickness=(thickness+2*(this.clearance!=0?this.getClearance():source.getClearance()));                    
+        g2.setStroke(new BasicStroke((float) lineThickness, 1, 1));
+        g2.setColor(printContext.getBackgroundColor());       
+         
+        polyline.paint(g2, false);
+        
     }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {

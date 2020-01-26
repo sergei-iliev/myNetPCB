@@ -261,7 +261,22 @@ public class Pad extends PadShape{
     @Override
     public <T extends ClearanceSource> void printClearance(Graphics2D g2, PrintContext printContext,
                                                            T source) {
+        //is different layer and SMD -> no clearance
+        if ((source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {           
+               return; //not on the same layer
+        }        
+        //2. is same net 
+        if(isSameNet(source)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
+            return;
+        }
+        //3. is pad  within copper area
+        Box rect = getBoundingShape();
+        rect.grow(source.getClearance());
         
+        if(!source.getBoundingShape().intersects(rect)){
+          return; 
+        }  
+        shape.printClearance(g2, printContext, source);        
 
     }
     @Override
