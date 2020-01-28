@@ -37,7 +37,11 @@ public class Hexagon extends Polygon {
         });
         return copy;
     }
-    
+    @Override
+    public void mirror(Line line) {        
+        super.mirror(line);
+        this.pc.mirror(line);
+    }
     public void grow(double offset) {
             this.width += 2 * offset;
             double a =(2*offset)/Math.sqrt(3);
