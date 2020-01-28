@@ -402,10 +402,6 @@ public class GlyphTexture implements Texture {
                     glyph.segments[i].paint(g2, false);                    
                 }
         });
-
-        
-           
-        
     } 
     
 

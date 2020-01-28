@@ -69,8 +69,11 @@ public class Line extends AbstractLine implements Externalizable{
 
     @Override
     public void fromXML(Node node) {
-        Element element = (Element) node;        
-        this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));
+        Element element = (Element) node; 
+        if(element.hasAttribute("copper")){
+          this.setCopper(Layer.Copper.valueOf(element.getAttribute("copper")));    
+        } 
+       
         
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
 

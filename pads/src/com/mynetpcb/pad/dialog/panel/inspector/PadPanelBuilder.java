@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.shape.Pad;
 
@@ -165,13 +166,13 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         
         padNumber.setText(pad.getTextureByTag("number").getText());
         numberSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getSize())));
-        numberX.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getAnchorPoint().x)));
-        numberY.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getAnchorPoint().y)));
+        numberX.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(pad.getTextureByTag("number").getAnchorPoint().x))));
+        numberY.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(pad.getTextureByTag("number").getAnchorPoint().y))));
         
         padNetName.setText(pad.getTextureByTag("netvalue").getText());        
         netvalueSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getSize())));
-        netvalueX.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getAnchorPoint().x)));
-        netvalueY.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getAnchorPoint().y)));
+        netvalueX.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getAnchorPoint().x))));
+        netvalueY.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getAnchorPoint().y))));
         
         widthField.setText(String.valueOf(Grid.COORD_TO_MM(pad.getWidth())));
         if(pad.getShapeType() == Pad.Shape.CIRCULAR||pad.getShapeType()==Pad.Shape.POLYGON){

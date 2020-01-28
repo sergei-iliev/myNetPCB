@@ -18,7 +18,6 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
-import com.mynetpcb.pad.shape.SolidRegion;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -30,6 +29,7 @@ import java.awt.geom.AffineTransform;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
 
@@ -230,6 +230,14 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         
     }
     @Override
+    public void mirror(Line line) {
+        this.polygon.mirror(line);
+    }  
+    @Override
+    public void move(double xoffset, double yoffset) {
+        this.polygon.move(xoffset,yoffset);        
+    }
+    @Override
     public void print(Graphics2D g2, PrintContext printContext, int layersmask) {
         if((layersmask&this.copper.getLayerMaskID())==0){        
              return;
@@ -414,6 +422,8 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     static class Memento extends AbstractMemento<Board,PCBCopperArea>{
         private double Ax[];
         private double Ay[];
+        private int clearance;
+        private String net;
         
         public Memento(MementoType mementoType) {
             super(mementoType);
@@ -432,6 +442,8 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
                 shape.floatingStartPoint.set(shape.polygon.points.get(shape.polygon.points.size() - 1));
                 shape.reset();
             }
+            shape.net=net;
+            shape.clearance=clearance;
         }
 
         @Override
@@ -443,6 +455,8 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
                 Ax[i] = (shape.polygon.points.get(i)).x;
                 Ay[i] = (shape.polygon.points.get(i)).y;
             }
+            this.net=shape.net;
+            this.clearance=shape.clearance;
         }
 
         @Override
@@ -461,14 +475,14 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
                 return false;
             }
             Memento other = (Memento) obj;
-            return (super.equals(obj)&&
+            return (super.equals(obj)&&this.clearance==other.clearance&&Objects.equals(this.net, other.net)&&
                     Arrays.equals(Ax, other.Ax) && Arrays.equals(Ay, other.Ay));
 
         }
 
         @Override
         public int hashCode() {
-            int  hash = super.hashCode();
+            int  hash = super.hashCode()+this.clearance+Objects.hashCode(this.net);
             hash += Arrays.hashCode(Ax);
             hash += Arrays.hashCode(Ay);
             return hash;
@@ -476,7 +490,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         
         @Override
         public boolean isSameState(Unit unit) {
-            SolidRegion polygon = (SolidRegion) unit.getShape(getUUID());
+            PCBCopperArea polygon = (PCBCopperArea) unit.getShape(getUUID());
             return (polygon.getState(getMementoType()).equals(this));
         }
         
