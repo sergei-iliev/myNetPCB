@@ -2,6 +2,8 @@ package com.mynetpcb.board.dialog.panel.inspector;
 
 import com.mynetpcb.board.component.BoardComponent;
 import com.mynetpcb.board.shape.PCBHole;
+import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.layer.ClearanceTarget;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -74,7 +76,7 @@ public class HolePanelBuilder extends AbstractPanelBuilder<Shape>{
           hole.getInner().r=(fromUnit(this.widthField.getText())/2);
         }
         if(e.getSource()==this.clearanceField){
-         //  ((ClearanceTarget)getTarget()).setClearance(Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
+           ((ClearanceTarget)getTarget()).setClearance((int)Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
         }
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint(); 

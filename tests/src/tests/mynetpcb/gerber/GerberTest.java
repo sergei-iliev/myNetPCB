@@ -63,9 +63,9 @@ public class GerberTest {
         
             Gerber gerber=new Gerber(container.getUnit());              
         //    gerber.build(gerberServiceContext,"d:\\top.gbr",Layer.LAYER_FRONT);
-        //    gerber.build(gerberServiceContext,"d:\\bottom.gbr",Layer.LAYER_BACK);
-            gerber.build(gerberServiceContext,"d:\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
-        //        gerber.build("c:\\sergei\\bottom_silk.gbr",Layer.SILKSCREEN_LAYER_BACK);
+            gerber.build(gerberServiceContext,"d:\\bottom.gbr",Layer.LAYER_BACK);
+        //    gerber.build(gerberServiceContext,"d:\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
+                gerber.build(gerberServiceContext,"d:\\bottom_silk.gbr",Layer.SILKSCREEN_LAYER_BACK);
         //
             Excelon drill=new Excelon(container.getUnit());
             drill.build(gerberServiceContext,"d:\\drill_npth.gbr", Layer.NPTH_LAYER_DRILL);

@@ -28,6 +28,7 @@ import java.awt.geom.Ellipse2D;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class PCBHole extends HoleShape implements PCBShape{
@@ -94,8 +95,13 @@ public class PCBHole extends HoleShape implements PCBShape{
     @Override
     public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
                                                           AffineTransform scale, T source) {
+        
+        //only if explicitly set
+        if(Utils.EQ(this.clearance,0)){
+            return;
+        }
         Box rect = this.circle.box();
-        rect.grow(this.clearance!=0?this.clearance:source.getClearance());        
+        rect.grow(this.clearance);        
         
         //is via within copper area
         if(!(source.getBoundingShape().intersects(rect))){
@@ -137,13 +143,22 @@ public class PCBHole extends HoleShape implements PCBShape{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer xml = new StringBuffer();
+        xml.append("<hole x=\""+Utilities.roundDouble(this.circle.pc.x)+"\" y=\""+Utilities.roundDouble(this.circle.pc.y)+"\" width=\""+this.circle.r*2+"\"  clearance=\""+this.clearance+"\" />");
+        return xml.toString();
     }
 
     @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
+        Element element=(Element)node;
+        double x=(Double.parseDouble(element.getAttribute("x")));
+        double y=(Double.parseDouble(element.getAttribute("y")));
+   
+        this.circle.pc.set(x,y);
+        
+        this.circle.r=(Double.parseDouble(element.getAttribute("width")))/2;
+                
+        this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));                
 
     }
 
