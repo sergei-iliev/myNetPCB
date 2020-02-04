@@ -57,7 +57,27 @@ public class Utils{
         }
         return result;
     };
-
+//    public static boolean intersectLine2Circle(Line line,Circle circle) {
+//        let ip = [];
+//        Point prj = circle.pc.projectionOn(line);            // projection of circle center on line
+//        let dist = circle.pc.distanceTo(prj)[0];           // distance from circle center to projection
+//
+//        if (Flatten.Utils.EQ(dist, circle.r)) {            // line tangent to circle - return single intersection point
+//            ip.push(prj);
+//        } else if (Flatten.Utils.LT(dist, circle.r)) {       // return two intersection points
+//            let delta = Math.sqrt(circle.r * circle.r - dist * dist);
+//            let v_trans, pt;
+//
+//            v_trans = line.norm.rotate90CCW().multiply(delta);
+//            pt = prj.translate(v_trans);
+//            ip.push(pt);
+//
+//            v_trans = line.norm.rotate90CW().multiply(delta);
+//            pt = prj.translate(v_trans);
+//            ip.push(pt);
+//        }
+//        return ip;
+//    }
     public static void drawCrosshair(Graphics2D g2,int length, Point... points) {
 
         Line2D line = new Line2D.Double();

@@ -1,5 +1,6 @@
 package com.mynetpcb.d2.shapes;
 
+
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
@@ -32,6 +33,44 @@ public class Polyline<P extends Point> extends GeometricFigure{
     }
     public Box box(){
       return new Box((Collection<Point>)this.points);        
+    }
+    public boolean intersect(GeometricFigure shape) {
+      Segment segment=new Segment();
+      if (shape instanceof Circle) {
+          Point prevPoint = this.points.get(0);        
+          for(Point point:this.points){
+              if(prevPoint.equals(point)){
+                  prevPoint = point;
+                  continue;
+              }
+              
+              segment.set(prevPoint,point);
+              if(segment.intersect((Circle)shape)){
+                  return true;
+              }
+              prevPoint = point;
+          }
+          
+      }
+      if(shape instanceof Box){
+        Point prevPoint = this.points.get(0);        
+        for(Point point:this.points){
+            if(prevPoint.equals(point)){
+                prevPoint = point;
+                continue;
+            }
+            
+            segment.set(prevPoint,point);
+            
+            if(segment.intersect((Box)shape)){
+                return true;
+            }
+            prevPoint = point;
+        }
+      }
+      
+      
+      return false;
     }
     public void move(double offsetX,double offsetY){
         this.points.forEach(point->{

@@ -53,12 +53,46 @@ public class Segment extends GeometricFigure {
             this.ps.mirror(line);
             this.pe.mirror(line);
     }  
+    public Point projectionPoint(Point pt) {
+        Vector v1 = new Vector(this.ps, pt);
+        Vector v2 = new Vector(this.ps, this.pe);
+
+        Vector v = v1.projectionOn(v2);
+        //translate point
+        double x = this.ps.x + v.x;
+        double y = this.ps.y + v.y;
+        return new Point(x, y);
+    }
+
+    public boolean intersect(Circle circle){
+        
+        Point projectionPoint = this.projectionPoint(circle.pc);
+
+        double a = (projectionPoint.x - this.ps.x) / ((this.pe.x - this.ps.x) == 0 ? 1 : this.pe.x - this.ps.x);
+        double b = (projectionPoint.y - this.ps.y) / ((this.pe.y - this.ps.y) == 0 ? 1 : this.pe.y - this.ps.y);
+
+        double dist = projectionPoint.distanceTo(circle.pc);
+        
+        if (0 <= a && a <= 1 && 0 <= b && b <= 1) { //is projection between start and end point
+            if (!Utils.GT(dist,circle.r)) {
+                return true;
+            }
+        }
+        //end points in circle?
+        if (Utils.LE(this.ps.distanceTo(circle.pc), circle.r)) {
+            return true;
+        }
+        if (Utils.LE(this.pe.distanceTo(circle.pc), circle.r)) {
+            return true;
+        }        
+        return false;
+    }
     /**
      * Liang-Barsky function by Daniel White 
      * 
      * @link http://www.skytopia.com/project/articles/compsci/clipping.html
      */
-    public boolean intersects(Box box){
+    public boolean intersect(Box box){
         double x0=ps.x,y0=ps.y,x1=pe.x,y1=pe.y;
         double xmin=box.min.x, xmax=box.max.x, ymin=box.min.y, ymax=box.max.y;
         double t0 = 0, t1 = 1;

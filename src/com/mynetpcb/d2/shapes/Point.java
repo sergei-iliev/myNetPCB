@@ -89,7 +89,7 @@ public class Point extends GeometricFigure{
                 return Math.sqrt(dx*dx + dy*dy);                   
         }
         throw new IllegalStateException("Unknown shape type - "+shape.getClass());
-    }
+    }   
     @Override
     public boolean equals(Object obj) {
         if(this==obj){
