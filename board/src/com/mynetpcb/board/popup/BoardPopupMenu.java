@@ -5,6 +5,7 @@ import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.board.shape.PCBLine;
 import com.mynetpcb.board.shape.PCBTrack;
 import com.mynetpcb.board.unit.BoardMgr;
+import com.mynetpcb.core.board.Net;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
@@ -51,6 +52,12 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
         
         item=new JMenuItem("Delete"); item.setActionCommand("Delete");
         blockMenu.put("Delete",item);           
+    }
+    @Override
+    protected void createLineSelectMenuItems(){
+        JMenuItem item=new JMenuItem("Track Net Select"); item.setActionCommand("track.net");       
+        lineSelectMenu.put("TrackNetSelect",item); 
+        super.createLineSelectMenuItems();
     }
     protected void createTrackMenuItems(){
         trackMenu=new LinkedHashMap<String,Object>();
@@ -125,6 +132,11 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
     }
     
     public void actionPerformed(ActionEvent e) {
+        if(e.getActionCommand().equals("track.net")) {
+            getUnitComponent().getModel().getUnit().selectNetAt((Net)getTarget());
+            getUnitComponent().Repaint(); 
+            return;
+        }
         if (e.getActionCommand().equals("Resume")) {
             if(getTarget() instanceof PCBTrack){                
                         getUnitComponent().getDialogFrame().setButtonGroup(Mode.TRACK_MODE);

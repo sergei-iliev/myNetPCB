@@ -3,11 +3,20 @@ package com.mynetpcb.pad.dialog;
 
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
+import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
+import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
+import com.mynetpcb.core.capi.io.Command;
+import com.mynetpcb.core.capi.io.CommandExecutor;
+import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.io.WriteUnitLocal;
+import com.mynetpcb.core.capi.io.remote.WriteConnector;
+import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.popup.JPopupButton;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -35,6 +44,7 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -55,7 +65,7 @@ import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
 
 
-public class FootprintEditorDialog extends JDialog implements DialogFrame, ActionListener {
+public class FootprintEditorDialog extends JDialog implements DialogFrame,CommandListener, ActionListener {
 
     protected FootprintComponent footprintComponent;
     private JPanel basePanel;
@@ -214,7 +224,9 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         AddFootprintButton.setToolTipText("Add footprint");
         AddFootprintButton.setPreferredSize(new Dimension(35, 35));
         AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
-        AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addMenu("Exit","exit"); 
+        AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
+                           addSeparator().addMenu("Export to Clipboard","export.clipboard").
+                           addSeparator().addMenu("Exit","exit"); 
         
         PrintButton.addActionListener(this);
         PrintButton.setToolTipText("Print footprint");
@@ -417,12 +429,13 @@ exit();
         if (footprintComponent.getModel().getUnit() == null) {
             return;
         }
-
+        
+        if(e.getActionCommand().equals("export.clipboard")){            
+            ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.SYSTEM, new StringSelection(footprintComponent.getModel().format().toString()));
+        }
+        
         if (e.getActionCommand().equals("Save")||e.getActionCommand().equals("SaveAs")) {
-            if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
-               User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
-               return;
-            }
+
             //could be a freshly imported circuit with no library/project name
             if(e.getActionCommand().equals("Save")){
               if (footprintComponent.getModel().getLibraryName() == null||footprintComponent.getModel().getLibraryName().length()==0) {
@@ -434,6 +447,41 @@ exit();
                 return;                
             }            
             
+            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
+                User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
+                return;
+            }
+            //could be a freshly imported circuit with no library/project name
+            if(e.getActionCommand().equals("Save")){
+              if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
+                   User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
+                   return;
+              }                
+              if (footprintComponent.getModel().getLibraryName() == null||footprintComponent.getModel().getLibraryName().length()==0) {
+                 (new FootprintSaveDialog(this, footprintComponent,Configuration.get().isIsOnline())).build();
+                  return;
+              }
+            }else{
+                (new FootprintSaveDialog(this, footprintComponent,Configuration.get().isIsOnline())).build();
+                return;                
+            }
+            
+            //save the file
+            if (!Configuration.get().isIsApplet()) {
+                Command writer =
+                    new WriteUnitLocal(this, footprintComponent.getModel().format(),
+                                       Configuration.get().getFootprintsRoot(),
+                                       footprintComponent.getModel().getLibraryName(), null,
+                                       footprintComponent.getModel().getFileName(), true, FootprintComponent.class);
+                CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
+            } else {
+                Command writer =
+                    new WriteConnector(this, footprintComponent.getModel().format(),
+                                       new RestParameterMap.ParameterBuilder("/footprints").addURI(footprintComponent.getModel().getLibraryName()).addURI(footprintComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
+                                                                                                                                                                                                                      String.valueOf(true)).build(),
+                                       FootprintComponent.class);
+                CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
+            }            
              
         }
         if (e.getSource()==ScaleIn) {
@@ -524,6 +572,29 @@ exit();
             footprintComponent.setMode(Mode.MEASUMENT_MODE);
         }
     }
+    @Override
+    public void OnStart(Class<?> receiver) {
+        if(receiver==FootprintComponent.class){
+            DisabledGlassPane.block(this.getRootPane(), "Saving..."); 
+        }
+    }
+
+    @Override
+    public void OnRecive(String string, Class receiver) {
+    }
+    
+    @Override
+    public void OnFinish(Class<?> receiver) {
+        DisabledGlassPane.unblock(this.getRootPane());        
+        
+        if(receiver==FootprintComponent.class){ 
+           footprintComponent.getModel().registerInitialState();
+        }
+    }
+
+    @Override
+    public void OnError(String message) {
+    }    
 
 /**
      *Create,load footprint

@@ -10,7 +10,6 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
-import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.BasicStroke;
@@ -60,22 +59,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     }
     @Override
     public boolean isInRect(Box box) {
-        LinePoint prevPoint = this.polyline.points.get(0);
-        Segment segment=new Segment();
-        for(LinePoint point:this.polyline.points){
-            if(prevPoint.equals(point)){
-                prevPoint = point;
-                continue;
-            }
-            
-            segment.set(prevPoint,point);
-            
-            if(segment.intersects(box)){
-                return true;
-            }
-            prevPoint = point;
-        }
-         return false;       
+         return this.polyline.intersect(box);       
     }
     @Override
     public void alignResizingPointToGrid(Point targetPoint) {

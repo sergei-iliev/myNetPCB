@@ -9,6 +9,7 @@ import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -17,12 +18,17 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -68,6 +74,23 @@ public class PCBVia extends ViaShape implements PCBShape{
           return null;
         }
     } 
+    @Override
+    public Collection<Shape> getNetShapes(Collection<UUID> selected) {
+        Collection<Shape> net=new ArrayList<>(); 
+        Collection<PCBTrack> tracks=getOwningUnit().getShapes(PCBTrack.class); 
+        Polyline polyline=new Polyline();
+        for(PCBTrack track:tracks){
+            if(selected.contains(track.getUUID())){
+                continue;
+            }            
+            polyline.points.clear();
+            polyline.points.addAll(track.getLinePoints());
+            if(polyline.intersect(outer)){
+               net.add(track); 
+            }
+        }
+        return net;
+    }
     @Override
     public Box getBoundingShape() {
         return this.outer.box();                         

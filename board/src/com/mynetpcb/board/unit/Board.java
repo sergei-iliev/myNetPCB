@@ -1,6 +1,7 @@
 package com.mynetpcb.board.unit;
 
 import com.mynetpcb.board.shape.BoardShapeFactory;
+import com.mynetpcb.core.board.Net;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.Resizeable;
@@ -31,7 +32,11 @@ import java.lang.ref.WeakReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
@@ -71,6 +76,30 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         copy.shapeFactory = new BoardShapeFactory();
         copy.compositeLayer = new CompositeLayer();
         return copy;
+    }
+    public void selectNetAt(Net target){
+        Queue<Net> targets = new LinkedList<>();        
+        Collection<UUID> selectedShapes=new HashSet<>();
+        targets.add(target);
+        selectedShapes.add(((Shape)target).getUUID());
+        
+        while(!targets.isEmpty()){
+            Net shape=targets.remove();
+            Collection<Shape> list=shape.getNetShapes(selectedShapes);
+            if(!list.isEmpty()){
+                for(Shape item:list){
+                    if(!selectedShapes.contains(item.getUUID())){
+                        selectedShapes.add(item.getUUID());
+                        targets.add((Net)item);
+                    }
+                }
+            }
+            
+        }
+        
+        for(UUID uuid:selectedShapes){
+            getShape(uuid).setSelected(true);
+        }
     }
 //    private Comparator<Shape> clickedShapesComparator=new Comparator<Shape>(){
 //        @Override
@@ -131,7 +160,6 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
               return clickedShapes.get(0);             
             }
         }
-        System.out.println(clickedShapes);
         //Collections.reverse(clickedShapes);
         Shape result=null;
         for(Shape shape:clickedShapes){

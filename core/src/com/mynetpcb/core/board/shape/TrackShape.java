@@ -7,7 +7,7 @@ import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.AbstractLine;
-import com.mynetpcb.core.pad.Net;
+import com.mynetpcb.core.board.Net;
 
 /*
  * reduce dependency to board jar

@@ -2,7 +2,7 @@ package com.mynetpcb.core.capi.layer;
 
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.pad.Net;
+import com.mynetpcb.core.board.Net;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;

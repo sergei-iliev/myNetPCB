@@ -13,21 +13,27 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
+import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -55,6 +61,83 @@ public class PCBTrack extends TrackShape implements PCBShape{
             return copy;        
     }
 
+    @Override
+    public Collection<Shape> getNetShapes(Collection<UUID> selected) {
+        Collection<Shape> net=new ArrayList<>(); 
+        //1. via
+        Collection<PCBVia> vias=getOwningUnit().getShapes(PCBVia.class);         
+        for(PCBVia via:vias ){
+            if(selected.contains(via.getUUID())){
+                continue;
+            }
+            if(this.polyline.intersect(via.getOuter())){
+               net.add(via); 
+            }
+        }
+        //2.track on same layer
+        Collection<PCBTrack> tracks=getOwningUnit().getShapes(PCBTrack.class,this.copper.getLayerMaskID());         
+        Circle circle=new Circle(new Point(),0);
+        for(PCBTrack track:tracks ){
+            if(track==this){
+                continue;
+            }
+            if(selected.contains(track.getUUID())){
+                continue;
+            }
+            //my points on another
+            for(Point pt:this.polyline.points){
+                circle.pc=pt;
+                circle.r=this.getThickness()/2;
+                if(track.polyline.intersect(circle)){
+                   net.add(track);
+                   break;
+                }   
+            }
+            //another points on me
+            for(Point pt:track.polyline.points){
+                circle.pc=pt;
+                circle.r=track.getThickness()/2;
+                if(this.polyline.intersect(circle)){
+                   net.add(track);
+                   break;
+                }   
+            }            
+            
+        } 
+        //3.Footprint pads on me
+        Collection<PCBFootprint> footprints=getOwningUnit().getShapes(PCBFootprint.class);         
+        //the other side
+        tracks=getOwningUnit().getShapes(PCBTrack.class,Layer.Side.change(this.copper.getLayerMaskID()).getLayerMaskID());
+        
+        for(PCBFootprint footprint:footprints){
+            Collection<PadShape> pads=footprint.getPads();
+            for(PadShape pad:pads){
+                if(pad.getType()!=PadShape.Type.THROUGH_HOLE){
+                    continue;
+                }                
+                for(Point pt:this.polyline.points){
+                    double distance=pt.distanceTo(pad.getCenter());
+                    if(!Utils.GT(distance,this.getThickness())){  //this pad is a via 
+                        //find tracks on pad
+                        for(PCBTrack track:tracks ){  //each track on opposite layer
+                         if(selected.contains(track.getUUID())){
+                            continue;
+                         }
+                         //another points on me
+                          for(Point p:track.polyline.points){
+                             distance=p.distanceTo(pad.getCenter());
+                             if(!Utils.GT(distance,this.getThickness())){  //this pad is a via 
+                               net.add(track);
+                               break;
+                             }
+                          }   
+                        }                                                                       
+                    }                                       
+                }
+            }
+        }
+        return net;
+    }
     @Override
     public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
                                                           AffineTransform scale, T source) {

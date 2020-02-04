@@ -7,6 +7,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -92,7 +93,7 @@ public class CoordinateSystem extends Shape {
             return;
         }
         g2.setColor(Color.BLUE);
-        
+        g2.setStroke(new BasicStroke());
         line.setLine(0, this.origin.y, this.getOwningUnit().getWidth(),
                         this.origin.y);
         line.scale(scale.getScaleX());

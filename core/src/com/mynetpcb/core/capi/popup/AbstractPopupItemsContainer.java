@@ -60,7 +60,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
     
     protected Map<String,Object> lineMenu;
     
-    protected Map<String,Object> lineSelectMenu;
+    protected Map<String,Object> lineSelectMenu =new LinkedHashMap<String,Object>();;
     
     protected Map<String,Object> chipMenu;
     
@@ -178,8 +178,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
       basicMenu.put("Delete",item); 
     }
     
-    private void createLineSelectMenuItems(){
-        lineSelectMenu=new LinkedHashMap<String,Object>();
+    protected void createLineSelectMenuItems(){       
         
         JMenuItem item=new JMenuItem("Clone"); item.setActionCommand("clone");       
         lineSelectMenu.put("Clone",item);  

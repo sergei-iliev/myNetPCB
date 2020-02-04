@@ -5,7 +5,7 @@ import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.layer.ClearanceTarget;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.pad.Net;
+import com.mynetpcb.core.board.Net;
 import com.mynetpcb.d2.shapes.Circle;
 
 /*

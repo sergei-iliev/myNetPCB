@@ -5,7 +5,7 @@ import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.pad.Net;
+import com.mynetpcb.core.board.Net;
 import com.mynetpcb.d2.shapes.Point;
 
 /*
