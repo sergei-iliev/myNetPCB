@@ -11,6 +11,7 @@ import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.layer.LayerOrderedList;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.print.Printable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -341,7 +342,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
             for (Shape shape : printboard.getShapes()) {
                 shape.print(g2d,context.get(),context.get().getLayermaskId());
             }
-            //((Printaware) this.frame).print(g2d,context.get(),Layer.Copper.All.getLayerMaskID());
+            ((Printable) this.frame).print(g2d,context.get(),Layer.Copper.All.getLayerMaskID());
             g2d.setTransform(oldTransform);
             return PAGE_EXISTS;
         }

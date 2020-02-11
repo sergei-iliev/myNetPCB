@@ -20,7 +20,6 @@ import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
-import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -75,9 +74,9 @@ public class PCBTrack extends TrackShape implements PCBShape{
             }
         }
         //2.track on same layer
-        Collection<PCBTrack> tracks=getOwningUnit().getShapes(PCBTrack.class,this.copper.getLayerMaskID());         
+        Collection<PCBTrack> sameSideTracks=getOwningUnit().getShapes(PCBTrack.class,this.copper.getLayerMaskID());         
         Circle circle=new Circle(new Point(),0);
-        for(PCBTrack track:tracks ){
+        for(PCBTrack track:sameSideTracks ){
             if(track==this){
                 continue;
             }
@@ -107,32 +106,41 @@ public class PCBTrack extends TrackShape implements PCBShape{
         //3.Footprint pads on me
         Collection<PCBFootprint> footprints=getOwningUnit().getShapes(PCBFootprint.class);         
         //the other side
-        tracks=getOwningUnit().getShapes(PCBTrack.class,Layer.Side.change(this.copper.getLayerMaskID()).getLayerMaskID());
+        Collection<PCBTrack> oppositeSideTracks=getOwningUnit().getShapes(PCBTrack.class,Layer.Side.change(this.copper.getLayerMaskID()).getLayerMaskID());
         
         for(PCBFootprint footprint:footprints){
             Collection<PadShape> pads=footprint.getPads();
-            for(PadShape pad:pads){
-                if(pad.getType()!=PadShape.Type.THROUGH_HOLE){
-                    continue;
-                }                
+            for(PadShape pad:pads){              
                 for(Point pt:this.polyline.points){
-                    double distance=pt.distanceTo(pad.getCenter());
-                    if(!Utils.GT(distance,this.getThickness())){  //this pad is a via 
-                        //find tracks on pad
-                        for(PCBTrack track:tracks ){  //each track on opposite layer
+                    if(pad.getPadDrawing().contains(pt)){  //found pad on track -> investigate both SMD and THROUGH_HOLE
+                       if(pad.getType()==PadShape.Type.SMD){
+                           for(PCBTrack track:sameSideTracks ){  //each track on SAME layer
+                            if(selected.contains(track.getUUID())){
+                               continue;
+                            }
+                            //another points on me
+                            for(Point p:track.polyline.points){
+                                if(pad.getPadDrawing().contains(p)){
+                                  net.add(track);
+                                  break;
+                                }
+                             }   
+                           }                              
+                       }else{ 
+                        for(PCBTrack track:oppositeSideTracks ){  //each track on OPPOSITE layer
                          if(selected.contains(track.getUUID())){
                             continue;
                          }
                          //another points on me
-                          for(Point p:track.polyline.points){
-                             distance=p.distanceTo(pad.getCenter());
-                             if(!Utils.GT(distance,this.getThickness())){  //this pad is a via 
+                         for(Point p:track.polyline.points){
+                             if(pad.getPadDrawing().contains(p)){
                                net.add(track);
                                break;
                              }
-                          }   
-                        }                                                                       
-                    }                                       
+                         }
+                        }     
+                      }
+                    }                 
                 }
             }
         }

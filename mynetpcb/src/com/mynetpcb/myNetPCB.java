@@ -1,22 +1,19 @@
 package com.mynetpcb;
 
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 // Author:      Sergey Iliev
@@ -39,18 +36,13 @@ public class myNetPCB extends JFrame
                   screenSize.height - inset*2);
         //Set up the GUI.
         desktop = new JDesktopPane(); //a specialized layered pane
-        
-        JPanel p=new JPanel(new BorderLayout());
-        p.setBackground(Color.red);
-        p.add(new JButton("ksdhfskdjhfkjsdhf"));
-        p.setBounds(0, 0, 1200, 200);
-        p.setVisible(true);
-       
+  
         //createFrame(); //create first "window"
         setContentPane(desktop);        
-        setJMenuBar(createMenuBar());
+        //setJMenuBar(createMenuBar());
  
-        getContentPane().add(p);
+        getContentPane().setLayout(new GridLayout(1, 1));
+        getContentPane().add(new MainPanel());
         //Make dragging a little faster but perhaps uglier.
         //desktop.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
     }
