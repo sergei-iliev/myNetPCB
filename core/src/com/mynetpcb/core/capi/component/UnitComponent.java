@@ -377,7 +377,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     @Override
     public boolean zoomOut(Point windowPoint) {
         if (model.getUnit().getScalableTransformation().scaleOut()) {
-            this.getViewportWindow().scaleout(windowPoint.x, windowPoint.y,
+            this.getViewportWindow().scaleOut(windowPoint.x, windowPoint.y,
                                               this.model.getUnit().getScalableTransformation());
             this.Repaint();
         } else {
@@ -414,7 +414,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     @Override
     public boolean zoomIn(Point windowPoint) {
         if (model.getUnit().getScalableTransformation().scaleIn()) {
-            this.getViewportWindow().scalein(windowPoint.x, windowPoint.y,
+            this.getViewportWindow().scaleIn(windowPoint.x, windowPoint.y,
                                              this.model.getUnit().getScalableTransformation());
             this.Repaint();
         } else {

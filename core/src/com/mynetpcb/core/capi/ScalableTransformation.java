@@ -52,7 +52,9 @@ public class ScalableTransformation implements Cloneable{
         
              return true;        
     }
-      
+    public double getInverseScaleRatio(){
+       return 1/this.scaleRatio;
+    }  
     public double getScaleRatio(){
       return scaleRatio;  
     }
