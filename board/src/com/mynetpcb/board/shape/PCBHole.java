@@ -176,20 +176,33 @@ public class PCBHole extends HoleShape implements PCBShape{
         g2.setColor(isSelected() ? Color.GRAY : fillColor);
         
         Circle  c=this.circle.clone();
+        c.grow(this.thickness);
         c.scale(scale.getScaleX());
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
 
-        g2.setStroke(new BasicStroke((float)(thickness*scale.getScaleX())));            
-        c.paint(g2, false);
+        //g2.setStroke(new BasicStroke((float)(thickness*scale.getScaleX())));            
+        g2.setColor(isSelected() ? Color.GRAY : fillColor);        
+        c.paint(g2,true);
+        
+        c=this.circle.clone();
+        c.scale(scale.getScaleX());
+        c.move(-viewportWindow.getX(),- viewportWindow.getY());        
+        g2.setColor(Color.BLACK);
+        c.paint(g2,true);
+
         
         Utilities.drawCrosshair(g2,  null,(int)(selectionRectWidth*scale.getScaleX()),c.getCenter());
         
 
     }
     @Override
-    public void print(Graphics2D g2, PrintContext printContext, int layermask) {        
-        g2.setStroke(new BasicStroke((float)(thickness)));      
-        this.circle.paint(g2, false);
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {    
+        g2.setStroke(new BasicStroke(thickness));     
+        g2.setColor(printContext.getBackgroundColor()==Color.BLACK?Color.WHITE:Color.BLACK);                
+        this.circle.paint(g2, true); 
+        
+        g2.setColor(printContext.getBackgroundColor());  
+        this.circle.paint(g2, true);
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {

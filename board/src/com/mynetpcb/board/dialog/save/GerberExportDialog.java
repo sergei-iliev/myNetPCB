@@ -6,6 +6,7 @@ import com.mynetpcb.board.dialog.print.BoardPrintDialog;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.gerber.Excelon;
 import com.mynetpcb.gerber.Gerber;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 
@@ -114,8 +115,8 @@ public class GerberExportDialog extends BoardPrintDialog implements ActionListen
         gerber.build(context,path+"\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
         gerber.build(context,path+"\\bottom_silk.gbr",Layer.SILKSCREEN_LAYER_BACK);
         
-        //Excelon drill=new Excelon(board);
-        //drill.build(context,path+"\\drill_npth.gbr", Layer.NPTH_LAYER_DRILL); 
-        //drill.build(context,path+"\\drill_pth.gbr", Layer.PTH_LAYER_DRILL);
+        Excelon drill=new Excelon(board);
+        drill.build(context,path+"\\drill_npth.gbr", Layer.NPTH_LAYER_DRILL); 
+        drill.build(context,path+"\\drill_pth.gbr", Layer.PTH_LAYER_DRILL);
     }
 }

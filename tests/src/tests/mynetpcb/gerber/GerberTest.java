@@ -6,7 +6,6 @@ import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
-import com.mynetpcb.gerber.Excelon;
 import com.mynetpcb.gerber.Gerber;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 
@@ -20,7 +19,7 @@ import org.junit.Test;
 
 public class GerberTest {
         //private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\BlueTooth\\BlueTemp.xml";
-        private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\demo\\first.xml";
+        private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\SolarLight\\SolarLight_MPPT.xml";
         @Test
         public void testTrackRender()throws Exception{
             Board board=new Board((int)Grid.MM_TO_COORD(100),(int)Grid.MM_TO_COORD(100));   
@@ -55,21 +54,21 @@ public class GerberTest {
             container.add(new Board(1, 1));
             
             //second board
-            container.parse(xml.toString(),0);
+            container.parse(xml.toString(),1);
             GerberServiceContext gerberServiceContext=new GerberServiceContext();
-            gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN,true);
-            gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_REFERENCE_ON_SILKSCREEN,true);
-            gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_VALUE_ON_SILKSCREEN,true);
+            //gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN,true);
+            //gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_REFERENCE_ON_SILKSCREEN,true);
+            //gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_VALUE_ON_SILKSCREEN,true);
         
             Gerber gerber=new Gerber(container.getUnit());              
-        //    gerber.build(gerberServiceContext,"d:\\top.gbr",Layer.LAYER_FRONT);
-            gerber.build(gerberServiceContext,"d:\\bottom.gbr",Layer.LAYER_BACK);
-        //    gerber.build(gerberServiceContext,"d:\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
-                gerber.build(gerberServiceContext,"d:\\bottom_silk.gbr",Layer.SILKSCREEN_LAYER_BACK);
-        //
-            Excelon drill=new Excelon(container.getUnit());
-            drill.build(gerberServiceContext,"d:\\drill_npth.gbr", Layer.NPTH_LAYER_DRILL);
-            drill.build(gerberServiceContext,"d:\\drill_pth.gbr", Layer.PTH_LAYER_DRILL);
+            //gerber.build(gerberServiceContext,"d:\\sergei\\top.gbr",Layer.LAYER_FRONT);
+            gerber.build(gerberServiceContext,"d:\\sergei\\bottom.gbr",Layer.LAYER_BACK);
+            //gerber.build(gerberServiceContext,"d:\\sergei\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
+            gerber.build(gerberServiceContext,"d:\\sergei\\bottom_silk.gbr",Layer.SILKSCREEN_LAYER_BACK);
+        
+        //    Excelon drill=new Excelon(container.getUnit());
+        //    drill.build(gerberServiceContext,"d:\\drill_npth.gbr", Layer.NPTH_LAYER_DRILL);
+        //    drill.build(gerberServiceContext,"d:\\drill_pth.gbr", Layer.PTH_LAYER_DRILL);
         
     }
 }

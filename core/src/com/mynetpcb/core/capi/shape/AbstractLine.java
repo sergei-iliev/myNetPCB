@@ -269,7 +269,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         return null;
     }
     @Override
-    public void setResizingPoint(Point point) {
+    public void setResizingPoint(Point point) {        
         this.resizingPoint=point;
     }
     @Override

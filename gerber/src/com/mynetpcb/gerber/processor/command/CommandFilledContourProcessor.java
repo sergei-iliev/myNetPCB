@@ -41,9 +41,9 @@ public class CommandFilledContourProcessor implements Processor{
             AbstractCommand command=context.getCommandDictionary().get(AbstractCommand.Type.REGION_MODE_ON, FunctionCommand.class);
             context.getOutput().append(command.print());
         
-            ApertureDefinition aperture=context.getApertureDictionary().get(10);        
+            //ApertureDefinition aperture=context.getApertureDictionary().get(10);        
             //set aperture if not same
-            context.resetAperture(aperture);
+            //context.resetAperture(aperture);
         
             //process arcs
             List<Arc> arcs = board.getShapes(Arc.class, layermask);
