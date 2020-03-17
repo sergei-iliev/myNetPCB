@@ -34,7 +34,7 @@ public class CommandLineProcessor implements Processor{
             
             //process board lines
             if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){        
-             List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);              
+             List<FootprintShape> footprints= board.getShapes(FootprintShape.class);                   
              for(FootprintShape footprint:footprints){            
                 for(Shape shape:footprint.getShapes()){
                     if(!shape.isVisibleOnLayers(layermask)){

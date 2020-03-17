@@ -19,7 +19,7 @@ import org.junit.Test;
 
 public class GerberTest {
         //private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\BlueTooth\\BlueTemp.xml";
-        private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\SolarLight\\SolarLight_MPPT.xml";
+        private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\demo\\gerber.xml";
         @Test
         public void testTrackRender()throws Exception{
             Board board=new Board((int)Grid.MM_TO_COORD(100),(int)Grid.MM_TO_COORD(100));   
@@ -46,25 +46,26 @@ public class GerberTest {
         StringBuffer xml = new StringBuffer();
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(demo), charset)) {
             String line=null;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {                
                 xml.append(line);
             }
         } 
+      
             BoardContainer container=new BoardContainer();
             container.add(new Board(1, 1));
             
-            //second board
-            container.parse(xml.toString(),1);
+            //first board
+            container.parse(xml.toString(),0);
             GerberServiceContext gerberServiceContext=new GerberServiceContext();
-            //gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN,true);
+            gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN,true);
             //gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_REFERENCE_ON_SILKSCREEN,true);
             //gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_VALUE_ON_SILKSCREEN,true);
         
             Gerber gerber=new Gerber(container.getUnit());              
             //gerber.build(gerberServiceContext,"d:\\sergei\\top.gbr",Layer.LAYER_FRONT);
-            gerber.build(gerberServiceContext,"d:\\sergei\\bottom.gbr",Layer.LAYER_BACK);
+            gerber.build(gerberServiceContext,"d:\\sergei\\top.gbr",Layer.LAYER_BACK);
             //gerber.build(gerberServiceContext,"d:\\sergei\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
-            gerber.build(gerberServiceContext,"d:\\sergei\\bottom_silk.gbr",Layer.SILKSCREEN_LAYER_BACK);
+            gerber.build(gerberServiceContext,"d:\\sergei\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
         
         //    Excelon drill=new Excelon(container.getUnit());
         //    drill.build(gerberServiceContext,"d:\\drill_npth.gbr", Layer.NPTH_LAYER_DRILL);
