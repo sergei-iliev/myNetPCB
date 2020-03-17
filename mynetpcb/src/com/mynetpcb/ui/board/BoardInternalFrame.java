@@ -1,5 +1,4 @@
-package com.mynetpcb.board.dialog;
-
+package com.mynetpcb.ui.board;
 
 import com.mynetpcb.board.component.BoardComponent;
 import com.mynetpcb.board.container.BoardContainer;
@@ -40,21 +39,17 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.pad.dialog.FootprintLoadDialog;
 import com.mynetpcb.pad.unit.Footprint;
+import com.mynetpcb.ui.AbstractInternalFrame;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,16 +64,14 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
-import javax.swing.WindowConstants;
 
-@Deprecated
-public class BoardEditorDialog extends JDialog implements DialogFrame,CommandListener,ActionListener{
-    
+public class BoardInternalFrame extends AbstractInternalFrame implements DialogFrame,CommandListener,ActionListener{
     private BoardComponent boardComponent;
     private BoardsPanel boardsPanel;
     private FootprintsPanel footprintsPanel;
@@ -129,17 +122,16 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
     private JPanel basePanel;
     private JTabbedPane tabbedPane = new JTabbedPane();
     
-    public BoardEditorDialog(Frame frame, String caption) {
-        this(frame,caption,null);
+    public BoardInternalFrame() {
+       this(null);
     }
-    public BoardEditorDialog(Window f, String Caption,BoardContainer boardContainer) {
-        super(f, Caption, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        this.setResizable(true);
-        Init();
+    
+    public BoardInternalFrame(BoardContainer boardContainer) {
+        super("Board");        
+        init();
         LoadBoards(boardContainer); 
     }
-    private void Init() {
+    private void init() {
         Container content = this.getContentPane();
         basePanel = new JPanel();
         basePanel.setLayout(new BorderLayout());
@@ -270,7 +262,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         AddBoardButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
         AddBoardButton.addMenu("Create new boards project","Create").addMenu("Add board to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
             .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Gerber RS-274X/X2", "export.gerber").addSeparator().addMenu("Exit","exit");
- 
+    
         PrintButton.addActionListener(this);
         PrintButton.setToolTipText("Print footprint");
         PrintButton.setPreferredSize(new Dimension(35, 35));
@@ -398,12 +390,6 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
                 
         content.add(basePanel); // Add components to the content 
         
-        addWindowListener(new WindowAdapter(){
-
-                public void windowClosing(WindowEvent e) { 
-                    exit();                                       
-                }
-            });
     }
     
     @Override
@@ -415,7 +401,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         if (e.getSource()==LoadButton) {
                         
             AbstractLoadDialog.Builder builder=boardComponent.getLoadDialogBuilder();
-            AbstractLoadDialog boardLoadDialog =builder/*.setWindow(boardComponent.getDialogFrame().getParentFrame())*/.setCaption("Load Project").setEnabled(false).build();
+            AbstractLoadDialog boardLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Project").setEnabled(false).build();
             
             boardLoadDialog.pack();
             boardLoadDialog.setLocationRelativeTo(null); //centers on screen
@@ -488,7 +474,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         }
       
         if (e.getActionCommand().equals("export.gerber")) {
-            JDialog d=new GerberExportDialog(this.getParentFrame(),boardComponent);
+            JDialog d=new GerberExportDialog(this.getParentFrame() ,boardComponent);
             d.setLocationRelativeTo(null); //centers on screen
             d.setVisible(true);                                                
             return;
@@ -555,7 +541,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         if (e.getSource()==FootprintButton) {           
             
             AbstractLoadDialog.Builder builder=new FootprintLoadDialog.Builder();
-            AbstractLoadDialog symbolLoadDialog =builder.setWindow(this).setCaption("Load Footprint").setEnabled(true).build();
+            AbstractLoadDialog symbolLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Footprint").setEnabled(true).build();
 
             symbolLoadDialog.pack();
             symbolLoadDialog.setLocationRelativeTo(null); //centers on screen
@@ -581,7 +567,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
 
         }
         if (e.getSource()== PrintButton) {
-            JDialog d=new BoardPrintDialog(this,boardComponent,"Print");
+            JDialog d=new BoardPrintDialog(this.getParentFrame(),boardComponent,"Print");
             d.setLocationRelativeTo(null); //centers on screen
             d.setVisible(true);
             //boardComponent.Print("board");
@@ -607,9 +593,7 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
         if (e.getSource()==SelectionButton) {
             boardComponent.setMode(Mode.COMPONENT_MODE);
         }
-        //if (e.getActionCommand().equals("Rectangle")) {
-        //    boardComponent.setMode(BoardComponent.RECT_MODE);
-        //}
+
         if (e.getSource()==EllipseButton) {
             boardComponent.setMode(Mode.ELLIPSE_MODE);
         }
@@ -659,8 +643,8 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
     }
     
     @Override
-    public Frame getParentFrame() {
-        return null;
+    public JFrame getParentFrame() {
+        return  (JFrame)this.getDesktopPane().getRootPane().getParent();
     }
 
     @Override
@@ -753,36 +737,15 @@ public class BoardEditorDialog extends JDialog implements DialogFrame,CommandLis
             boardComponent.Repaint();
         }
 
-    private void exit(){
+    public boolean exit(){
         if(boardComponent.getModel().isChanged()){                        
-            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(BoardEditorDialog.this, "There is a changed element.Do you want to close?", "Close", JOptionPane.YES_NO_OPTION)) {                                                                                              
-                return;
+            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(this, "There is a changed element.Do you want to close?", "Close", JOptionPane.YES_NO_OPTION)) {                                                                                              
+                return false;
             }                      
         }
         boardComponent.release();  
-        BoardEditorDialog.this.dispose(); 
+        this.dispose(); 
+        return true;
     }
-    
-    public static void main(String[] args) {
-        //***initialize configuration
-        Configuration.Initilize(false);
-        Configuration.get().read();
-        //*****************Footprint editor
-        final BoardEditorDialog f = new BoardEditorDialog(null, "Board Editor");
-        f.setPreferredSize(new Dimension(730, 800));
-        f.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-        f.addWindowListener(new WindowAdapter() {
-            public void windowActivated(WindowEvent e) {
 
-            }
-        });
-        f.pack();
-        f.setVisible(true);
-
-
-    }    
 }

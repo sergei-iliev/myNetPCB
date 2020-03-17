@@ -18,7 +18,6 @@ import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.UnitMgr;
-import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
@@ -672,42 +671,43 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }
         
         if (e.getActionCommand().equalsIgnoreCase("LoadUnit")) {
-            AbstractLoadDialog.Builder builder=getUnitComponent().getLoadDialogBuilder();
-            AbstractLoadDialog loadDialog =builder.setWindow(getUnitComponent().getDialogFrame().getParentFrame()).setCaption("Load "+getUnitComponent().getModel().getUnit().toString()).setEnabled(true).build();
-            
-            loadDialog.pack();
-            loadDialog.setLocationRelativeTo(null); //centers on screen
-            loadDialog.setVisible(true);
-
-            if(loadDialog.getSelectedModel()==null||loadDialog.getSelectedModel().getUnit()==null){
-                loadDialog.dispose();
-                loadDialog=null;
-                return;
-            }
-            UnitMgr unitMgr=new UnitMgr();
-            try {
-                unitMgr.Load(getUnitComponent().getModel().getUnit(),loadDialog.getSelectedModel().getUnit());
-            } catch (CloneNotSupportedException f) {
-                            f.printStackTrace(System.out);
-                        }
-                        
-            loadDialog.dispose();
-            loadDialog=null;
-                        
-            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.RENAME_UNIT));
-            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.SELECT_UNIT));
-            getUnitComponent().getModel().setActiveUnit(getUnitComponent().getModel().getUnit().getUUID());
-                        
-                        //***refresh scrollbars
-            getUnitComponent().componentResized(null);             
-            getUnitComponent().Repaint();
-            
-                        //position on center
-            Box r=getUnitComponent().getModel().getUnit().getBoundingRect();
-            getUnitComponent().setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
-            
-            getUnitComponent().requestFocusInWindow(); //***for the cancel button  
-            return;                        
+            throw new IllegalStateException("REWORK abdstract");
+//            AbstractLoadDialog.Builder builder=getUnitComponent().getLoadDialogBuilder();
+//            AbstractLoadDialog loadDialog =builder.setWindow(getUnitComponent().getDialogFrame().getParentFrame()).setCaption("Load "+getUnitComponent().getModel().getUnit().toString()).setEnabled(true).build();
+//            
+//            loadDialog.pack();
+//            loadDialog.setLocationRelativeTo(null); //centers on screen
+//            loadDialog.setVisible(true);
+//
+//            if(loadDialog.getSelectedModel()==null||loadDialog.getSelectedModel().getUnit()==null){
+//                loadDialog.dispose();
+//                loadDialog=null;
+//                return;
+//            }
+//            UnitMgr unitMgr=new UnitMgr();
+//            try {
+//                unitMgr.Load(getUnitComponent().getModel().getUnit(),loadDialog.getSelectedModel().getUnit());
+//            } catch (CloneNotSupportedException f) {
+//                            f.printStackTrace(System.out);
+//                        }
+//                        
+//            loadDialog.dispose();
+//            loadDialog=null;
+//                        
+//            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.RENAME_UNIT));
+//            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.SELECT_UNIT));
+//            getUnitComponent().getModel().setActiveUnit(getUnitComponent().getModel().getUnit().getUUID());
+//                        
+//                        //***refresh scrollbars
+//            getUnitComponent().componentResized(null);             
+//            getUnitComponent().Repaint();
+//            
+//                        //position on center
+//            Box r=getUnitComponent().getModel().getUnit().getBoundingRect();
+//            getUnitComponent().setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+//            
+//            getUnitComponent().requestFocusInWindow(); //***for the cancel button  
+//            return;                        
         }           
         
     }

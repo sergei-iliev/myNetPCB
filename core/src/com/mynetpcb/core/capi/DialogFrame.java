@@ -1,6 +1,6 @@
 package com.mynetpcb.core.capi;
 
-import java.awt.Window;
+import java.awt.Component;
 
 import javax.swing.JRootPane;
 import javax.swing.JScrollBar;
@@ -16,7 +16,7 @@ public interface DialogFrame {
      *Get parents frame, applets need it
      * @return
      */
-    public Window getParentFrame();
+    public Component getParentFrame();
 
     public JRootPane getRootPane();
 

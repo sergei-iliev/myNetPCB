@@ -11,7 +11,7 @@ import com.mynetpcb.core.capi.io.remote.WriteConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.dialog.save.AbstractSaveDialog;
 
-import java.awt.Window;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JComboBox;
@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 
 public class BoardSaveDialog extends AbstractSaveDialog{
     
-    public BoardSaveDialog(Window owner,UnitComponent component,boolean isonline) {
+    public BoardSaveDialog(Frame owner,UnitComponent component,boolean isonline) {
         super(owner,component,"Save", isonline);
     }
     

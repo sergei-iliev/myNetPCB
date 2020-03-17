@@ -114,7 +114,7 @@ public final class BoardMgr extends UnitMgr {
         alignBlock(copy.getUnit().getGrid(),copy.getUnit().getShapes());
         
         FootprintInlineEditorDialog footprintEditorDialog =
-            new FootprintInlineEditorDialog(unitComponent.getDialogFrame().getParentFrame(), "Footprint Inline Editor",copy);
+            new FootprintInlineEditorDialog(null, "Footprint Inline Editor",copy);
         footprintEditorDialog.pack();
         footprintEditorDialog.setLocationRelativeTo(null); //centers on screen
         footprintEditorDialog.setFocusable(true);

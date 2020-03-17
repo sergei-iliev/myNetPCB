@@ -13,7 +13,7 @@ import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.dialog.save.AbstractSaveDialog;
 import com.mynetpcb.core.utils.Utilities;
 
-import java.awt.Window;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class FootprintSaveDialog extends AbstractSaveDialog {
-    public FootprintSaveDialog(Window owner, UnitComponent component,boolean isonline) {
+    public FootprintSaveDialog(Frame owner, UnitComponent component,boolean isonline) {
         super(owner, component, "Save",isonline);
     }
 

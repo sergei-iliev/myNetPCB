@@ -10,7 +10,6 @@ import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.pad.component.FootprintComponent;
-import com.mynetpcb.pad.dialog.save.FootprintSaveDialog;
 import com.mynetpcb.pad.unit.FootprintMgr;
 
 import java.awt.event.ActionEvent;
@@ -103,7 +102,7 @@ public class FootprintPopupMenu extends AbstractPopupItemsContainer<FootprintCom
     
     public void actionPerformed(ActionEvent e) { 
         if(e.getActionCommand().equals("addtolocallibrary")){
-          new FootprintSaveDialog(this.getUnitComponent().getDialogFrame().getParentFrame(), this.getUnitComponent(),false).build();
+          //new FootprintSaveDialog(this.getUnitComponent().getDialogFrame().getParentFrame(), this.getUnitComponent(),false).build();
           return;  
         }
         if(e.getActionCommand().equalsIgnoreCase("sendtoback")){

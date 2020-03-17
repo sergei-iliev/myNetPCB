@@ -8,6 +8,7 @@ import java.awt.Window;
 
 import javax.swing.JDialog;
 
+@Deprecated
 public abstract class AbstractLoadDialog extends JDialog{
    
     public AbstractLoadDialog(Window owner, String title, Dialog.ModalityType modalityType){

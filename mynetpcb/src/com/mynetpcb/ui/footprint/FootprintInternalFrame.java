@@ -1,5 +1,4 @@
-package com.mynetpcb.pad.dialog;
-
+package com.mynetpcb.ui.footprint;
 
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
@@ -29,27 +28,22 @@ import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.container.FootprintContainer;
-import com.mynetpcb.pad.dialog.panel.FootprintsPanel;
+import com.mynetpcb.pad.dialog.FootprintLoadDialog;
 import com.mynetpcb.pad.dialog.save.FootprintSaveDialog;
 import com.mynetpcb.pad.unit.Footprint;
 import com.mynetpcb.pad.unit.FootprintMgr;
+import com.mynetpcb.ui.AbstractInternalFrame;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import java.util.Collection;
 
@@ -58,20 +52,18 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
-import javax.swing.WindowConstants;
 
-@Deprecated
-public class FootprintEditorDialog extends JDialog implements DialogFrame,CommandListener, ActionListener {
-
+public class FootprintInternalFrame extends AbstractInternalFrame implements DialogFrame,CommandListener,ActionListener{
+    
     protected FootprintComponent footprintComponent;
     private JPanel basePanel;
 
-    private FootprintsPanel footprintsPanel;
+    private com.mynetpcb.pad.dialog.panel.FootprintsPanel footprintsPanel;
     private JPanel footprintBasePanel = new JPanel(new GridBagLayout());
     private GridBagConstraints gridBagConstraints = new GridBagConstraints();
     private JScrollBar vbar = new JScrollBar(JScrollBar.VERTICAL);
@@ -107,21 +99,17 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame,Comman
     private JPanel SouthPanel = new JPanel();
     private JPanel leftButtonGroupPanel = new JPanel();
 
-    public FootprintEditorDialog(Window f, String caption) {
-       this(f,caption,null);
+    public FootprintInternalFrame() {
+       this(null);
     }
-    public FootprintEditorDialog(Window f, String Caption,FootprintContainer footprintContainer) {
-        super(f, Caption, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        this.setResizable(true);
-        Init();
-        //set size
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setPreferredSize(new Dimension((int)(2*screenSize.getWidth()/3),(int)(2*screenSize.getHeight()/3)));
+    public FootprintInternalFrame(FootprintContainer footprintContainer) {
+        super("Footprints");
+
+        init();
         
         LoadFootprints(footprintContainer); 
     }
-    private void Init() {
+    private void init() {
         Container content = this.getContentPane();
         this.setPreferredSize(new Dimension(750, 600));
         basePanel = new JPanel();
@@ -129,7 +117,7 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame,Comman
 
 
         footprintComponent = new FootprintComponent(this);
-        footprintsPanel = new FootprintsPanel(footprintComponent);
+        footprintsPanel = new com.mynetpcb.pad.dialog.panel.FootprintsPanel(footprintComponent);
 
         footprintComponent.setPreferredSize(new Dimension(700, 500));
         footprintComponent.addContainerListener(footprintsPanel);
@@ -341,45 +329,12 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame,Comman
 
         content.add(basePanel); // Add components to the content
 
-        addWindowListener(new WindowAdapter() {
-
-            public void windowClosing(WindowEvent e) {
-exit();
-            }
-        });
 
     }
-
-    @Override
-    public Frame getParentFrame() {
-        return null;
-    }
-
-    @Override
-    public JScrollBar getVerticalScrollBar() {
-        return vbar;
-    }
-
-    @Override
-    public JScrollBar getHorizontalScrollBar() {
-        return hbar;
-    }
-
-    @Override
-    public void setButtonGroup(int requestedMode) {
-        if (requestedMode == Mode.COMPONENT_MODE) {
-            group.setSelected(SelectionButton.getModel(), true);
-        }
-        
-        if(requestedMode==Mode.LINE_MODE){
-            group.setSelected(LineButton.getModel(), true);            
-        }
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("exit")){
-            exit();
+            this.exit();
             return;
         }
         if (e.getActionCommand().equals("Create")) {
@@ -403,7 +358,7 @@ exit();
             footprintComponent.getModel().fireUnitEvent(new UnitEvent(footprint, UnitEvent.SELECT_UNIT));
             footprintComponent.Repaint();
         }
-        if (e.getSource()==LoadButton) {
+        if (e.getSource()==LoadButton) {            
                         AbstractLoadDialog.Builder builder=new FootprintLoadDialog.Builder();
                         AbstractLoadDialog footprintLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Footprint").setEnabled(false).build();
 
@@ -572,6 +527,32 @@ exit();
         if (e.getSource()==MeasureButton) {
             footprintComponent.setMode(Mode.MEASUMENT_MODE);
         }
+        
+    }
+    @Override
+    public JFrame getParentFrame() {
+        return  (JFrame)this.getDesktopPane().getRootPane().getParent();
+    }
+
+    @Override
+    public JScrollBar getVerticalScrollBar() {
+        return vbar;
+    }
+
+    @Override
+    public JScrollBar getHorizontalScrollBar() {
+        return hbar;
+    }
+
+    @Override
+    public void setButtonGroup(int requestedMode) {
+        if (requestedMode == Mode.COMPONENT_MODE) {
+            group.setSelected(SelectionButton.getModel(), true);
+        }
+        
+        if(requestedMode==Mode.LINE_MODE){
+            group.setSelected(LineButton.getModel(), true);            
+        }
     }
     @Override
     public void OnStart(Class<?> receiver) {
@@ -595,89 +576,76 @@ exit();
 
     @Override
     public void OnError(String message) {
-    }    
-
-/**
-     *Create,load footprint
-     * @param source 
-     */
-    private void LoadFootprints(FootprintContainer source) {
-        footprintComponent.clear();
-        footprintComponent.setMode(Mode.COMPONENT_MODE);
-        if(source==null){
-            Footprint footprint=new Footprint((int)Grid.MM_TO_COORD(50),(int)Grid.MM_TO_COORD(50)); 
-            footprintComponent.getModel().add(footprint);
-        }else{
-        for (Footprint footprint : source.getUnits()) {
-            try {
-                Footprint copy = footprint.clone();
-                copy.getScalableTransformation().reset(0.5,10,4,13);
-                footprintComponent.getModel().add(copy);
-                copy.notifyListeners(ShapeEvent.ADD_SHAPE);
-            } catch (CloneNotSupportedException f) {
-                f.printStackTrace(System.out);
+    }        
+    /**
+         *Create,load footprint
+         * @param source 
+         */
+        private void LoadFootprints(FootprintContainer source) {
+            footprintComponent.clear();
+            footprintComponent.setMode(Mode.COMPONENT_MODE);
+            if(source==null){
+                Footprint footprint=new Footprint((int)Grid.MM_TO_COORD(50),(int)Grid.MM_TO_COORD(50)); 
+                footprintComponent.getModel().add(footprint);
+            }else{
+            for (Footprint footprint : source.getUnits()) {
+                try {
+                    Footprint copy = footprint.clone();
+                    copy.getScalableTransformation().reset(0.5,10,4,13);
+                    footprintComponent.getModel().add(copy);
+                    copy.notifyListeners(ShapeEvent.ADD_SHAPE);
+                } catch (CloneNotSupportedException f) {
+                    f.printStackTrace(System.out);
+                }
             }
+            }
+            footprintComponent.getModel().setLibraryName(source!=null?source.getLibraryName():"");
+            footprintComponent.getModel().setCategoryName(source!=null?source.getCategoryName():"");
+            footprintComponent.getModel().setFileName(source!=null?source.getFileName():"Footprints");
+            footprintComponent.getModel().setDesignerName(source!=null?source.getDesignerName():"");
+            footprintComponent.getModel().setActiveUnit(0);
+            footprintComponent.componentResized(null);
+            footprintComponent.getModel().getUnit().setSelected(false);
+            footprintComponent.fireContainerEvent(new ContainerEvent(null, ContainerEvent.RENAME_CONTAINER));
+            footprintComponent.getModel().fireUnitEvent(new UnitEvent(footprintComponent.getModel().getUnit(),
+                                                                      UnitEvent.SELECT_UNIT));
+
+            //align to grid in board in-line editing
+            FootprintMgr.getInstance().alignBlock(footprintComponent.getModel().getUnit().getGrid(), footprintComponent.getModel().getUnit().getShapes());
+
+            //position all to symbol center
+            for(Unit unit:footprintComponent.getModel().getUnits()){
+                com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
+                com.mynetpcb.d2.shapes.Point pt=r.min.clone();
+                pt.scale(unit.getScalableTransformation().getCurrentTransformation().getScaleX());            
+                unit.setScrollPositionValue((int)pt.x,(int)pt.y);            
+            }
+            //position to symbol center
+            com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getBoundingRect();
+            footprintComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+
+            //remember state
+            footprintComponent.getModel().registerInitialState();
+            footprintComponent.Repaint();
         }
-        }
-        footprintComponent.getModel().setLibraryName(source!=null?source.getLibraryName():"");
-        footprintComponent.getModel().setCategoryName(source!=null?source.getCategoryName():"");
-        footprintComponent.getModel().setFileName(source!=null?source.getFileName():"Footprints");
-        footprintComponent.getModel().setDesignerName(source!=null?source.getDesignerName():"");
-        footprintComponent.getModel().setActiveUnit(0);
-        footprintComponent.componentResized(null);
-        footprintComponent.getModel().getUnit().setSelected(false);
-        footprintComponent.fireContainerEvent(new ContainerEvent(null, ContainerEvent.RENAME_CONTAINER));
-        footprintComponent.getModel().fireUnitEvent(new UnitEvent(footprintComponent.getModel().getUnit(),
-                                                                  UnitEvent.SELECT_UNIT));
-
-        //align to grid in board in-line editing
-        FootprintMgr.getInstance().alignBlock(footprintComponent.getModel().getUnit().getGrid(), footprintComponent.getModel().getUnit().getShapes());
-
-        //position all to symbol center
-        for(Unit unit:footprintComponent.getModel().getUnits()){
-            com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
-            com.mynetpcb.d2.shapes.Point pt=r.min.clone();
-            pt.scale(unit.getScalableTransformation().getCurrentTransformation().getScaleX());            
-            unit.setScrollPositionValue((int)pt.x,(int)pt.y);            
-        }
-        //position to symbol center
-        com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getBoundingRect();
-        footprintComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
-
-        //remember state
-        footprintComponent.getModel().registerInitialState();
-        footprintComponent.Repaint();
-    }
-
-    private void exit(){
+    public boolean exit(){
         if(footprintComponent.getModel().isChanged()){
-            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(FootprintEditorDialog.this, "There is a changed element.Do you want to close?", "Close", JOptionPane.YES_NO_OPTION)) {
-                return;
+            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(this, "There is a changed element.Do you want to close?", "Close", JOptionPane.YES_NO_OPTION)) {
+                return false;
             }
         }
         footprintComponent.release();
-        FootprintEditorDialog.this.dispose();
+        this.dispose();
+        return true;
     }
-    public static void main(String[] args) {
-        //***initialize configuration
-        Configuration.Initilize(false);
-        Configuration.get().read();
-        //*****************Footprint editor
-        final FootprintEditorDialog f = new FootprintEditorDialog(null, "Footprint Editor");
-        f.setPreferredSize(new Dimension(730, 600));
-        f.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-        f.addWindowListener(new WindowAdapter() {
-            public void windowActivated(WindowEvent e) {
+//
+//    @Override
+//    public void vetoableChange(PropertyChangeEvent event) throws PropertyVetoException {
+//        if(event.getPropertyName().equals(IS_CLOSED_PROPERTY)||event.getPropertyName().equals(IS_ICON_PROPERTY)){
+//            if(!exit()){ 
+//               throw new PropertyVetoException("Cancelled",null);
+//            }
+//        }
+//    }
 
-            }
-        });
-        f.pack();
-        f.setVisible(true);
-
-
-    }
 }
