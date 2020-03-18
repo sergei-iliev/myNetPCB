@@ -41,9 +41,10 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import java.security.AccessControlException;
 
 import java.util.Collection;
 
@@ -214,7 +215,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         AddFootprintButton.setPreferredSize(new Dimension(35, 35));
         AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
         AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
-                           addSeparator().addMenu("Export to Clipboard","export.clipboard").
+                           addSeparator().addMenu("Export to Clipboard","clipboard.export").
                            addSeparator().addMenu("Exit","exit"); 
         
         PrintButton.addActionListener(this);
@@ -386,8 +387,16 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
             return;
         }
         
-        if(e.getActionCommand().equals("export.clipboard")){            
-            ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.SYSTEM, new StringSelection(footprintComponent.getModel().format().toString()));
+        if(e.getActionCommand().equals("clipboard.export")){            
+            try {
+                ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.SYSTEM,
+                                                               footprintComponent.getModel().createClipboardContent());
+            } catch (AccessControlException ace) {
+                JOptionPane.showMessageDialog(this.getParentFrame(),
+                                              "You need to use the signed applet version.",
+                                              "Security exception", JOptionPane.ERROR_MESSAGE);
+            }
+            return;
         }
         
         if (e.getActionCommand().equals("Save")||e.getActionCommand().equals("SaveAs")) {

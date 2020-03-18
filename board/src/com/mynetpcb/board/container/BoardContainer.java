@@ -27,7 +27,6 @@ public class BoardContainer extends UnitContainer<Board, Shape>{
     public BoardContainer() {
         setFileName("Boards");
     }
-
     @Override
     public StringBuffer format() {
         //***go through all circuits and invoke format on them

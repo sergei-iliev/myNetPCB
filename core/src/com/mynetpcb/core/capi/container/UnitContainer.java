@@ -2,6 +2,7 @@ package com.mynetpcb.core.capi.container;
 
 
 import com.mynetpcb.core.capi.Changeable;
+import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeEventDispatcher;
 import com.mynetpcb.core.capi.event.ShapeListener;
@@ -13,6 +14,9 @@ import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 
 import java.io.IOException;
 
@@ -34,7 +38,7 @@ import org.xml.sax.SAXException;
 
 
 public abstract class UnitContainer<T extends Unit, S extends Shape> implements UnitEventDispatcher,
-                                                                                ShapeEventDispatcher,Changeable {
+                                                                                ShapeEventDispatcher,Changeable,Clipboardable {
     private T unit;
 
     private Map<UUID, T> unitsMap;
@@ -340,6 +344,14 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         if(!unitsMap.containsKey(target.getKey())){
             unitsMap.put(target.getKey(), target.getValue()); 
         }
+        
+    }
+    
+    public  Transferable createClipboardContent(){        
+        return new StringSelection(this.format().toString());
+    }
+    
+    public  void realizeClipboardContent(Transferable transferable){
         
     }
 }

@@ -14,6 +14,8 @@ import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
+import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
@@ -53,6 +55,8 @@ import java.awt.event.ActionListener;
 
 import java.io.File;
 import java.io.IOException;
+
+import java.security.AccessControlException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -261,7 +265,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         AddBoardButton.setPreferredSize(new Dimension(35, 35));
         AddBoardButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
         AddBoardButton.addMenu("Create new boards project","Create").addMenu("Add board to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
-            .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Gerber RS-274X/X2", "export.gerber").addSeparator().addMenu("Exit","exit");
+            .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSubMenu("export","Gerber RS-274X/X2", "export.gerber").addSeparator().addMenu("Exit","exit");
     
         PrintButton.addActionListener(this);
         PrintButton.setToolTipText("Print footprint");
@@ -440,6 +444,17 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         }
         
         if (boardComponent.getModel().getUnit() == null) {
+            return;
+        }
+        if (e.getActionCommand().equals("clipboard.export")) {
+            try {
+                ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.SYSTEM,
+                                                               boardComponent.getModel().createClipboardContent());
+            } catch (AccessControlException ace) {
+                JOptionPane.showMessageDialog(this.getParentFrame(),
+                                              "You need to use the signed applet version.",
+                                              "Security exception", JOptionPane.ERROR_MESSAGE);
+            }
             return;
         }
         if (e.getActionCommand().equals("export.xml")) {
