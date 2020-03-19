@@ -763,4 +763,8 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         return true;
     }
 
+    @Override
+    public boolean isChanged() {
+        return boardComponent.getModel().isChanged();
+    }
 }

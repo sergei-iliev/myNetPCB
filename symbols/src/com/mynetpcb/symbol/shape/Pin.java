@@ -1,13 +1,15 @@
 package com.mynetpcb.symbol.shape;
 
 
-import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.PinLineable;
+
 import com.mynetpcb.core.capi.Pinable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.pin.CompositePinable;
+import com.mynetpcb.core.capi.pin.PinLineable;
+import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.ChipText;
@@ -36,11 +38,13 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.StringTokenizer;
 
+import jdk.internal.util.xml.impl.Pair;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 
-public class Pin extends Shape implements PinLineable, Textable, Externalizable {
+public class Pin extends Shape {
 
     public enum Type {
         SIMPLE,
@@ -63,16 +67,14 @@ public class Pin extends Shape implements PinLineable, Textable, Externalizable 
 
     private Pair points;
 
-    private Orientation orientation;
+    private Pinable.Orientation orientation;
 
     private Type type;
 
-    private ChipText text;
-
     private Style style;
 
-    public Pin(int x, int y) {
-        super(x, y, 0, 0, 1, 0);
+    public Pin() {
+        super(0, 0, 0, 0, 1, 0);
         //startPoint = new Point(x, y);
         orientation = Pinable.Orientation.WEST;
         type = Type.COMPLEX;
@@ -82,11 +84,6 @@ public class Pin extends Shape implements PinLineable, Textable, Externalizable 
         text.setFillColor(Color.BLACK);
         this.style = Style.LINE;
         points = new Pair();
-    }
-
-    public Pin() {
-        this(0, 0);
-
     }
 
     @Override

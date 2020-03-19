@@ -335,7 +335,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("exit")){
-            this.exit();
+            exit();
             return;
         }
         if (e.getActionCommand().equals("Create")) {
@@ -647,14 +647,10 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         this.dispose();
         return true;
     }
-//
-//    @Override
-//    public void vetoableChange(PropertyChangeEvent event) throws PropertyVetoException {
-//        if(event.getPropertyName().equals(IS_CLOSED_PROPERTY)||event.getPropertyName().equals(IS_ICON_PROPERTY)){
-//            if(!exit()){ 
-//               throw new PropertyVetoException("Cancelled",null);
-//            }
-//        }
-//    }
 
+
+    @Override
+    public boolean isChanged() {
+        return footprintComponent.getModel().isChanged();    
+    }
 }

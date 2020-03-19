@@ -3,48 +3,84 @@ package com.mynetpcb.ui;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.ui.board.BoardInternalFrame;
 import com.mynetpcb.ui.footprint.FootprintInternalFrame;
+import com.mynetpcb.ui.myNetPCB.MainFrameListener;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-public class MainPanel extends JPanel implements InternalFrameListener, ActionListener{
+public class MainPanel extends JPanel implements InternalFrameListener,MainFrameListener, ActionListener{
     
     private final JDesktopPane desktop;
     private JButton footprintButton,boardButton;
+    private AbstractInternalFrame selectedFrame;
     
     public MainPanel(JDesktopPane desktop) {
         this.desktop=desktop;       
-        setLayout(new GridLayout(4,1));      
+        setLayout(new GridBagLayout());      
         init();
     }
-    
     private void init(){
-        //first row
-        JPanel  firstRowPanel=new JPanel(new GridLayout(1, 1));
-        firstRowPanel.setBackground(Color.white);
-        //JPanel controlButtonsPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        //JButton b=new JButton("Symbols");
-        //controlButtonsPanel.add(b);
-        //firstRowPanel.add(controlButtonsPanel);
-        this.add(firstRowPanel);
+        GridBagConstraints c = new GridBagConstraints();
+         
+        /*HEADER*/
+        JPanel header=createHeader();
         
-        JPanel  secondRowPanel=new JPanel(new GridLayout(1, 1));
-        secondRowPanel.setBackground(Color.white);
-        this.add(secondRowPanel);
-        
-        //third row
-        JPanel  thirdRowPanel=new JPanel(new GridLayout(1, 4));
+        c.fill = GridBagConstraints.BOTH;
+        c.ipady = 40;      //make this component tall
+        c.weightx = 1.0;
+        c.weighty=3;
+        c.gridwidth = 3;
+        c.gridx = 0;
+        c.gridy = 0;
+        this.add(header, c);
+         
+        /*BODY*/
+        JPanel body=createBody();         
+  
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty=1;
+        c.gridwidth = 3;
+        c.gridx = 0;
+        c.gridy = 1;
+        this.add(body, c);
+         
+        /*FOOTER*/
+        JPanel footer=createFooter(); 
+        c.fill = GridBagConstraints.BOTH;
+        c.ipady = 40;      //make this component tall
+        c.weightx = 0.0;
+        c.weighty=1;
+        c.gridwidth = 3;
+        c.gridx = 1;
+        c.gridy = 2;
+        this.add(footer, c);        
+    }
+    private JPanel createFooter(){
+        JPanel  forthRowPanel=new JPanel(new GridLayout(1, 1));
+        forthRowPanel.setBackground(Color.white);
+        return forthRowPanel;
+    }
+    private JPanel createBody(){
+        JPanel  thirdRowPanel=new JPanel(new GridLayout(1,4));
         JPanel symbolsPanel=new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
         symbolsPanel.setBorder(new EmptyBorder(0,0,0,0));
         symbolsPanel.setBackground(Color.white);  
@@ -94,30 +130,59 @@ public class MainPanel extends JPanel implements InternalFrameListener, ActionLi
         boardButton.setBackground(Color.white);
         boardButton.setPreferredSize(new Dimension(143,130));
         boardPanel.add(boardButton);        
-        thirdRowPanel.add(boardPanel);          
-        
-        this.add(thirdRowPanel);
-        
-        JPanel  forthRowPanel=new JPanel(new GridLayout(1, 1));
-        forthRowPanel.setBackground(Color.white);
-        this.add(forthRowPanel);
+        thirdRowPanel.add(boardPanel); 
+        return thirdRowPanel;
     }
+    private JPanel createHeader(){
+        JPanel  firstRowPanel=new JPanel(new BorderLayout());
+        firstRowPanel.setBackground(Color.white);
+        
+        JPanel panel=new JPanel();
+        panel.setBackground(Color.white);
+        firstRowPanel.add(panel,BorderLayout.WEST);
+        
+        JPanel background=new JPanel();
+     
+        background.setBorder(new EmptyBorder(90, 90, 90, 90));
+        background.setBackground(Color.white);
+        background.setLayout(new BoxLayout(background, BoxLayout.Y_AXIS));
+  
+        
+        JLabel title=new JLabel("Create Design Innovate");
+        title.setFont(title.getFont().deriveFont(50.0f));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        background.add(title,BorderLayout.CENTER);
+        
+        title=new JLabel("Free and open-source schematic capture and pcb design tool");
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        title.setFont(title.getFont().deriveFont(15.0f));
+        background.add(title,BorderLayout.CENTER);
+        
+        
+        firstRowPanel.add(background,BorderLayout.CENTER);
+        
+        panel=new JPanel();
+        panel.setBackground(Color.white);
+        firstRowPanel.add(panel,BorderLayout.EAST); 
+        return firstRowPanel;
+    }
+
     @Override
     public void actionPerformed(ActionEvent event) {
         
         if(event.getSource()==footprintButton){
-            FootprintInternalFrame frame=new FootprintInternalFrame();
-            frame.setVisible(true); //necessary as of 1.3            
+            selectedFrame=new FootprintInternalFrame();
+            selectedFrame.setVisible(true); //necessary as of 1.3            
             desktop.removeAll();
-            desktop.add(frame);
-            frame.addInternalFrameListener(this);
+            desktop.add(selectedFrame);
+            selectedFrame.addInternalFrameListener(this);            
         }
         if(event.getSource()==boardButton){
-            BoardInternalFrame frame=new BoardInternalFrame();
-            frame.setVisible(true); //necessary as of 1.3            
+            selectedFrame =new BoardInternalFrame();
+            selectedFrame.setVisible(true); //necessary as of 1.3            
             desktop.removeAll();
-            desktop.add(frame);
-            frame.addInternalFrameListener(this);
+            desktop.add(selectedFrame);
+            selectedFrame.addInternalFrameListener(this);
         }        
     }
     
@@ -133,12 +198,14 @@ public class MainPanel extends JPanel implements InternalFrameListener, ActionLi
 
     @Override
     public void internalFrameClosed(InternalFrameEvent internalFrameEvent) {
+        selectedFrame=null;
         desktop.removeAll();
         desktop.add(this);
     }
 
     @Override
     public void internalFrameIconified(InternalFrameEvent internalFrameEvent) {
+        selectedFrame=null;        
         desktop.removeAll();
         desktop.add(this);
     }
@@ -158,4 +225,14 @@ public class MainPanel extends JPanel implements InternalFrameListener, ActionLi
         // TODO Implement this method
     }
 
+    @Override
+    public void onMainFrameClose() {
+            if(selectedFrame!=null&&selectedFrame.isChanged()){                        
+                if (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(this, "There is a changed circuit.Do you want to close?", "Close", JOptionPane.YES_NO_OPTION)) {                                                           
+                    System.exit(0);
+                }                      
+            }else{  
+                   System.exit(0);
+            }   
+    }
 }

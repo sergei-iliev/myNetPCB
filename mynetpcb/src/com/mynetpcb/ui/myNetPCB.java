@@ -6,21 +6,29 @@ import com.mynetpcb.core.capi.config.Configuration;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 // Author:      Sergey Iliev
 // Copyright:   (c) 2013 Sergey Iliev <sergei_iliev@yahoo.com>
 // Licence:     myNetPCB licence
 
-public class myNetPCB extends JFrame{
+public class myNetPCB extends JFrame {
+    
+    public interface MainFrameListener{
+        void onMainFrameClose();
+    }
     
     private MainPanel mainPanel;
+    private JDesktopPane desktop;
     
     public myNetPCB() {
         super("myNetPCB");
- 
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
         int inset = 50;
@@ -36,9 +44,11 @@ public class myNetPCB extends JFrame{
         mainPanel= new MainPanel(desktop);        
         desktop.add(mainPanel);
         
-        //createFrame(); //create first "window"
-        //Make dragging a little faster but perhaps uglier.
-        //desktop.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+        this.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {              
+                   mainPanel.onMainFrameClose(); 
+                }
+            });
     }
  
 //    protected JMenuBar createMenuBar() {
@@ -122,12 +132,6 @@ public class myNetPCB extends JFrame{
 //        } catch (java.beans.PropertyVetoException e) {}
 //    }
  
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
-     */
-
  
     public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
@@ -143,7 +147,6 @@ public class myNetPCB extends JFrame{
                 
                 //Create and set up the window.
                 myNetPCB frame = new myNetPCB();
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 
                 //Display the window.
                 frame.setVisible(true);

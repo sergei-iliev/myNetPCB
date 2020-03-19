@@ -19,6 +19,8 @@ public abstract class AbstractInternalFrame extends JInternalFrame implements Ve
     }
     public abstract boolean exit();
     
+    public abstract boolean isChanged();
+    
     @Override
     public void vetoableChange(PropertyChangeEvent event) throws PropertyVetoException {
         if(event.getPropertyName().equals(IS_CLOSED_PROPERTY)||event.getPropertyName().equals(IS_ICON_PROPERTY)){
