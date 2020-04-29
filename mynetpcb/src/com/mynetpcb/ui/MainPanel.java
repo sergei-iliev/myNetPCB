@@ -4,6 +4,7 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.ui.board.BoardInternalFrame;
 import com.mynetpcb.ui.footprint.FootprintInternalFrame;
 import com.mynetpcb.ui.myNetPCB.MainFrameListener;
+import com.mynetpcb.ui.symbol.SymbolInternalFrame;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,7 +30,7 @@ import javax.swing.event.InternalFrameListener;
 public class MainPanel extends JPanel implements InternalFrameListener,MainFrameListener, ActionListener{
     
     private final JDesktopPane desktop;
-    private JButton footprintButton,boardButton;
+    private JButton symbolButton,footprintButton,boardButton;
     private AbstractInternalFrame selectedFrame;
     
     public MainPanel(JDesktopPane desktop) {
@@ -85,12 +86,13 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         symbolsPanel.setBorder(new EmptyBorder(0,0,0,0));
         symbolsPanel.setBackground(Color.white);  
         
-        JButton button=new JButton();
-        button.setIcon(Utilities.loadImageIcon(this, 
+        symbolButton=new JButton();
+        symbolButton.addActionListener(this);
+        symbolButton.setIcon(Utilities.loadImageIcon(this, 
                                                     "/com/mynetpcb/core/images/symbol_icon.png"));
-        button.setBackground(Color.white);
-        button.setPreferredSize(new Dimension(130,130));
-        symbolsPanel.add(button);
+        symbolButton.setBackground(Color.white);
+        symbolButton.setPreferredSize(new Dimension(130,130));
+        symbolsPanel.add(symbolButton);
         thirdRowPanel.add(symbolsPanel);
         
         JPanel padsPanel=new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
@@ -111,7 +113,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         circuitPanel.setBorder(new EmptyBorder(0,0,0,0));
         circuitPanel.setBackground(Color.white);        
         
-        button=new JButton();
+        JButton button=new JButton();
         button.setIcon(Utilities.loadImageIcon(this, 
                                                     "/com/mynetpcb/core/images/circuit_icon.png"));
         button.setBackground(Color.white);
@@ -183,7 +185,14 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
             desktop.removeAll();
             desktop.add(selectedFrame);
             selectedFrame.addInternalFrameListener(this);
-        }        
+        }   
+        if(event.getSource()==symbolButton){
+            selectedFrame =new SymbolInternalFrame();
+            selectedFrame.setVisible(true); //necessary as of 1.3            
+            desktop.removeAll();
+            desktop.add(selectedFrame);
+            selectedFrame.addInternalFrameListener(this);
+        }         
     }
     
     @Override

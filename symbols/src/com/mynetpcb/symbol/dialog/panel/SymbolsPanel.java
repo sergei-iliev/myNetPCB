@@ -1,19 +1,18 @@
 package com.mynetpcb.symbol.dialog.panel;
 
-
-import com.mynetpcb.core.capi.tree.TreeNodeData;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeListener;
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.event.UnitListener;
+import com.mynetpcb.core.capi.tree.TreeNodeData;
 import com.mynetpcb.core.capi.tree.UnitTreeCellRenderer;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.symbol.component.SymbolComponent;
 
 import java.awt.BorderLayout;
-import java.awt.Rectangle;
 
 import java.util.UUID;
 
@@ -26,7 +25,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 
 public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitListener, ShapeListener,
                                                     ContainerListener {
@@ -91,11 +89,11 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
                 symbolInspector.selectShapeEvent(new ShapeEvent(symbolComponent.getModel().getUnit().getShape(data.getUUID()),
                                                                                    ShapeEvent.SELECT_SHAPE));
                 //***position on a symbol
-                Rectangle symbolRect = symbolComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape().getBounds();
-                symbolComponent.setScrollPosition(symbolRect.x, symbolRect.y);
+                Box symbolRect=symbolComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
+                symbolComponent.setScrollPosition((int)symbolRect.min.x, (int)symbolRect.min.y);
             } else { //click on unit
-                symbolComponent.getModel().getUnit().setScrollPositionValue(symbolComponent.getViewportWindow().x,
-                                                                            symbolComponent.getViewportWindow().y);
+                symbolComponent.getModel().getUnit().setScrollPositionValue((int)symbolComponent.getViewportWindow().getX(),(int)symbolComponent.getViewportWindow().getY());                 
+
                 symbolComponent.getModel().setActiveUnit(data.getUUID());
                 symbolComponent.getModel().getUnit().setSelected(false);
                 symbolComponent.componentResized(null);
@@ -319,5 +317,5 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
             footprintsTree.addTreeSelectionListener(this);
         }
     }
-
 }
+

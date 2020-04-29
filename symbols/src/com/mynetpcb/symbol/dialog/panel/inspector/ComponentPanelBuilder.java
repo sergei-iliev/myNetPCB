@@ -1,13 +1,10 @@
 package com.mynetpcb.symbol.dialog.panel.inspector;
 
-
 import com.mynetpcb.core.capi.Typeable;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.symbol.component.SymbolComponent;
-
-import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -20,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-
 
 public class ComponentPanelBuilder extends AbstractPanelBuilder<Shape>{
     

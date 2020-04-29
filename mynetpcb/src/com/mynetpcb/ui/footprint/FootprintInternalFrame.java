@@ -108,7 +108,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
 
         init();
         
-        LoadFootprints(footprintContainer); 
+        loadFootprints(footprintContainer); 
     }
     private void init() {
         Container content = this.getContentPane();
@@ -372,7 +372,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
                           return;
                         }
             
-                        LoadFootprints((FootprintContainer)footprintLoadDialog.getSelectedModel());
+                        loadFootprints((FootprintContainer)footprintLoadDialog.getSelectedModel());
             
                         footprintLoadDialog.dispose();
                         footprintLoadDialog=null;
@@ -590,7 +590,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
          *Create,load footprint
          * @param source 
          */
-        private void LoadFootprints(FootprintContainer source) {
+        private void loadFootprints(FootprintContainer source) {
             footprintComponent.clear();
             footprintComponent.setMode(Mode.COMPONENT_MODE);
             if(source==null){

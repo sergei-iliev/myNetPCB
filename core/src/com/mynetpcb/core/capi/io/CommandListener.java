@@ -1,5 +1,6 @@
 package com.mynetpcb.core.capi.io;
 
+
 public interface CommandListener {
   
   public void OnStart(Class<?> reciever);

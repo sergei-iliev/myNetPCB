@@ -1,6 +1,5 @@
 package com.mynetpcb.symbol.container;
 
-
 import com.mynetpcb.core.capi.Typeable;
 import com.mynetpcb.core.capi.container.UnitContainer;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -23,24 +22,23 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-
 public class SymbolContainer extends UnitContainer<Symbol,Shape> implements Typeable{
     public SymbolContainer() {
         setFileName("Symbols");
     }
-    public StringBuffer Format() {
+    public StringBuffer format() {
         //***go through all circuits and invoke format on them
         StringBuffer xml=new StringBuffer();
         xml.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n<modules identity=\"Module\" type=\""+getType()+"\" version=\"" + VersionUtils.SYMBOL_VERSION+"\">\r\n");
         for(Symbol symbol:getUnits()){
-          xml.append(symbol.Format());
+          xml.append(symbol.format());
           xml.append("\r\n");
         }
         xml.append("</modules>");
         return xml;
     }
     
-    public void Parse(String xml) throws XPathExpressionException,ParserConfigurationException,
+    public void parse(String xml) throws XPathExpressionException,ParserConfigurationException,
                                          SAXException, IOException {   
         Document document = Utilities.buildDocument(xml);
         
@@ -74,8 +72,8 @@ public class SymbolContainer extends UnitContainer<Symbol,Shape> implements Type
                 continue;                        
              }  
             Symbol module=new Symbol(1,1);
-            module.Parse(node); 
-            Add(module);
+            module.parse(node); 
+            add(module);
          }   
         
         //set the type{SYMBOL,GROUND,POWER}
@@ -87,7 +85,7 @@ public class SymbolContainer extends UnitContainer<Symbol,Shape> implements Type
     }
     
     @Override
-    public void Parse(String xml,int index) throws XPathExpressionException,ParserConfigurationException,
+    public void parse(String xml,int index) throws XPathExpressionException,ParserConfigurationException,
                                         SAXException, IOException {
          
         Document document = Utilities.buildDocument(xml);
@@ -106,7 +104,7 @@ public class SymbolContainer extends UnitContainer<Symbol,Shape> implements Type
                continue;                        
             }  
             if(_index==index){
-               getUnit().Parse(node);
+               getUnit().parse(node);
             }
             _index++;
         }   
@@ -129,4 +127,4 @@ public class SymbolContainer extends UnitContainer<Symbol,Shape> implements Type
         }     
     }
 
-}
+    }
