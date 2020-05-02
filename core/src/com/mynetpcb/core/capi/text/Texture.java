@@ -6,6 +6,8 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 
+import java.awt.Font;
+
 import org.w3c.dom.Node;
 
 
@@ -14,6 +16,32 @@ import org.w3c.dom.Node;
  */
 public interface Texture extends Drawable,Printable,Cloneable{
     
+    public enum Style{
+        PLAIN,
+        BOLD,
+        ITALIC;
+        public static Style valueOf(int value){
+            if(value==Font.PLAIN){
+                return PLAIN;
+            }else if(value==Font.BOLD){
+                return BOLD;         
+            }else if(value==Font.ITALIC){
+                return ITALIC;
+            }
+            return PLAIN;
+        }
+    }
+    
+    public enum Orientation{
+        HORIZONTAL,
+        VERTICAL
+    }
+    public default Style getStyle(){
+        return Style.PLAIN;
+    }
+    public default void setStyle(Style style){
+        
+    }
     public boolean isEmpty();
     
     public Point getAnchorPoint();
@@ -21,7 +49,6 @@ public interface Texture extends Drawable,Printable,Cloneable{
     public String getTag();
 
     public void setTag(String tag);
-
     
     public String getText();
     

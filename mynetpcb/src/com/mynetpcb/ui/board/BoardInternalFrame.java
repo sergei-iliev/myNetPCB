@@ -344,7 +344,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         WestPanel.setLayout(new BorderLayout());
         basePanel.add(NorthPanel, BorderLayout.NORTH);
         //****EAST PANEL
-        tabbedPane.setPreferredSize(new Dimension(220, 200));
+        tabbedPane.setPreferredSize(new Dimension(250, 200));
         //***create circuit tab
         tabbedPane.addTab("Boards", boardsPanel);
         //***create symbol tab

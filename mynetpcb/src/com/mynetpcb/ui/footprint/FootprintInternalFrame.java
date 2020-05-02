@@ -290,7 +290,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         group.add(MeasureButton);
         
         EastPanel.setLayout(new BorderLayout());
-        EastPanel.setPreferredSize(new Dimension(200, 200));
+        EastPanel.setPreferredSize(new Dimension(250, 200));
 
 
         WestPanel.setLayout(new BorderLayout());
@@ -637,6 +637,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
             footprintComponent.getModel().registerInitialState();
             footprintComponent.Repaint();
         }
+    @Override
     public boolean exit(){
         if(footprintComponent.getModel().isChanged()){
             if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(this, "There is a changed element.Do you want to close?", "Close", JOptionPane.YES_NO_OPTION)) {

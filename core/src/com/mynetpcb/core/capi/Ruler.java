@@ -23,7 +23,7 @@ public class Ruler extends Shape implements Resizeable{
     
     public Ruler() {
         super(0,0);
-        text=new FontTexture("label","0",0,0,(int)Grid.MM_TO_COORD(1.2));        
+        text=new FontTexture("label","0",0,0,(int)Grid.MM_TO_COORD(1.2),0);        
         text.setFillColor(Color.WHITE);
         line=new Line(0,0,0,0);
         //text.setStyle(Font.BOLD);

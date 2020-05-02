@@ -33,5 +33,10 @@ public interface Mode {
     public static final int COPPERAREA_MODE = 15;
     
     public static final int HOLE_MODE = 16;
-
+    
+    public static final int PIN_MODE = 17;
+    
+    public static final int TRIANGLE_MODE = 18;
+    
+    public static final int ARROW_MODE = 19;
 }

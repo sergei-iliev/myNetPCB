@@ -3,6 +3,7 @@ package com.mynetpcb.symbol.dialog.panel.inspector;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilderFactory;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.symbol.component.SymbolComponent;
+import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.unit.Symbol;
 
 public class SymbolBuilderFactory extends AbstractPanelBuilderFactory<Shape>{
@@ -15,7 +16,7 @@ public class SymbolBuilderFactory extends AbstractPanelBuilderFactory<Shape>{
 //          panelsMap.put(Line.class,new LinePanelBuilder(component)); 
 //          panelsMap.put(Arrow.class,new ArrowPanelBuilder(component)); 
 //          panelsMap.put(Pin.class,new PinPanelBuilder(component));  
-//          panelsMap.put(FontLabel.class,new LabelPanelBuilder(component)); 
+          panelsMap.put(FontLabel.class,new LabelPanelBuilder(component)); 
           panelsMap.put(SymbolComponent.class,new ComponentPanelBuilder(component)); 
         }
 

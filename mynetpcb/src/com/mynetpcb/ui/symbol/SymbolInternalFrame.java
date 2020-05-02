@@ -6,10 +6,16 @@ import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.popup.JPopupButton;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Mode;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.undo.CompositeMemento;
+import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.pad.unit.FootprintMgr;
 import com.mynetpcb.symbol.component.SymbolComponent;
 import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.dialog.panel.SymbolsPanel;
@@ -17,20 +23,24 @@ import com.mynetpcb.symbol.unit.Symbol;
 import com.mynetpcb.ui.AbstractInternalFrame;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import java.util.Collection;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
@@ -155,7 +165,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         
         EllipseButton.addActionListener(this);
         EllipseButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/ellipse.png"));
-        EllipseButton.setToolTipText("Add Circle");
+        EllipseButton.setToolTipText("Add Ellipse");
         EllipseButton.setPreferredSize(new Dimension(35, 35));
 
         ArcButton.addActionListener(this);
@@ -194,7 +204,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         AddFootprintButton.setToolTipText("Add footprint");
         AddFootprintButton.setPreferredSize(new Dimension(35, 35));
         AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
-        AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
+        AddFootprintButton.addMenu("Create symbols bundle","Create").addMenu("Add symbol to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
                            addSeparator().addMenu("Export to Clipboard","clipboard.export").
                            addSeparator().addMenu("Exit","exit"); 
         
@@ -270,7 +280,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         group.add(DragHeand);
         
         EastPanel.setLayout(new BorderLayout());
-        EastPanel.setPreferredSize(new Dimension(200, 200));
+        EastPanel.setPreferredSize(new Dimension(250, 200));
 
 
         WestPanel.setLayout(new BorderLayout());
@@ -311,21 +321,15 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
 
         content.add(basePanel); // Add components to the content        
     }
-    @Override
-    public boolean exit() {        
-        return true;
-    }
 
     @Override
     public boolean isChanged() {
-        // TODO Implement this method
-        return false;
+        return symbolComponent.getModel().isChanged();    
     }
 
     @Override
-    public Component getParentFrame() {
-        // TODO Implement this method
-        return null;
+    public JFrame getParentFrame() {
+        return  (JFrame)this.getDesktopPane().getRootPane().getParent();
     }
 
     @Override
@@ -338,10 +342,6 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         return hbar;
     }
 
-    @Override
-    public void setButtonGroup(int i) {
-        // TODO Implement this method
-    }
 
     @Override
     public void OnStart(Class<?> c) {
@@ -365,8 +365,175 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
     }
 
     @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        // TODO Implement this method
+    public void actionPerformed(ActionEvent e) {
+            if(e.getActionCommand().equals("exit")){
+                exit();
+                return;
+            }
+            if (e.getActionCommand().equals("Create")) {
+                if(symbolComponent.getModel().isChanged()){                        
+                    if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(symbolComponent.getDialogFrame().getParentFrame(), "There are unsaved changes. Do you want to continue?", "Create", JOptionPane.YES_NO_OPTION)) {                                       
+                        return;
+                    }                      
+                }
+                symbolComponent.clear();                              
+            }
+            
+            if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {                
+                //rememeber current unit position
+                if(symbolComponent.getModel().getUnit()!=null){
+                    symbolComponent.getModel().getUnit().setScrollPositionValue((int)symbolComponent.getViewportWindow().getX(),(int)symbolComponent.getViewportWindow().getY());                      
+                }
+                Symbol symbol  = new Symbol(500, 500);
+                symbolComponent.getModel().add(symbol);
+                symbolComponent.getModel().setActiveUnit(symbol.getUUID());
+                symbolComponent.componentResized(null);
+                symbolComponent.getModel().fireUnitEvent(new UnitEvent(symbol, UnitEvent.SELECT_UNIT));
+                symbolComponent.Repaint();
+            }
+            if (e.getActionCommand().equals("Load")) {
+//                            AbstractLoadDialog.Builder builder=new SymbolLoadDialog.Builder();
+//                            AbstractLoadDialog symbolLoadDialog =builder.setWindow(this).setCaption("Load Symbol").setEnabled(false).build();
+//                    
+//                            symbolLoadDialog.pack();
+//                            symbolLoadDialog.setLocationRelativeTo(null); //centers on screen
+//                            symbolLoadDialog.setVisible(true);
+//                
+//                            if(symbolLoadDialog.getSelectedModel()==null){
+//                              return;
+//                            }
+//                
+//                            LoadSymbols((SymbolContainer)symbolLoadDialog.getSelectedModel());
+//                
+//                            symbolLoadDialog.dispose();
+//                            symbolLoadDialog=null;
+//                            setButtonGroup(SymbolComponent.COMPONENT_MODE);
+                
+                            //position on center
+                            //Rectangle r=symbolComponent.getModel().getUnit().getBoundingRect();
+                            //symbolComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
+
+            }
+            if (symbolComponent.getModel().getUnit() == null) {
+                return;
+            }
+            if (e.getActionCommand().equals("Save")) {  
+//                if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
+//                   User.showMessageDialog(symbolComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
+//                   return;
+//                }
+//                (new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline())).build();
+            } 
+        if (e.getSource()==ScaleIn) {
+            symbolComponent.zoomIn(new Point((int)symbolComponent.getVisibleRect().getCenterX(),
+                                                (int)symbolComponent.getVisibleRect().getCenterY()));
+        }
+        if (e.getSource()==ScaleOut) {
+            symbolComponent.zoomOut(new Point((int)symbolComponent.getVisibleRect().getCenterX(),
+                                                 (int)symbolComponent.getVisibleRect().getCenterY()));
+        }
+        if (e.getSource()==RotateLeft || e.getSource()==RotateRight) {        
+            Collection<Shape> shapes= symbolComponent.getModel().getUnit().getShapes();
+            if(shapes.size()==0){
+               return; 
+            }   
+            //***notify undo manager                    
+            symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            com.mynetpcb.d2.shapes.Box r=symbolComponent.getModel().getUnit().getShapesRect(shapes);  
+            
+            FootprintMgr.getInstance().rotateBlock(shapes,
+                                   ((e.getSource()==RotateLeft?
+                                                                      1 :
+                                                                      -1) *90),
+                                                                     r.getCenter()); 
+            FootprintMgr.getInstance().alignBlock(symbolComponent.getModel().getUnit().getGrid(),shapes);                     
+
+            //***notify undo manager
+            symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
+            symbolComponent.Repaint();
+        }        
+//            if (e.getActionCommand().equals("RotateLeft") || e.getActionCommand().equals("RotateRight")) {        
+//                Collection<Shape> shapes= symbolComponent.getModel().getUnit().getShapes();
+//                if(shapes.size()==0){
+//                   return; 
+//                }   
+//                //***notify undo manager                    
+//                symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+//                Rectangle r=symbolComponent.getModel().getUnit().getShapesRect(shapes);  
+//
+//                SymbolMgr.getInstance().rotateBlock(shapes,
+//                                       AffineTransform.getRotateInstance((e.getActionCommand().equals("RotateLeft")?
+//                                                                          -1 :
+//                                                                          1) *(Math.PI /2),
+//                                                                         r.getCenterX(),
+//                                                                         r.getCenterY())); 
+//                SymbolMgr.getInstance().alignBlock(symbolComponent.getModel().getUnit().getGrid(),shapes);                     
+//                SymbolMgr.getInstance().normalizePinText(shapes);
+//                //***notify undo manager
+//                symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
+//                symbolComponent.Repaint();
+//            }
+            if (e.getActionCommand().equals("Rectangle")) {
+                symbolComponent.setMode(Mode.RECT_MODE);
+            }
+            if (e.getActionCommand().equals("Ellipse")) {
+                symbolComponent.setMode(Mode.ELLIPSE_MODE);
+            }
+            if (e.getActionCommand().equals("Arc")) {
+                symbolComponent.setMode(Mode.ARC_MODE);
+            }
+            if (e.getActionCommand().equals("Line")) {
+                symbolComponent.setMode(Mode.LINE_MODE);
+            }
+            if (e.getActionCommand().equals("Arrow")) {
+                symbolComponent.setMode(Mode.ARROW_MODE);
+            }
+            if (e.getActionCommand().equals("Triangle")) {
+                symbolComponent.setMode(Mode.TRIANGLE_MODE);
+            }
+            if (e.getSource() == LabelButton) {
+                symbolComponent.setMode(Mode.LABEL_MODE);
+            }
+            if (e.getActionCommand().equals("Print")) {
+                PrintContext printContext=new PrintContext();
+                printContext.setIsMirrored(false);
+                printContext.setLayermaskId(Layer.LAYER_ALL);
+                printContext.setTag("symbols");
+                symbolComponent.print(printContext);
+            }
+            if (e.getSource()==DragHeand) {
+                symbolComponent.setMode(Mode.DRAGHEAND_MODE);
+            }
+            if (e.getActionCommand().equals("Pin")) {
+                symbolComponent.setMode(Mode.PIN_MODE);
+            }
+            if(e.getActionCommand().equals("Selection")){
+                symbolComponent.setMode(Mode.COMPONENT_MODE);          
+            }
+            if (e.getSource()==PositionToCenter) {      
+                symbolComponent.setScrollPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
+            }
+            if (e.getActionCommand().equals("SnapToGrid")) {
+                symbolComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
+            }
+            if (e.getActionCommand().equals("CoordOrigin")) {
+                symbolComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+            }
+            if(e.getActionCommand().equals("assignfootprint")){            
+                 //FootprintMgr.getInstance().assignPackage(this, symbolComponent.getModel().getUnit().getPackaging());
+            }
+        
+
+    }
+    @Override
+    public void setButtonGroup(int requestedMode) {
+        if (requestedMode == Mode.COMPONENT_MODE) {
+            group.setSelected(SelectionButton.getModel(), true);
+        }
+        if(requestedMode==Mode.LINE_MODE){
+            group.setSelected(LineButton.getModel(), true);            
+        }
+
     }
     /**
      *Load symbol method
@@ -415,5 +582,17 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         //remember state
         symbolComponent.getModel().registerInitialState();
         symbolComponent.Repaint();
+    }    
+    
+    @Override
+    public boolean exit(){
+        if(symbolComponent.getModel().isChanged()){
+            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(this, "There is a changed element.Do you want to close?", "Close", JOptionPane.YES_NO_OPTION)) {
+                return false;
+            }
+        }
+        symbolComponent.release();
+        this.dispose();
+        return true;
     }    
 }

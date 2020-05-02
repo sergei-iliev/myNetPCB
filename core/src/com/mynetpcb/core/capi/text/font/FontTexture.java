@@ -18,13 +18,13 @@ import org.w3c.dom.Node;
 
 public class FontTexture implements Texture{
     private String tag;
-    private FontText shape;
+    FontText shape;
     private boolean isSelected;
     private Color fillColor;
     
-    public FontTexture(String tag,String text, double x, double y, int size) {
+    public FontTexture(String tag,String text, double x, double y, int size,double rotation) {
         this.tag=tag;              
-        this.shape=new FontText(x,y,text,size);       
+        this.shape=new FontText(x,y,text,size,rotation);               
         this.fillColor=Color.WHITE;
     }
     @Override
@@ -32,6 +32,14 @@ public class FontTexture implements Texture{
         FontTexture copy=(FontTexture)super.clone();
         copy.shape=this.shape.clone();
         return copy;
+    }
+    @Override
+    public  Style getStyle(){
+        return Style.valueOf(shape.fontStyle);
+    }
+    @Override
+    public void setStyle(Style style){
+        this.shape.setStyle(style.ordinal());
     }
     @Override
     public boolean isEmpty() {        

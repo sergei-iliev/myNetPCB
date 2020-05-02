@@ -1,5 +1,7 @@
-package com.mynetpcb.symbol;
+package com.mynetpcb.symbol.event;
 
+import com.mynetpcb.core.capi.event.CursorEventHandle;
+import com.mynetpcb.core.capi.event.DragingEventHandle;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.EventMgr;
 import com.mynetpcb.core.capi.event.MoveEventHandle;
@@ -22,11 +24,11 @@ public class SymbolEventMgr extends EventMgr<SymbolComponent,Shape> {
         hash.put("component", new UnitEventHandle<SymbolComponent,Shape>(component));
 //        hash.put("line",new LineEventHandle(component));
 //        hash.put("block",new BlockEventHandle<SymbolComponent,Shape>(component,false));
-//        hash.put("cursor",new CursorEventHandle<SymbolComponent,Shape>(component));
+        hash.put("cursor",new CursorEventHandle<SymbolComponent,Shape>(component));
 //        hash.put("resize",new ResizeEventHandle<SymbolComponent,Shape>(component));
 //        hash.put("texture",new TextureEventHandle<SymbolComponent,Shape>(component));
 //        hash.put("reshape",new ReshapeEventHandle(component));
-//        hash.put("dragheand",new DragingEventHandle<SymbolComponent,Shape>(component)); 
+        hash.put("dragheand",new DragingEventHandle<SymbolComponent,Shape>(component)); 
         
     }
 
