@@ -77,6 +77,7 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
       this.fill=Fill.EMPTY;
       this.copper=Layer.Copper.resolve(layermask);
       this.selectionRectWidth=4;
+      this.fillColor=Color.BLACK;
     }
     /**
      * Board does not need to see control points of shapes
@@ -146,7 +147,7 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     
     @Override
     public Point getCenter(){
-        return null;
+        return getBoundingShape().getCenter();
     }
     
     @Override

@@ -105,15 +105,15 @@ public class ScalableTransformation implements Cloneable{
      }
 
      public Box getInverseRect(Box box){
-          int s=1;
+          double s=1;
           if(this.scaleFactor!=0){     
               for(int i=0;i<this.scaleFactor;i++){
-                s*=2;
+                s*=this.getInverseScaleRatio();
               }
           }
           Box copy=box.clone();
           copy.scale(s);
-          return copy;
+          return copy;           
      }  
      
      private AffineTransform calculateTransformation(){

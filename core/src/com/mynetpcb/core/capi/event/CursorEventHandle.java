@@ -5,15 +5,11 @@ import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.UnitMgr;
-
-
 import com.mynetpcb.d2.shapes.Point;
 
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
 
 public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extends EventHandle<U,S>{
     public CursorEventHandle(U component) {
@@ -101,7 +97,7 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
                         }else{  //right
                             getTarget().rotate(-90,p);     
                         }           
-                        unitMgr.normalizePinText(getTarget());
+                        //unitMgr.normalizePinText(getTarget());
                         getComponent().Repaint(); 
                         
                     }  
@@ -117,7 +113,7 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
                         }else{
                             //getTarget().mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
                         }                        
-                        unitMgr.normalizePinText(getTarget());  
+                        //unitMgr.normalizePinText(getTarget());  
                         getComponent().Repaint();  
                        
                     }

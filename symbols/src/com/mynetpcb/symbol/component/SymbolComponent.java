@@ -15,7 +15,9 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.event.SymbolEventMgr;
 import com.mynetpcb.symbol.popup.SymbolPopupMenu;
+import com.mynetpcb.symbol.shape.ArrowLine;
 import com.mynetpcb.symbol.shape.FontLabel;
+import com.mynetpcb.symbol.shape.RoundRect;
 import com.mynetpcb.symbol.unit.Symbol;
 import com.mynetpcb.symbol.unit.SymbolMgr;
 
@@ -50,16 +52,16 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
 
         this.requestFocusInWindow(); //***for the cancel button
         switch (getMode()) {
-//        case Mode.RECT_MODE:
-//            shape=new RoundRect(0,0,50,50);
-//            setContainerCursor(shape);               
-//            getEventMgr().setEventHandle("cursor",shape);   
-//            break;
-//        case Mode.ARROW_MODE:
-//            shape=new Arrow(0,0,20,-20);
-//            setContainerCursor(shape);               
-//            getEventMgr().setEventHandle("cursor",shape); 
-//            break;
+        case Mode.RECT_MODE:
+            shape=new RoundRect(1);
+            setContainerCursor(shape);               
+            getEventMgr().setEventHandle("cursor",shape);   
+            break;
+        case Mode.ARROW_MODE:
+            shape=new ArrowLine(1);
+            setContainerCursor(shape);               
+            getEventMgr().setEventHandle("cursor",shape); 
+            break;
 //        case Mode.ARC_MODE:
 //            shape=new Arc(0,0,50,50);
 //            setContainerCursor(shape);               
@@ -136,33 +138,22 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
 //                        (((Reshapeable)shape).isReshapeRectClicked(scaledEvent.getX(), scaledEvent.getY()) != null))
 //                        getEventMgr().setEventHandle("reshape", shape);
 //                    else
-//                        getEventMgr().setEventHandle("resize", shape);
+                        getEventMgr().setEventHandle("resize", shape);
                 } else if ((shape =
                             getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true)) !=
                            null) {
                     //***block operation
                     if (SymbolMgr.getInstance().isBlockSelected(getModel().getUnit()) && shape.isSelected())
-                        getEventMgr().setEventHandle("block", shape);
-                    else if (!(shape instanceof Textable)&&
-                             (((Textable)shape).getClickedTexture(scaledEvent.getX(),
-                                                                                scaledEvent.getY()) != null))
-                        getEventMgr().setEventHandle("texture", shape);
-                    //***still this could be control point
-                    else if (getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY()) !=
-                             null) {
-                        getEventMgr().setEventHandle("resize",
-                                                     getModel().getUnit().isControlRectClicked(scaledEvent.getX(),
-                                                                                               scaledEvent.getY()));
-                    } else {
-                        getEventMgr().setEventHandle("move", shape);
-                    }
+                         getEventMgr().setEventHandle("block", shape);
+                    else if((shape instanceof Textable)&&( ((Textable)shape).getClickedTexture(scaledEvent.getX(), scaledEvent.getY())!=null)) 
+                         getEventMgr().setEventHandle("texture", shape);
+                    else
+                         getEventMgr().setEventHandle("move",shape);
                 } else {
                     getEventMgr().setEventHandle("component", null);
                 }
 
                 break;
-//            case Mode.RECT_MODE:
-//                break;
 //            case Mode.LINE_MODE:
 //                if ((getEventMgr().getTargetEventHandle() == null) ||
 //                    !(getEventMgr().getTargetEventHandle() instanceof LineEventHandle)) {

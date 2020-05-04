@@ -452,30 +452,9 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
             symbolComponent.Repaint();
         }        
-//            if (e.getActionCommand().equals("RotateLeft") || e.getActionCommand().equals("RotateRight")) {        
-//                Collection<Shape> shapes= symbolComponent.getModel().getUnit().getShapes();
-//                if(shapes.size()==0){
-//                   return; 
-//                }   
-//                //***notify undo manager                    
-//                symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-//                Rectangle r=symbolComponent.getModel().getUnit().getShapesRect(shapes);  
-//
-//                SymbolMgr.getInstance().rotateBlock(shapes,
-//                                       AffineTransform.getRotateInstance((e.getActionCommand().equals("RotateLeft")?
-//                                                                          -1 :
-//                                                                          1) *(Math.PI /2),
-//                                                                         r.getCenterX(),
-//                                                                         r.getCenterY())); 
-//                SymbolMgr.getInstance().alignBlock(symbolComponent.getModel().getUnit().getGrid(),shapes);                     
-//                SymbolMgr.getInstance().normalizePinText(shapes);
-//                //***notify undo manager
-//                symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
-//                symbolComponent.Repaint();
-//            }
-            if (e.getActionCommand().equals("Rectangle")) {
+        if (e.getSource()==RectButton){
                 symbolComponent.setMode(Mode.RECT_MODE);
-            }
+        }
             if (e.getActionCommand().equals("Ellipse")) {
                 symbolComponent.setMode(Mode.ELLIPSE_MODE);
             }
@@ -485,7 +464,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if (e.getActionCommand().equals("Line")) {
                 symbolComponent.setMode(Mode.LINE_MODE);
             }
-            if (e.getActionCommand().equals("Arrow")) {
+            if (e.getSource()==ArrowButton){
                 symbolComponent.setMode(Mode.ARROW_MODE);
             }
             if (e.getActionCommand().equals("Triangle")) {
@@ -513,10 +492,10 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if (e.getSource()==PositionToCenter) {      
                 symbolComponent.setScrollPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
             }
-            if (e.getActionCommand().equals("SnapToGrid")) {
+            if (e.getSource()==SnapToGridButton) {
                 symbolComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
             }
-            if (e.getActionCommand().equals("CoordOrigin")) {
+            if (e.getSource()==CoordButton) {
                 symbolComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
             }
             if(e.getActionCommand().equals("assignfootprint")){            
