@@ -35,9 +35,9 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
 
     private JPanel basePanel;
 
-    private JTree footprintsTree = new JTree();;
+    private JTree symbolsTree = new JTree();;
 
-    private JScrollPane scrollPaneTree = new JScrollPane(footprintsTree);
+    private JScrollPane scrollPaneTree = new JScrollPane(symbolsTree);
     
     private JScrollPane scrollPaneInspector;
 
@@ -46,13 +46,13 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
         this.symbolComponent = symbolComponent;
         this.basePanel = new JPanel(new BorderLayout());
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Symbols");
-        footprintsTree.setShowsRootHandles(true);
-        footprintsTree.setVisibleRowCount(10);
-        footprintsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        footprintsTree.setEditable(false);
-        footprintsTree.addTreeSelectionListener(this);
-        footprintsTree.setModel(new DefaultTreeModel(root));
-        footprintsTree.setCellRenderer(new UnitTreeCellRenderer(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/library.png"), Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/chip_ico.png"),null));
+        symbolsTree.setShowsRootHandles(true);
+        symbolsTree.setVisibleRowCount(10);
+        symbolsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        symbolsTree.setEditable(false);
+        symbolsTree.addTreeSelectionListener(this);
+        symbolsTree.setModel(new DefaultTreeModel(root));
+        symbolsTree.setCellRenderer(new UnitTreeCellRenderer(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/library.png"), Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/chip_ico.png"),null));
 
         basePanel.add(scrollPaneTree, BorderLayout.NORTH);
         
@@ -65,7 +65,7 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
 
     @Override
     public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)footprintsTree.getLastSelectedPathComponent();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)symbolsTree.getLastSelectedPathComponent();
 
         if (node == null)
             return;
@@ -74,7 +74,7 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
         if (node.getUserObject() instanceof TreeNodeData) {
             //***could be a click on Module or Chip
             TreeNodeData data = (TreeNodeData)node.getUserObject();
-            if (node.getParent() != footprintsTree.getModel().getRoot()) { //click on chip
+            if (node.getParent() != symbolsTree.getModel().getRoot()) { //click on chip
                 TreeNodeData footprintData = (TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
                 if (symbolComponent.getModel().getUnit().getUUID().compareTo(footprintData.getUUID()) != 0) {
                     symbolComponent.getModel().getUnit().setScrollPositionValue(symbolComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
@@ -114,79 +114,79 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
 
     @Override
     public void addUnitEvent(UnitEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
         try {
             //***get root
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode)footprintsTree.getModel().getRoot();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)symbolsTree.getModel().getRoot();
             //***create footprint node
             DefaultMutableTreeNode footprint =
                 new DefaultMutableTreeNode(new TreeNodeData(e.getObject().getUUID(), e.getObject().getUnitName()));
 
-            ((DefaultTreeModel)footprintsTree.getModel()).insertNodeInto(footprint, root, root.getChildCount());
+            ((DefaultTreeModel)symbolsTree.getModel()).insertNodeInto(footprint, root, root.getChildCount());
         } finally {
-            footprintsTree.addTreeSelectionListener(this);
+            symbolsTree.addTreeSelectionListener(this);
         }
     }
 
     @Override
     public void deleteUnitEvent(UnitEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
         try {
             //***get root
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode)footprintsTree.getModel().getRoot();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)symbolsTree.getModel().getRoot();
             for (int i = 0; i < root.getChildCount(); i++) {
                 DefaultMutableTreeNode footprintNode = (DefaultMutableTreeNode)root.getChildAt(i);
                 TreeNodeData footprintData = (TreeNodeData)footprintNode.getUserObject();
                 if (e.getObject().getUUID().compareTo(footprintData.getUUID()) == 0) {
-                    ((DefaultTreeModel)footprintsTree.getModel()).removeNodeFromParent(footprintNode);
+                    ((DefaultTreeModel)symbolsTree.getModel()).removeNodeFromParent(footprintNode);
 
                     break;
                 }
             }
         } finally {
-            footprintsTree.addTreeSelectionListener(this);
+            symbolsTree.addTreeSelectionListener(this);
         }
     }
 
     @Override
     public void renameUnitEvent(UnitEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
         try {
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode)footprintsTree.getModel().getRoot();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)symbolsTree.getModel().getRoot();
             UUID footprintUUID = e.getObject().getUUID();
             for (int i = 0; i < root.getChildCount(); i++) {
                 DefaultMutableTreeNode footprintNode = (DefaultMutableTreeNode)root.getChildAt(i);
                 TreeNodeData data = (TreeNodeData)footprintNode.getUserObject();
                 if (footprintUUID.compareTo(data.getUUID()) == 0) {
                     data.setName(e.getObject().getUnitName());
-                    ((DefaultTreeModel)footprintsTree.getModel()).nodeChanged(footprintNode);
-                    footprintsTree.setSelectionPath(new TreePath(footprintNode.getPath()));
+                    ((DefaultTreeModel)symbolsTree.getModel()).nodeChanged(footprintNode);
+                    symbolsTree.setSelectionPath(new TreePath(footprintNode.getPath()));
                 }
             }
 
         } finally {
-            footprintsTree.addTreeSelectionListener(this);
+            symbolsTree.addTreeSelectionListener(this);
         }
     }
 
     @Override
     public void selectUnitEvent(UnitEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
 
         //***get root
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode)footprintsTree.getModel().getRoot();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode)symbolsTree.getModel().getRoot();
         //find footprint
         for (int i = 0; i < root.getChildCount(); i++) {
             DefaultMutableTreeNode footprintNode = (DefaultMutableTreeNode)root.getChildAt(i);
             TreeNodeData footprintData = (TreeNodeData)footprintNode.getUserObject();
             if (e.getObject().getUUID().compareTo(footprintData.getUUID()) == 0) {
                 //select footprint
-                footprintsTree.scrollPathToVisible(new TreePath(footprintNode.getPath()));
-                footprintsTree.setSelectionPath(new TreePath(footprintNode.getPath()));
+                symbolsTree.scrollPathToVisible(new TreePath(footprintNode.getPath()));
+                symbolsTree.setSelectionPath(new TreePath(footprintNode.getPath()));
                 break;
             }
         }
-        footprintsTree.addTreeSelectionListener(this);
+        symbolsTree.addTreeSelectionListener(this);
     }
 
     @Override
@@ -195,22 +195,22 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
 
     @Override
     public void selectShapeEvent(ShapeEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
         try {
             //***get root
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode)footprintsTree.getModel().getRoot();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)symbolsTree.getModel().getRoot();
             for (int i = 0; i < root.getChildCount(); i++) {
-                DefaultMutableTreeNode footprintNode = (DefaultMutableTreeNode)root.getChildAt(i);
-                TreeNodeData data = (TreeNodeData)footprintNode.getUserObject();
+                DefaultMutableTreeNode symbolNode = (DefaultMutableTreeNode)root.getChildAt(i);
+                TreeNodeData data = (TreeNodeData)symbolNode.getUserObject();
 
                 if (e.getObject().getOwningUnit().getUUID().equals(data.getUUID())) {
-                    for (int j = 0; i <= footprintNode.getChildCount(); j++) {
-                        DefaultMutableTreeNode symbol = (DefaultMutableTreeNode)footprintNode.getChildAt(j);
+                    for (int j = 0; i <= symbolNode.getChildCount(); j++) {
+                        DefaultMutableTreeNode symbol = (DefaultMutableTreeNode)symbolNode.getChildAt(j);
                         TreeNodeData _data = (TreeNodeData)symbol.getUserObject();
                         if (_data.getUUID().equals(e.getObject().getUUID())) {
                             //***select symbol
-                            footprintsTree.scrollPathToVisible(new TreePath(symbol.getPath()));
-                            footprintsTree.setSelectionPath(new TreePath(symbol.getPath()));
+                            symbolsTree.scrollPathToVisible(new TreePath(symbol.getPath()));
+                            symbolsTree.setSelectionPath(new TreePath(symbol.getPath()));
                             break;
                         }
 
@@ -218,28 +218,28 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
                 }
             }
         } finally {
-            footprintsTree.addTreeSelectionListener(this);
+            symbolsTree.addTreeSelectionListener(this);
         }
     }
 
     @Override
     public void deleteShapeEvent(ShapeEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
         try {
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode)footprintsTree.getModel().getRoot();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)symbolsTree.getModel().getRoot();
             UUID footprintUUID = e.getObject().getOwningUnit().getUUID();
             for (int i = 0; i < root.getChildCount(); i++) {
-                DefaultMutableTreeNode footprintNode = (DefaultMutableTreeNode)root.getChildAt(i);
-                TreeNodeData data = (TreeNodeData)footprintNode.getUserObject();
+                DefaultMutableTreeNode symbolNode = (DefaultMutableTreeNode)root.getChildAt(i);
+                TreeNodeData data = (TreeNodeData)symbolNode.getUserObject();
                 if (footprintUUID.compareTo(data.getUUID()) == 0) {
-                    for (int j = 0; j < footprintNode.getChildCount(); j++) {
-                        DefaultMutableTreeNode symbol = (DefaultMutableTreeNode)footprintNode.getChildAt(j);
+                    for (int j = 0; j < symbolNode.getChildCount(); j++) {
+                        DefaultMutableTreeNode symbol = (DefaultMutableTreeNode)symbolNode.getChildAt(j);
                         TreeNodeData _data = (TreeNodeData)symbol.getUserObject();
                         if (_data.getUUID().equals(e.getObject().getUUID())) {
                             //delete child
-                            ((DefaultTreeModel)footprintsTree.getModel()).removeNodeFromParent(symbol);
+                            ((DefaultTreeModel)symbolsTree.getModel()).removeNodeFromParent(symbol);
                             //select root
-                            footprintsTree.setSelectionPath(new TreePath(footprintNode.getPath()));
+                            symbolsTree.setSelectionPath(new TreePath(symbolNode.getPath()));
                             //select unit
                             symbolInspector.selectUnitEvent(null);
                             break;
@@ -248,7 +248,7 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
                 }
             }
         } finally {
-            footprintsTree.addTreeSelectionListener(this);
+            symbolsTree.addTreeSelectionListener(this);
         }
     }
 
@@ -258,24 +258,24 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
 
     @Override
     public void addShapeEvent(ShapeEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
         try {
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode)footprintsTree.getModel().getRoot();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)symbolsTree.getModel().getRoot();
             UUID footprintUUID = e.getObject().getOwningUnit().getUUID();
             for (int i = 0; i < root.getChildCount(); i++) {
-                DefaultMutableTreeNode footprintNode = (DefaultMutableTreeNode)root.getChildAt(i);
-                TreeNodeData data = (TreeNodeData)footprintNode.getUserObject();
+                DefaultMutableTreeNode symbolNode = (DefaultMutableTreeNode)root.getChildAt(i);
+                TreeNodeData data = (TreeNodeData)symbolNode.getUserObject();
                 if (footprintUUID.compareTo(data.getUUID()) == 0) {
                     DefaultMutableTreeNode chip =
                         new DefaultMutableTreeNode(new TreeNodeData(e.getObject().getUUID(), e.getObject().getDisplayName()));
-                    ((DefaultTreeModel)footprintsTree.getModel()).insertNodeInto(chip, footprintNode,
-                                                                                 footprintNode.getChildCount());
+                    ((DefaultTreeModel)symbolsTree.getModel()).insertNodeInto(chip, symbolNode,
+                                                                                 symbolNode.getChildCount());
 
                     break;
                 }
             }
         } finally {
-            footprintsTree.addTreeSelectionListener(this);
+            symbolsTree.addTreeSelectionListener(this);
         }
     }
 
@@ -285,36 +285,36 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
 
     @Override
     public void deleteContainerEvent(ContainerEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
         try {
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode)footprintsTree.getModel().getRoot();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)symbolsTree.getModel().getRoot();
             root.setUserObject("Modules");
-            ((DefaultTreeModel)footprintsTree.getModel()).nodeChanged(root);
+            ((DefaultTreeModel)symbolsTree.getModel()).nodeChanged(root);
         } finally {
-            footprintsTree.addTreeSelectionListener(this);
+            symbolsTree.addTreeSelectionListener(this);
         }
     }
 
     @Override
     public void renameContainerEvent(ContainerEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
         try {
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode)footprintsTree.getModel().getRoot();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)symbolsTree.getModel().getRoot();
             root.setUserObject(symbolComponent.getModel().getFormatedFileName());
-            ((DefaultTreeModel)footprintsTree.getModel()).nodeChanged(root);
+            ((DefaultTreeModel)symbolsTree.getModel()).nodeChanged(root);
         } finally {
-            footprintsTree.addTreeSelectionListener(this);
+            symbolsTree.addTreeSelectionListener(this);
         }
     }
 
     @Override
     public void selectContainerEvent(ContainerEvent e) {
-        this.footprintsTree.removeTreeSelectionListener(this);
+        this.symbolsTree.removeTreeSelectionListener(this);
         try {
-            footprintsTree.setSelectionPath(new TreePath(footprintsTree.getModel().getRoot()));
-            footprintsTree.scrollPathToVisible(new TreePath(footprintsTree.getModel().getRoot()));
+            symbolsTree.setSelectionPath(new TreePath(symbolsTree.getModel().getRoot()));
+            symbolsTree.scrollPathToVisible(new TreePath(symbolsTree.getModel().getRoot()));
         } finally {
-            footprintsTree.addTreeSelectionListener(this);
+            symbolsTree.addTreeSelectionListener(this);
         }
     }
 }

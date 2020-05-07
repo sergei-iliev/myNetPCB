@@ -2,9 +2,11 @@ package com.mynetpcb.symbol.component;
 
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.event.LineEventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.io.CommandListener;
 import com.mynetpcb.core.capi.line.DefaultBendingProcessorFactory;
+import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
@@ -16,7 +18,9 @@ import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.event.SymbolEventMgr;
 import com.mynetpcb.symbol.popup.SymbolPopupMenu;
 import com.mynetpcb.symbol.shape.ArrowLine;
+import com.mynetpcb.symbol.shape.Ellipse;
 import com.mynetpcb.symbol.shape.FontLabel;
+import com.mynetpcb.symbol.shape.Line;
 import com.mynetpcb.symbol.shape.RoundRect;
 import com.mynetpcb.symbol.unit.Symbol;
 import com.mynetpcb.symbol.unit.SymbolMgr;
@@ -25,6 +29,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -67,11 +72,11 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
 //            setContainerCursor(shape);               
 //            getEventMgr().setEventHandle("cursor",shape);   
 //            break;
-//        case Mode.ELLIPSE_MODE:
-//            shape=new Ellipse(0,0,50,50);
-//            setContainerCursor(shape);               
-//            getEventMgr().setEventHandle("cursor",shape);   
-//            break; 
+        case Mode.ELLIPSE_MODE:
+            shape=new Ellipse(1);
+            setContainerCursor(shape);               
+            getEventMgr().setEventHandle("cursor",shape);   
+            break; 
 //        case Mode.TRIANGLE_MODE:
 //            shape=new Triangle( Triangle.DIRECTION_EAST,0,0,20,30);
 //            setContainerCursor(shape);               
@@ -154,36 +159,36 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
                 }
 
                 break;
-//            case Mode.LINE_MODE:
-//                if ((getEventMgr().getTargetEventHandle() == null) ||
-//                    !(getEventMgr().getTargetEventHandle() instanceof LineEventHandle)) {
-//                    //***handle popup when no active wire
-//                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
-//                        return; //***right button click
-//                    }
-//                    shape = getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true);
-//
-//                    if ((shape == null) || (!(shape instanceof Line))) {
-//                        shape = new Line();
-//                        getModel().getUnit().Add(shape);
-//                    }else {
-//                        /*Click on a line
-//                                    *1.Click at begin or end point - resume
-//                                    *2.Click in between - new Wire
-//                                    */
-//                        Trackable line = (Trackable)shape;
-//                        if (line.isEndPoint(scaledEvent.getX(),
-//                                            scaledEvent.getY())) {
-//                            this.resumeLine(line,"line", scaledEvent.getX(), scaledEvent.getY());
-//                            return;
-//                        } else {
-//                            shape = new Line();                        
-//                            getModel().getUnit().Add(shape);
-//                        }
-//                    }
-//                    getEventMgr().setEventHandle("line", shape);
-//                }
-//                break;
+            case Mode.LINE_MODE:
+                if ((getEventMgr().getTargetEventHandle() == null) ||
+                    !(getEventMgr().getTargetEventHandle() instanceof LineEventHandle)) {
+                    //***handle popup when no active wire
+                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
+                        return; //***right button click
+                    }
+                    shape = getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true);
+
+                    if ((shape == null) || (!(shape instanceof Line))) {
+                        shape = new Line(1);
+                        getModel().getUnit().add(shape);
+                    }else {
+                        /*Click on a line
+                                    *1.Click at begin or end point - resume
+                                    *2.Click in between - new Wire
+                                    */
+                        Trackable line = (Trackable)shape;
+                        if (line.isEndPoint(scaledEvent.getX(),
+                                            scaledEvent.getY())) {
+                            this.resumeLine(line,"line", scaledEvent.getX(), scaledEvent.getY());
+                            return;
+                        } else {
+                            shape = new Line(1);                        
+                            getModel().getUnit().add(shape);
+                        }
+                    }
+                    getEventMgr().setEventHandle("line", shape);
+                }
+                break;
             case Mode.ARROW_MODE:
                 break;
             case Mode.PIN_MODE:

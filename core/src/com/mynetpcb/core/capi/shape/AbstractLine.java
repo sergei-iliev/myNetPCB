@@ -96,7 +96,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
                     line.setLine(prevPoint, point);
                     Point projectionPoint = line.projectionPoint(pt);
 
-                    if(projectionPoint.distanceTo(pt)>(this.thickness/2)){
+                    if(projectionPoint.distanceTo(pt)>(this.thickness/2<1?1:this.thickness/2)){
                         prevPoint = point;
                         continue;
                     }

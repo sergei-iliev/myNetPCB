@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.event.CursorEventHandle;
 import com.mynetpcb.core.capi.event.DragingEventHandle;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.EventMgr;
+import com.mynetpcb.core.capi.event.LineEventHandle;
 import com.mynetpcb.core.capi.event.MoveEventHandle;
 import com.mynetpcb.core.capi.event.OriginEventHandle;
 import com.mynetpcb.core.capi.event.ResizeEventHandle;
@@ -24,7 +25,7 @@ public class SymbolEventMgr extends EventMgr<SymbolComponent,Shape> {
         hash.put("origin",new OriginEventHandle<SymbolComponent,Shape>(component));
         hash.put("move",new MoveEventHandle<SymbolComponent,Shape>(component));
         hash.put("component", new UnitEventHandle<SymbolComponent,Shape>(component));
-//        hash.put("line",new LineEventHandle(component));
+        hash.put("line",new LineEventHandle(component));
         hash.put("block",new BlockEventHandle<SymbolComponent,Shape>(component,false));
         hash.put("cursor",new CursorEventHandle<SymbolComponent,Shape>(component));
         hash.put("resize",new ResizeEventHandle<SymbolComponent,Shape>(component));

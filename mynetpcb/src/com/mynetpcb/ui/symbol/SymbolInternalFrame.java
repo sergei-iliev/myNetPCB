@@ -455,13 +455,13 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         if (e.getSource()==RectButton){
                 symbolComponent.setMode(Mode.RECT_MODE);
         }
-            if (e.getActionCommand().equals("Ellipse")) {
+            if (e.getSource()==EllipseButton) {
                 symbolComponent.setMode(Mode.ELLIPSE_MODE);
             }
             if (e.getActionCommand().equals("Arc")) {
                 symbolComponent.setMode(Mode.ARC_MODE);
             }
-            if (e.getActionCommand().equals("Line")) {
+            if (e.getSource()==LineButton) {
                 symbolComponent.setMode(Mode.LINE_MODE);
             }
             if (e.getSource()==ArrowButton){
@@ -486,7 +486,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if (e.getActionCommand().equals("Pin")) {
                 symbolComponent.setMode(Mode.PIN_MODE);
             }
-            if(e.getActionCommand().equals("Selection")){
+            if(e.getSource()==SelectionButton){
                 symbolComponent.setMode(Mode.COMPONENT_MODE);          
             }
             if (e.getSource()==PositionToCenter) {      

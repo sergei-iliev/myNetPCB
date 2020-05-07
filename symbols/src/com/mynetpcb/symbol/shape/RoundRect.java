@@ -32,10 +32,9 @@ public class RoundRect extends Shape implements Resizeable, Externalizable{
     public RoundRect(int thickness) {
             super(thickness,Layer.LAYER_ALL);
             this.setDisplayName("Rect");            
-            this.selectionRectWidth=4;
-            this.resizingPoint = null;
+            this.selectionRectWidth=2;
             this.fillColor=Color.BLACK;            
-            this.roundRect=new RoundRectangle(0,0,30,30,0);               
+            this.roundRect=new RoundRectangle(0,0,40,20,0);               
     }
     @Override
     public RoundRect clone()throws CloneNotSupportedException{
