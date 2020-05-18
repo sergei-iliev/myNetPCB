@@ -32,6 +32,8 @@ public class SymbolEventMgr extends EventMgr<SymbolComponent,Shape> {
 //        hash.put("texture",new TextureEventHandle<SymbolComponent,Shape>(component));
 //        hash.put("reshape",new ReshapeEventHandle(component));
         hash.put("dragheand",new DragingEventHandle<SymbolComponent,Shape>(component)); 
+        hash.put("arc.start.angle",new ArcStartAngleEventHandle<SymbolComponent,Shape>(component));
+        hash.put("arc.extend.angle",new ArcExtendAngleEventHandler<SymbolComponent,Shape>(component));        
         
     }
 

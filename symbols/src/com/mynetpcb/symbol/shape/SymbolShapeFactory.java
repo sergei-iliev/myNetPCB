@@ -44,11 +44,6 @@ public class SymbolShapeFactory  implements AbstractShapeFactory{
             ellipse.setState(memento);
             return ellipse;
         }
-//        if(memento instanceof Arc.Memento){
-//            Arc arc=new Arc();
-//            arc.setState(memento);
-//            return arc;
-//        }
 //        if(memento instanceof Triangle.Memento){
 //            Triangle triangle=new Triangle();
 //            triangle.setState(memento);
@@ -58,7 +53,12 @@ public class SymbolShapeFactory  implements AbstractShapeFactory{
             RoundRect rect=new RoundRect(1);
             rect.setState(memento);
             return rect;
-        }       
+        }
+        if(memento instanceof Arc.Memento){
+            Arc arc=new Arc(1);
+            arc.setState(memento);
+            return arc;
+        }        
         throw new IllegalStateException("Unknown memento type: "+memento.getClass().getCanonicalName());
     }
 }

@@ -458,7 +458,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if (e.getSource()==EllipseButton) {
                 symbolComponent.setMode(Mode.ELLIPSE_MODE);
             }
-            if (e.getActionCommand().equals("Arc")) {
+            if (e.getSource()==ArcButton){
                 symbolComponent.setMode(Mode.ARC_MODE);
             }
             if (e.getSource()==LineButton) {

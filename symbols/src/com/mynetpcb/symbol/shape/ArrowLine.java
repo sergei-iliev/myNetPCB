@@ -49,6 +49,7 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
    @Override
    public ArrowLine clone()throws CloneNotSupportedException{
         ArrowLine copy=(ArrowLine)super.clone();
+        copy.resizingPoint=null;
         copy.headSize=this.headSize;
         copy.line=this.line.clone();
         copy.arrow=this.arrow.clone();    

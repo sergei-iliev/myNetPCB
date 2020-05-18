@@ -38,7 +38,8 @@ public class RoundRect extends Shape implements Resizeable, Externalizable{
     }
     @Override
     public RoundRect clone()throws CloneNotSupportedException{
-            RoundRect copy = new RoundRect(this.thickness);
+            RoundRect copy = (RoundRect)super.clone();
+            copy.resizingPoint=null;
             copy.roundRect = this.roundRect.clone();                
             copy.fill = this.fill;          
             return copy;

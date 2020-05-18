@@ -34,11 +34,12 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
                     this.ellipse=new com.mynetpcb.d2.shapes.Ellipse(0,0,20,10);
                     this.selectionRectWidth=2;
                     this.fillColor=Color.BLACK;
-                    this.rotate=0;
+                    
     }
     @Override
     public Ellipse clone() throws CloneNotSupportedException {
         Ellipse copy=(Ellipse)super.clone();
+        copy.resizingPoint=null;
         copy.ellipse=this.ellipse.clone();
         return copy;
     }

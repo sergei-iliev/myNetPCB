@@ -104,7 +104,9 @@ public final class Utilities {
     public static double roundDouble(double number){
          return BigDecimal.valueOf(number).setScale(5, BigDecimal.ROUND_HALF_EVEN).doubleValue();
     }
-    
+    public static double roundDouble(double number,int rounding){
+         return BigDecimal.valueOf(number).setScale(rounding, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+    }
 
     public static void IncrementRect(Rectangle2D rect, int x, int y) {
         rect.setRect(rect.getX() - x, rect.getY() - y, rect.getWidth() + 2 * x, rect.getHeight() + 2 * y);

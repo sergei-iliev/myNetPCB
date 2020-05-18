@@ -17,6 +17,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.event.SymbolEventMgr;
 import com.mynetpcb.symbol.popup.SymbolPopupMenu;
+import com.mynetpcb.symbol.shape.Arc;
 import com.mynetpcb.symbol.shape.ArrowLine;
 import com.mynetpcb.symbol.shape.Ellipse;
 import com.mynetpcb.symbol.shape.FontLabel;
@@ -67,11 +68,11 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
             setContainerCursor(shape);               
             getEventMgr().setEventHandle("cursor",shape); 
             break;
-//        case Mode.ARC_MODE:
-//            shape=new Arc(0,0,50,50);
-//            setContainerCursor(shape);               
-//            getEventMgr().setEventHandle("cursor",shape);   
-//            break;
+        case Mode.ARC_MODE:
+            shape=new Arc(1);
+            setContainerCursor(shape);               
+            getEventMgr().setEventHandle("cursor",shape);   
+            break;
         case Mode.ELLIPSE_MODE:
             shape=new Ellipse(1);
             setContainerCursor(shape);               
@@ -139,11 +140,17 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
                 Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
                 //***is control rect clicked
                 if (shape != null) {
-//                    if (shape instanceof Reshapeable &&
-//                        (((Reshapeable)shape).isReshapeRectClicked(scaledEvent.getX(), scaledEvent.getY()) != null))
-//                        getEventMgr().setEventHandle("reshape", shape);
-//                    else
+                    if(shape instanceof Arc){
+                        if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
+                            this.getEventMgr().setEventHandle("arc.start.angle",shape);                    
+                        }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX(), scaledEvent.getY() )){
+                            this.getEventMgr().setEventHandle("arc.extend.angle",shape);                                              
+                        }else{
+                             this.getEventMgr().setEventHandle("resize",shape);    
+                        }                    
+                    }else{
                         getEventMgr().setEventHandle("resize", shape);
+                    }
                 } else if ((shape =
                             getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true)) !=
                            null) {
