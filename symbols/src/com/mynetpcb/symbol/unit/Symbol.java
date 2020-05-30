@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.Typeable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.shape.SymbolShapeFactory;
 
 import java.awt.Color;
@@ -28,6 +29,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -188,16 +190,16 @@ public class Symbol extends Unit<Shape> implements Typeable{
 
 
     public void parse(Node node) throws XPathExpressionException, ParserConfigurationException {
-//        Element e = (Element) node;
-//        this.setSize(e.hasAttribute("width") ?
-//                     (Integer.parseInt(e.getAttribute("width")) != 1 ? Integer.parseInt(e.getAttribute("width")) :
-//                      500) : 500,
-//                     e.hasAttribute("height") ?
-//                     (Integer.parseInt(e.getAttribute("height")) != 1 ? Integer.parseInt(e.getAttribute("height")) :
-//                      500) : 500);
-//        NodeList nlist = ((Element) node).getElementsByTagName("name");
-//        this.unitName = nlist.item(0).getTextContent();
-//
+        Element e = (Element) node;
+        this.setSize(e.hasAttribute("width") ?
+                     (Integer.parseInt(e.getAttribute("width")) != 1 ? Integer.parseInt(e.getAttribute("width")) :
+                      500) : 500,
+                     e.hasAttribute("height") ?
+                     (Integer.parseInt(e.getAttribute("height")) != 1 ? Integer.parseInt(e.getAttribute("height")) :
+                      500) : 500);
+        NodeList nlist = ((Element) node).getElementsByTagName("name");
+        this.unitName = nlist.item(0).getTextContent();
+
 //        nlist = ((Element) node).getElementsByTagName("footprint");
 //        if (nlist.item(0) != null) {
 //            e = (Element) nlist.item(0);
@@ -206,37 +208,37 @@ public class Symbol extends Unit<Shape> implements Typeable{
 //            packaging.setFootprintFileName(e.getAttribute("filename"));
 //            packaging.setFootprintName(e.getAttribute("name"));
 //        }
-//        NodeList nodelist = ((Element) node).getElementsByTagName("reference");
-//        Node n = nodelist.item(0);
-//        if (n != null && !n.getTextContent().equals("")) {
-//            Element ref=(Element)n;  
-//            NodeList refList=ref.getElementsByTagName("label");
-//            
-//            FontLabel label = new FontLabel();
-//            label.getTexture().setTag("reference");
-//            if(refList.getLength()==0){
-//               label.fromXML(n);                //old schema
-//            }else{
-//               label.fromXML(refList.item(0));    //new schema 
-//            }
-//            Add(label);
-//        }
-//        nodelist = ((Element) node).getElementsByTagName("unit");
-//        n = nodelist.item(0);
-//        if (n != null && !n.getTextContent().equals("")) {
-//            Element unit=(Element)n;  
-//            NodeList unitList=unit.getElementsByTagName("label");
-//
-//            FontLabel label = new FontLabel();
-//            label.getTexture().setTag("unit");
-//            if(unitList.getLength()==0){
-//               label.fromXML(n);                //old schema
-//            }else{
-//               label.fromXML(unitList.item(0));    //new schema 
-//            }
-//            Add(label);
-//        }
-//        parseSelection(node, false);
+        NodeList nodelist = ((Element) node).getElementsByTagName("reference");
+        Node n = nodelist.item(0);
+        if (n != null && !n.getTextContent().equals("")) {
+            Element ref=(Element)n;  
+            NodeList refList=ref.getElementsByTagName("label");
+            
+            FontLabel label = new FontLabel();
+            label.getTexture().setTag("reference");
+            if(refList.getLength()==0){
+               label.fromXML(n);                //old schema
+            }else{
+               label.fromXML(refList.item(0));    //new schema 
+            }
+            add(label);
+        }
+        nodelist = ((Element) node).getElementsByTagName("unit");
+        n = nodelist.item(0);
+        if (n != null && !n.getTextContent().equals("")) {
+            Element unit=(Element)n;  
+            NodeList unitList=unit.getElementsByTagName("label");
+
+            FontLabel label = new FontLabel();
+            label.getTexture().setTag("unit");
+            if(unitList.getLength()==0){
+               label.fromXML(n);                //old schema
+            }else{
+               label.fromXML(unitList.item(0));    //new schema 
+            }
+            add(label);
+        }
+        parseSelection(node, false);
     }
 
     private void parseSelection(Node node, boolean selection) throws XPathExpressionException,
@@ -250,6 +252,9 @@ public class Symbol extends Unit<Shape> implements Typeable{
         for (int i = 0; i < nodelist.getLength(); i++) {
             Node n = nodelist.item(i);
             Shape shape = shapeFactory.createShape(n);
+            if(shape==null){
+                continue;
+            }
             shape.setSelected(selection);
             this.add(shape);
         }

@@ -4,13 +4,29 @@ import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class SymbolShapeFactory  implements AbstractShapeFactory{
 
     @Override
     public Shape createShape(Node node) {
-        // TODO Implement this method
+        Element element=(Element)node; 
+        if (element.getTagName().equals("label")) {
+            FontLabel label = new FontLabel();
+            label.fromXML(node);
+            return label;
+        }
+        if (element.getTagName().equals("rectangle")) {
+            RoundRect rect = new RoundRect(1);
+            rect.fromXML(node);
+            return rect;
+        }       
+        if (element.getTagName().equals("line")) {
+            Line line = new Line(1);
+            line.fromXML(node);
+            return line;
+        }        
         return null;
     }
 

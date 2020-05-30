@@ -19,17 +19,16 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
+import java.util.StringTokenizer;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Line  extends AbstractLine implements Externalizable {
 
     public Line(int thickness) {
         super(thickness, Layer.LAYER_ALL);
-        this.selectionRectWidth=4;
+        this.selectionRectWidth=2;
         this.fillColor=Color.BLACK;
     }
     
@@ -100,8 +99,23 @@ public class Line  extends AbstractLine implements Externalizable {
     }
 
     @Override
-    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
+    public void fromXML(Node node) {
+        Element element = (Element) node; 
+        
+        StringTokenizer st = new StringTokenizer(node.getTextContent(), ",");
+        int counter=st.countTokens()-1;
+        while(st.hasMoreTokens()){
+          this.add(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));  
+          counter-=2;
+          if(counter==0)
+              break;
+        }   
+        if(element.hasAttribute("thickness")){
+            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));   
+        }else{ 
+            setThickness(Integer.parseInt(st.nextToken()));
+        }
+        
 
     }
     @Override

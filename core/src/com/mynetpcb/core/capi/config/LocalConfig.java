@@ -68,8 +68,8 @@ import javax.xml.bind.annotation.XmlTransient;
             File library=new File(r,this.LIBRARY_FOLDER_NAME);  
             libraryRoot  =library.toURI();
 
-            symbolsRoot  =new File(library,this.SYMBOLS_FOLDER_NAME).toURI();
-            
+            //symbolsRoot  =new File(library,this.SYMBOLS_FOLDER_NAME).toURI();
+            symbolsRoot  =new File("C:/sergei/java/myNetPCB/deploy/library",this.SYMBOLS_FOLDER_NAME).toURI();
             //footprintsRoot=new File(library,this.FOOTPRINTS_FOLDER_NAME).toURI();
             footprintsRoot=new File("C:/sergei/java/myNetPCB/deploy/library",this.FOOTPRINTS_FOLDER_NAME).toURI();
         }

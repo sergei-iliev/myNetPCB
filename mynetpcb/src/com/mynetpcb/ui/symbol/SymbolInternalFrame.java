@@ -14,12 +14,14 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.utils.Utilities;
-import com.mynetpcb.pad.unit.FootprintMgr;
 import com.mynetpcb.symbol.component.SymbolComponent;
 import com.mynetpcb.symbol.container.SymbolContainer;
+import com.mynetpcb.symbol.dialog.SymbolLoadDialog;
 import com.mynetpcb.symbol.dialog.panel.SymbolsPanel;
 import com.mynetpcb.symbol.unit.Symbol;
+import com.mynetpcb.symbol.unit.SymbolMgr;
 import com.mynetpcb.ui.AbstractInternalFrame;
 
 import java.awt.BorderLayout;
@@ -391,23 +393,23 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
                 symbolComponent.getModel().fireUnitEvent(new UnitEvent(symbol, UnitEvent.SELECT_UNIT));
                 symbolComponent.Repaint();
             }
-            if (e.getActionCommand().equals("Load")) {
-//                            AbstractLoadDialog.Builder builder=new SymbolLoadDialog.Builder();
-//                            AbstractLoadDialog symbolLoadDialog =builder.setWindow(this).setCaption("Load Symbol").setEnabled(false).build();
-//                    
-//                            symbolLoadDialog.pack();
-//                            symbolLoadDialog.setLocationRelativeTo(null); //centers on screen
-//                            symbolLoadDialog.setVisible(true);
-//                
-//                            if(symbolLoadDialog.getSelectedModel()==null){
-//                              return;
-//                            }
-//                
-//                            LoadSymbols((SymbolContainer)symbolLoadDialog.getSelectedModel());
-//                
-//                            symbolLoadDialog.dispose();
-//                            symbolLoadDialog=null;
-//                            setButtonGroup(SymbolComponent.COMPONENT_MODE);
+            if (e.getSource()==LoadButton) {
+                            AbstractLoadDialog.Builder builder=new SymbolLoadDialog.Builder();
+                            AbstractLoadDialog symbolLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Symbol").setEnabled(false).build();
+                    
+                            symbolLoadDialog.pack();
+                            symbolLoadDialog.setLocationRelativeTo(null); //centers on screen
+                            symbolLoadDialog.setVisible(true);
+                
+                            if(symbolLoadDialog.getSelectedModel()==null){
+                              return;
+                            }
+                
+                            loadSymbols((SymbolContainer)symbolLoadDialog.getSelectedModel());
+                
+                            symbolLoadDialog.dispose();
+                            symbolLoadDialog=null;
+                            setButtonGroup(Mode.COMPONENT_MODE);
                 
                             //position on center
                             //Rectangle r=symbolComponent.getModel().getUnit().getBoundingRect();
@@ -441,12 +443,12 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
             com.mynetpcb.d2.shapes.Box r=symbolComponent.getModel().getUnit().getShapesRect(shapes);  
             
-            FootprintMgr.getInstance().rotateBlock(shapes,
+            SymbolMgr.getInstance().rotateBlock(shapes,
                                    ((e.getSource()==RotateLeft?
                                                                       1 :
                                                                       -1) *90),
                                                                      r.getCenter()); 
-            FootprintMgr.getInstance().alignBlock(symbolComponent.getModel().getUnit().getGrid(),shapes);                     
+            SymbolMgr.getInstance().alignBlock(symbolComponent.getModel().getUnit().getGrid(),shapes);                     
 
             //***notify undo manager
             symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    

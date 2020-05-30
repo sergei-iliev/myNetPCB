@@ -20,8 +20,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import java.util.StringTokenizer;
 
 import org.w3c.dom.Node;
 
@@ -151,9 +150,12 @@ public class RoundRect extends Shape implements Resizeable, Externalizable{
     }
 
     @Override
-    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
-
+    public void fromXML(Node node) {     
+        StringTokenizer st=new StringTokenizer(node.getTextContent(),",");   
+        this.roundRect.setRect(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+        setThickness(Byte.parseByte(st.nextToken()));
+        setFill(Fill.byIndex(Byte.parseByte(st.nextToken()))); 
+        this.roundRect.rounding=Integer.parseInt(st.nextToken());
     }
 
     public static class Memento extends AbstractMemento<Symbol,RoundRect> {

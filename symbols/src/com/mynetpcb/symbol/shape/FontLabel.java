@@ -17,9 +17,7 @@ import com.mynetpcb.symbol.unit.Symbol;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class FontLabel extends Shape implements Label,Externalizable{
@@ -84,9 +82,10 @@ public class FontLabel extends Shape implements Label,Externalizable{
     }
 
     @Override
-    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
-
+    public void fromXML(Node node) {
+        Element  element= (Element)node;
+        //texture.setFillColor(element.getAttribute("color").equals("")?Color.BLACK:new Color(Integer.parseInt(element.getAttribute("color"))));
+        texture.fromXML(node);        
     }
 
     @Override
