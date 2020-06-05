@@ -469,7 +469,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if (e.getSource()==ArrowButton){
                 symbolComponent.setMode(Mode.ARROW_MODE);
             }
-            if (e.getActionCommand().equals("Triangle")) {
+            if (e.getSource()==TriangleButton) {
                 symbolComponent.setMode(Mode.TRIANGLE_MODE);
             }
             if (e.getSource() == LabelButton) {
@@ -485,7 +485,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if (e.getSource()==DragHeand) {
                 symbolComponent.setMode(Mode.DRAGHEAND_MODE);
             }
-            if (e.getActionCommand().equals("Pin")) {
+            if (e.getSource()==PinButton){
                 symbolComponent.setMode(Mode.PIN_MODE);
             }
             if(e.getSource()==SelectionButton){

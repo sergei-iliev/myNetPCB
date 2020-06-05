@@ -20,8 +20,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import java.util.StringTokenizer;
 
 import org.w3c.dom.Node;
 
@@ -136,9 +135,22 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     }
 
     @Override
-    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
-
+    public void fromXML(Node node) {
+        StringTokenizer st=new StringTokenizer(node.getTextContent(),","); 
+        double x=Double.parseDouble(st.nextToken());
+        double y=Double.parseDouble(st.nextToken());
+        double w=Double.parseDouble(st.nextToken());
+        double h=Double.parseDouble(st.nextToken());
+        
+        this.arc.pc.set(x+w/2,y+h/2);
+        this.arc.width=w/2;
+        this.arc.height=h/2;
+        
+        this.arc.endAngle = Double.parseDouble(st.nextToken());       
+        this.arc.startAngle = Double.parseDouble(st.nextToken());
+        
+        this.thickness = Integer.parseInt(st.nextToken());
+        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));   
     }
 
     @Override

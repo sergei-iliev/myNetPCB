@@ -19,8 +19,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import java.util.StringTokenizer;
 
 import org.w3c.dom.Node;
 
@@ -144,9 +143,20 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
     }
     
     @Override
-    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
-
+    public void fromXML(Node node) {
+        StringTokenizer st=new StringTokenizer(node.getTextContent(),","); 
+        double x=Double.parseDouble(st.nextToken());
+        double y=Double.parseDouble(st.nextToken());
+        double w=Double.parseDouble(st.nextToken());
+        double h=Double.parseDouble(st.nextToken());
+        
+        this.ellipse.pc.set(x+w/2,y+h/2);
+        this.ellipse.width=w/2;
+        this.ellipse.height=h/2;
+        
+        
+        this.thickness = Integer.parseInt(st.nextToken());
+        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));         
     }
     
     @Override

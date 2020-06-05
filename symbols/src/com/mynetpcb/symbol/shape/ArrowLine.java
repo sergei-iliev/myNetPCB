@@ -20,8 +20,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import java.util.StringTokenizer;
 
 import org.w3c.dom.Node;
 
@@ -163,9 +162,13 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
     }
 
     @Override
-    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
-
+    public void fromXML(Node node) {
+        StringTokenizer st=new StringTokenizer(node.getTextContent(),",");      
+        this.line.ps.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));      
+        this.line.pe.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+        this.thickness=Integer.parseInt(st.nextToken());
+        this.setHeadSize(Integer.parseInt(st.nextToken()));
+        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));    
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {

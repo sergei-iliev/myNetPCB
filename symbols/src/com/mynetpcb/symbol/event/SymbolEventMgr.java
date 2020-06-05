@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.event.MoveEventHandle;
 import com.mynetpcb.core.capi.event.OriginEventHandle;
 import com.mynetpcb.core.capi.event.ResizeEventHandle;
 import com.mynetpcb.core.capi.event.ShapeEvent;
+import com.mynetpcb.core.capi.event.TextureEventHandle;
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.event.UnitEventHandle;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -29,7 +30,7 @@ public class SymbolEventMgr extends EventMgr<SymbolComponent,Shape> {
         hash.put("block",new BlockEventHandle<SymbolComponent,Shape>(component,false));
         hash.put("cursor",new CursorEventHandle<SymbolComponent,Shape>(component));
         hash.put("resize",new ResizeEventHandle<SymbolComponent,Shape>(component));
-//        hash.put("texture",new TextureEventHandle<SymbolComponent,Shape>(component));
+        hash.put("texture",new TextureEventHandle<SymbolComponent,Shape>(component));
 //        hash.put("reshape",new ReshapeEventHandle(component));
         hash.put("dragheand",new DragingEventHandle<SymbolComponent,Shape>(component)); 
         hash.put("arc.start.angle",new ArcStartAngleEventHandle<SymbolComponent,Shape>(component));

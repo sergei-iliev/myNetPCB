@@ -21,12 +21,32 @@ public class SymbolShapeFactory  implements AbstractShapeFactory{
             RoundRect rect = new RoundRect(1);
             rect.fromXML(node);
             return rect;
-        }       
+        }
+        if (element.getTagName().equals("arrow")) {
+            ArrowLine arrow = new ArrowLine(1);
+            arrow.fromXML(node);
+            return arrow;
+        }        
+        if (element.getTagName().equals("arc")) {
+            Arc arc = new Arc(1);
+            arc.fromXML(node);
+            return arc;
+        }  
+        if (element.getTagName().equals("ellipse")) {
+            Ellipse ellipse = new Ellipse(1);
+            ellipse.fromXML(node);
+            return ellipse;
+        }         
         if (element.getTagName().equals("line")) {
             Line line = new Line(1);
             line.fromXML(node);
             return line;
-        }        
+        }
+        if (element.getTagName().equals("triangle")) {
+            Triangle triangle = new Triangle(1);
+            triangle.fromXML(node);
+            return triangle;
+        }         
         return null;
     }
 
@@ -60,11 +80,11 @@ public class SymbolShapeFactory  implements AbstractShapeFactory{
             ellipse.setState(memento);
             return ellipse;
         }
-//        if(memento instanceof Triangle.Memento){
-//            Triangle triangle=new Triangle();
-//            triangle.setState(memento);
-//            return triangle;
-//        }         
+        if(memento instanceof Triangle.Memento){
+            Triangle triangle=new Triangle(1);
+            triangle.setState(memento);
+            return triangle;
+        }         
         if(memento instanceof RoundRect.Memento){
             RoundRect rect=new RoundRect(1);
             rect.setState(memento);

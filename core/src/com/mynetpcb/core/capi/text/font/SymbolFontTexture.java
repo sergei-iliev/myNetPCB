@@ -7,8 +7,8 @@ import java.awt.Color;
 
 public class SymbolFontTexture extends FontTexture {
 
-    public SymbolFontTexture(String tag, String text, double x, double y, int fontSize, double rotation) {
-        super(tag, text, x, y, fontSize, rotation);
+    public SymbolFontTexture(String text, String tag, double x, double y, int fontSize, double rotation) {
+        super(text,tag, x, y, fontSize, rotation);
         //this.selectionRectWidth=4;
         this.setFillColor(Color.BLACK);
     }

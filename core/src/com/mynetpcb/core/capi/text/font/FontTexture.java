@@ -22,7 +22,7 @@ public class FontTexture implements Texture{
     private boolean isSelected;
     private Color fillColor;
     
-    public FontTexture(String tag,String text, double x, double y, int size,double rotation) {
+    public FontTexture(String text,String tag, double x, double y, int size,double rotation) {
         this.tag=tag;              
         this.shape=new FontText(x,y,text,size,rotation);               
         this.fillColor=Color.WHITE;
@@ -120,12 +120,17 @@ public class FontTexture implements Texture{
             this.shape.text = "";
             return;
         }
+        
         String[] tokens=node.getTextContent().split(",");
         this.shape.anchorPoint.set(Double.parseDouble(tokens[1]),
                 Double.parseDouble(tokens[2]));     
         
         this.shape.setText(tokens[0]);
-        this.shape.setSize(Integer.parseInt(tokens[5]));
+        try{
+          this.shape.setSize(Integer.parseInt(tokens[5]));
+        }catch(Exception e){
+            this.shape.setSize(8);  
+        }
         try{
           this.shape.rotate(Double.parseDouble(tokens[6]));
         }catch(Exception e){

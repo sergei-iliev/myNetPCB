@@ -22,7 +22,9 @@ import com.mynetpcb.symbol.shape.ArrowLine;
 import com.mynetpcb.symbol.shape.Ellipse;
 import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.shape.Line;
+import com.mynetpcb.symbol.shape.Pin;
 import com.mynetpcb.symbol.shape.RoundRect;
+import com.mynetpcb.symbol.shape.Triangle;
 import com.mynetpcb.symbol.unit.Symbol;
 import com.mynetpcb.symbol.unit.SymbolMgr;
 
@@ -78,17 +80,17 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
             setContainerCursor(shape);               
             getEventMgr().setEventHandle("cursor",shape);   
             break; 
-//        case Mode.TRIANGLE_MODE:
-//            shape=new Triangle( Triangle.DIRECTION_EAST,0,0,20,30);
-//            setContainerCursor(shape);               
-//            getEventMgr().setEventHandle("cursor",shape);
-//            break;
-//        case Mode.PIN_MODE:
-//            shape=new Pin(0,0);
-//            shape.setSelected(true);
-//            setContainerCursor(shape);               
-//            getEventMgr().setEventHandle("cursor",shape);   
-//            break;
+        case Mode.TRIANGLE_MODE:
+            shape=new Triangle(1);
+            setContainerCursor(shape);               
+            getEventMgr().setEventHandle("cursor",shape);
+            break;
+        case Mode.PIN_MODE:
+            shape=new Pin();
+            shape.setSelected(true);
+            setContainerCursor(shape);               
+            getEventMgr().setEventHandle("cursor",shape);   
+            break;
         case Mode.LABEL_MODE:
             shape=new FontLabel();
             setContainerCursor(shape);               

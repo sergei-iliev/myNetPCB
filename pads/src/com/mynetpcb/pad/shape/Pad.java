@@ -56,8 +56,8 @@ public class Pad extends PadShape{
         this.shape=new CircularShape(0,0,width,this);
         this.setType(PadShape.Type.THROUGH_HOLE);  
         
-        this.number=new FontTexture("number","1",0,0,4000,0);
-        this.netvalue=new FontTexture("netvalue","",0,0,4000,0);  
+        this.number=new FontTexture("1","number",0,0,4000,0);
+        this.netvalue=new FontTexture("","netvalue",0,0,4000,0);  
     }
     public Pad clone() throws CloneNotSupportedException {
         Pad copy = (Pad) super.clone();
