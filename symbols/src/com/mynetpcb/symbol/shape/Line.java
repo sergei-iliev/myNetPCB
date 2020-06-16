@@ -105,7 +105,7 @@ public class Line  extends AbstractLine implements Externalizable {
         StringTokenizer st = new StringTokenizer(node.getTextContent(), ",");
         int counter=st.countTokens()-1;
         while(st.hasMoreTokens()){
-          this.add(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));  
+          this.add(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));  
           counter-=2;
           if(counter==0)
               break;

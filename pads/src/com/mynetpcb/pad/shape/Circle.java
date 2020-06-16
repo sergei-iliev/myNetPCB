@@ -203,7 +203,7 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
 
     @Override
     public String toXML() {
-        return "<ellipse copper=\""+getCopper().getName()+"\" x=\""+Utilities.roundDouble(this.circle.pc.x)+"\" y=\""+Utilities.roundDouble(this.circle.pc.y)+"\" radius=\""+Utilities.roundDouble(this.circle.r)+"\"  thickness=\""+this.getThickness()+"\" fill=\""+this.getFill().ordinal()+"\"/>\r\n";
+        return "<circle copper=\""+getCopper().getName()+"\" x=\""+Utilities.roundDouble(this.circle.pc.x)+"\" y=\""+Utilities.roundDouble(this.circle.pc.y)+"\" radius=\""+Utilities.roundDouble(this.circle.r)+"\"  thickness=\""+this.getThickness()+"\" fill=\""+this.getFill().ordinal()+"\"/>\r\n";
 
     }
 

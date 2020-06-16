@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 
 import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Arc  extends Shape implements Resizeable, Externalizable{
@@ -137,20 +138,40 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     @Override
     public void fromXML(Node node) {
         StringTokenizer st=new StringTokenizer(node.getTextContent(),","); 
-        double x=Double.parseDouble(st.nextToken());
-        double y=Double.parseDouble(st.nextToken());
-        double w=Double.parseDouble(st.nextToken());
-        double h=Double.parseDouble(st.nextToken());
+        if(st.hasMoreTokens()){    //old schema
+            double x=Double.parseDouble(st.nextToken());
+            double y=Double.parseDouble(st.nextToken());
+            double w=Double.parseDouble(st.nextToken());
+            double h=Double.parseDouble(st.nextToken());
         
-        this.arc.pc.set(x+w/2,y+h/2);
-        this.arc.width=w/2;
-        this.arc.height=h/2;
+            this.arc.pc.set(x+w/2,y+h/2);
+            this.arc.width=w/2;
+            this.arc.height=h/2;
         
-        this.arc.endAngle = Double.parseDouble(st.nextToken());       
-        this.arc.startAngle = Double.parseDouble(st.nextToken());
+            this.arc.endAngle = Double.parseDouble(st.nextToken());       
+            this.arc.startAngle = Double.parseDouble(st.nextToken());
         
-        this.thickness = Integer.parseInt(st.nextToken());
-        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));   
+            this.thickness = Integer.parseInt(st.nextToken());
+            setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));  
+        }else{
+            Element element = (Element) node;
+            double x=Double.parseDouble(element.getAttribute("x"));
+            double y=Double.parseDouble(element.getAttribute("y"));
+            double w=Double.parseDouble(element.getAttribute("width"));
+            double h=Double.parseDouble(element.getAttribute("height"));
+            
+            this.arc.pc.set(x+w/2,y+h/2);
+            this.arc.width=w/2;
+            this.arc.height=h/2;
+            
+            this.arc.startAngle = Double.parseDouble(element.getAttribute("start"));       
+            this.arc.endAngle = Double.parseDouble(element.getAttribute("extend"));
+            
+            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+            this.setFill(Fill.values()[Integer.parseInt(element.getAttribute("fill"))]);
+        }
+        
+        
     }
 
     @Override

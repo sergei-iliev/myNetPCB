@@ -6,8 +6,10 @@ import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.Typeable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.CompositeTextable;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.symbol.shape.FontLabel;
+import com.mynetpcb.symbol.shape.Pin;
 import com.mynetpcb.symbol.shape.SymbolShapeFactory;
 
 import java.awt.Color;
@@ -129,21 +131,22 @@ public class Symbol extends Unit<Shape> implements Typeable{
 
     public void setTextLayoutVisibility(boolean isTextLayoutVisible) {
         this.isTextLayoutVisible = isTextLayoutVisible;
-//        for (Shape textable : this.<Shape>getShapes(Textable.class)) {
-//            ((Textable) textable).getChipText().setTextLayoutVisible(isTextLayoutVisible);
-//        }
+        for (Shape textable : this.<Shape>getShapes(Pin.class)) {
+            ((CompositeTextable) textable).getTextureByTag("number").setTextLayoutVisible(isTextLayoutVisible);
+            ((CompositeTextable) textable).getTextureByTag("name").setTextLayoutVisible(isTextLayoutVisible);
+        }
     }
 
     public StringBuffer format() {
         StringBuffer xml = new StringBuffer();
-//        xml.append("<module width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\">\r\n");
+        xml.append("<module width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\">\r\n");
 //        xml.append("<footprint library=\"" +
 //                   (packaging.getFootprintLibrary() == null ? "" : packaging.getFootprintLibrary()) + "\" category=\"" +
 //                   (packaging.getFootprintCategory() == null ? "" : packaging.getFootprintCategory()) +
 //                   "\"  filename=\"" +
 //                   (packaging.getFootprintFileName() == null ? "" : packaging.getFootprintFileName()) + "\" name=\"" +
 //                   (packaging.getFootprintName() == null ? "" : packaging.getFootprintName()) + "\"/>\r\n");
-//        xml.append("<name>" + this.unitName + "</name>\r\n");
+        xml.append("<name>" + this.unitName + "</name>\r\n");
 //        //***reference
 //        FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"reference");
 //        if (text != null) {

@@ -155,8 +155,9 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
     public CoordinateSystem getCoordinateSystem(){
         return coordinateSystem;
     }
-    public void createCoordinateSystem(){
-        coordinateSystem=new CoordinateSystem(this);  
+    
+    public void setCoordinateSystem(CoordinateSystem coordinateSystem){
+        this.coordinateSystem=coordinateSystem;
     }
     public void deleteCoordinateSystem(){
         if(coordinateSystem!=null){ 

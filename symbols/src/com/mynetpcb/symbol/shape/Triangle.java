@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Triangle extends Shape implements Resizeable, Externalizable{
@@ -60,7 +61,10 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
     public void move(double xoffset,double yoffset) {
        this.shape.move(xoffset,yoffset);       
     }
-    
+    @Override
+    public boolean isClicked(int x,int y) {
+      return this.shape.contains(new Point(x, y));       
+    }
     @Override
     public Point isControlRectClicked(int x, int y) {
         Box rect = Box.fromRect(x
@@ -105,11 +109,24 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
 
     @Override
     public void fromXML(Node node) {
-        StringTokenizer st=new StringTokenizer(node.getTextContent(),",");
-        int orientation=Integer.parseInt(st.nextToken());
-        this.initPoints(orientation,Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));           
-        setThickness(Byte.parseByte(st.nextToken()));
-        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));                 
+        Element element =(Element)node;
+        if(element.hasAttribute("thickness")){        
+            
+            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+            this.setFill(Fill.values()[(element.getAttribute("fill")==""?0:Integer.parseInt(element.getAttribute("fill")))]);  
+            StringTokenizer st=new StringTokenizer(node.getTextContent(),",");
+            
+            this.shape.points.get(0).set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+            this.shape.points.get(1).set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+            this.shape.points.get(2).set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+            
+        }else{
+            StringTokenizer st=new StringTokenizer(node.getTextContent(),",");
+            int orientation=Integer.parseInt(st.nextToken());
+            this.initPoints(orientation,Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));           
+            setThickness(Byte.parseByte(st.nextToken()));
+            setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));                 
+        }
     }
 
     @Override

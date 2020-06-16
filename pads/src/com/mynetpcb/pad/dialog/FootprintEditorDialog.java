@@ -1,6 +1,7 @@
 package com.mynetpcb.pad.dialog;
 
 
+import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
@@ -65,7 +66,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
 
-@Deprecated
 public class FootprintEditorDialog extends JDialog implements DialogFrame,CommandListener, ActionListener {
 
     protected FootprintComponent footprintComponent;
@@ -559,7 +559,7 @@ exit();
         }
         if(e.getSource()==CoordButton){ 
             if(CoordButton.getModel().isSelected()){
-                footprintComponent.getModel().getUnit().createCoordinateSystem();
+               footprintComponent.getModel().getUnit().setCoordinateSystem(new CoordinateSystem(footprintComponent.getModel().getUnit()));
                footprintComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
             }else{
                footprintComponent.getModel().getUnit().deleteCoordinateSystem(); 

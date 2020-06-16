@@ -138,7 +138,8 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
                     getEventMgr().setEventHandle("origin",null); 
                     break;
                  }
-                }
+                }                                
+                
                 Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
                 //***is control rect clicked
                 if (shape != null) {

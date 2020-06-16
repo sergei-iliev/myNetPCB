@@ -46,6 +46,11 @@ public class SymbolShapeFactory  implements AbstractShapeFactory{
             Triangle triangle = new Triangle(1);
             triangle.fromXML(node);
             return triangle;
+        }  
+        if (element.getTagName().equals("pin")) {
+            Pin pin = new Pin();
+            pin.fromXML(node);
+            return pin;
         }         
         return null;
     }
@@ -64,11 +69,11 @@ public class SymbolShapeFactory  implements AbstractShapeFactory{
            return line;
         }
         
-//        if(memento instanceof Pin.Memento){
-//          Pin pin=new Pin();          
-//          pin.setState(memento);
-//          return pin;          
-//        }
+        if(memento instanceof Pin.Memento){
+          Pin pin=new Pin();          
+          pin.setState(memento);
+          return pin;          
+        }
         
         if(memento instanceof FontLabel.Memento){
             FontLabel label=new FontLabel();          

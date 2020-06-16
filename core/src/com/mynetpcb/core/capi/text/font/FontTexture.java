@@ -8,6 +8,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.FontText;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Rectangle;
 import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.Color;
@@ -21,6 +22,7 @@ public class FontTexture implements Texture{
     FontText shape;
     private boolean isSelected;
     private Color fillColor;
+    private boolean isTextLayoutVisible;
     
     public FontTexture(String text,String tag, double x, double y, int size,double rotation) {
         this.tag=tag;              
@@ -92,7 +94,15 @@ public class FontTexture implements Texture{
     public Box getBoundingShape() {
         return this.shape.box();
     }
-
+    private Rectangle getBoundingRect(){
+        if (this.shape.text == null || this.shape.text.length() == 0){
+            return null;
+        } 
+        Box box=this.shape.box();
+        Rectangle rect= new Rectangle(box.getX(),box.getY(),box.getWidth(),box.getHeight());
+        rect.rotate(this.shape.rotate,this.shape.anchorPoint);
+        return rect;
+    }
     @Override
     public void clear() {
 
@@ -173,6 +183,15 @@ public class FontTexture implements Texture{
         t.move(-viewportWindow.getX(),- viewportWindow.getY());     
         t.paint(g2,true);
 
+        if(this.isTextLayoutVisible){
+               g2.setColor(Color.blue);
+               Rectangle box=this.getBoundingRect();
+               box.scale(scale.getScaleX());
+               box.move(-viewportWindow.getX(),- viewportWindow.getY());
+                              
+               box.paint(g2,false);
+        }
+        
         if(this.isSelected){
             g2.setColor(Color.BLUE);
             t.anchorPoint.paint(g2,false);            
@@ -201,7 +220,10 @@ public class FontTexture implements Texture{
     public boolean isSelected() {
         return isSelected;
     }
-
+    @Override
+    public  void setTextLayoutVisible(boolean visible){
+        this.isTextLayoutVisible = visible;
+    };
     @Override
     public Color getFillColor() {
         return fillColor;

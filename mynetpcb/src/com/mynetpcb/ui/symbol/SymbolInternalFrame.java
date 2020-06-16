@@ -1,5 +1,6 @@
 package com.mynetpcb.ui.symbol;
 
+import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.event.ContainerEvent;
@@ -282,7 +283,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         group.add(DragHeand);
         
         EastPanel.setLayout(new BorderLayout());
-        EastPanel.setPreferredSize(new Dimension(250, 200));
+        EastPanel.setPreferredSize(new Dimension(290, 200));
 
 
         WestPanel.setLayout(new BorderLayout());
@@ -497,9 +498,15 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if (e.getSource()==SnapToGridButton) {
                 symbolComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
             }
-            if (e.getSource()==CoordButton) {
-                symbolComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
-            }
+            if(e.getSource()==CoordButton){ 
+                if(CoordButton.getModel().isSelected()){
+                    symbolComponent.getModel().getUnit().setCoordinateSystem(new CoordinateSystem(symbolComponent.getModel().getUnit(),2));
+                    symbolComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+                }else{
+                    symbolComponent.getModel().getUnit().deleteCoordinateSystem(); 
+                    symbolComponent.setMode(Mode.COMPONENT_MODE); 
+                }
+        }
             if(e.getActionCommand().equals("assignfootprint")){            
                  //FootprintMgr.getInstance().assignPackage(this, symbolComponent.getModel().getUnit().getPackaging());
             }

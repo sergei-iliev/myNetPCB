@@ -12,6 +12,7 @@ import com.mynetpcb.board.dialog.save.GerberExportDialog;
 import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.board.unit.BoardMgr;
+import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
@@ -645,7 +646,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         }
         if(e.getSource()==CoordButton){ 
             if(CoordButton.getModel().isSelected()){
-               boardComponent.getModel().getUnit().createCoordinateSystem();
+               boardComponent.getModel().getUnit().setCoordinateSystem(new CoordinateSystem(boardComponent.getModel().getUnit()));
                boardComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
             }else{
                boardComponent.getModel().getUnit().deleteCoordinateSystem(); 

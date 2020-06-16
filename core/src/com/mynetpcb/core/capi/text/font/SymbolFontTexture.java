@@ -9,7 +9,6 @@ public class SymbolFontTexture extends FontTexture {
 
     public SymbolFontTexture(String text, String tag, double x, double y, int fontSize, double rotation) {
         super(text,tag, x, y, fontSize, rotation);
-        //this.selectionRectWidth=4;
         this.setFillColor(Color.BLACK);
     }
 
@@ -17,7 +16,7 @@ public class SymbolFontTexture extends FontTexture {
     public SymbolFontTexture clone() throws CloneNotSupportedException {
         return (SymbolFontTexture) super.clone();
     }
-
+    
     public void rotate(double angle, Point pt) {
         //redesign!!!!!!!!
         this.shape

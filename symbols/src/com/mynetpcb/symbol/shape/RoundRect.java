@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 
 import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class RoundRect extends Shape implements Resizeable, Externalizable{
@@ -150,12 +151,27 @@ public class RoundRect extends Shape implements Resizeable, Externalizable{
     }
 
     @Override
-    public void fromXML(Node node) {     
-        StringTokenizer st=new StringTokenizer(node.getTextContent(),",");   
-        this.roundRect.setRect(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
-        setThickness(Byte.parseByte(st.nextToken()));
-        setFill(Fill.byIndex(Byte.parseByte(st.nextToken()))); 
-        this.roundRect.rounding=Integer.parseInt(st.nextToken());
+    public void fromXML(Node node) { 
+        Element element = (Element) node;        
+        if(element.hasAttribute("points")){            
+            StringTokenizer st = new StringTokenizer(element.getAttribute("points"), ",");             
+            this.roundRect.points.clear();
+            
+            while (st.hasMoreTokens()) {
+                this.roundRect.points.add(new Point(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())));
+            }
+                        
+            this.roundRect.setRounding(Integer.parseInt(element.getAttribute("arc")));           
+            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+            this.setFill(Fill.values()[(element.getAttribute("fill") == "" ? 0 :
+                                                Integer.parseInt(element.getAttribute("fill")))]);                      
+        }else{        
+          StringTokenizer st=new StringTokenizer(node.getTextContent(),",");   
+          this.roundRect.setRect(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+          setThickness(Byte.parseByte(st.nextToken()));
+          setFill(Fill.byIndex(Byte.parseByte(st.nextToken()))); 
+          this.roundRect.rounding=Integer.parseInt(st.nextToken());
+        }
     }
 
     public static class Memento extends AbstractMemento<Symbol,RoundRect> {

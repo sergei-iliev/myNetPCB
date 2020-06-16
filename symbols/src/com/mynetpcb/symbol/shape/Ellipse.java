@@ -21,6 +21,7 @@ import java.awt.geom.AffineTransform;
 
 import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Ellipse extends Shape implements Resizeable, Externalizable{
@@ -143,20 +144,31 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
     }
     
     @Override
-    public void fromXML(Node node) {
-        StringTokenizer st=new StringTokenizer(node.getTextContent(),","); 
-        double x=Double.parseDouble(st.nextToken());
-        double y=Double.parseDouble(st.nextToken());
-        double w=Double.parseDouble(st.nextToken());
-        double h=Double.parseDouble(st.nextToken());
-        
-        this.ellipse.pc.set(x+w/2,y+h/2);
-        this.ellipse.width=w/2;
-        this.ellipse.height=h/2;
-        
-        
-        this.thickness = Integer.parseInt(st.nextToken());
-        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));         
+    public void fromXML(Node node) {        
+        Element  element= (Element)node;                           
+        if(element.hasAttribute("width")){  
+            double x=(Double.parseDouble(element.getAttribute("x")));
+            double y=(Double.parseDouble(element.getAttribute("y")));
+            this.ellipse.pc.set(x,y);
+            this.ellipse.width=Double.parseDouble(element.getAttribute("width"));
+            this.ellipse.height=Double.parseDouble(element.getAttribute("height"));  
+            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+            this.setFill(Fill.values()[(element.getAttribute("fill")==""?0:Integer.parseInt(element.getAttribute("fill")))]);  
+        }else{
+            StringTokenizer st=new StringTokenizer(node.getTextContent(),","); 
+            double x=Double.parseDouble(st.nextToken());
+            double y=Double.parseDouble(st.nextToken());
+            double w=Double.parseDouble(st.nextToken());
+            double h=Double.parseDouble(st.nextToken());
+            
+            this.ellipse.pc.set(x+w/2,y+h/2);
+            this.ellipse.width=w/2;
+            this.ellipse.height=h/2;
+            
+            
+            this.thickness = Integer.parseInt(st.nextToken());
+            setFill(Fill.byIndex(Byte.parseByte(st.nextToken()))); 
+        }        
     }
     
     @Override

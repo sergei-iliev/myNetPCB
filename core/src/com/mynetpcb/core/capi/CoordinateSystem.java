@@ -30,6 +30,10 @@ public class CoordinateSystem extends Shape {
         setOwningUnit(owningUnit);
         this.selectionRectWidth=3000;
     }
+    public CoordinateSystem(Unit owningUnit,int selectionRectWidth) {
+        this(owningUnit);
+        this.selectionRectWidth=selectionRectWidth;
+    }
     
     @Override
     public Point alignToGrid(boolean isRequired) {

@@ -11,7 +11,7 @@ public interface Pinable {
         EAST;
         
 
-        public Orientation Rotate(boolean isClockwise) {
+        public Orientation rotate(boolean isClockwise) {
             if (isClockwise) {
                 if (this == NORTH)
                     return EAST;
@@ -33,7 +33,7 @@ public interface Pinable {
             }
         }
 
-        public Orientation Mirror(boolean isHorizontal) {
+        public Orientation mirror(boolean isHorizontal) {
             if (isHorizontal) {
                 if (this == EAST)
                     return WEST;

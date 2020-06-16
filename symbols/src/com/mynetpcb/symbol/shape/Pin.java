@@ -1,5 +1,6 @@
 package com.mynetpcb.symbol.shape;
 
+import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.pin.Pinable;
@@ -10,18 +11,26 @@ import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.symbol.unit.Symbol;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-public class Pin extends Shape implements Pinable,CompositeTextable{
+import java.util.StringTokenizer;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+public class Pin extends Shape implements Pinable,CompositeTextable,Externalizable{
 
     public enum PinType {
         SIMPLE,
@@ -38,6 +47,30 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
         FALLING_EDGE_CLOCK,
         NON_LOGIC                
     }
+    
+    public enum Position{            
+        TOP_LEFT,
+        BOTTOM_RIGHT;        
+        
+        
+        public static Position findPositionToLine(double x,double y,Point l1,Point l2){
+                    if(l1.y==l2.y){ //horizontal line
+                       if(y<l1.y){
+                               return TOP_LEFT;
+                       }else{
+                               return BOTTOM_RIGHT;
+                       }    
+                    }else{  //vertical line
+                       if(x<l1.x){
+                               return TOP_LEFT;
+                       }else{
+                               return BOTTOM_RIGHT;
+                       }                            
+                    }
+       }
+            
+    };
+
     private int PIN_LENGTH = 2 * Utilities.POINT_TO_POINT;
     private Segment segment;
     private PinType type;
@@ -53,7 +86,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
         
         this.segment=new Segment();
         this.type = PinType.COMPLEX;
-        this.style = Style.LINE;
+        this.style = Style.FALLING_EDGE_CLOCK;
 
         this.name=new SymbolFontTexture("XXX","name",-8,0,8,0);
         this.number=new SymbolFontTexture("1","number",10,-4,8,0);
@@ -67,6 +100,29 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
         copy.name = this.name.clone();
         return copy;
     }
+    
+    public PinType getPinType(){
+        return type;
+    }
+    public Orientation getOrientation(){
+        return orientation;
+    }
+    
+    public Style getStyle(){
+        return style;
+    }
+    public void setStyle(Style style){
+        this.style=style;
+    }
+    
+    @Override
+    public Point alignToGrid(boolean isRequired) {
+        Point center=this.segment.ps;
+        Point point=this.getOwningUnit().getGrid().positionOnGrid(center.x,center.y);
+        this.move(point.x - center.x,point.y - center.y);
+        return new Point(point.x - center.x, point.y - center.y);         
+    }
+    
     @Override
     public Box getBoundingShape(){
         return this.segment.box();
@@ -101,14 +157,72 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
                     }else{
                             return false;
                     }                    
-    }    
-    
+    } 
+    public void rotate(double angle,Point origin){    
+            //read current position 
+            Position oposname= Position.findPositionToLine(this.name.getAnchorPoint().x,this.name.getAnchorPoint().y,this.segment.ps,this.segment.pe);
+            Position oposnumber= Position.findPositionToLine(this.number.getAnchorPoint().x,this.number.getAnchorPoint().y,this.segment.ps,this.segment.pe);
+            
+            this.segment.rotate(angle,origin);
+            this.orientation=orientation.rotate(angle>0?false:true);
+            this.name.rotate(angle,origin);
+            this.number.rotate(angle,origin);
+            
+            //read new position
+            Position nposname=Position.findPositionToLine(this.name.getAnchorPoint().x,this.name.getAnchorPoint().y,this.segment.ps,this.segment.pe);        
+            this.normalizeText(this.name,oposname,nposname);
+
+            
+            Position nposnumber=Position.findPositionToLine(this.number.getAnchorPoint().x,this.number.getAnchorPoint().y,this.segment.ps,this.segment.pe);  
+            this.normalizeText(this.number,oposnumber,nposnumber);
+            
+    }
+    private void normalizeText(SymbolFontTexture text,Position opos,Position npos){
+            if(opos==npos){
+               return;      
+            }
+            if(this.orientation==Orientation.EAST||this.orientation==Orientation.WEST){     //horizontal
+              double off=this.segment.ps.y-text.getAnchorPoint().y;
+              text.move(0,2*off);
+            }else{  //vertical
+              double off=this.segment.ps.x-text.getAnchorPoint().x;
+              text.move(2*off,0);             
+            }       
+    }
     @Override
     public void move(double xoffset,double yoffset) {
         this.segment.move(xoffset,yoffset);
-            this.name.move(xoffset,yoffset);
-            this.number.move(xoffset,yoffset);
+        this.name.move(xoffset,yoffset);
+        this.number.move(xoffset,yoffset);
     }
+    /*
+     * keep text orientation too, observing text normalization
+     */
+    public void setOrientation(Orientation orientation){
+     Orientation o=this.orientation;     
+     
+     while(o!=orientation){
+       switch (o) {
+             case EAST:        
+                     o=Orientation.SOUTH;
+                     this.rotate(-90,this.segment.ps);
+         break;
+             case WEST:
+                     o=Orientation.NORTH;
+                     this.rotate(-90,this.segment.ps);
+         break;
+             case NORTH:
+                     o=Orientation.EAST;
+                     this.rotate(-90,this.segment.ps);
+         break;
+             case SOUTH:        
+                     o=Orientation.WEST;
+                     this.rotate(-90,this.segment.ps);
+      }   
+     }
+     this.orientation=orientation;
+    }
+    
     public void setPinType(PinType type){
             this.type=type;
             this.init(this.orientation);
@@ -140,40 +254,43 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
             this.name.setFillColor(Color.black);
             this.number.setFillColor(Color.black);
         }
+        
+        g2.setStroke(new BasicStroke(1));
+        
         switch(this.style){
         case LINE:
                 this.drawPinLine(g2, viewportWindow, scale,0);
                 break;
-//        case Style.INVERTED:
-//                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
-//                this.drawInverted(g2, viewportWindow, scale);
-//                break;    
-//        case Style.CLOCK:
-//                this.drawPinLine(g2, viewportWindow, scale,0);
-//                this.drawTriState(g2, viewportWindow, scale);
-//                break;
-//        case Style.INVERTED_CLOCK:
-//                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
-//                this.drawInverted(g2, viewportWindow, scale);
-//                this.drawTriState(g2, viewportWindow, scale);
-//                break;
-//        case Style.INPUT_LOW:
-//                this.drawPinLine(g2, viewportWindow, scale,0);
-//                this.drawInputLow(g2, viewportWindow, scale);
-//                break;
-//        case Style.CLOCK_LOW:
-//                this.drawPinLine(g2, viewportWindow, scale,0);
-//                this.drawInputLow(g2, viewportWindow, scale);
-//                this.drawTriState(g2, viewportWindow, scale);
-//                break;
-//        case  Style.OUTPUT_LOW:
-//                this.drawPinLine(g2, viewportWindow, scale,0);
-//                this.drawOutputLow(g2, viewportWindow, scale);
-//                break;
-//        case  Style.FALLING_EDGE_CLOCK:
-//                this.drawPinLine(g2, viewportWindow, scale,PIN_LENGTH/ 6);
-//                this.drawFallingEdgeClock(g2, viewportWindow, scale);
-//                break;
+        case INVERTED:
+                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
+                this.drawInverted(g2, viewportWindow, scale);
+                break;    
+        case CLOCK:
+                this.drawPinLine(g2, viewportWindow, scale,0);
+                this.drawTriState(g2, viewportWindow, scale);
+                break;
+        case INVERTED_CLOCK:
+                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
+                this.drawInverted(g2, viewportWindow, scale);
+                this.drawTriState(g2, viewportWindow, scale);
+                break;
+        case INPUT_LOW:
+                this.drawPinLine(g2, viewportWindow, scale,0);
+                this.drawInputLow(g2, viewportWindow, scale);
+                break;
+        case CLOCK_LOW:
+                this.drawPinLine(g2, viewportWindow, scale,0);
+                this.drawInputLow(g2, viewportWindow, scale);
+                this.drawTriState(g2, viewportWindow, scale);
+                break;
+        case  OUTPUT_LOW:
+                this.drawPinLine(g2, viewportWindow, scale,0);
+                this.drawOutputLow(g2, viewportWindow, scale);
+                break;
+        case  FALLING_EDGE_CLOCK:
+                this.drawPinLine(g2, viewportWindow, scale, PIN_LENGTH / 6);
+                this.drawFallingEdgeClock(g2, viewportWindow, scale);
+                break;
                   
         }
         if (this.type == PinType.COMPLEX) {               
@@ -181,7 +298,179 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
             this.number.paint(g2, viewportWindow, scale,0);
         }        
     }
-   private void drawPinLine(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int offset) { 
+    
+    private void drawFallingEdgeClock(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
+        double pinlength = (PIN_LENGTH/6)*scale.getScaleX();
+        Segment line=new Segment();
+        double x=this.segment.ps.x*scale.getScaleX();
+        double y=this.segment.ps.y*scale.getScaleX();
+        switch (this.orientation) {
+        case SOUTH:
+            line.set(x - pinlength  - viewportWindow.getX(), y - viewportWindow.getY(), x - viewportWindow.getX(),
+                          y + pinlength  - viewportWindow.getY());
+            line.paint(g2,false);
+            line.set(x + pinlength - viewportWindow.getX(), y - viewportWindow.getY(), x - viewportWindow.getX(),
+                          y + pinlength - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        case NORTH:
+            line.set(x - pinlength  - viewportWindow.getX(), y - viewportWindow.getY(), x - viewportWindow.getX(),
+                          y - pinlength - viewportWindow.getY());
+            line.paint(g2,false);
+            line.set(x + pinlength  - viewportWindow.getX(), y - viewportWindow.getY(), x - viewportWindow.getX(),
+                          y - pinlength  - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        case WEST:
+            line.set(x - viewportWindow.getX(), y - pinlength - viewportWindow.getY(),
+                          x - pinlength  - viewportWindow.getX(), y - viewportWindow.getY());
+            line.paint(g2,false);
+            line.set(x - viewportWindow.getX(), y + pinlength  - viewportWindow.getY(),
+                          x - pinlength  - viewportWindow.getX(), y - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        case EAST:
+            line.set(x - viewportWindow.getX(), y - pinlength  - viewportWindow.getY(),
+                          x + pinlength  - viewportWindow.getX(), y - viewportWindow.getY());
+            line.paint(g2,false);
+            line.set(x - viewportWindow.getX(), y + pinlength  - viewportWindow.getY(),
+                          x + pinlength  - viewportWindow.getX(), y - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        }
+    }    
+    private void drawOutputLow(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
+        double pinlength = PIN_LENGTH *scale.getScaleX(); 
+        Segment line=new Segment();
+        double x=this.segment.ps.x*scale.getScaleX();
+        double y=this.segment.ps.y*scale.getScaleX();
+        switch (this.orientation) {
+        case SOUTH:
+            line.set(x - viewportWindow.getX(), y+ (pinlength / 3) - viewportWindow.getY(), x - (pinlength / 6) - viewportWindow.getX(),
+                          y  - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        case NORTH:
+            line.set(x - viewportWindow.getX(), y- (pinlength / 3) - viewportWindow.getY(), x - (pinlength / 6) - viewportWindow.getX(),
+                          y - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        case WEST:
+            line.set(x - viewportWindow.getX(), y- (pinlength / 6) - viewportWindow.getY(), x - (pinlength / 3) - viewportWindow.getX(),
+                          y - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        case EAST:
+            line.set(x - viewportWindow.getX(), y - (pinlength / 6) - viewportWindow.getY(), x + (pinlength / 3) - viewportWindow.getX(),
+                          y  - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        }
+
+    }    
+    private void drawInputLow(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
+        double pinlength = PIN_LENGTH *scale.getScaleX(); 
+        Segment line=new Segment();
+        double x=this.segment.ps.x*scale.getScaleX();
+        double y=this.segment.ps.y*scale.getScaleX();
+        switch (this.orientation) {
+        case SOUTH:
+            line.set(x - viewportWindow.getX(), y - viewportWindow.getY(), x - (pinlength / 6) - viewportWindow.getX(),
+                          y + (pinlength / 3) - viewportWindow.getY());
+            line.paint(g2,false);
+            line.set(x - (pinlength / 6) - viewportWindow.getX(), y + (pinlength / 3) - viewportWindow.getY(),
+                          x - viewportWindow.getX(), y + (pinlength / 3) - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        case NORTH:
+            line.set(x - viewportWindow.getX(), y - viewportWindow.getY(), x - (pinlength / 6) - viewportWindow.getX(),
+                          y - (pinlength / 3) - viewportWindow.getY());
+            line.paint(g2,false);
+            line.set(x - (pinlength / 6) - viewportWindow.getX(), y - (pinlength / 3) - viewportWindow.getY(),
+                          x - viewportWindow.getX(), y - (pinlength / 3) - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        case WEST:
+            line.set(x - viewportWindow.getX(), y - viewportWindow.getY(), x - (pinlength / 3) - viewportWindow.getX(),
+                          y - (pinlength / 6) - viewportWindow.getY());
+            line.paint(g2,false);
+            line.set(x - (pinlength / 3) - viewportWindow.getX(), y - (pinlength / 6) - viewportWindow.getY(),
+                          x - (pinlength / 3) - viewportWindow.getX(), y - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        case EAST:
+            line.set(x - viewportWindow.getX(), y - viewportWindow.getY(), x + (pinlength / 3) - viewportWindow.getX(),
+                          y - (pinlength / 6) - viewportWindow.getY());
+            line.paint(g2,false);
+            line.set(x + (pinlength / 3) - viewportWindow.getX(), y - (pinlength / 6) - viewportWindow.getY(),
+                          x + (pinlength / 3) - viewportWindow.getX(), y - viewportWindow.getY());
+            line.paint(g2,false);
+            break;
+        }
+
+    }    
+    public void drawTriState(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
+        double pinlength = PIN_LENGTH *scale.getScaleX();    
+        Segment line=new Segment();
+        double x=this.segment.ps.x*scale.getScaleX();
+        double y=this.segment.ps.y*scale.getScaleX();
+        switch (this.orientation) {
+          case EAST:
+              line.set(x - viewportWindow.getX(), y - pinlength / 6 - viewportWindow.getY(),
+                      x - pinlength / 6 - viewportWindow.getX(), y - viewportWindow.getY());
+              line.paint(g2,false);
+              line.set(x - viewportWindow.getX(), y + pinlength / 6 - viewportWindow.getY(),
+                      x - pinlength / 6 - viewportWindow.getX(), y - viewportWindow.getY());
+              line.paint(g2,false);
+              break;
+          case WEST:
+              line.set(x - viewportWindow.getX(), y - pinlength / 6 - viewportWindow.getY(),
+                      x + pinlength / 6 - viewportWindow.getX(), y - viewportWindow.getY());
+              line.paint(g2,false);
+              line.set(x - viewportWindow.getX(), y + pinlength / 6 - viewportWindow.getY(),
+                      x + pinlength / 6 - viewportWindow.getX(), y - viewportWindow.getY());
+              line.paint(g2,false);
+              break;
+          case NORTH:
+              line.set(x - pinlength / 6 - viewportWindow.getX(), y - viewportWindow.getY(), x - viewportWindow.getX(),
+                      y + pinlength / 6 - viewportWindow.getY());
+              line.paint(g2,false);
+              line.set(x + pinlength / 6 - viewportWindow.getX(), y - viewportWindow.getY(), x - viewportWindow.getX(),
+                      y + pinlength / 6 - viewportWindow.getY());
+              line.paint(g2,false);
+              break;
+          case SOUTH:
+              line.set(x - pinlength / 6 - viewportWindow.getX(), y - viewportWindow.getY(), x - viewportWindow.getX(),
+                      y - pinlength / 6 - viewportWindow.getY());
+              line.paint(g2,false);
+              line.set(x + pinlength / 6 - viewportWindow.getX(), y - viewportWindow.getY(), x - viewportWindow.getX(),
+                      y - pinlength / 6 - viewportWindow.getY());
+              line.paint(g2,false);
+              break;                            
+        }
+    }    
+    public void drawInverted(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
+        double invertCircleRadios = (PIN_LENGTH / 6);
+        Circle circle=new Circle(new Point(this.segment.ps.x,this.segment.ps.y),invertCircleRadios);
+        switch (this.orientation) {
+          case EAST:
+              circle.move(invertCircleRadios,0);
+              break;
+          case WEST:
+              circle.move(-invertCircleRadios,0);
+              break;
+          case NORTH:
+              circle.move(0,-invertCircleRadios);
+              break;
+          case SOUTH:
+              circle.move(0,invertCircleRadios);
+              break;                            
+        }
+            circle.scale(scale.getScaleX());
+            circle.move(-viewportWindow.getX(),- viewportWindow.getY());
+            circle.paint(g2,false);       
+   }
+   private void drawPinLine(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, double offset) { 
         Segment line=this.segment.clone();            
             
         switch (this.orientation) {
@@ -235,6 +524,44 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
         return null;
     }
     @Override
+    public String toXML() {
+        // TODO Implement this method
+        return null;
+    }
+
+    @Override
+    public void fromXML(Node node) {
+        Element element = (Element) node;
+        style = Style.values()[element.getAttribute("style") == "" ? 0 : (Byte.parseByte(element.getAttribute("style")))];
+        type = PinType.values()[(Byte.parseByte(element.getAttribute("type")))];
+        Node a = element.getElementsByTagName("a").item(0);
+        if(a!=null){
+          StringTokenizer st = new StringTokenizer(a.getTextContent(), ",");
+          this.segment.ps.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+          st.nextToken();
+          this.init(Orientation.values()[Byte.parseByte(st.nextToken())]);
+        }else{
+          this.segment.ps.set(Double.parseDouble(element.getAttribute("x")),Double.parseDouble(element.getAttribute("y")));   
+            this.init(Orientation.values()[Byte.parseByte(element.getAttribute("orientation"))]);
+        }
+        
+        node = element.getElementsByTagName("name").item(0);
+        if (node != null) {
+            name.fromXML(node);
+        } else {
+            name.setText("");
+            name.getAnchorPoint().set(this.segment.ps.x,this.segment.ps.y);
+        }
+        node = element.getElementsByTagName("number").item(0);
+
+        if (node != null) {
+            number.fromXML(node);
+        } else {
+            number.setText("");
+            number.getAnchorPoint().set(this.segment.ps.x,this.segment.ps.y);
+        }
+    }    
+    @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
@@ -246,6 +573,11 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
 
         private double pex,pey;
 
+        private int orientation;
+
+        private int style;
+
+        private int type;
         
         private Texture.Memento name,number;
 
@@ -257,10 +589,26 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
 
         public void loadStateTo(Pin shape) {
             super.loadStateTo(shape);
+            shape.type = PinType.values()[this.type];
+            shape.style = Style.values()[this.style];
+            shape.orientation = Pinable.Orientation.values()[orientation];
+            number.loadStateTo(shape.number);
+            name.loadStateTo(shape.name);            
+            shape.segment.set(psx, psy, pex, pey);
         }
 
         public void saveStateFrom(Pin shape) {
             super.saveStateFrom(shape);
+            this.name.saveStateFrom(shape.name);
+            this.number.saveStateFrom(shape.number);
+            this.type = shape.type.ordinal();
+            this.style = shape.style.ordinal();
+            this.orientation = shape.orientation.ordinal();
+            this.psx = shape.segment.ps.x;
+            this.psy = shape.segment.ps.y;            
+            this.pex = shape.segment.pe.x;
+            this.pey = shape.segment.pe.y;            
+            
         }
 
         @Override
@@ -272,24 +620,24 @@ public class Pin extends Shape implements Pinable,CompositeTextable{
                 return false;
             }
             Memento other = (Memento) obj;
-            return (other.getUUID().equals(this.getUUID()) && other.getMementoType() == this.getMementoType());
+            return super.equals(obj) && 
+            this.name.equals(other.name) && this.number.equals(other.number)&& other.type == this.type && other.style == this.style &&other.orientation == this.orientation &&
+            Utils.EQ(this.psx, other.psx)&&Utils.EQ(this.psy, other.psy)&&Utils.EQ(this.pex, other.pex)&&Utils.EQ(this.pey, other.pey);
         }
 
         @Override
         public int hashCode() {
-            int hash = 1;
-            hash =
-                hash * 31 + this.getUUID().hashCode() + getMementoType().hashCode();
-                
+            int hash = super.hashCode();
+            hash += this.name.hashCode()+this.number.hashCode()+this.type+this.style+this.orientation+Double.hashCode(psx)+Double.hashCode(psy)+Double.hashCode(pex)+Double.hashCode(pey);                                
             return hash;
         }
 
-
-        public void Clear() {
-            super.clear();                        
+        @Override 
+        public void clear() {
+            super.clear();                                    
         }
-
-        public boolean isSameState(Symbol unit) {
+        @Override
+        public boolean isSameState(Unit unit) {
             Pin pin = (Pin) unit.getShape(getUUID());
             return (pin.getState(getMementoType()).equals(this));
         }

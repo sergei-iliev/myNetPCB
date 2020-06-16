@@ -76,7 +76,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape> implements Co
     public void updateUI() {
           FontLabel label=(FontLabel)getTarget();
           
-          orientationCombo.setSelectedItem(((SymbolFontTexture)label.getTexture()).getOrientation());    
+          setSelectedItem(orientationCombo,((SymbolFontTexture)label.getTexture()).getOrientation());    
           textField.setText(label.getTexture().getText());
           leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x ));
           topField.setText(toUnitY(label.getTexture().getAnchorPoint().y));

@@ -1,5 +1,6 @@
 package com.mynetpcb.ui.footprint;
 
+import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
@@ -523,7 +524,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         }
         if(e.getSource()==CoordButton){ 
             if(CoordButton.getModel().isSelected()){
-                footprintComponent.getModel().getUnit().createCoordinateSystem();
+               footprintComponent.getModel().getUnit().setCoordinateSystem(new CoordinateSystem(footprintComponent.getModel().getUnit()));
                footprintComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
             }else{
                footprintComponent.getModel().getUnit().deleteCoordinateSystem(); 
