@@ -3,7 +3,6 @@ package com.mynetpcb.d2.shapes;
 import java.awt.Graphics2D;
 import java.awt.geom.Arc2D;
 
-
 import java.util.Arrays;
 
 public class Arc  extends GeometricFigure{

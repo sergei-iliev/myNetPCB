@@ -88,6 +88,10 @@ public class Point extends GeometricFigure{
                 double dy = ((Circle)shape).getCenter().y - this.y;
                 return Math.sqrt(dx*dx + dy*dy);                   
         }
+        if (shape instanceof Line) {
+            Point closest=((Line)shape).projectionPoint(this);
+            return this.distanceTo(closest.x, closest.y);
+        }
         throw new IllegalStateException("Unknown shape type - "+shape.getClass());
     }   
     @Override

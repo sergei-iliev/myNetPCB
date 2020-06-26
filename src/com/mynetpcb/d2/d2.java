@@ -1,15 +1,17 @@
 package com.mynetpcb.d2;
 
 import com.mynetpcb.d2.shapes.Arc;
+import com.mynetpcb.d2.shapes.Arcellipse;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Ellipse;
 import com.mynetpcb.d2.shapes.FontText;
+import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Hexagon;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.RoundRectangle;
-import com.mynetpcb.d2.shapes.GeometricFigure;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -62,7 +64,7 @@ public class d2 extends  JFrame {
            pane.add(panel);
        }
        private void addShapes(){
-           FontText t1=new FontText(900,400,"Sergio Leonq",8);
+           FontText t1=new FontText(900,400,"Sergio Leonq",8,0);
            d2Component.add(t1);
            fontSize.addChangeListener((e) -> {t1.setSize(fontSize.getValue());
                                               d2Component.repaint(); }); 
@@ -120,6 +122,26 @@ public class d2 extends  JFrame {
            RoundRectangle roundRect1=roundRect.clone();
            roundRect1.rotate(10);
            d2Component.add(roundRect1);
+       
+           
+           Ellipse e=new Ellipse(130, 200, 80, 40);   
+           e.rotate(30);
+           d2Component.add(e);
+           
+           Ellipse e1=e.clone();           
+           e1.rotate(0);
+           d2Component.add(e1);
+           
+           
+           Arcellipse a=new Arcellipse(320, 200, 80, 40);
+           a.rotate(46);
+           d2Component.add(a);
+           
+           Arcellipse a1=a.clone();           
+           a1.rotate(0);
+           d2Component.add(a1);
+           
+       
        }
        public static void main(String[] args) {
           d2 ex = new d2();

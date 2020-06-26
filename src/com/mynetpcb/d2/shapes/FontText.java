@@ -15,21 +15,22 @@ public class FontText extends GeometricFigure {
     public int fontSize,fontStyle;
     public double rotate;
     
-    private final TextMetrics metrics;
+    public final TextMetrics metrics;
     
-    public FontText(double x,double y,String text,int fontSize){
+    public FontText(double x,double y,String text,int fontSize,double rotate){
         this.anchorPoint=new Point(x,y);
         this.text=text;
+        this.rotate=rotate;
         this.fontSize=fontSize;            
-        this.fontStyle=Font.BOLD;
+        this.fontStyle=Font.PLAIN;
         this.metrics = new TextMetrics();
         this.metrics.calculateMetrics(text, fontStyle,fontSize,rotate);
         
     }
     @Override
     public FontText clone() {        
-        FontText copy= new FontText(anchorPoint.x,anchorPoint.y,this.text,this.fontSize);        
-        copy.rotate=this.rotate;
+        FontText copy= new FontText(anchorPoint.x,anchorPoint.y,this.text,this.fontSize,this.rotate);                
+        copy.fontStyle=this.fontStyle;
         return copy;
     }
     public void scale(double alpha){
@@ -101,10 +102,9 @@ public class FontText extends GeometricFigure {
     public Box  box(){
         return new Box(this.anchorPoint.x-(this.metrics.width/2), this.anchorPoint.y-(this.metrics.height/2),this.anchorPoint.x+(this.metrics.width/2), this.anchorPoint.y+(this.metrics.height/2));
     }
-    
     @Override
     public void paint(Graphics2D g2,boolean fill) {
-        
+
         Font font = new Font(Font.MONOSPACED,fontStyle,fontSize);
         g2.setFont(font); 
         Box r=this.box();
@@ -132,7 +132,7 @@ public class FontText extends GeometricFigure {
         this.rotate(angle,this.anchorPoint);
     }
 
-    private static class TextMetrics{
+    public static class TextMetrics{
          //int fontSize;
          double width,height;
          int  descent;
