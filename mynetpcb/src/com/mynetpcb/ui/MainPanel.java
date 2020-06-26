@@ -41,6 +41,14 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
     private void init(){
         GridBagConstraints c = new GridBagConstraints();
          
+        /*MENU*/
+        JPanel menu=createMenu(); 
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = 3;
+        c.gridx = 0;
+        c.gridy = 0;
+        this.add(menu, c); 
+        
         /*HEADER*/
         JPanel header=createHeader();
         
@@ -50,7 +58,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         c.weighty=3;
         c.gridwidth = 3;
         c.gridx = 0;
-        c.gridy = 0;
+        c.gridy = 1;
         this.add(header, c);
          
         /*BODY*/
@@ -61,7 +69,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         c.weighty=1;
         c.gridwidth = 3;
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         this.add(body, c);
          
         /*FOOTER*/
@@ -72,8 +80,26 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         c.weighty=1;
         c.gridwidth = 3;
         c.gridx = 1;
-        c.gridy = 2;
+        c.gridy = 3;
         this.add(footer, c);        
+    }
+    private JPanel createMenu(){
+        JPanel  panel=new JPanel(new GridLayout(1, 1));        
+        
+        JPanel symbolsPanel=new JPanel(new FlowLayout(FlowLayout.LEFT,10,10));
+        symbolsPanel.setBorder(new EmptyBorder(0,0,0,0));
+        symbolsPanel.setBackground(Color.white); 
+            
+        JButton menuButton=new JButton();
+        menuButton.setBackground(Color.white);
+        menuButton.setPreferredSize(new Dimension(44,44));
+        menuButton.setIcon(Utilities.loadImageIcon(this, 
+                                                    "/com/mynetpcb/core/images/navbar.png"));
+        symbolsPanel.add(menuButton);
+                    
+        panel.add(symbolsPanel);
+        
+        return panel;
     }
     private JPanel createFooter(){
         JPanel  forthRowPanel=new JPanel(new GridLayout(1, 1));
@@ -140,7 +166,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         firstRowPanel.setBackground(Color.white);
         
         JPanel panel=new JPanel();
-        panel.setBackground(Color.white);
+        panel.setBackground(Color.WHITE);
         firstRowPanel.add(panel,BorderLayout.WEST);
         
         JPanel background=new JPanel();

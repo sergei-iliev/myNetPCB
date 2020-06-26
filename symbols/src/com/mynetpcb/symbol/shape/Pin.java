@@ -246,6 +246,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         }
         
         if (this.isSelected()) {
+            
             g2.setColor(Color.gray);
             this.name.setFillColor(Color.gray);
             this.number.setFillColor(Color.gray);
@@ -253,8 +254,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
             g2.setColor(Color.black);
             this.name.setFillColor(Color.black);
             this.number.setFillColor(Color.black);
-        }
-        
+        }  
         g2.setStroke(new BasicStroke(1));
         
         switch(this.style){
@@ -293,10 +293,18 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                 break;
                   
         }
-        if (this.type == PinType.COMPLEX) {               
+        if (this.type == PinType.COMPLEX) {                     
             this.name.paint(g2, viewportWindow, scale,0);
-            this.number.paint(g2, viewportWindow, scale,0);
-        }        
+            this.number.paint(g2, viewportWindow, scale,0);        
+        }
+        
+        if (isSelected()) {
+            g2.setColor(Color.BLUE);
+            Circle c=new Circle(this.segment.pe.clone(), 2);
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(),- viewportWindow.getY());
+            c.paint(g2,false);        
+        }
     }
     
     private void drawFallingEdgeClock(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
