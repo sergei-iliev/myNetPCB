@@ -103,8 +103,14 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer points=new StringBuffer();
+        this.shape.points.forEach(point->{
+           points.append(Utilities.roundDouble(point.x,1));
+           points.append(",");
+           points.append(Utilities.roundDouble(point.y,1));
+           points.append(",");
+        });     
+        return "<triangle thickness=\"" + this.thickness + "\" fill=\"" + this.fill + "\">"+points.toString()+"</triangle>";
     }
 
     @Override

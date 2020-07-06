@@ -145,9 +145,15 @@ public class RoundRect extends Shape implements Resizeable, Externalizable{
 
 
     @Override
-    public String toXML() {
-        // TODO Implement this method
-        return null;
+    public String toXML() {        
+        StringBuffer sb = new StringBuffer();
+        sb.append("<rectangle  thickness=\"" + this.getThickness()+"\"");
+        sb.append(" fill=\"" + this.getFill().ordinal() + "\" arc=\"" + this.roundRect.rounding + "\" points=\"");
+        for (Point point : this.roundRect.points) {
+            sb.append(Utilities.roundDouble(point.x) + "," + Utilities.roundDouble(point.y) + ",");
+        }
+        sb.append("\"></rectangle>\r\n");
+        return sb.toString();        
     }
 
     @Override

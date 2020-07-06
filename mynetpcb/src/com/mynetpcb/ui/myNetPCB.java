@@ -41,7 +41,7 @@ public class myNetPCB extends JFrame {
         desktop.setLayout(new GridLayout(1, 1));
         setContentPane(desktop);        
         //setJMenuBar(createMenuBar());
-        mainPanel= new MainPanel(desktop);        
+        mainPanel= new MainPanel(this,desktop);        
         desktop.add(mainPanel);
         
         this.addWindowListener(new WindowAdapter() {
@@ -50,87 +50,6 @@ public class myNetPCB extends JFrame {
                 }
             });
     }
- 
-//    protected JMenuBar createMenuBar() {
-//        JMenuBar menuBar = new JMenuBar();
-// 
-//        //Set up the lone menu.
-//        JMenu menu = new JMenu("Document");
-//        menu.setMnemonic(KeyEvent.VK_D);
-//        menuBar.add(menu);
-// 
-//        //Set up the first menu item.
-//        JMenuItem menuItem = new JMenuItem("New");
-//        menuItem.setMnemonic(KeyEvent.VK_N);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_N, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("new");
-//        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        //Set up the second menu item.
-//        menuItem = new JMenuItem("Quit");
-//        menuItem.setMnemonic(KeyEvent.VK_Q);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("quit");
-//        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        return menuBar;
-//    }
- 
- 
-//    //Create a new internal frame.
-//    protected void createFrame() {
-//        AbstractInternalFrame frame = new AbstractInternalFrame("John");
-//        frame.setVisible(true); //necessary as of 1.3
-//        //desktop.setLayout(new GridLayout(1,1));
-//        desktop.removeAll();
-//        desktop.add(frame);
-//        frame.addInternalFrameListener(new InternalFrameListener(){
-//            @Override
-//            public void internalFrameOpened(InternalFrameEvent internalFrameEvent) {
-//                // TODO Implement this method
-//            }
-//
-//            @Override
-//            public void internalFrameClosing(InternalFrameEvent internalFrameEvent) {
-//                // TODO Implement this method
-//            }
-//
-//            @Override
-//            public void internalFrameClosed(InternalFrameEvent internalFrameEvent) {
-//                desktop.removeAll();
-//                desktop.add(mainPanel);
-//            }
-//
-//            @Override
-//            public void internalFrameIconified(InternalFrameEvent internalFrameEvent) {
-//                desktop.removeAll();
-//                desktop.add(mainPanel);
-//            }
-//
-//            @Override
-//            public void internalFrameDeiconified(InternalFrameEvent internalFrameEvent) {
-//                // TODO Implement this method
-//            }
-//
-//            @Override
-//            public void internalFrameActivated(InternalFrameEvent internalFrameEvent) {
-//                // TODO Implement this method
-//            }
-//
-//            @Override
-//            public void internalFrameDeactivated(InternalFrameEvent internalFrameEvent) {
-//                // TODO Implement this method
-//            }
-//        });
-//        try {
-//            frame.setMaximum(true);
-//            frame.setSelected(true);
-//        } catch (java.beans.PropertyVetoException e) {}
-//    }
  
  
     public static void main(String[] args) {

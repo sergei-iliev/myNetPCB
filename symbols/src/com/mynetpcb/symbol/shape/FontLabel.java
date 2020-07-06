@@ -77,8 +77,10 @@ public class FontLabel extends Shape implements Label,Externalizable{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        if(this.texture!=null&&!this.texture.isEmpty())
+            return "<label color=\""+this.texture.getFillColor()+"\">"+this.texture.toXML()+"</label>";
+          else
+            return "";  
     }
 
     @Override

@@ -131,8 +131,7 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     }       
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        return "<arc  x=\""+Utilities.roundDouble(this.arc.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.arc.width,1)+"\" height=\""+Utilities.roundDouble(this.arc.height,1)+ "\"  thickness=\""+this.thickness+"\" start=\""+Utilities.roundDouble(this.arc.startAngle,1)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle,1)+"\" fill=\""+this.fill+"\"/>";
     }
 
     @Override

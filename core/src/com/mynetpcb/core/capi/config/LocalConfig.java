@@ -53,25 +53,24 @@ import javax.xml.bind.annotation.XmlTransient;
         private boolean isOnline=false;
 
         public LocalConfig(){
+                                 
             Class clazz = this.getClass();
-            File r = new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().getParentFile();
+            File root = new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().getParentFile();
             //File r=new File("C:\\sergei\\java\\myNetPCB\\deploy");
             
-            File workspace =new File(r,this.WORKSPACE_FOLDER_NAME); 
+            File workspace =new File(root,this.WORKSPACE_FOLDER_NAME); 
             workspaceRoot=workspace.toURI();
             
             circuitRoot=new File(workspace,this.CIRCUITS_FOLDER_NAME).toURI();      
             
-            //boardRoot=new File(workspace,this.BOARDS_FOLDER_NAME).toURI(); 
-            boardRoot=new File("C:/sergei/java/myNetPCB/deploy/workspace",this.BOARDS_FOLDER_NAME).toURI(); 
+            boardRoot=new File(workspace,this.BOARDS_FOLDER_NAME).toURI(); 
             
-            File library=new File(r,this.LIBRARY_FOLDER_NAME);  
+            File library=new File(root,this.LIBRARY_FOLDER_NAME);  
             libraryRoot  =library.toURI();
 
-            //symbolsRoot  =new File(library,this.SYMBOLS_FOLDER_NAME).toURI();
-            symbolsRoot  =new File("C:/sergei/java/myNetPCB/deploy/library",this.SYMBOLS_FOLDER_NAME).toURI();
-            //footprintsRoot=new File(library,this.FOOTPRINTS_FOLDER_NAME).toURI();
-            footprintsRoot=new File("C:/sergei/java/myNetPCB/deploy/library",this.FOOTPRINTS_FOLDER_NAME).toURI();
+            symbolsRoot  =new File(library,this.SYMBOLS_FOLDER_NAME).toURI();
+            
+            footprintsRoot=new File(library,this.FOOTPRINTS_FOLDER_NAME).toURI();            
         }
         
         public void setIsOnline(boolean isOnline) {

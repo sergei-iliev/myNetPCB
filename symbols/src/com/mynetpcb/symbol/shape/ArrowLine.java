@@ -157,8 +157,7 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
     }
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        return "<arrow thickness=\"" + this.thickness + "\" fill=\"" + this.fill + "\"  head=\"" + this.headSize+ "\">" + Utilities.roundDouble(this.line.ps.x,1) + "," + Utilities.roundDouble(this.line.ps.y,1) + "," + Utilities.roundDouble(this.line.pe.x,1) + "," + Utilities.roundDouble(this.line.pe.y,1) + "</arrow>";
     }
 
     @Override

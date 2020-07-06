@@ -533,8 +533,20 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
     }
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb = new StringBuffer();
+        sb.append("<pin type=\"" + this.type + "\"  style=\"" + this.style + "\"   x=\""+Utilities.roundDouble(this.segment.ps.x,1)+"\" y=\""+Utilities.roundDouble(this.segment.ps.y,1)+"\" orientation=\""+this.orientation+"\">\r\n");    
+        if(this.type == PinType.COMPLEX){
+         if (!this.number.isEmpty())
+            sb.append("<number>" +
+                  this.number.toXML() +
+             "</number>\r\n");
+        if (!this.name.isEmpty())
+            sb.append("<name>" +
+                  this.name.toXML() +
+             "</name>\r\n");     
+        }
+        sb.append("</pin>");
+        return sb.toString();
     }
 
     @Override

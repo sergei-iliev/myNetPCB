@@ -94,8 +94,13 @@ public class Line  extends AbstractLine implements Externalizable {
     }
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb = new StringBuffer();
+        sb.append("<line  thickness=\"" + this.getThickness() + "\">");
+        for (Point point : this.polyline.points) {
+            sb.append(Utilities.roundDouble(point.x,1) + "," + Utilities.roundDouble(point.y,1) + ",");
+        }
+        sb.append("</line>\r\n");
+        return sb.toString();
     }
 
     @Override

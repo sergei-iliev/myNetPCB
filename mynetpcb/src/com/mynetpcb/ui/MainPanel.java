@@ -1,5 +1,7 @@
 package com.mynetpcb.ui;
 
+import com.mynetpcb.core.capi.popup.JPopupButton;
+import com.mynetpcb.core.dialog.config.PreferencesDialog;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.ui.board.BoardInternalFrame;
 import com.mynetpcb.ui.footprint.FootprintInternalFrame;
@@ -14,12 +16,15 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,9 +37,11 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
     private final JDesktopPane desktop;
     private JButton symbolButton,footprintButton,boardButton;
     private AbstractInternalFrame selectedFrame;
+    private final JFrame parent;
     
-    public MainPanel(JDesktopPane desktop) {
+    public MainPanel(JFrame parent,JDesktopPane desktop) {
         this.desktop=desktop;       
+        this.parent=parent;
         setLayout(new GridBagLayout());      
         init();
     }
@@ -90,11 +97,14 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         symbolsPanel.setBorder(new EmptyBorder(0,0,0,0));
         symbolsPanel.setBackground(Color.white); 
             
-        JButton menuButton=new JButton();
+        JPopupButton menuButton=new JPopupButton(this);
         menuButton.setBackground(Color.white);
         menuButton.setPreferredSize(new Dimension(44,44));
         menuButton.setIcon(Utilities.loadImageIcon(this, 
                                                     "/com/mynetpcb/core/images/navbar.png"));
+        
+        menuButton.addMenu("Preferences","preferences").addSeparator().addRootMenu("Import","import").addSubMenu("import","Clipboard" , "import.clipboard").addSubMenu("import","XML" , "import.xml").addMenu("Exit","exit"); 
+        
         symbolsPanel.add(menuButton);
                     
         panel.add(symbolsPanel);
@@ -197,7 +207,18 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        
+        if (event.getActionCommand().equals("exit")) {
+            Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new WindowEvent(parent,
+                                                                                        WindowEvent.WINDOW_CLOSING));
+        }
+        if (event.getActionCommand().equals("preferences")) {
+            PreferencesDialog d = new PreferencesDialog(parent, "Preferences");
+            d.pack();
+            d.setLocationRelativeTo(null); //centers on screen
+            d.setFocusable(true);
+            d.setVisible(true);
+            return;
+        }
         if(event.getSource()==footprintButton){
             selectedFrame=new FootprintInternalFrame();
             selectedFrame.setVisible(true); //necessary as of 1.3            
