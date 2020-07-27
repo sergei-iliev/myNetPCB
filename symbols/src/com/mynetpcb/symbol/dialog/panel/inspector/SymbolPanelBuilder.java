@@ -3,8 +3,11 @@ package com.mynetpcb.symbol.dialog.panel.inspector;
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.tree.AttachedItem;
 import com.mynetpcb.symbol.component.SymbolComponent;
+import com.mynetpcb.symbol.shape.FontLabel;
+import com.mynetpcb.symbol.unit.SymbolMgr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -89,13 +92,13 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
         
         //Texture atext = SymbolMgr.getInstance().getTextureByTag(getComponent().getModel().getUnit(),"reference");
         //***get could be Owners list 
-//        for(Shape symbol:((SymbolComponent)getComponent()).getModel().getUnit().<Shape>getShapes(FontLabel.class)){
-//             Texture text=((FontLabel)symbol).getTexture();     
-//             AttachedItem item=new AttachedItem.Builder(text.getText()).setUUID(symbol.getUUID()).build();  
-//             referenceCombo.addItem(item);                          
-//             if(text.getTag().equals("reference"))
-//                 referenceCombo.setSelectedItem(item);  
-//        }   
+        for(Shape symbol:((SymbolComponent)getComponent()).getModel().getUnit().<Shape>getShapes(FontLabel.class)){
+             Texture text=((FontLabel)symbol).getTexture();     
+             AttachedItem item=new AttachedItem.Builder(text.getText()).setUUID(symbol.getUUID()).build();  
+             referenceCombo.addItem(item);                          
+             if(text.getTag().equals("reference"))
+                 referenceCombo.setSelectedItem(item);  
+        }   
         referenceCombo.addActionListener(this);
                       
 
@@ -106,13 +109,13 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
         
         //atext = SymbolMgr.getInstance().getTextureByTag(getComponent().getModel().getUnit(),"unit");
         //***get could be Owners list        
-//        for(FontLabel symbol:((SymbolComponent)getComponent()).getModel().getUnit().<FontLabel>getShapes(FontLabel.class)){
-//             Texture text=symbol.getTexture();     
-//             AttachedItem item=new AttachedItem.Builder(text.getText()).setUUID(symbol.getUUID()).build();   
-//             valueCombo.addItem(item);  
-//             if(text.getTag().equals("unit"))
-//                 valueCombo.setSelectedItem(item);    
-//        }
+        for(FontLabel symbol:((SymbolComponent)getComponent()).getModel().getUnit().<FontLabel>getShapes(FontLabel.class)){
+             Texture text=symbol.getTexture();     
+             AttachedItem item=new AttachedItem.Builder(text.getText()).setUUID(symbol.getUUID()).build();   
+             valueCombo.addItem(item);  
+             if(text.getTag().equals("unit"))
+                 valueCombo.setSelectedItem(item);    
+        }
         
         //***reconnect
         valueCombo.addActionListener(this);
@@ -129,31 +132,31 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if(e.getSource()==referenceCombo){
-//           Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)referenceCombo.getSelectedItem()).getUUID());
-//           Label text = (Label)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"reference");
-//           //***demark the old one
-//           if(text!=null)
-//              text.getTexture().setTag("label");  
-//           //***mark the new one 
-//           if(element!=null){
-//               text=((Label)element);
-//               text.getTexture().setTag("reference");
-//           }           
-//        }
-//        
-//        if(e.getSource()==valueCombo){
-//           Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)valueCombo.getSelectedItem()).getUUID());
-//           Label text = (Label)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"unit");
-//           //***demark the old one
-//           if(text!=null)
-//              text.getTexture().setTag("label");  
-//           //***mark the new one 
-//           if(element!=null){
-//               text=(Label)element;
-//               text.getTexture().setTag("unit");
-//           }           
-//        }
+        if(e.getSource()==referenceCombo){
+           Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)referenceCombo.getSelectedItem()).getUUID());
+           FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"reference");
+           //***demark the old one
+           if(text!=null)
+              text.getTexture().setTag("label");  
+           //***mark the new one 
+           if(element!=null){
+               text=((FontLabel)element);
+               text.getTexture().setTag("reference");
+           }           
+        }
+        
+        if(e.getSource()==valueCombo){
+           Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)valueCombo.getSelectedItem()).getUUID());
+           FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"unit");
+           //***demark the old one
+           if(text!=null)
+              text.getTexture().setTag("label");  
+           //***mark the new one 
+           if(element!=null){
+               text=(FontLabel)element;
+               text.getTexture().setTag("unit");
+           }           
+        }
         
         
         if(e.getSource()==textLayoutCombo){

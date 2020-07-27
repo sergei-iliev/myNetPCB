@@ -131,7 +131,7 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     }       
     @Override
     public String toXML() {
-        return "<arc  x=\""+Utilities.roundDouble(this.arc.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.arc.width,1)+"\" height=\""+Utilities.roundDouble(this.arc.height,1)+ "\"  thickness=\""+this.thickness+"\" start=\""+Utilities.roundDouble(this.arc.startAngle,1)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle,1)+"\" fill=\""+this.fill+"\"/>";
+        return "<arc  x=\""+Utilities.roundDouble(this.arc.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.arc.width,1)+"\" height=\""+Utilities.roundDouble(this.arc.height,1)+ "\"  thickness=\""+this.thickness+"\" start=\""+Utilities.roundDouble(this.arc.startAngle,1)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle,1)+"\" fill=\""+this.fill.ordinal()+"\"/>";
     }
 
     @Override
@@ -159,9 +159,9 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
             double w=Double.parseDouble(element.getAttribute("width"));
             double h=Double.parseDouble(element.getAttribute("height"));
             
-            this.arc.pc.set(x+w/2,y+h/2);
-            this.arc.width=w/2;
-            this.arc.height=h/2;
+            this.arc.pc.set(x,y);
+            this.arc.width=w;
+            this.arc.height=h;
             
             this.arc.startAngle = Double.parseDouble(element.getAttribute("start"));       
             this.arc.endAngle = Double.parseDouble(element.getAttribute("extend"));

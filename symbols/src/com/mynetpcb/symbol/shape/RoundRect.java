@@ -152,7 +152,7 @@ public class RoundRect extends Shape implements Resizeable, Externalizable{
         for (Point point : this.roundRect.points) {
             sb.append(Utilities.roundDouble(point.x) + "," + Utilities.roundDouble(point.y) + ",");
         }
-        sb.append("\"></rectangle>\r\n");
+        sb.append("\"></rectangle>");
         return sb.toString();        
     }
 

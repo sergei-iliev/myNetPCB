@@ -129,6 +129,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape> implements Co
         FontLabel label=(FontLabel)getTarget(); 
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         label.getTexture().setFillColor(color);
+        getComponent().Repaint();  
     }    
 }
 

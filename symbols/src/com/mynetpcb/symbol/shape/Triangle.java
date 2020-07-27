@@ -110,7 +110,7 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
            points.append(Utilities.roundDouble(point.y,1));
            points.append(",");
         });     
-        return "<triangle thickness=\"" + this.thickness + "\" fill=\"" + this.fill + "\">"+points.toString()+"</triangle>";
+        return "<triangle thickness=\"" + this.thickness + "\" fill=\"" + this.fill.ordinal() + "\">"+points.toString()+"</triangle>";
     }
 
     @Override

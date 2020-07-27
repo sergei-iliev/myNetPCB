@@ -14,6 +14,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.symbol.unit.Symbol;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -78,7 +79,7 @@ public class FontLabel extends Shape implements Label,Externalizable{
     @Override
     public String toXML() {
         if(this.texture!=null&&!this.texture.isEmpty())
-            return "<label color=\""+this.texture.getFillColor()+"\">"+this.texture.toXML()+"</label>";
+            return "<label color=\""+texture.getFillColor().getRGB()+"\">"+this.texture.toXML()+"</label>";
           else
             return "";  
     }
@@ -86,7 +87,7 @@ public class FontLabel extends Shape implements Label,Externalizable{
     @Override
     public void fromXML(Node node) {
         Element  element= (Element)node;
-        //texture.setFillColor(element.getAttribute("color").equals("")?Color.BLACK:new Color(Integer.parseInt(element.getAttribute("color"))));
+        texture.setFillColor(element.getAttribute("color").equals("")?Color.BLACK:new Color(Integer.parseInt(element.getAttribute("color"))));
         texture.fromXML(node);        
     }
 

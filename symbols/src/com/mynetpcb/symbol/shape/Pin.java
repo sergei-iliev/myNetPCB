@@ -534,7 +534,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
     @Override
     public String toXML() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<pin type=\"" + this.type + "\"  style=\"" + this.style + "\"   x=\""+Utilities.roundDouble(this.segment.ps.x,1)+"\" y=\""+Utilities.roundDouble(this.segment.ps.y,1)+"\" orientation=\""+this.orientation+"\">\r\n");    
+        sb.append("<pin type=\"" + this.type.ordinal() + "\"  style=\"" + this.style.ordinal() + "\"   x=\""+Utilities.roundDouble(this.segment.ps.x,1)+"\" y=\""+Utilities.roundDouble(this.segment.ps.y,1)+"\" orientation=\""+this.orientation.ordinal()+"\">\r\n");    
         if(this.type == PinType.COMPLEX){
          if (!this.number.isEmpty())
             sb.append("<number>" +
@@ -562,7 +562,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
           this.init(Orientation.values()[Byte.parseByte(st.nextToken())]);
         }else{
           this.segment.ps.set(Double.parseDouble(element.getAttribute("x")),Double.parseDouble(element.getAttribute("y")));   
-            this.init(Orientation.values()[Byte.parseByte(element.getAttribute("orientation"))]);
+          this.init(Orientation.values()[Byte.parseByte(element.getAttribute("orientation"))]);
         }
         
         node = element.getElementsByTagName("name").item(0);

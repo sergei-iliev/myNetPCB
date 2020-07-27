@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -147,36 +149,36 @@ public class Symbol extends Unit<Shape> implements Typeable{
 //                   (packaging.getFootprintFileName() == null ? "" : packaging.getFootprintFileName()) + "\" name=\"" +
 //                   (packaging.getFootprintName() == null ? "" : packaging.getFootprintName()) + "\"/>\r\n");
         xml.append("<name>" + this.unitName + "</name>\r\n");
-//        //***reference
-//        FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"reference");
-//        if (text != null) {
-//            xml.append("<reference>");
-//            xml.append(text.toXML());
-//            xml.append("</reference>\r\n");
-//        }
-//        //unit
-//        text =(FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"unit");
-//        if (text != null) {
-//            xml.append("<unit>");
-//            xml.append(text.toXML());
-//            xml.append("</unit>\r\n");
-//        }
-//
-//        //exclude ref and value tags
-//        List shapes=getShapes().stream().filter(s->{
-//            if(s instanceof Label){
-//                if(((Label)s).getTexture().getTag().equals("reference")||((Label)s).getTexture().getTag().equals("unit")){
-//                   return false; 
-//                }else{
-//                   return true; 
-//                }                
-//            }else{
-//                return true;
-//            }
-//        }).collect(Collectors.toList());
-//        xml.append(Format(shapes));
-//
-//        xml.append("</module>");
+        //***reference
+        FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"reference");
+        if (text != null) {
+            xml.append("<reference>");
+            xml.append(text.toXML());
+            xml.append("</reference>\r\n");
+        }
+        //unit
+        text =(FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"unit");
+        if (text != null) {
+            xml.append("<unit>");
+            xml.append(text.toXML());
+            xml.append("</unit>\r\n");
+        }
+
+        //exclude ref and value tags
+        List shapes=getShapes().stream().filter(s->{
+            if(s instanceof FontLabel){
+                if(((FontLabel)s).getTexture().getTag().equals("reference")||((FontLabel)s).getTexture().getTag().equals("unit")){
+                   return false; 
+                }else{
+                   return true; 
+                }                
+            }else{
+                return true;
+            }
+        }).collect(Collectors.toList());
+        xml.append(format(shapes));
+
+        xml.append("</module>");
         return xml;
     }
 
@@ -186,6 +188,7 @@ public class Symbol extends Unit<Shape> implements Typeable{
         xml.append("<elements>\r\n");
         for (Shape e : shapes) {
             xml.append(((Externalizable) e).toXML());
+            xml.append("\r\n"); 
         }
         xml.append("</elements>\r\n");
         return xml;
