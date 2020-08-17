@@ -8,35 +8,40 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class FontText extends GeometricFigure {
-    private static final BufferedImage bi=new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_INDEXED);  
-        
+
+    public static final String  FONT_NAME=Font.MONOSPACED;
+    
     public Point anchorPoint;
     public String text;
     public int fontSize,fontStyle;
     public double rotate;
-    
     public final TextMetrics metrics;
+    private Font font;
     
     public FontText(double x,double y,String text,int fontSize,double rotate){
+        this(x,y,text,fontSize,Font.PLAIN,rotate);         
+    }
+    public FontText(double x,double y,String text,int fontSize,int fontStyle,double rotate){
         this.anchorPoint=new Point(x,y);
         this.text=text;
         this.rotate=rotate;
         this.fontSize=fontSize;            
-        this.fontStyle=Font.PLAIN;
+        this.fontStyle=fontStyle;
+        this.font = new Font(FONT_NAME,fontStyle,fontSize);
         this.metrics = new TextMetrics();
-        this.metrics.calculateMetrics(text, fontStyle,fontSize,rotate);
-        
+        this.metrics.calculateMetrics(this.font,text);        
     }
+    
     @Override
     public FontText clone() {        
-        FontText copy= new FontText(anchorPoint.x,anchorPoint.y,this.text,this.fontSize,this.rotate);                
-        copy.fontStyle=this.fontStyle;
+        FontText copy= new FontText(anchorPoint.x,anchorPoint.y,this.text,this.fontSize,this.fontStyle,this.rotate);                        
         return copy;
     }
     public void scale(double alpha){
        this.anchorPoint.scale(alpha);
        this.fontSize=(int)(this.fontSize*alpha);
-       this.metrics.calculateMetrics(text, fontStyle,fontSize,rotate);        
+       this.font = new Font(FONT_NAME,fontStyle,fontSize);
+       this.metrics.calculateMetrics(font,text);        
     }
     
     public void rotate(double angle, Point center){
@@ -51,15 +56,18 @@ public class FontText extends GeometricFigure {
     }
     public void setStyle(int style){
         this.fontStyle=style;
-        this.metrics.calculateMetrics(this.text,this.fontStyle,this.fontSize,this.rotate);
+        this.font = new Font(FONT_NAME,fontStyle,fontSize);
+        this.metrics.calculateMetrics(font,text);         
     }
     public void setSize(int fontSize){
-            this.fontSize=fontSize;
-            this.metrics.calculateMetrics(this.text,this.fontStyle,this.fontSize,this.rotate);
+        this.fontSize=fontSize;
+        this.font = new Font(FONT_NAME,fontStyle,fontSize);
+        this.metrics.calculateMetrics(font,text); 
     }
     public void setText(String text){
-            this.text=text;
-            this.metrics.calculateMetrics(this.text,this.fontStyle,this.fontSize,this.rotate);
+        this.text=text;
+        this.font = new Font(FONT_NAME,fontStyle,fontSize);
+        this.metrics.calculateMetrics(font,text); 
     }    
     
     /**
@@ -104,14 +112,9 @@ public class FontText extends GeometricFigure {
     }
     @Override
     public void paint(Graphics2D g2,boolean fill) {
-
-        Font font = new Font(Font.MONOSPACED,fontStyle,fontSize);
         g2.setFont(font); 
         Box r=this.box();
-        
-        
-        
-        
+
         AffineTransform saved = g2.getTransform();
         AffineTransform rotate =
             AffineTransform.getRotateInstance(Utils.radians(360-this.rotate), this.anchorPoint.x,this.anchorPoint.y);
@@ -134,29 +137,22 @@ public class FontText extends GeometricFigure {
 
     public static class TextMetrics{
          //int fontSize;
-         double width,height;
-         int  descent;
-         int ascent;
-
-         
-         public void calculateMetrics(String text,int fontStyle,int fontSize,double rotation){
-                 Graphics2D g2 = (Graphics2D)bi.getGraphics();
-                 AffineTransform saved = g2.getTransform();
-                 AffineTransform rotate =
-                           AffineTransform.getRotateInstance(Utils.radians(360-rotation), 0,0);
-                 
-                 g2.transform(rotate);
-             
-                 Font font = new Font(Font.MONOSPACED,fontStyle,fontSize);
-                 g2.setFont(font);                                   
-                 FontMetrics metrics = g2.getFontMetrics(font);
-                 // Determine the X coordinate for the text
-                 this.width=metrics.stringWidth(text);             
-                 this.height = metrics.getHeight();
-                 this.ascent=  metrics.getAscent();
-                 this.descent=metrics.getDescent();
-                 g2.setTransform(saved);                 
-                 g2.dispose();
-         }
+        double width,height;
+        int  descent;
+        int ascent;
+        
+        private static final BufferedImage bi=new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_INDEXED);  
+        
+        public void calculateMetrics(Font font,String text){
+                Graphics2D g2 = (Graphics2D)bi.getGraphics();                            
+                g2.setFont(font);                                   
+                FontMetrics metrics = g2.getFontMetrics(font);
+                // Determine the X coordinate for the text
+                this.width=metrics.stringWidth(text);  
+                this.height = metrics.getHeight();
+                this.ascent=  metrics.getAscent();
+                this.descent=metrics.getDescent();                
+                g2.dispose();
+        }         
     }
 }

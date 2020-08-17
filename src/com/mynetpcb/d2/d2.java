@@ -1,22 +1,15 @@
 package com.mynetpcb.d2;
 
-import com.mynetpcb.d2.shapes.Arc;
-import com.mynetpcb.d2.shapes.Arcellipse;
-import com.mynetpcb.d2.shapes.Circle;
-import com.mynetpcb.d2.shapes.Ellipse;
+import com.mynetpcb.d2.shapes.BaseFontText;
 import com.mynetpcb.d2.shapes.FontText;
 import com.mynetpcb.d2.shapes.GeometricFigure;
-import com.mynetpcb.d2.shapes.Hexagon;
-import com.mynetpcb.d2.shapes.Line;
-import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
-import com.mynetpcb.d2.shapes.Polygon;
-import com.mynetpcb.d2.shapes.RoundRectangle;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -64,7 +57,7 @@ public class d2 extends  JFrame {
            pane.add(panel);
        }
        private void addShapes(){
-           FontText t1=new FontText(900,400,"Sergio Leonq",8,0);
+           FontText t1=new FontText(900,400,"Sergio Leonq",0,10);
            d2Component.add(t1);
            fontSize.addChangeListener((e) -> {t1.setSize(fontSize.getValue());
                                               d2Component.repaint(); }); 
@@ -72,74 +65,85 @@ public class d2 extends  JFrame {
            angle.addChangeListener((e) -> {t1.rotate(angle.getValue(),t1.anchorPoint);
                                               d2Component.repaint(); }); 
            
+           BaseFontText bfr=new BaseFontText(500,400,"Basic Sergio Leonq",0,24,Font.BOLD);
+           d2Component.add(bfr);
            
-           Circle circle=new Circle(new Point(100,100),20);
-           d2Component.add(circle);
+           BaseFontText bfl=new BaseFontText(500,400,"Basic Sergio Leonq",2,24,Font.BOLD);
+           d2Component.add(bfl);
            
-           Circle copy=circle.clone();
-           copy.rotate(10,new Point(0,0));
-           d2Component.add(copy);
-           
-           Arc arc=new Arc(new Point(150,100),20,0,80);
-           d2Component.add(arc);
-           
-           Arc arc1=arc.clone();
-           arc1.rotate(10);
-           d2Component.add(arc1);
-           
-           Polygon polygon=new Polygon();
-           polygon.points.add(new Point(200,100));
-           polygon.points.add(new Point(250,100));
-           polygon.points.add(new Point(250,50));           
-           d2Component.add(polygon);
-           
-           Polygon polygon1=polygon.clone();
-           polygon1.rotate(10);
-           d2Component.add(polygon1);
-           
-           Hexagon hexagon=new Hexagon(300,100,70);
-           hexagon.rotate(30,hexagon.pc);
-           d2Component.add(hexagon);
-           Hexagon hexagon1=hexagon.clone();
-           hexagon1.rotate(10);
-           d2Component.add(hexagon1);
-           
-           Line line=new Line(new Point(380,100),new Point(430,100));        
-           d2Component.add(line);
-           Line line1=line.clone();
-           line1.rotate(2);
-           d2Component.add(line1);
-           
-           Obround obround=new Obround(new Point(500,100),50,20);        
-           d2Component.add(obround);
-           Obround obround1=obround.clone();
-           obround1.rotate(10,new Point(0,0));
-           d2Component.add(obround1);
-           
-           RoundRectangle roundRect=new RoundRectangle(600, 100, 80, 40, 9);                      
-           d2Component.add(roundRect);
-           
-           RoundRectangle roundRect1=roundRect.clone();
-           roundRect1.rotate(10);
-           d2Component.add(roundRect1);
-       
-           
-           Ellipse e=new Ellipse(130, 200, 80, 40);   
-           e.rotate(30);
-           d2Component.add(e);
-           
-           Ellipse e1=e.clone();           
-           e1.rotate(0);
-           d2Component.add(e1);
-           
-           
-           Arcellipse a=new Arcellipse(320, 200, 80, 40);
-           a.rotate(46);
-           d2Component.add(a);
-           
-           Arcellipse a1=a.clone();           
-           a1.rotate(0);
-           d2Component.add(a1);
+           BaseFontText bft=new BaseFontText(150,400,"Basic Sergio Leonq",1,24,Font.BOLD);
+           d2Component.add(bft);
+
+           BaseFontText bfb=new BaseFontText(150,400,"Basic Sergio Leonq",3,24,Font.BOLD);
+           d2Component.add(bfb);           
+//           
+//           Circle circle=new Circle(new Point(100,100),20);
+//           d2Component.add(circle);
+//           
+//           Circle copy=circle.clone();
+//           copy.rotate(10,new Point(0,0));
+//           d2Component.add(copy);
+//           
+//           Arc arc=new Arc(new Point(150,100),20,0,80);
+//           d2Component.add(arc);
+//           
+//           Arc arc1=arc.clone();
+//           arc1.rotate(10);
+//           d2Component.add(arc1);
+//           
+//           Polygon polygon=new Polygon();
+//           polygon.points.add(new Point(200,100));
+//           polygon.points.add(new Point(250,100));
+//           polygon.points.add(new Point(250,50));           
+//           d2Component.add(polygon);
+//           
+//           Polygon polygon1=polygon.clone();
+//           polygon1.rotate(10);
+//           d2Component.add(polygon1);
+//           
+//           Hexagon hexagon=new Hexagon(300,100,70);
+//           hexagon.rotate(30,hexagon.pc);
+//           d2Component.add(hexagon);
+//           Hexagon hexagon1=hexagon.clone();
+//           hexagon1.rotate(10);
+//           d2Component.add(hexagon1);
+//           
+//           Line line=new Line(new Point(380,100),new Point(430,100));        
+//           d2Component.add(line);
+//           Line line1=line.clone();
+//           line1.rotate(2);
+//           d2Component.add(line1);
+//           
+//           Obround obround=new Obround(new Point(500,100),50,20);        
+//           d2Component.add(obround);
+//           Obround obround1=obround.clone();
+//           obround1.rotate(10,new Point(0,0));
+//           d2Component.add(obround1);
+//           
+//           RoundRectangle roundRect=new RoundRectangle(600, 100, 80, 40, 9);                      
+//           d2Component.add(roundRect);
+//           
+//           RoundRectangle roundRect1=roundRect.clone();
+//           roundRect1.rotate(10);
+//           d2Component.add(roundRect1);
+//       
+//           
+//           Ellipse e=new Ellipse(130, 200, 80, 40);   
+//           e.rotate(30);
+//           d2Component.add(e);
+//           
+//           Ellipse e1=e.clone();           
+//           e1.rotate(0);
+//           d2Component.add(e1);
+//           
+//           
+//           Arcellipse a=new Arcellipse(320, 200, 80, 40);
+//           a.rotate(46);
+//           d2Component.add(a);
+//           
+//           Arcellipse a1=a.clone();           
+//           a1.rotate(0);
+//           d2Component.add(a1);
            
        
        }
