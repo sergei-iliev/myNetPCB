@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.symbol.unit.Symbol;
@@ -60,6 +61,10 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
     @Override
     public void move(double xoffset,double yoffset) {
        this.shape.move(xoffset,yoffset);       
+    }
+    @Override
+    public void mirror(Line line) {
+        this.shape.mirror(line);                
     }
     @Override
     public boolean isClicked(int x,int y) {

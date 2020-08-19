@@ -43,23 +43,23 @@ public class PinPanelBuilder  extends  AbstractPanelBuilder<Shape> {
         layoutPanel.add(panel);  
         
         panel=new JPanel();panel.setLayout(new BorderLayout()); ;
-        label=new JLabel("Pin name"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+        label=new JLabel("Name"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
         nameField=new JTextField(""); nameField.addKeyListener(this); panel.add(nameField,BorderLayout.CENTER);
         layoutPanel.add(panel);
         
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-        label=new JLabel("Text Orientation"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-        nameOrientationCombo=new JComboBox(Texture.Orientation.values());nameOrientationCombo.addActionListener(this);  panel.add(nameOrientationCombo,BorderLayout.CENTER);
+        label=new JLabel("Alignment"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+        nameOrientationCombo=new JComboBox(Texture.Alignment.values());nameOrientationCombo.addActionListener(this);  panel.add(nameOrientationCombo,BorderLayout.CENTER);
         layoutPanel.add(panel);
         
         panel=new JPanel();panel.setLayout(new BorderLayout()); ;
-        label=new JLabel("Pin name"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+        label=new JLabel("Number"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
         numberField=new JTextField(""); numberField.addKeyListener(this); panel.add(numberField,BorderLayout.CENTER);
         layoutPanel.add(panel);
         
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-        label=new JLabel("Text Orientation"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-        numberOrientationCombo=new JComboBox(Texture.Orientation.values());numberOrientationCombo.addActionListener(this);  panel.add(numberOrientationCombo,BorderLayout.CENTER);
+        label=new JLabel("Alignment"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+        numberOrientationCombo=new JComboBox(Texture.Alignment.values());numberOrientationCombo.addActionListener(this);  panel.add(numberOrientationCombo,BorderLayout.CENTER);
         layoutPanel.add(panel);
     }
 
@@ -72,8 +72,8 @@ public class PinPanelBuilder  extends  AbstractPanelBuilder<Shape> {
         nameField.setText(pin.getTextureByTag("name").getText());
         numberField.setText(pin.getTextureByTag("number").getText());
         
-        setSelectedItem(nameOrientationCombo,((SymbolFontTexture)pin.getTextureByTag("name")).getOrientation());
-        setSelectedItem(numberOrientationCombo,((SymbolFontTexture)pin.getTextureByTag("number")).getOrientation());
+        setSelectedItem(nameOrientationCombo,((SymbolFontTexture)pin.getTextureByTag("name")).getAlignment());
+        setSelectedItem(numberOrientationCombo,((SymbolFontTexture)pin.getTextureByTag("number")).getAlignment());
         
         
         enableControls(pin.getPinType() == Pin.PinType.COMPLEX);
@@ -87,10 +87,10 @@ public class PinPanelBuilder  extends  AbstractPanelBuilder<Shape> {
             this.updateUI();
         }    
         if(e.getSource()==nameOrientationCombo){                                 
-           ((SymbolFontTexture)pin.getTextureByTag("name")).setOrientation((Texture.Orientation)nameOrientationCombo.getSelectedItem());           
+           ((SymbolFontTexture)pin.getTextureByTag("name")).setAlignment((Texture.Alignment)nameOrientationCombo.getSelectedItem());           
         }    
         if(e.getSource()==numberOrientationCombo){
-            ((SymbolFontTexture)pin.getTextureByTag("number")).setOrientation((Texture.Orientation)numberOrientationCombo.getSelectedItem());
+            ((SymbolFontTexture)pin.getTextureByTag("number")).setAlignment((Texture.Alignment)numberOrientationCombo.getSelectedItem());
         }
      
         if(e.getSource()==orientationCombo){

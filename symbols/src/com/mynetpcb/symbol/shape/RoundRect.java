@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.RoundRectangle;
 import com.mynetpcb.d2.shapes.Utils;
@@ -75,6 +76,10 @@ public class RoundRect extends Shape implements Resizeable, Externalizable{
     @Override
     public void move(double offsetX, double offsetY) {
         roundRect.move(offsetX,offsetY);
+    }
+    @Override
+    public void mirror(Line line) {
+       roundRect.mirror(line); 
     }
     @Override
     public void rotate(double angle,Point origin) {                      

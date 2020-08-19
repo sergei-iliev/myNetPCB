@@ -5,7 +5,6 @@ import com.mynetpcb.core.capi.gui.button.JColorButton.ColorChangedListener;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Texture;
-import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.symbol.component.SymbolComponent;
@@ -50,8 +49,8 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape> implements Co
                 layoutPanel.add(panel);
         
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Orientation"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                orientationCombo=new JComboBox(Texture.Orientation.values());orientationCombo.addActionListener(this);  panel.add(orientationCombo,BorderLayout.CENTER);
+                label=new JLabel("Alignment"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                orientationCombo=new JComboBox(Texture.Alignment.values());orientationCombo.addActionListener(this);  panel.add(orientationCombo,BorderLayout.CENTER);
                 layoutPanel.add(panel); 
         
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
@@ -75,8 +74,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape> implements Co
     @Override
     public void updateUI() {
           FontLabel label=(FontLabel)getTarget();
-          
-          setSelectedItem(orientationCombo,((SymbolFontTexture)label.getTexture()).getOrientation());    
+          setSelectedItem(orientationCombo,((SymbolFontTexture)label.getTexture()).getAlignment());    
           textField.setText(label.getTexture().getText());
           leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x ));
           topField.setText(toUnitY(label.getTexture().getAnchorPoint().y));
@@ -90,11 +88,11 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape> implements Co
     public void actionPerformed(ActionEvent e) {
         FontLabel label=(FontLabel)getTarget();        
         if(e.getSource()==orientationCombo){ 
-            ((SymbolFontTexture)label.getTexture()).setOrientation((Texture.Orientation)orientationCombo.getSelectedItem());            
+           ((SymbolFontTexture)label.getTexture()).setAlignment((Texture.Alignment)orientationCombo.getSelectedItem());            
         } 
 
         if(e.getSource()==styleCombo){
-            FontTexture text=(FontTexture)label.getTexture(); 
+            SymbolFontTexture text=(SymbolFontTexture)label.getTexture(); 
             text.setStyle((Texture.Style)styleCombo.getSelectedItem());                                
         }  
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));

@@ -15,7 +15,82 @@ import org.w3c.dom.Node;
  * Glyph and Font texture blueprint
  */
 public interface Texture extends Drawable,Printable,Cloneable{
+    public enum Alignment{
+       RIGHT(Orientation.HORIZONTAL),
+       TOP(Orientation.VERTICAL),
+       LEFT(Orientation.HORIZONTAL),
+       BOTTOM(Orientation.VERTICAL);
+       
+       private final Orientation orientation;
+       
+       private Alignment(Orientation orientation){
+         this.orientation=orientation;    
+       }
+       public static Alignment from(int align){
+           switch(align){
+           case 0:
+              return RIGHT;
+           case 1:
+              return TOP;           
+           case 2:
+              return LEFT;  
+           default:
+               return BOTTOM;
+           }
+       }
+       public Alignment rotate(boolean isClockwise){       
+           if(this==LEFT){
+              if(isClockwise)
+                return TOP;
+              else
+                return BOTTOM;
+              }           
+              else if(this==RIGHT){
+                if(isClockwise)
+                  return BOTTOM;
+                else
+                  return TOP;           
+                }
+               
+              else if(this==TOP){
+                if(isClockwise) 
+                   return RIGHT;
+                else
+                   return LEFT;           
+                }               
+               else if(this==BOTTOM){
+                if(isClockwise)
+                    return LEFT;
+                else
+                   return RIGHT;
+               }else
+                  throw new IllegalArgumentException("Wrong alignment."); 
+                      
+       }
+       
+       public Orientation getOrientation(){
+           return orientation;
+       }
     
+        
+       public Alignment mirror(boolean isHorizontal){
+           if(isHorizontal){
+            if(this==LEFT)
+              return RIGHT;
+            else if(this==RIGHT)
+              return LEFT;
+            else
+              return this;
+           }else{
+            if(this==BOTTOM)
+              return TOP;
+            else if(this==TOP)
+              return BOTTOM;
+            else
+              return this;  
+           }          
+       }
+    }
     public enum Style{
         PLAIN,
         BOLD,
@@ -36,6 +111,7 @@ public interface Texture extends Drawable,Printable,Cloneable{
         HORIZONTAL,
         VERTICAL
     }
+    
     public default Style getStyle(){
         return Style.PLAIN;
     }
@@ -57,6 +133,8 @@ public interface Texture extends Drawable,Printable,Cloneable{
     public void move(double xoffset,double yoffset);
     
     public void mirror(Line line);
+    
+    public void rotate(double alpha,Point pt);
     
     public Box getBoundingShape();
     

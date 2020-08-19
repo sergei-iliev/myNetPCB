@@ -9,6 +9,7 @@ import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Segment;
@@ -115,7 +116,12 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
             this.line.move(xoffset,yoffset);
             this.arrow.move(xoffset,yoffset);
     }
-    
+
+    @Override
+    public void mirror(Line line) {
+        this.line.mirror(line);
+        this.arrow.mirror(line);   
+    }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         Box rect = this.line.box();

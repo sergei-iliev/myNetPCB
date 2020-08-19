@@ -172,8 +172,8 @@ public class Pad extends PadShape{
           
           this.shape.rotate(alpha,center);
           
-          this.number.setRotation(angle,center);
-          this.netvalue.setRotation(angle,center);
+          this.number.rotate(angle,center);
+          this.netvalue.rotate(angle,center);
           
           if(this.drill!=null){
                 this.drill.rotate(alpha,center);
@@ -195,8 +195,8 @@ public class Pad extends PadShape{
         if(this.drill!=null){
            this.drill.rotate(angle,pt);
         }
-        this.number.setRotation(alpha,pt);
-        this.netvalue.setRotation(alpha,pt);
+        this.number.rotate(alpha,pt);
+        this.netvalue.rotate(alpha,pt);
         this.rotate=alpha;
     }
   

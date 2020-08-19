@@ -78,7 +78,7 @@ public class FontTexture implements Texture{
         this.shape.move(xoffset, yoffset); 
     }
     
-    public void setRotation(double alpha,Point pt){ 
+    public void rotate(double alpha,Point pt){ 
       this.shape.rotate(alpha,pt);
     }
     
@@ -150,7 +150,7 @@ public class FontTexture implements Texture{
 
     @Override
     public String toXML() {
-        return (this.shape.text=="" ? "" :
+        return (this.isEmpty() ? "" :
             this.shape.text + "," + this.shape.anchorPoint.x + "," + this.shape.anchorPoint.y +
             ",,,"+this.shape.fontSize+"," +this.shape.rotate);
     }
@@ -182,15 +182,6 @@ public class FontTexture implements Texture{
         t.scale(scale.getScaleX());
         t.move(-viewportWindow.getX(),- viewportWindow.getY());     
         t.paint(g2,true);
-
-        if(this.isTextLayoutVisible){
-               g2.setColor(Color.blue);
-               Rectangle box=this.getBoundingRect();
-               box.scale(scale.getScaleX());
-               box.move(-viewportWindow.getX(),- viewportWindow.getY());
-                              
-               box.paint(g2,false);
-        }
         
         if(this.isSelected){
             g2.setColor(Color.BLUE);

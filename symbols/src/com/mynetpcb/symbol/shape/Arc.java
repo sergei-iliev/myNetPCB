@@ -11,6 +11,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Arcellipse;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.symbol.unit.Symbol;
@@ -177,7 +178,10 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     public void move(double xoffset, double yoffset) {
         this.arc.move(xoffset, yoffset);        
     }
-    
+    @Override
+    public void mirror(Line line) {        
+        this.arc.mirror(line);
+    }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         Box rect = this.arc.box();

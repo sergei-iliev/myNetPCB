@@ -6,15 +6,17 @@ import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Texture;
-import com.mynetpcb.core.capi.text.font.FontTexture;
+import com.mynetpcb.core.capi.text.Texture.Alignment;
 import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -27,7 +29,7 @@ public class FontLabel extends Shape implements Label,Externalizable{
     public FontLabel() {
         super(1,Layer.LAYER_ALL);
         this.setDisplayName("Label");           
-        this.texture=new SymbolFontTexture("label","Label",0,0,8,0);
+        this.texture=new SymbolFontTexture("label","Label",0,0,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
       
     }
     @Override
@@ -61,7 +63,33 @@ public class FontLabel extends Shape implements Label,Externalizable{
     }
     @Override
     public void rotate(double angle,Point origin) {
-       this.texture.rotate(angle,origin);
+        Alignment alignment=Texture.Alignment.from(this.texture.shape.alignment);                 
+        this.texture.rotate(angle,origin);
+        if(angle<0){  //clockwise              
+            if(alignment.getOrientation() == Texture.Orientation.HORIZONTAL){
+                this.texture.shape.anchorPoint.set(this.texture.shape.anchorPoint.x+(this.texture.shape.metrics.ascent-this.texture.shape.metrics.descent),this.texture.shape.anchorPoint.y);            
+            }
+        }else{                   
+            if(alignment.getOrientation() == Texture.Orientation.VERTICAL){
+                this.texture.shape.anchorPoint.set(this.texture.shape.anchorPoint.x,this.texture.shape.anchorPoint.y+(this.texture.shape.metrics.ascent-this.texture.shape.metrics.descent));                   
+            }
+        }
+    }
+    @Override
+    public void mirror(Line line) {
+        Alignment alignment=Texture.Alignment.from(this.texture.shape.alignment); 
+        this.texture.mirror(line);      
+        if (line.isVertical()) { //right-left mirroring
+            if (this.texture.shape.alignment == alignment.ordinal()) {
+                this.texture.shape.anchorPoint.set(this.texture.shape.anchorPoint.x +
+                                        (this.texture.shape.metrics.ascent - this.texture.shape.metrics.descent),this.texture.shape.anchorPoint.y);
+            }
+        } else { //***top-botom mirroring          
+            if (this.texture.shape.alignment == alignment.ordinal()) {
+                this.texture.shape.anchorPoint.set(this.texture.shape.anchorPoint.x,this.texture.shape.anchorPoint.y +(this.texture.shape.metrics.ascent - this.texture.shape.metrics.descent));
+            }
+        }  
+        
     }
     @Override
     public void move(double xoffset,double yoffset) {
@@ -114,7 +142,7 @@ public class FontLabel extends Shape implements Label,Externalizable{
         
         public Memento(MementoType mementoType){
           super(mementoType);  
-          textureMemento=new FontTexture.Memento();
+          textureMemento=new SymbolFontTexture.Memento();
         }
         @Override
         public void loadStateTo(FontLabel shape) {

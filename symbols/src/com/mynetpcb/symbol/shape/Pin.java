@@ -7,7 +7,6 @@ import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.CompositeTextable;
 import com.mynetpcb.core.capi.text.Texture;
-import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -15,6 +14,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
@@ -22,6 +22,7 @@ import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -88,8 +89,8 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         this.type = PinType.COMPLEX;
         this.style = Style.FALLING_EDGE_CLOCK;
 
-        this.name=new SymbolFontTexture("XXX","name",-8,0,8,0);
-        this.number=new SymbolFontTexture("1","number",10,-4,8,0);
+        this.name=new SymbolFontTexture("XXX","name",-8,0,Texture.Alignment.RIGHT.ordinal(),8,Font.PLAIN);
+        this.number=new SymbolFontTexture("1","number",10,-4,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
         this.init(Orientation.EAST);        
     }
     @Override
@@ -174,26 +175,42 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
 
             
             Position nposnumber=Position.findPositionToLine(this.number.getAnchorPoint().x,this.number.getAnchorPoint().y,this.segment.ps,this.segment.pe);  
-            this.normalizeText(this.number,oposnumber,nposnumber);
-            
+            this.normalizeText(this.number,oposnumber,nposnumber);			
     }
     private void normalizeText(SymbolFontTexture text,Position opos,Position npos){
             if(opos==npos){
                return;      
             }
-            if(this.orientation==Orientation.EAST||this.orientation==Orientation.WEST){     //horizontal
-              double off=this.segment.ps.y-text.getAnchorPoint().y;
-              text.move(0,2*off);
-            }else{  //vertical
-              double off=this.segment.ps.x-text.getAnchorPoint().x;
-              text.move(2*off,0);             
-            }       
+
+            text.mirror(new Line(this.segment.ps,this.segment.pe));      
     }
     @Override
     public void move(double xoffset,double yoffset) {
         this.segment.move(xoffset,yoffset);
         this.name.move(xoffset,yoffset);
         this.number.move(xoffset,yoffset);
+    }
+    @Override
+    public void mirror(Line line) {
+        
+        Position oposname= Position.findPositionToLine(this.name.shape.anchorPoint.x,this.name.shape.anchorPoint.y,this.segment.ps,this.segment.pe);
+        Position oposnumber= Position.findPositionToLine(this.number.shape.anchorPoint.x,this.number.shape.anchorPoint.y,this.segment.ps,this.segment.pe);
+              
+        this.segment.mirror(line);    
+        if(line.isVertical()){ //left-right               
+                this.orientation = this.orientation.mirror(true);   
+        }else{          
+                this.orientation = this.orientation.mirror(false);
+        }     
+        this.name.mirror(line);
+        this.number.mirror(line);
+        
+              //read new position
+        Position nposname=Position.findPositionToLine(this.name.shape.anchorPoint.x,this.name.shape.anchorPoint.y,this.segment.ps,this.segment.pe);              
+        Position nposnumber=Position.findPositionToLine(this.number.shape.anchorPoint.x,this.number.shape.anchorPoint.y,this.segment.ps,this.segment.pe);        
+        
+        this.normalizeText(this.name,oposname,nposname);
+        this.normalizeText(this.number,oposnumber,nposnumber);          
     }
     /*
      * keep text orientation too, observing text normalization
@@ -603,8 +620,8 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
 
         public Memento(MementoType mementoType) {
             super(mementoType);
-            number=new FontTexture.Memento();
-            name=new FontTexture.Memento();    
+            number=new SymbolFontTexture.Memento();
+            name=new SymbolFontTexture.Memento();    
         }
 
         public void loadStateTo(Pin shape) {
