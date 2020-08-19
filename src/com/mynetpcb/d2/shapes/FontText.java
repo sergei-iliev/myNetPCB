@@ -137,9 +137,9 @@ public class FontText extends GeometricFigure {
 
     public static class TextMetrics{
          //int fontSize;
-        double width,height;
-        int  descent;
-        int ascent;
+        public double width,height;
+        public int  descent;
+        public int ascent;
         
         private static final BufferedImage bi=new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_INDEXED);  
         

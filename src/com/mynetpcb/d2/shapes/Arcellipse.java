@@ -120,6 +120,19 @@ public class Arcellipse extends GeometricFigure{
     public void rotate(double angle) {
        this.rotate(angle,this.pc);
     }   
+    public void mirror(Line line){
+        this.pc.mirror(line);
+        this.endAngle=-1*this.endAngle;
+        if(line.isVertical()){
+                if(this.startAngle>=0&&this.startAngle<=180){
+                  this.startAngle=180-this.startAngle;  
+                }else{
+                  this.startAngle=180+(360-this.startAngle);            
+                }
+        }else{
+                this.startAngle=360-this.startAngle; 
+        }                        
+    }    
     public void resize(double offX,double offY,Point pt){      
       if(pt.equals(vert[0])){
                     Point point=vert[0];

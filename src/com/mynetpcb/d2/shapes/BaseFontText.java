@@ -10,9 +10,9 @@ import java.awt.geom.AffineTransform;
  * Alignment/Justified based texture
  */
 public class BaseFontText  extends GeometricFigure {
-    private int alignment;
-    private String text;    
-    private int fontSize,fontStyle;
+    public int alignment;
+    public String text;    
+    public int fontSize,fontStyle;
     public Point anchorPoint;
     public final TextMetrics metrics;
     private Font font;
@@ -131,7 +131,7 @@ public class BaseFontText  extends GeometricFigure {
         }
         //Box b=this.box();
         //b.paint(g2, fill);
-        Utils.drawCrosshair(g2,4,this.anchorPoint);
+        //Utils.drawCrosshair(g2,4,this.anchorPoint);
     }
     
     @Override

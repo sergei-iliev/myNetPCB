@@ -49,6 +49,10 @@ public class Ellipse extends GeometricFigure {
     public void move(double offsetX,double offsetY){
         this.pc.move(offsetX,offsetY);              
     }
+    public void mirror(Line line){
+        this.pc.mirror(line);              
+    }
+    
     public void scale(double alpha){
        this.pc.scale(alpha);
        this.width*=alpha;
