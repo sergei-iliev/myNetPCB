@@ -3,6 +3,7 @@ package com.mynetpcb.symbol.shape;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -91,6 +92,13 @@ public class Line  extends AbstractLine implements Externalizable {
             }
         }        
         
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {        
+        g2.setStroke(new BasicStroke(thickness));
+        g2.setColor(Color.BLACK);
+        
+        this.polyline.paint(g2,false);  
     }
     @Override
     public String toXML() {

@@ -72,7 +72,8 @@ public class EllipsePanelBuilder extends  AbstractPanelBuilder<Shape> {
     }
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==fillCombo){
-            getTarget().setFill((Shape.Fill)fillCombo.getSelectedItem());
+           getTarget().setFill((Shape.Fill)fillCombo.getSelectedItem());
+           getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
            this.getComponent().Repaint();
         }  
     }

@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.pin.Pinable;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.CompositeTextable;
 import com.mynetpcb.core.capi.text.Texture;
@@ -322,6 +323,60 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
             c.move(-viewportWindow.getX(),- viewportWindow.getY());
             c.paint(g2,false);        
         }
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+
+        ViewportWindow viewportWindow = new ViewportWindow(0, 0, 0, 0);
+        AffineTransform scale = AffineTransform.getScaleInstance(1, 1);
+
+        g2.setColor(Color.black);
+        this.name.setFillColor(Color.black);
+        this.number.setFillColor(Color.black);
+          
+        g2.setStroke(new BasicStroke(1));
+        
+        switch(this.style){
+        case LINE:
+                this.drawPinLine(g2, viewportWindow, scale,0);
+                break;
+        case INVERTED:
+                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
+                this.drawInverted(g2, viewportWindow, scale);
+                break;    
+        case CLOCK:
+                this.drawPinLine(g2, viewportWindow, scale,0);
+                this.drawTriState(g2, viewportWindow, scale);
+                break;
+        case INVERTED_CLOCK:
+                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
+                this.drawInverted(g2, viewportWindow, scale);
+                this.drawTriState(g2, viewportWindow, scale);
+                break;
+        case INPUT_LOW:
+                this.drawPinLine(g2, viewportWindow, scale,0);
+                this.drawInputLow(g2, viewportWindow, scale);
+                break;
+        case CLOCK_LOW:
+                this.drawPinLine(g2, viewportWindow, scale,0);
+                this.drawInputLow(g2, viewportWindow, scale);
+                this.drawTriState(g2, viewportWindow, scale);
+                break;
+        case  OUTPUT_LOW:
+                this.drawPinLine(g2, viewportWindow, scale,0);
+                this.drawOutputLow(g2, viewportWindow, scale);
+                break;
+        case  FALLING_EDGE_CLOCK:
+                this.drawPinLine(g2, viewportWindow, scale, PIN_LENGTH / 6);
+                this.drawFallingEdgeClock(g2, viewportWindow, scale);
+                break;
+                  
+        }
+        if (this.type == PinType.COMPLEX) {                     
+            this.name.paint(g2, viewportWindow, scale,0);
+            this.number.paint(g2, viewportWindow, scale,0);        
+        }        
+        
     }
     
     private void drawFallingEdgeClock(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){

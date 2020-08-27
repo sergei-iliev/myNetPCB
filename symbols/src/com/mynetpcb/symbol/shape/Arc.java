@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -217,7 +218,18 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
         }
 
     }
-    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) { 
+        if(fill == Fill.EMPTY){    //framed         
+          g2.setStroke(new BasicStroke(thickness,1,1));    
+          g2.setPaint(Color.BLACK);        
+          this.arc.paint(g2,false);
+        }else{               //filled  
+          g2.setColor(Color.BLACK);  
+          this.arc.paint(g2,true);
+        }        
+        
+    }
     @Override
     public AbstractMemento getState(MementoType operationType) {
         Memento memento=new Memento(operationType);

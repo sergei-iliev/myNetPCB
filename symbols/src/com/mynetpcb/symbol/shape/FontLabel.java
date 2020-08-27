@@ -3,6 +3,7 @@ package com.mynetpcb.symbol.shape;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Texture;
@@ -129,6 +130,10 @@ public class FontLabel extends Shape implements Label,Externalizable{
                   }
 
                   this.texture.paint(g2, viewportWindow, scale,layersmask);        
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {               
+        texture.print(g2,printContext,layermask);
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {

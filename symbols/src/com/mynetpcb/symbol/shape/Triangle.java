@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -174,6 +175,16 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
             }            
         }
 
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setStroke(new BasicStroke(thickness));
+        g2.setColor(Color.BLACK);  
+        if (fill == Fill.EMPTY) { //framed            
+            shape.paint(g2, false);
+        } else { //filled
+            shape.paint(g2,true);
+        }        
     }
     //***old schema
     //DIRECTION_WEST = 0x01;

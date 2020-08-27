@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -121,6 +122,20 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
     public void mirror(Line line) {
         this.line.mirror(line);
         this.arrow.mirror(line);   
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setStroke(new BasicStroke(thickness, 1, 1));
+        
+        Segment l=this.line.clone();
+        l.pe.set((this.arrow.points.get(1).x + this.arrow.points.get(2).x)/2, (this.arrow.points.get(1).y + this.arrow.points.get(2).y)/2);
+        l.paint(g2,false);
+        if (fill == Fill.EMPTY) { //framed
+            //transparent rect
+            this.arrow.paint(g2,false);
+        } else { //filled
+            this.arrow.paint(g2,true);
+        }
     }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {

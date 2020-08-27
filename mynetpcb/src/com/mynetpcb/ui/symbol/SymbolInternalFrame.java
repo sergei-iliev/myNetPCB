@@ -216,7 +216,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         
         //***construct Top Buttons Panel
 
-        AddFootprintButton.setToolTipText("Add footprint");
+        AddFootprintButton.setToolTipText("Add symbol");
         AddFootprintButton.setPreferredSize(new Dimension(35, 35));
         AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
         AddFootprintButton.addMenu("Create symbols bundle","Create").addMenu("Add symbol to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
@@ -224,12 +224,12 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
                            addSeparator().addMenu("Exit","exit"); 
         
         PrintButton.addActionListener(this);
-        PrintButton.setToolTipText("Print footprint");
+        PrintButton.setToolTipText("Print symbol");
         PrintButton.setPreferredSize(new Dimension(35, 35));
         PrintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/print.png"));
 
         SaveButton.addActionListener(this);
-        SaveButton.setToolTipText("Save Footprint");
+        SaveButton.setToolTipText("Save symbol");
         SaveButton.setActionCommand("Save");  //for inline editing
         SaveButton.setPreferredSize(new Dimension(35, 35));
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
@@ -540,12 +540,12 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if (e.getSource() == LabelButton) {
                 symbolComponent.setMode(Mode.LABEL_MODE);
             }
-            if (e.getActionCommand().equals("Print")) {
+            if (e.getSource()==PrintButton) {
                 PrintContext printContext=new PrintContext();
                 printContext.setIsMirrored(false);
                 printContext.setLayermaskId(Layer.LAYER_ALL);
                 printContext.setTag("symbols");
-                symbolComponent.print(printContext);
+                symbolComponent.print(printContext);                
             }
             if (e.getSource()==DragHeand) {
                 symbolComponent.setMode(Mode.DRAGHEAND_MODE);

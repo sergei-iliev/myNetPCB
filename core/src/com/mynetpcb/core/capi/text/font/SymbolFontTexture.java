@@ -3,6 +3,7 @@ package com.mynetpcb.core.capi.text.font;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.BaseFontText;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
@@ -157,7 +158,7 @@ public class SymbolFontTexture implements Texture{
     @Override
     public String toXML() {
         return (this.isEmpty() ? "" :
-                this.shape.text + "," + this.shape.anchorPoint.x + "," + this.shape.anchorPoint.y +
+                this.shape.text + "," + Utilities.roundDouble(this.shape.anchorPoint.x,1) + "," + Utilities.roundDouble(this.shape.anchorPoint.y,1) +
                 "," + Texture.Alignment.from(this.shape.alignment)+","+Texture.Style.valueOf(this.shape.fontStyle)+","+this.shape.fontSize);
     }
 
@@ -194,7 +195,12 @@ public class SymbolFontTexture implements Texture{
         }
 
     }
-
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        Color color=printContext.isBlackAndWhite()?Color.BLACK:this.getFillColor(); 
+        g2.setColor(color);
+        this.shape.paint(g2, false);
+    }
     @Override
     public boolean isClicked(int x, int y) {
         if (this.shape.text == null || this.shape.text.length() == 0){
@@ -238,11 +244,6 @@ public class SymbolFontTexture implements Texture{
        this.fillColor=color;
     }
 
-    @Override
-    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
-        // TODO Implement this method
-
-    }
     
     public static class Memento  implements Texture.Memento{
          private String text;
