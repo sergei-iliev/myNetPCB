@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.FontText;
 import com.mynetpcb.d2.shapes.Line;
@@ -151,7 +152,7 @@ public class FontTexture implements Texture{
     @Override
     public String toXML() {
         return (this.isEmpty() ? "" :
-            this.shape.text + "," + this.shape.anchorPoint.x + "," + this.shape.anchorPoint.y +
+            this.shape.text + "," + Utilities.roundDouble(this.shape.anchorPoint.x) + "," + Utilities.roundDouble(this.shape.anchorPoint.y) +
             ",,,"+this.shape.fontSize+"," +this.shape.rotate);
     }
 
