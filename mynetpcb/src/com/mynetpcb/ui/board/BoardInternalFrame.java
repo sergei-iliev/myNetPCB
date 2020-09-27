@@ -276,12 +276,12 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         
         SaveButton.addActionListener(this);
         SaveButton.setActionCommand("Save");
-        SaveButton.setToolTipText("Save Module");
+        SaveButton.setToolTipText("Save Board");
         SaveButton.setPreferredSize(new Dimension(35, 35));
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
        
         LoadButton.addActionListener(this);
-        LoadButton.setToolTipText("Load Module");
+        LoadButton.setToolTipText("Load Board");
         LoadButton.setPreferredSize(new Dimension(35, 35));
         LoadButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/folder.png"));
 

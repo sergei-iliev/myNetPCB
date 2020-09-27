@@ -11,6 +11,7 @@ import com.mynetpcb.core.capi.text.Texture.Alignment;
 import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
@@ -179,8 +180,8 @@ public class FontLabel extends Shape implements Label,Externalizable{
           int hash = super.hashCode()+textureMemento.hashCode();
           return hash;
         }     
-        
-        public boolean isSameState(Symbol unit) {
+        @Override
+        public boolean isSameState(Unit unit) {
             FontLabel label=(FontLabel)unit.getShape(getUUID());
             return (label.getState(getMementoType()).equals(this));             
         }
