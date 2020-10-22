@@ -1,5 +1,6 @@
 package com.mynetpcb.board.shape;
 
+import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
@@ -7,7 +8,10 @@ import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.layer.ClearanceTarget;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
+import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.pad.shape.GlyphLabel;
@@ -73,9 +77,63 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget{
         // TODO Implement this method
         return 0;
     }
-    public static class Memento extends GlyphLabel.Memento{
-        public Memento(MementoType mementoType) {
-            super(mementoType);
+
+    public AbstractMemento getState(MementoType operationType) {
+        AbstractMemento memento = new Memento(operationType);
+        memento.saveStateFrom(this);
+        return memento;
+    }
+    public static class Memento extends AbstractMemento<Board,PCBLabel>{
+        GlyphTexture.Memento memento;
+        
+        public Memento(MementoType mementoType){
+          super(mementoType);  
+          memento=new GlyphTexture.Memento();
+        }
+        @Override
+        public void loadStateTo(PCBLabel shape) {
+          super.loadStateTo(shape);  
+          memento.loadStateTo(shape.texture);  
+        }
+        @Override
+        public void saveStateFrom(PCBLabel shape){
+            super.saveStateFrom(shape);
+            memento.saveStateFrom(shape.texture);
+        }
+        
+        @Override
+        public void clear(){
+          super.clear();
+          memento.clear();
+        }
+        @Override
+        public boolean equals(Object obj){
+            if(this==obj){
+              return true;  
+            }
+            if(!(obj instanceof Memento)){
+              return false;  
+            }
+            
+            Memento other=(Memento)obj;
+
+            return(super.equals(obj)&&
+                   memento.equals(other.memento)
+                );            
+          
+        }
+        
+        @Override
+        public int hashCode(){
+          int hash=super.hashCode();          
+          hash+=memento.hashCode();
+          return hash;
+        }        
+        @Override
+        public boolean isSameState(Unit unit) {
+            PCBLabel label=(PCBLabel)unit.getShape(getUUID());
+            return (label.getState(getMementoType()).equals(this)); 
         }
     }
+
 }
