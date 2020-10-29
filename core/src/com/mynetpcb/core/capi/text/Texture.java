@@ -71,7 +71,13 @@ public interface Texture extends Drawable,Printable,Cloneable{
        public Orientation getOrientation(){
            return orientation;
        }
-    
+       public static Orientation getOrientation(int alignment){
+           if(alignment==0||alignment==2){
+                 return  Orientation.HORIZONTAL; 
+           }else{
+                 return  Orientation.VERTICAL;  
+           }
+       }
         
        public Alignment mirror(boolean isHorizontal){
            if(isHorizontal){

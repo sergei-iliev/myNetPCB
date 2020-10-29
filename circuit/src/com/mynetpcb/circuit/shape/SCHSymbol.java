@@ -1,0 +1,357 @@
+package com.mynetpcb.circuit.shape;
+
+import com.mynetpcb.circuit.unit.Circuit;
+import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.core.capi.Typeable;
+import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.pin.CompositePinable;
+import com.mynetpcb.core.capi.pin.Pinable;
+import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.CompositeTextable;
+import com.mynetpcb.core.capi.text.Texture;
+import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
+import com.mynetpcb.core.capi.undo.AbstractMemento;
+import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.symbol.shape.SymbolShapeFactory;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Node;
+
+public class SCHSymbol extends Shape implements CompositeTextable,Typeable,CompositePinable,Externalizable{
+    private List<Shape> shapes;
+    private Typeable.Type type;
+    private SymbolFontTexture reference,unit; 
+    
+    public SCHSymbol() {
+        super(1,Layer.LAYER_ALL);
+        this.shapes=new ArrayList<Shape>();              
+        this.reference=new SymbolFontTexture("","reference",0,0,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
+        this.unit=new SymbolFontTexture("","unit",0,0,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
+        
+        this.reference.setFillColor(Color.BLACK);
+        this.unit.setFillColor(Color.BLACK);
+        
+        this.type=Typeable.Type.SYMBOL;
+    }
+    
+    @Override
+    public SCHSymbol clone() throws CloneNotSupportedException {
+        SCHSymbol copy=(SCHSymbol)super.clone();
+        copy.reference =reference.clone();
+        copy.unit=unit.clone();
+        copy.shapes=new ArrayList<Shape>();        
+        for(Shape shape:this.shapes){ 
+          copy.shapes.add(shape.clone());  
+        }
+        return copy;    
+    }
+    
+    
+    @Override
+    public Point alignToGrid(boolean isRequired) {
+        Box r=getPinsRect();
+        //may not have pins
+        if(r==null)
+           return null;
+        Point point=this.getOwningUnit().getGrid().positionOnGrid(r.min.x,r.min.y); 
+        this.move(point.x-r.min.x,point.y-r.min.y);
+        return null;
+    }
+    public void add(Shape shape){
+      if (shape == null)
+            return;   
+      shapes.add(shape);  
+    }
+    
+    @Override
+    public Box getBoundingShape(){
+        Box r = new Box();
+        double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+
+        //***empty schematic,element,package
+        if (shapes.size() == 0) {
+            return r;
+        }
+
+        for (Shape shape : shapes) {
+            Box tmp = shape.getBoundingShape();
+            if (tmp != null) {
+                x1 = Math.min(x1, tmp.min.x);
+                y1 = Math.min(y1, tmp.min.y);
+                x2 = Math.max(x2, tmp.max.x);
+                y2 = Math.max(y2, tmp.max.y);
+            }
+        }
+        r.setRect(x1, y1, x2 - x1, y2 - y1);
+        return r; 
+    }    
+    @Override
+    public void move(double xoffset, double yoffset) {
+        for(Shape shape:shapes){
+            shape.move(xoffset,yoffset);
+        }        
+        //***move module text
+         unit.move(xoffset,yoffset);
+         reference.move(xoffset,yoffset);
+    }
+    @Override
+    public void mirror(Line line){
+        for(Shape shape:shapes){
+            shape.mirror(line);       
+        }
+
+        this.mirrorText(line,this.unit);
+        this.mirrorText(line,this.reference);           
+    }
+    private void mirrorText(Line line,SymbolFontTexture texture){
+        int oldalignment = texture.shape.alignment;
+        texture.mirror(line);   
+        if (line.isVertical()) { //right-left mirroring
+            if (texture.shape.alignment == oldalignment) {
+                texture.shape.anchorPoint.set(texture.shape.anchorPoint.x +
+                                        (texture.shape.metrics.ascent - texture.shape.metrics.descent),texture.shape.anchorPoint.y);
+            }
+        } else { //***top-botom mirroring          
+            if (texture.shape.alignment == oldalignment) {
+                    texture.shape.anchorPoint.set(texture.shape.anchorPoint.x,texture.shape.anchorPoint.y +(texture.shape.metrics.ascent - texture.shape.metrics.descent));
+            }
+        }   
+    }    
+    @Override
+    public void rotate(double angle, Point center){
+        for(Shape shape:this.shapes){                    
+           shape.rotate(angle,center);  
+        }
+        this.unit.setRotation(angle,center);
+        this.reference.setRotation(angle,center);
+    }    
+    @Override
+    public void setType(Typeable.Type type) {
+        this.type = type;
+    }
+    @Override
+    public Typeable.Type getType() {
+        return type;
+    }
+    @Override
+    public String toXML() {
+        // TODO Implement this method
+        return null;
+    }
+
+    @Override
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+        // TODO Implement this method
+
+    }
+
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {
+        Box rect = this.getBoundingShape();             
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+         return;
+        }
+                
+        for(Shape shape:this.shapes){   
+          shape.paint(g2,viewportWindow,scale,layersmask);  
+        }   
+        
+        if(this.isSelected()){
+            unit.setFillColor(Color.BLUE);
+            unit.paint(g2, viewportWindow, scale, layersmask);
+            reference.setFillColor(Color.BLUE);
+            reference.paint(g2, viewportWindow, scale, layersmask);
+        }else{
+            unit.setFillColor(Color.BLACK);
+            unit.paint(g2, viewportWindow, scale, layersmask);
+            reference.setFillColor(Color.BLACK);
+            reference.paint(g2, viewportWindow, scale, layersmask);
+            
+        }    
+        
+//        if(this.isSelected()){
+//        g2.globalCompositeOperation = 'lighter';
+//        rect.move(-viewportWindow.x,- viewportWindow.y);
+//        g2.fillStyle = "blue";
+//        g2._fill=true;
+//        rect.paint(g2);
+//        g2._fill=false;
+//        g2.globalCompositeOperation = 'source-over';
+//        
+//        this.unit.fillColor = "blue";
+//        this.unit.paint(g2, viewportWindow, scale, layersmask);
+//        this.reference.fillColor = "blue";
+//        this.reference.paint(g2, viewportWindow, scale, layersmask);
+//        }else{
+//        this.unit.fillColor = "black";
+//        this.unit.paint(g2, viewportWindow, scale, layersmask);
+//        this.reference.fillColor = "black";
+//        this.reference.paint(g2, viewportWindow, scale, layersmask);        
+//        }
+    }
+    
+    @Override
+    public Texture getTextureByTag(String  tag) {
+        if(tag.equals(this.reference.getTag()))
+            return this.reference;
+        else if(tag.equals(this.unit.getTag()))
+            return this.unit;
+        else
+        return null;        
+    }
+    
+    @Override
+    public Texture getClickedTexture(int x, int y) {
+        
+        return null;
+    }
+
+    @Override
+    public boolean isClickedTexture(int x, int y) {
+        // TODO Implement this method
+        return false;
+    }
+    @Override
+    public  Box getPinsRect(){   
+        Box r = new Box();
+        double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+        boolean  isPinnable=false;
+        //***empty schematic,element,package
+        if (shapes.size() == 0) {
+            return null;
+        }
+
+        for (Shape shape : shapes) {
+            if(shape instanceof Pinable){
+              Point p=((Pinable)shape).getPinPoint();
+              x1=Math.min(x1,p.x );
+              y1=Math.min(y1,p.y);
+              x2=Math.max(x2,p.x+0);
+              y2=Math.max(y2,p.y +0);             
+              isPinnable=true;
+            }
+        }
+        r.setRect(x1, y1, x2 - x1, y2 - y1);
+        return r;         
+        
+    }
+    @Override
+    public Collection<Point> getPinPoints() {
+        // TODO Implement this method
+        return Collections.emptySet();
+    }
+    
+    @Override
+    public AbstractMemento getState(MementoType operationType) {
+        AbstractMemento memento = new Memento(operationType);
+        memento.saveStateFrom(this);
+        return memento;
+    }
+    
+    static class Memento extends AbstractMemento<Circuit,SCHSymbol>{
+        
+        private final List<AbstractMemento> mementoList;
+        
+        private SymbolFontTexture.Memento unit,reference;
+
+        public Memento(MementoType operationType){
+           super(operationType);
+           mementoList=new LinkedList<AbstractMemento>();
+           unit=new SymbolFontTexture.Memento();
+           reference=new SymbolFontTexture.Memento();              
+        }
+        
+        public void loadStateTo(SCHSymbol symbol) {
+          super.loadStateTo(symbol);
+          unit.loadStateTo(symbol.unit); 
+          reference.loadStateTo(symbol.reference);                  
+          /*
+           * Symbol is recreated with empty shapes in it
+           */
+          if(symbol.shapes.size()==0){
+            //***fill elements
+            AbstractShapeFactory shapeFactory=new SymbolShapeFactory();
+            for(AbstractMemento elementMemento:mementoList){
+               Shape shape=shapeFactory.createShape(elementMemento); 
+               symbol.add(shape);               
+            } 
+          }
+          for(int i=0;i<mementoList.size();i++){
+              AbstractMemento memento=mementoList.get(i);
+              symbol.shapes.get(i).setState(memento);
+          }
+        }
+        
+        public void saveStateFrom(SCHSymbol symbol) {
+            super.saveStateFrom(symbol);
+            this.unit.saveStateFrom(symbol.unit);
+            this.reference.saveStateFrom(symbol.reference);
+            
+            for(Shape ashape:symbol.shapes){
+                mementoList.add(ashape.getState(mementoType));     
+            }            
+                        
+        }
+        @Override
+        public void clear() {
+            super.clear();
+            for(AbstractMemento memento:mementoList){
+              memento.clear();  
+            }
+            mementoList.clear();
+        }
+
+        @Override
+        public boolean equals(Object obj){
+            if(this==obj){
+              return true;  
+            }
+            if(!(obj instanceof Memento)){
+              return false;  
+            }
+            
+            Memento other=(Memento)obj;
+            
+    
+            return  super.equals(obj)&&                
+                   mementoList.equals(other.mementoList)&&
+                   reference.equals(other.reference)&&
+                   unit.equals(other.unit);         
+        }
+
+        
+        @Override
+        public int hashCode(){
+            int hash=super.hashCode(); 
+            hash+=this.mementoList.hashCode();
+            hash+=this.unit.hashCode()+this.reference.hashCode();
+            return hash;  
+        }        
+        
+        @Override
+        public boolean isSameState(Unit unit) {
+            SCHSymbol shape=(SCHSymbol)unit.getShape(getUUID());            
+            return (shape.getState(getMementoType()).equals(this));  
+        }
+    }    
+}

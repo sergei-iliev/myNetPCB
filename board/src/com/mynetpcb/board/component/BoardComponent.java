@@ -384,7 +384,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
         return false;
     }
     @Override
-    public void Import(String targetFile) {
+    public void _import(String targetFile) {
         UnitContainerProducer unitContainerProducer=new UnitContainerProducer().withFactory("boards", new BoardContainerFactory());
         CommandExecutor.INSTANCE.addTask("import",
                                          new XMLImportTask(this,

@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.pin.Pinaware;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.pin.CompositePinable;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Texture;
@@ -158,15 +159,15 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         boolean isPinnable = false;
 
         for (Moveable symbol : shapes) {
-//            if (symbol instanceof Pinaware) { //group of pins
-//                Pinaware element = (Pinaware) symbol;
-//                Rectangle r = element.getPinsRect();
-//                x1 = Math.min(x1, r.x);
-//                y1 = Math.min(y1, r.y);
-//                x2 = Math.max(x2, r.x + r.width);
-//                y2 = Math.max(y2, r.y + r.height);
-//                isPinnable = true;
-//            }
+            if (symbol instanceof CompositePinable) { //group of pins
+                CompositePinable element = (CompositePinable) symbol;
+                Box r = element.getPinsRect();
+                x1 = Math.min(x1, r.min.x);
+                y1 = Math.min(y1, r.min.y);
+                x2 = Math.max(x2, r.max.y);
+                y2 = Math.max(y2, r.max.y);
+                isPinnable = true;
+            }
             if (symbol instanceof Pinable) { //single pin
                 Pinable pin = (Pinable) symbol;
                 Point point = pin.getPinPoint();

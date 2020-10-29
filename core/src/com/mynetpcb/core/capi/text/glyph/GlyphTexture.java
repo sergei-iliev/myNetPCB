@@ -111,7 +111,7 @@ public class GlyphTexture implements Texture {
 
         return result.toString();       
     }
-
+    @Override
     public void clear() {
         glyphs.clear();
         this.width=0;

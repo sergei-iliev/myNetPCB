@@ -314,7 +314,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
     }
 
     @Override
-    public void Import(String string) {
+    public void _import(String string) {
         // TODO Implement this method
     }
 

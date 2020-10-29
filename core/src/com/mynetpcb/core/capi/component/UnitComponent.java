@@ -262,7 +262,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         super.repaint();
     }
 
-    public void Export(String fileName,PrintContext context){
+    public void export(String fileName,PrintContext context){
         this.model.getUnit().prepare(context);
         try {
             this.model.getUnit().export(fileName,context);
@@ -510,7 +510,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     /*
      * Import external asset to current project
      */
-    public abstract void Import(String targetFile);
+    public abstract void _import(String targetFile);
     
     public void componentMoved(ComponentEvent e) {
     }

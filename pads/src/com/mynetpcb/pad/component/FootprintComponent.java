@@ -322,7 +322,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         return false;
     }
     @Override
-    public void Import(String targetFile) {
+    public void _import(String targetFile) {
         UnitContainerProducer unitContainerProducer=new UnitContainerProducer().withFactory("footprints", new FootprintContainerFactory());
         CommandExecutor.INSTANCE.addTask("import",
                                          new XMLImportTask(this,

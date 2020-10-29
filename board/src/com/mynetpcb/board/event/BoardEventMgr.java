@@ -48,7 +48,7 @@ public class BoardEventMgr extends EventMgr<BoardComponent,Shape> {
 
 
 @Override
-    protected void Initialize(BoardComponent component) {
+    protected void initialize(BoardComponent component) {
      hash.put("arc.start.angle",new ArcStartAngleEventHandle<BoardComponent,Shape>(component));
      hash.put("arc.extend.angle",new ArcExtendAngleEventHandler<BoardComponent,Shape>(component));
      hash.put("arc.mid.point",new ArcMidPointEventHandle<BoardComponent,Shape>(component));

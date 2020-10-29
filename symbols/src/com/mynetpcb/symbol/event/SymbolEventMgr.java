@@ -22,7 +22,7 @@ public class SymbolEventMgr extends EventMgr<SymbolComponent,Shape> {
         super(component);
     }  
     @Override
-    protected void Initialize(SymbolComponent component) {
+    protected void initialize(SymbolComponent component) {
         hash.put("origin",new OriginEventHandle<SymbolComponent,Shape>(component));
         hash.put("move",new MoveEventHandle<SymbolComponent,Shape>(component));
         hash.put("component", new UnitEventHandle<SymbolComponent,Shape>(component));

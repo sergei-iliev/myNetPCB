@@ -12,9 +12,9 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class BoardShapeFactory implements AbstractShapeFactory{{
+public class BoardShapeFactory implements AbstractShapeFactory{
 
-}
+
 
     @Override
     public Shape createShape(Node node) {

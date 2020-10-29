@@ -95,6 +95,22 @@ public class SymbolFontTexture implements Texture{
            this.shape.alignment=alignment.rotate(false).ordinal(); 
         }
     }
+    /*
+     * Take into account text offset from anchro point when rotating
+     */
+    public void setRotation(double angle, Point center){
+       Orientation oldorientation=Alignment.getOrientation(this.shape.alignment);       
+       this.rotate(angle, center);
+       if(angle<0){  //clockwise              
+               if(oldorientation == Orientation.HORIZONTAL){
+                       this.shape.anchorPoint.set(this.shape.anchorPoint.x+(this.shape.metrics.ascent-this.shape.metrics.descent),this.shape.anchorPoint.y);            
+               }
+            }else{              
+               if(oldorientation == Orientation.VERTICAL){
+                       this.shape.anchorPoint.set(this.shape.anchorPoint.x,this.shape.anchorPoint.y+(this.shape.metrics.ascent-this.shape.metrics.descent));                   
+               }
+            }               
+    }    
     @Override
     public void mirror(Line line) {        
         Alignment alignment=Texture.Alignment.from(this.shape.alignment);  
@@ -113,7 +129,7 @@ public class SymbolFontTexture implements Texture{
 
     @Override
     public void clear() {
-        // TODO Implement this method
+       
     }
 
     @Override
@@ -127,8 +143,14 @@ public class SymbolFontTexture implements Texture{
     }
 
     @Override
-    public void copy(Texture texture) {
-        // TODO Implement this method
+    public void copy(Texture _copy) {
+        SymbolFontTexture copy=(SymbolFontTexture)_copy;
+        this.shape.anchorPoint.set(copy.shape.anchorPoint.x,copy.shape.anchorPoint.y); 
+        this.shape.alignment = copy.shape.alignment;
+        this.shape.text=copy.shape.text;
+        this.shape.fontStyle=copy.shape.fontStyle;
+        this.fillColor=copy.fillColor;
+        this.shape.setSize(copy.shape.fontSize);  
     }
 
     @Override

@@ -59,7 +59,7 @@ public class BoardImageExportDialog extends BoardPrintDialog implements ActionLi
                                               JOptionPane.ERROR_MESSAGE); 
                 return;
           }           
-          unitComponent.get().Export(targetFile.getText(), createContext());
+          unitComponent.get().export(targetFile.getText(), createContext());
           return;
         }
         super.actionPerformed(e);

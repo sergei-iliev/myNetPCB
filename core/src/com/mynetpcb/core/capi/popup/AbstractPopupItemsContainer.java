@@ -516,9 +516,9 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 
                     if (fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml")) {
-                        getUnitComponent().Import(fc.getSelectedFile().getAbsolutePath());                        
+                        getUnitComponent()._import(fc.getSelectedFile().getAbsolutePath());                        
                     } else {
-                        getUnitComponent().Import( fc.getSelectedFile().getAbsolutePath() + ".xml");                        
+                        getUnitComponent()._import( fc.getSelectedFile().getAbsolutePath() + ".xml");                        
                     }
                   
             }          

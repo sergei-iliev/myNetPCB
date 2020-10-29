@@ -39,4 +39,10 @@ public interface Mode {
     public static final int TRIANGLE_MODE = 18;
     
     public static final int ARROW_MODE = 19;
+    
+    public static final int WIRE_MODE = 20;
+    
+    public static final int BUS_MODE = 21;
+
+    public static final int SYMBOL_MODE = 22;
 }
