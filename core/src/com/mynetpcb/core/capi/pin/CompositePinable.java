@@ -10,7 +10,6 @@ public interface CompositePinable {
     public Collection<Point> getPinPoints();
     
     public default Box getPinsRect(){
-        return null;
-        
+        return null;        
     }
 }
