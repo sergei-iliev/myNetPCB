@@ -11,5 +11,6 @@ public interface CompositePinable {
     
     public default Box getPinsRect(){
         return null;
+        
     }
 }
