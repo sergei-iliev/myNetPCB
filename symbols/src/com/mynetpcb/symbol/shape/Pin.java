@@ -73,7 +73,6 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
             
     };
 
-    private int PIN_LENGTH = 2 * Utilities.POINT_TO_POINT;
     private Segment segment;
     private PinType type;
     private Style style;
@@ -89,7 +88,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         this.segment=new Segment();
         this.type = PinType.COMPLEX;
         this.style = Style.FALLING_EDGE_CLOCK;
-
+        this.fillColor=Color.BLACK;
         this.name=new SymbolFontTexture("XXX","name",-8,0,Texture.Alignment.RIGHT.ordinal(),8,Font.PLAIN);
         this.number=new SymbolFontTexture("1","number",10,-4,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
         this.init(Orientation.EAST);        
@@ -133,16 +132,16 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
             this.orientation=orientation;
         switch (this.orientation) {
         case EAST:        
-            this.segment.pe.set(this.segment.ps.x + (this.type == PinType.COMPLEX ? PIN_LENGTH : PIN_LENGTH / 2), this.segment.ps.y);
+            this.segment.pe.set(this.segment.ps.x + (this.type == PinType.COMPLEX ? Utilities.PIN_LENGTH : Utilities.PIN_LENGTH / 2), this.segment.ps.y);
             break;
         case WEST:
-            this.segment.pe.set(this.segment.ps.x - (this.type == PinType.COMPLEX ? PIN_LENGTH : PIN_LENGTH / 2), this.segment.ps.y);       
+            this.segment.pe.set(this.segment.ps.x - (this.type == PinType.COMPLEX ? Utilities.PIN_LENGTH : Utilities.PIN_LENGTH / 2), this.segment.ps.y);       
             break;
         case NORTH:
-            this.segment.pe.set(this.segment.ps.x, this.segment.ps.y - (this.type == PinType.COMPLEX ? PIN_LENGTH : PIN_LENGTH / 2));       
+            this.segment.pe.set(this.segment.ps.x, this.segment.ps.y - (this.type == PinType.COMPLEX ? Utilities.PIN_LENGTH : Utilities.PIN_LENGTH / 2));       
             break;
         case SOUTH:     
-            this.segment.pe.set(this.segment.ps.x, this.segment.ps.y + (this.type == PinType.COMPLEX ? PIN_LENGTH : PIN_LENGTH / 2));
+            this.segment.pe.set(this.segment.ps.x, this.segment.ps.y + (this.type == PinType.COMPLEX ? Utilities.PIN_LENGTH : Utilities.PIN_LENGTH / 2));
         }   
     }
     
@@ -263,15 +262,14 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                 return;
         }
         
-        if (this.isSelected()) {
-            
+        if (this.isSelected()) {            
             g2.setColor(Color.gray);
             this.name.setFillColor(Color.gray);
             this.number.setFillColor(Color.gray);
         } else {
-            g2.setColor(Color.black);
-            this.name.setFillColor(Color.black);
-            this.number.setFillColor(Color.black);
+            g2.setColor(fillColor);
+            this.name.setFillColor(fillColor);
+            this.number.setFillColor(fillColor);
         }  
         g2.setStroke(new BasicStroke(1));
         
@@ -280,7 +278,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                 this.drawPinLine(g2, viewportWindow, scale,0);
                 break;
         case INVERTED:
-                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
+                this.drawPinLine(g2, viewportWindow, scale,(Utilities.PIN_LENGTH / 3));
                 this.drawInverted(g2, viewportWindow, scale);
                 break;    
         case CLOCK:
@@ -288,7 +286,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                 this.drawTriState(g2, viewportWindow, scale);
                 break;
         case INVERTED_CLOCK:
-                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
+                this.drawPinLine(g2, viewportWindow, scale,(Utilities.PIN_LENGTH / 3));
                 this.drawInverted(g2, viewportWindow, scale);
                 this.drawTriState(g2, viewportWindow, scale);
                 break;
@@ -306,7 +304,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                 this.drawOutputLow(g2, viewportWindow, scale);
                 break;
         case  FALLING_EDGE_CLOCK:
-                this.drawPinLine(g2, viewportWindow, scale, PIN_LENGTH / 6);
+                this.drawPinLine(g2, viewportWindow, scale, Utilities.PIN_LENGTH / 6);
                 this.drawFallingEdgeClock(g2, viewportWindow, scale);
                 break;
                   
@@ -341,7 +339,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                 this.drawPinLine(g2, viewportWindow, scale,0);
                 break;
         case INVERTED:
-                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
+                this.drawPinLine(g2, viewportWindow, scale,(Utilities.PIN_LENGTH / 3));
                 this.drawInverted(g2, viewportWindow, scale);
                 break;    
         case CLOCK:
@@ -349,7 +347,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                 this.drawTriState(g2, viewportWindow, scale);
                 break;
         case INVERTED_CLOCK:
-                this.drawPinLine(g2, viewportWindow, scale,(PIN_LENGTH / 3));
+                this.drawPinLine(g2, viewportWindow, scale,(Utilities.PIN_LENGTH / 3));
                 this.drawInverted(g2, viewportWindow, scale);
                 this.drawTriState(g2, viewportWindow, scale);
                 break;
@@ -367,7 +365,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                 this.drawOutputLow(g2, viewportWindow, scale);
                 break;
         case  FALLING_EDGE_CLOCK:
-                this.drawPinLine(g2, viewportWindow, scale, PIN_LENGTH / 6);
+                this.drawPinLine(g2, viewportWindow, scale, Utilities.PIN_LENGTH / 6);
                 this.drawFallingEdgeClock(g2, viewportWindow, scale);
                 break;
                   
@@ -380,7 +378,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
     }
     
     private void drawFallingEdgeClock(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
-        double pinlength = (PIN_LENGTH/6)*scale.getScaleX();
+        double pinlength = (Utilities.PIN_LENGTH/6)*scale.getScaleX();
         Segment line=new Segment();
         double x=this.segment.ps.x*scale.getScaleX();
         double y=this.segment.ps.y*scale.getScaleX();
@@ -420,7 +418,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         }
     }    
     private void drawOutputLow(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
-        double pinlength = PIN_LENGTH *scale.getScaleX(); 
+        double pinlength = Utilities.PIN_LENGTH *scale.getScaleX(); 
         Segment line=new Segment();
         double x=this.segment.ps.x*scale.getScaleX();
         double y=this.segment.ps.y*scale.getScaleX();
@@ -449,7 +447,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
 
     }    
     private void drawInputLow(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
-        double pinlength = PIN_LENGTH *scale.getScaleX(); 
+        double pinlength = Utilities.PIN_LENGTH *scale.getScaleX(); 
         Segment line=new Segment();
         double x=this.segment.ps.x*scale.getScaleX();
         double y=this.segment.ps.y*scale.getScaleX();
@@ -490,7 +488,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
 
     }    
     public void drawTriState(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
-        double pinlength = PIN_LENGTH *scale.getScaleX();    
+        double pinlength = Utilities.PIN_LENGTH *scale.getScaleX();    
         Segment line=new Segment();
         double x=this.segment.ps.x*scale.getScaleX();
         double y=this.segment.ps.y*scale.getScaleX();
@@ -530,7 +528,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         }
     }    
     public void drawInverted(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
-        double invertCircleRadios = (PIN_LENGTH / 6);
+        double invertCircleRadios = (Utilities.PIN_LENGTH / 6);
         Circle circle=new Circle(new Point(this.segment.ps.x,this.segment.ps.y),invertCircleRadios);
         switch (this.orientation) {
           case EAST:

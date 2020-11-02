@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.event.DragingEventHandle;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.EventMgr;
 import com.mynetpcb.core.capi.event.MoveEventHandle;
+import com.mynetpcb.core.capi.event.ResizeEventHandle;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.TextureEventHandle;
 import com.mynetpcb.core.capi.event.UnitEvent;
@@ -46,8 +47,8 @@ public class CircuitEventMgr extends EventMgr<CircuitComponent,Shape> {
          hash.put("texture",new TextureEventHandle<CircuitComponent,Shape>(component));
          hash.put("component",new UnitEventHandle<CircuitComponent,Shape>(component));
          hash.put("block",new BlockEventHandle<CircuitComponent,Shape>(component,false));
-//         hash.put("line",new LineEventHandle(component));                   
-//         hash.put("resize",new ResizeEventHandle<CircuitComponent,Shape>(component));
+         hash.put("wire",new WireEventHandle(component));                   
+         hash.put("resize",new ResizeEventHandle<CircuitComponent,Shape>(component));
 //         hash.put("symbol",new SymbolEventHandle(component)); 
          hash.put("cursor",new CursorEventHandle<CircuitComponent,Shape>(component));        
          hash.put("dragheand",new DragingEventHandle<CircuitComponent,Shape>(component));  

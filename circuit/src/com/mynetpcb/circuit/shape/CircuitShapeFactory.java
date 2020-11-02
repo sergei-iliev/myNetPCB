@@ -20,26 +20,26 @@ return null;
                    symbol.setState(memento);
                    return symbol;
                 }
-        //        if(memento instanceof SCHConnector.Memento){
-        //          SCHConnector connector=new SCHConnector();  
-        //          connector.setState(memento);
-        //          return connector;
-        //        }
-        //        if(memento instanceof SCHBus.Memento){
-        //           SCHBus bus=new SCHBus();
-        //           bus.setState(memento);
-        //           return bus;
-        //        }
-        //        if(memento instanceof SCHBusPin.Memento){
-        //           SCHBusPin busPin=new SCHBusPin();
-        //           busPin.setState(memento);
-        //           return busPin;
-        //        }        
-        //        if(memento instanceof SCHWire.Memento){
-        //           SCHWire wire=new SCHWire();
-        //           wire.setState(memento);
-        //           return wire;
-        //        }
+                if(memento instanceof SCHConnector.Memento){
+                  SCHConnector connector=new SCHConnector();  
+                  connector.setState(memento);
+                  return connector;
+                }
+                if(memento instanceof SCHBus.Memento){
+                   SCHBus bus=new SCHBus();
+                   bus.setState(memento);
+                   return bus;
+                }
+                if(memento instanceof SCHBusPin.Memento){
+                   SCHBusPin busPin=new SCHBusPin();
+                   busPin.setState(memento);
+                   return busPin;
+                }        
+                if(memento instanceof SCHWire.Memento){
+                   SCHWire wire=new SCHWire();
+                   wire.setState(memento);
+                   return wire;
+                }
         //        if(memento instanceof SCHJunction.Memento){
         //           SCHJunction junction=new SCHJunction();
         //           junction.setState(memento);

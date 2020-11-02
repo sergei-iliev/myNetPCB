@@ -397,8 +397,24 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     }
 
     @Override
-    public void setButtonGroup(int i) {
-        // TODO Implement this method
+    public void setButtonGroup(int requestedMode) {
+        if (circuitComponent.getMode() == Mode.WIRE_MODE) {
+            circuitComponent.getEventMgr().resetEventHandle();
+        }
+        //***post operations
+        switch (requestedMode) {
+        case Mode.SYMBOL_MODE:
+            group.clearSelection();
+            break;
+        case Mode.COMPONENT_MODE:
+            group.setSelected(SelectionButton.getModel(), true);
+            break;
+        case Mode.WIRE_MODE:
+            group.setSelected(WireButton.getModel(), true);
+            break;
+        case Mode.BUS_MODE:
+            group.setSelected(BusButton.getModel(), true);
+        }
     }
 
     @Override
@@ -682,15 +698,15 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         if (e.getSource()==SelectionButton ){
             circuitComponent.setMode(Mode.COMPONENT_MODE);
         }
-//        if (e.getActionCommand().equals("wire")) {
-//            circuitComponent.setMode(Mode.WIRE_MODE);
-//        }
-//        if (e.getActionCommand().equals("bus")) {
-//            circuitComponent.setMode(Mode.BUS_MODE);
-//        }
-//        if (e.getActionCommand().equals("buspin")) {
-//            circuitComponent.setMode(Mode.BUSPIN_MODE);
-//        }
+        if (e.getSource()==WireButton) {
+            circuitComponent.setMode(Mode.WIRE_MODE);
+        }
+        if (e.getSource()==BusButton) {
+            circuitComponent.setMode(Mode.BUS_MODE);
+        }
+            if (e.getSource()==BusPinButton) {
+            circuitComponent.setMode(Mode.BUSPIN_MODE);
+        }
         if (e.getSource()==LabelButton) {
             circuitComponent.setMode(Mode.LABEL_MODE);
         }
@@ -700,15 +716,12 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
 //        if (e.getActionCommand().equals("CoordOrigin")) {
 //            circuitComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
 //        }        
-//        if (e.getActionCommand().equals("junction")) {
-//            circuitComponent.setMode(Mode.JUNCTION_MODE);
-//        }
-//        if (e.getActionCommand().equals("connector")) {
-//            circuitComponent.setMode(Mode.CONNECTOR_MODE);
-//        }
-//        if (e.getActionCommand().equals("noconnection")) {
-//            circuitComponent.setMode(Mode.NOCONNECTION_MODE);
-//        }
+        if (e.getSource()==JunctionButton) {
+            circuitComponent.setMode(Mode.JUNCTION_MODE);
+        }
+        if (e.getSource()==ConnectorButton) {
+            circuitComponent.setMode(Mode.CONNECTOR_MODE);
+        }
 //        if (e.getActionCommand().equals("scalein")) {
 //            circuitComponent.ZoomIn(new Point((int) circuitComponent.getVisibleRect().getCenterX(),
 //                                              (int) circuitComponent.getVisibleRect().getCenterY()));
@@ -717,10 +730,10 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
 //            circuitComponent.ZoomOut(new Point((int) circuitComponent.getVisibleRect().getCenterX(),
 //                                               (int) circuitComponent.getVisibleRect().getCenterY()));
 //        }
-        if (e.getActionCommand().equals("dragheand")) {
+        if (e.getSource()==DragHeand) {
             circuitComponent.setMode(Mode.DRAGHEAND_MODE);
         }
-        if (e.getActionCommand().equals("tocenter")) {
+        if (e.getSource()==PositionToCenter) {
             circuitComponent.setScrollPosition(circuitComponent.getModel().getUnit().getWidth() / 2,
                                                circuitComponent.getModel().getUnit().getHeight() / 2);
         }

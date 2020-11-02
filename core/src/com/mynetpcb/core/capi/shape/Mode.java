@@ -45,4 +45,11 @@ public interface Mode {
     public static final int BUS_MODE = 21;
 
     public static final int SYMBOL_MODE = 22;
+    
+    public static final int BUSPIN_MODE = 23;
+    
+    public static final int CONNECTOR_MODE = 24;
+    
+    public static final int JUNCTION_MODE = 25;
+    
 }

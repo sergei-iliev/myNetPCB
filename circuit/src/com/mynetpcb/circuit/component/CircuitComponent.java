@@ -3,20 +3,32 @@ package com.mynetpcb.circuit.component;
 
 import com.mynetpcb.circuit.container.CircuitContainer;
 import com.mynetpcb.circuit.event.CircuitEventMgr;
+import com.mynetpcb.circuit.event.WireEventHandle;
+import com.mynetpcb.circuit.line.CircuitBendingProcessorFactory;
+import com.mynetpcb.circuit.popup.CircuitPopupMenu;
+import com.mynetpcb.circuit.shape.SCHBus;
+import com.mynetpcb.circuit.shape.SCHBusPin;
+import com.mynetpcb.circuit.shape.SCHConnector;
 import com.mynetpcb.circuit.shape.SCHLabel;
 import com.mynetpcb.circuit.shape.SCHSymbol;
+import com.mynetpcb.circuit.shape.SCHWire;
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
+import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
@@ -27,17 +39,19 @@ import java.awt.event.MouseWheelEvent;
 public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitContainer> implements CommandListener {
 
 
-    //private final BoardPopupMenu popup;
+    private final CircuitPopupMenu popup;
 
     public CircuitComponent(DialogFrame dialog) {
         super(dialog);
         this.setModel(new CircuitContainer());
         this.eventMgr = new CircuitEventMgr(this);
         this.setBackground(Color.WHITE);
-//        this.loadDialogBuilder = new BoardLoadDialog.Builder();
-//        popup = new BoardPopupMenu(this);
-//        bendingProcessorFactory = new BoardBendingProcessorFactory();
-//        setLineBendingProcessor(bendingProcessorFactory.resolve("defaultbend", null));
+        this.setParameter("snaptogrid", true);
+        //this.loadDialogBuilder = new BoardLoadDialog.Builder();
+        popup = new CircuitPopupMenu(this);
+        bendingProcessorFactory = new CircuitBendingProcessorFactory();
+        setLineBendingProcessor(bendingProcessorFactory.resolve("vhbend", null));
+        getLineBendingProcessor().setGridAlignable(true);
     }
 
     public void setMode(int mode) {
@@ -46,30 +60,30 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
 
         this.requestFocusInWindow(); //***for the cancel button
         switch (getMode()) {
-//        case Mode.WIRE_MODE:
-//            Cursor cursor =
-//                    Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),
-//                                                                                         "/com/mynetpcb/core/images/cursor_cross.png").getImage(),
-//                                                                   new Point(16,
-//                                                                             16),
-//                                                                   "Wire");
-//            this.setCursor(cursor);
-//            break;
-//        case Mode.BUS_MODE:
-//            cursor =
-//                    Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),
-//                                                                                         "/com/mynetpcb/core/images/cursor_cross_bus.png").getImage(),
-//                                                                   new Point(16,
-//                                                                             16),
-//                                                                   "Bus");
-//            this.setCursor(cursor);
-//            //this.requestFocusInWindow(); //***for the cancel button
-//            break;
-//        case Mode.BUSPIN_MODE:
-//             SCHBusPin buspin = new SCHBusPin();        
-//            setContainerCursor(buspin);
-//            getEventMgr().setEventHandle("cursor", buspin);
-//            break;
+        case Mode.WIRE_MODE:
+            Cursor cursor =
+                    Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),
+                                                                                         "/com/mynetpcb/core/images/cursor_cross.png").getImage(),
+                                                                   new Point(16,
+                                                                             16),
+                                                                   "Wire");
+            this.setCursor(cursor);
+            break;
+        case Mode.BUS_MODE:
+            cursor =
+                    Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),
+                                                                                         "/com/mynetpcb/core/images/cursor_cross_bus.png").getImage(),
+                                                                   new Point(16,
+                                                                             16),
+                                                                   "Bus");
+            this.setCursor(cursor);
+            //this.requestFocusInWindow(); //***for the cancel button
+            break;
+        case Mode.BUSPIN_MODE:
+            SCHBusPin buspin = new SCHBusPin();        
+            setContainerCursor(buspin);
+            getEventMgr().setEventHandle("cursor", buspin);
+            break;
         case Mode.LABEL_MODE:
             shape=new SCHLabel();
             setContainerCursor(shape);               
@@ -86,13 +100,11 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
 //            setContainerCursor(shape);
 //            getEventMgr().setEventHandle("cursor", shape);
 //            break;
-//        case Mode.CONNECTOR_MODE:
-//            this.setCursor(Cursor.getDefaultCursor());
-//            shape = new SCHConnector();
-//            //shape.Move(-1 * (int)shape.getBoundingShape().getBounds().getCenterX(), -1 * (int)shape.getBoundingShape().getBounds().getCenterY());
-//            setContainerCursor(shape);               
-//            getEventMgr().setEventHandle("cursor",shape); 
-//            break;
+        case Mode.CONNECTOR_MODE:
+            shape = new SCHConnector();            
+            setContainerCursor(shape);               
+            getEventMgr().setEventHandle("cursor",shape); 
+            break;
 //        case Mode.NOCONNECTION_MODE:
 //                this.setCursor(Cursor.getDefaultCursor());
 //                shape = new SCHNoConnector();
@@ -156,79 +168,79 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                     }
                 }
                     break;
-//            case Mode.WIRE_MODE:
-//                getModel().getUnit().setSelected(false);
-//                //***is this a new wire
-//                if ((getEventMgr().getTargetEventHandle() == null) ||
-//                    !(getEventMgr().getTargetEventHandle() instanceof LineEventHandle)) {
-//                    //***handle popup when no active wire
-//                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
-//                        return; //***right button click
-//                    }
-//                    shape =
-//                            getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
-//                                                  true);
-//                    if ((shape == null)||(shape instanceof SCHBusPin)||(!(shape instanceof SCHWire))) {
-//                        shape = new SCHWire();
-//                        getModel().getUnit().Add(shape);
-//                    } 
-//                    else {
-//                        /*Click on a wire
-//                                    *1.Click at begin or end point - resume
-//                                    *2.Click in between - new Wire
-//                                    */
-//                        Trackable wire = (Trackable)shape;
-//                        if (wire.isEndPoint(scaledEvent.getX(),
-//                                            scaledEvent.getY())) {
-//                            //***do we need to reorder
-//                            wire.Reverse(scaledEvent.getX(),scaledEvent.getY());
-//                        } else {
-//                            shape = new SCHWire();                        
-//                            getModel().getUnit().Add(shape);
-//                        }
-//                    }
-//                    getEventMgr().setEventHandle("line", shape);
-//                }
-//                //****KEEP THE HANDLE between clicks, if wiring
-//                break;
-//            case Mode.BUS_MODE:
-//                getModel().getUnit().setSelected(false);
-//                //***is this a new wire
-//                if ((getEventMgr().getTargetEventHandle() == null) ||
-//                    !(getEventMgr().getTargetEventHandle() instanceof LineEventHandle)) {
-//                    //***handle popup when no active wire
-//                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
-//                        return; //***right button click
-//                    }
-//                    shape =
-//                            getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
-//                                                  true);
-//                    if ((shape == null) ||(!(shape instanceof SCHBus))) {
-//                        shape = new SCHBus();
-//                        getModel().getUnit().Add(shape);
-//                    } 
-//                    else {
-//                        /*Click on a wire
-//                                    *1.Click at begin or end point - resume
-//                                    *2.Click in between - new Wire
-//                                    */
-//                        Trackable bus = (Trackable)shape;
-//                        if (bus.isEndPoint(scaledEvent.getX(),
-//                                            scaledEvent.getY())) {
-//                            //***do we need to reorder
-//                            bus.Reverse(scaledEvent.getX(),scaledEvent.getY());
-//                        } else {
-//                            shape = new SCHWire();                        
-//                            getModel().getUnit().Add(shape);
-//                        }
-//                    }
-//                    getEventMgr().setEventHandle("line", shape);
-//                }
-//                //****KEEP THE HANDLE between clicks, if wiring
-//                break;
-//            case Mode.DRAGHEAND_MODE:
-//                getEventMgr().setEventHandle("dragheand", null);
-//                break;
+            case Mode.WIRE_MODE:
+                //getModel().getUnit().setSelected(false);
+                //***is this a new wire
+                if ((getEventMgr().getTargetEventHandle() == null) ||
+                    !(getEventMgr().getTargetEventHandle() instanceof WireEventHandle)) {
+                    //***handle popup when no active wire
+                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
+                        return; //***right button click
+                    }
+                    shape =
+                            getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
+                                                  true);
+                    if ((shape == null)||(!(shape instanceof SCHWire))) {
+                        shape = new SCHWire();
+                        getModel().getUnit().add(shape);
+                    } 
+                    else {
+                        /*Click on a wire
+                                    *1.Click at begin or end point - resume
+                                    *2.Click in between - new Wire
+                                    */
+                        Trackable wire = (Trackable)shape;
+                        if (wire.isEndPoint(scaledEvent.getX(),
+                                            scaledEvent.getY())) {
+                            //***do we need to reorder
+                            wire.reverse(scaledEvent.getX(),scaledEvent.getY());
+                        } else {
+                            shape = new SCHWire();                        
+                            getModel().getUnit().add(shape);
+                        }
+                    }
+                    getEventMgr().setEventHandle("wire", shape);
+                }
+                //****KEEP THE HANDLE between clicks, if wiring
+                break;
+            case Mode.BUS_MODE:
+                getModel().getUnit().setSelected(false);
+                //***is this a new wire
+                if ((getEventMgr().getTargetEventHandle() == null) ||
+                    !(getEventMgr().getTargetEventHandle() instanceof WireEventHandle)) {
+                    //***handle popup when no active wire
+                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
+                        return; //***right button click
+                    }
+                    shape =
+                            getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
+                                                  true);
+                    if ((shape == null) ||(!(shape instanceof SCHBus))) {
+                        shape = new SCHBus();
+                        getModel().getUnit().add(shape);
+                    } 
+                    else {
+                        /*Click on a wire
+                                    *1.Click at begin or end point - resume
+                                    *2.Click in between - new Wire
+                                    */
+                        Trackable bus = (Trackable)shape;
+                        if (bus.isEndPoint(scaledEvent.getX(),
+                                            scaledEvent.getY())) {
+                            //***do we need to reorder
+                            bus.reverse(scaledEvent.getX(),scaledEvent.getY());
+                        } else {
+                            shape = new SCHBus();                        
+                            getModel().getUnit().add(shape);
+                        }
+                    }
+                    getEventMgr().setEventHandle("wire", shape);
+                }
+                //****KEEP THE HANDLE between clicks, if wiring
+                break;
+            case Mode.DRAGHEAND_MODE:
+                getEventMgr().setEventHandle("dragheand", null);
+                break;
            }
         }
 
@@ -248,6 +260,12 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
             zoomIn(e.getPoint());
         }
     }
+    
+    @Override
+    public CircuitPopupMenu getPopupMenu() {        
+        return this.popup;
+    }
+    
     @Override
     public void _import(String string) {
         // TODO Implement this method

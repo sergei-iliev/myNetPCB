@@ -1,9 +1,11 @@
-package com.mynetpcb.symbol.shape;
+package com.mynetpcb.circuit.shape;
 
+import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
-import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.line.LinePoint;
+import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -12,7 +14,7 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
-import com.mynetpcb.symbol.unit.Symbol;
+import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -20,42 +22,65 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.Collections;
+import java.util.Set;
 
-import org.w3c.dom.Element;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.w3c.dom.Node;
 
-public class Line  extends AbstractLine implements Externalizable {
-
-    public Line(int thickness) {
-        super(thickness, Layer.LAYER_NONE);
-        this.selectionRectWidth=2;
+public class SCHWire extends AbstractLine implements Sublineable,Externalizable {
+    public SCHWire(){
+        super(1,Layer.LAYER_NONE);  
         this.fillColor=Color.BLACK;
+        this.displayName="Wire";
+        this.selectionRectWidth=2;
+        
     }
-    
-    public Line clone() throws CloneNotSupportedException {
-        Line copy = (Line) super.clone();
-        copy.floatingStartPoint = new Point();
-        copy.floatingMidPoint = new Point();
-        copy.floatingEndPoint = new Point();
-        copy.resizingPoint=null;
-        copy.polyline=this.polyline.clone();
-        return copy;
-    }
+    public SCHWire clone()throws CloneNotSupportedException{
+            SCHWire copy=(SCHWire)super.clone();
+            copy.floatingStartPoint = new Point();
+            copy.floatingMidPoint = new Point();
+            copy.floatingEndPoint = new Point();
+            copy.resizingPoint=null;
+            copy.polyline=this.polyline.clone();
+            return copy;
+    }  
     @Override
     public Point alignToGrid(boolean isRequired) {
-    if (isRequired) {
-      this.polyline.points.forEach(wirePoint->{
-          Point point = this.getOwningUnit().getGrid().positionOnGrid(wirePoint.x, wirePoint.y);
-          wirePoint.set(point.x,point.y);
-      });
+        for (Point wirePoint : getLinePoints()) {
+            Point point =
+                getOwningUnit().getGrid().positionOnGrid(wirePoint.x, wirePoint.y);
+            wirePoint.set(point);
+        }
+        return null;
+    }    
+    @Override
+    public boolean isSublineSelected() {
+        // TODO Implement this method
+        return false;
     }
-    return null;
+
+    @Override
+    public boolean isSublineInRect(Rectangle rectangle) {
+        // TODO Implement this method
+        return false;
+    }
+
+    @Override
+    public void setSublineSelected(Rectangle rectangle, boolean b) {
+        // TODO Implement this method
+
+    }
+
+    @Override
+    public Set<LinePoint> getSublinePoints() {
+        // TODO Implement this method
+        return Collections.emptySet();
     }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
-
-        
         Box rect = this.polyline.box();
         rect.scale(scale.getScaleX());           
         if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
@@ -63,22 +88,24 @@ public class Line  extends AbstractLine implements Externalizable {
         }
         g2.setColor(isSelected() ? Color.GRAY :fillColor);
         
-        Polyline r=this.polyline.clone();   
+        Polyline r=this.polyline.clone();         
         
         // draw floating point
         if (this.isFloating()) {
-            Point p = this.floatingEndPoint.clone();                              
-            r.add(p); 
+            Point p = this.floatingMidPoint.clone(); 
+            r.add(p);
+            p = this.floatingEndPoint.clone();
+            r.add(p);
         }
-        
         r.scale(scale.getScaleX());
         r.move(-viewportWindow.getX(),- viewportWindow.getY());
         
         double wireWidth = thickness * scale.getScaleX();
         g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-
         //transparent rect
         r.paint(g2, false);
+        
+        
         
         if (this.isSelected()&&isControlPointVisible) {
             Point pt=null;
@@ -90,47 +117,21 @@ public class Line  extends AbstractLine implements Externalizable {
             for(Object p:r.points){
               Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
             }
-        }        
+        }       
         
-    }
-    @Override
-    public void print(Graphics2D g2, PrintContext printContext, int layermask) {        
-        g2.setStroke(new BasicStroke(thickness));
-        g2.setColor(Color.BLACK);
-        
-        this.polyline.paint(g2,false);  
     }
     @Override
     public String toXML() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<line  thickness=\"" + this.getThickness() + "\">");
-        for (Point point : this.polyline.points) {
-            sb.append(Utilities.roundDouble(point.x,1) + "," + Utilities.roundDouble(point.y,1) + ",");
-        }
-        sb.append("</line>");
-        return sb.toString();
+        // TODO Implement this method
+        return null;
     }
 
     @Override
-    public void fromXML(Node node) {
-        Element element = (Element) node; 
-        
-        StringTokenizer st = new StringTokenizer(node.getTextContent(), ",");
-        int counter=st.countTokens()-1;
-        while(st.hasMoreTokens()){
-          this.add(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));  
-          counter-=2;
-          if(counter==0)
-              break;
-        }   
-        if(element.hasAttribute("thickness")){
-            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));   
-        }else{ 
-            setThickness(Integer.parseInt(st.nextToken()));
-        }
-        
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+        // TODO Implement this method
 
     }
+    
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
@@ -138,7 +139,7 @@ public class Line  extends AbstractLine implements Externalizable {
         return memento;
     }
     
-    public static class Memento extends AbstractMemento<Symbol, Line> {
+    public static class Memento extends AbstractMemento<Circuit, SCHWire> {
 
         private double Ax[];
 
@@ -150,7 +151,7 @@ public class Line  extends AbstractLine implements Externalizable {
         }
 
         @Override
-        public void loadStateTo(Line shape) {
+        public void loadStateTo(SCHWire shape) {
             super.loadStateTo(shape);
             shape.polyline.points.clear();
             for (int i = 0; i < Ax.length; i++) {
@@ -164,7 +165,7 @@ public class Line  extends AbstractLine implements Externalizable {
         }
 
         @Override
-        public void saveStateFrom(Line shape) {
+        public void saveStateFrom(SCHWire shape) {
             super.saveStateFrom(shape);
             Ax = new double[shape.polyline.points.size()];
             Ay = new double[shape.polyline.points.size()];
@@ -204,8 +205,8 @@ public class Line  extends AbstractLine implements Externalizable {
         }
         @Override
         public boolean isSameState(Unit unit) {
-            Line line = (Line) unit.getShape(getUUID());
+            SCHWire line = (SCHWire) unit.getShape(getUUID());
             return (line.getState(getMementoType()).equals(this));
         }
-    }        
+    }     
 }

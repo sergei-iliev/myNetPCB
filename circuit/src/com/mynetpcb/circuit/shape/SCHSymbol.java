@@ -143,7 +143,16 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
         }
         this.unit.setRotation(angle,center);
         this.reference.setRotation(angle,center);
-    }    
+    }  
+    @Override
+    public void setSelected(boolean selected) {        
+        super.setSelected(selected);
+        for(Shape shape:this.shapes){   
+          shape.setFillColor(selected?Color.BLUE:Color.BLACK);
+        }
+        unit.setSelected(selected);
+        reference.setSelected(selected);
+    }
     @Override
     public void setType(Typeable.Type type) {
         this.type = type;
@@ -175,39 +184,9 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
         for(Shape shape:this.shapes){   
           shape.paint(g2,viewportWindow,scale,layersmask);  
         }   
-        
-        if(this.isSelected()){
-            unit.setFillColor(Color.BLUE);
-            unit.paint(g2, viewportWindow, scale, layersmask);
-            reference.setFillColor(Color.BLUE);
-            reference.paint(g2, viewportWindow, scale, layersmask);
-        }else{
-            unit.setFillColor(Color.BLACK);
-            unit.paint(g2, viewportWindow, scale, layersmask);
-            reference.setFillColor(Color.BLACK);
-            reference.paint(g2, viewportWindow, scale, layersmask);
-            
-        }    
-        
-//        if(this.isSelected()){
-//        g2.globalCompositeOperation = 'lighter';
-//        rect.move(-viewportWindow.x,- viewportWindow.y);
-//        g2.fillStyle = "blue";
-//        g2._fill=true;
-//        rect.paint(g2);
-//        g2._fill=false;
-//        g2.globalCompositeOperation = 'source-over';
-//        
-//        this.unit.fillColor = "blue";
-//        this.unit.paint(g2, viewportWindow, scale, layersmask);
-//        this.reference.fillColor = "blue";
-//        this.reference.paint(g2, viewportWindow, scale, layersmask);
-//        }else{
-//        this.unit.fillColor = "black";
-//        this.unit.paint(g2, viewportWindow, scale, layersmask);
-//        this.reference.fillColor = "black";
-//        this.reference.paint(g2, viewportWindow, scale, layersmask);        
-//        }
+        unit.paint(g2, viewportWindow, scale, layersmask);
+        reference.paint(g2, viewportWindow, scale, layersmask);
+
     }
     
     @Override
@@ -222,14 +201,17 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
     
     @Override
     public Texture getClickedTexture(int x, int y) {
-        
+        if(this.reference.isClicked(x, y))
+            return this.reference;
+        else if(this.unit.isClicked(x, y))
+            return this.unit;
+        else
         return null;
     }
 
     @Override
     public boolean isClickedTexture(int x, int y) {
-        // TODO Implement this method
-        return false;
+        return this.getClickedTexture(x, y)!=null;
     }
     @Override
     public  Box getPinsRect(){   

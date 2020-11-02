@@ -219,7 +219,7 @@ public class Layer {
             }
 
             public Color getColor() {
-                return Color.LIGHT_GRAY;
+                return Color.BLACK;
             }
 
             public Color getBoardColor() {

@@ -54,6 +54,8 @@ import org.xml.sax.SAXException;
 
 
 public final class Utilities {
+    public static final int PIN_LENGTH = 2 * Utilities.POINT_TO_POINT;
+    
     public static final int DEVICE_INCH = 72;
 
     public static final int USER_INCH = 72;
