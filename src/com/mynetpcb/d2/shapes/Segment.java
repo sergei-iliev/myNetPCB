@@ -30,6 +30,12 @@ public class Segment extends GeometricFigure {
     public double length() {
         return this.ps.distanceTo(this.pe);
     } 
+    public boolean isHorizontal(){                                             
+        return Utils.EQ(this.ps.y,this.pe.y);                        
+    }
+    public boolean isVertical(){
+        return Utils.EQ(this.ps.x,this.pe.x);
+    }     
     public Box box() {
         return new Box(
             Math.min(this.ps.x, this.pe.x),

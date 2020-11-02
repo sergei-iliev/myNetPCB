@@ -23,6 +23,10 @@ public class Point extends GeometricFigure{
            this.x += vec.x;
            this.y += vec.y;
     }
+    public void translate(double x,double y) {       
+           this.x += x;
+           this.y += y;
+    }
     
     public Point middleOf(Point other){
         return new Point((this.x+other.x)/2,(this.y+other.y)/2); 
@@ -64,6 +68,37 @@ public class Point extends GeometricFigure{
         this.x+=offsetX;
         this.y+=offsetY;        
     } 
+    /**
+    * Returns true if point is on a shape, false otherwise
+    * @param {Shape} shape Shape of the one of supported types Point, Line, Circle, Segment, Arc, Polygon
+    * @returns {boolean}
+    */
+    public boolean on(GeometricFigure shape) {
+        if (shape instanceof Point) {
+            return this.equals(shape);
+        }
+
+    //              if (shape instanceof Flatten.Line) {
+    //                  return shape.contains(this);
+    //              }
+    //
+    //              if (shape instanceof Flatten.Circle) {
+    //                  return shape.contains(this);
+    //              }
+    //
+    //              if (shape instanceof Flatten.Segment) {
+    //                  return shape.contains(this);
+    //              }
+
+        if (shape instanceof Arc) {
+            return shape.contains(this);
+        }
+
+        if (shape instanceof Polygon) {
+            return shape.contains(this);
+        }
+        return false;
+    }
     
     public void mirror(Line line){
       Point prj=line.projectionPoint(this);

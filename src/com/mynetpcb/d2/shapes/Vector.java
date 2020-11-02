@@ -82,17 +82,21 @@ public class Vector{
      *rotate 90 degrees counter clockwise         
      */
     public void rotate90CCW() {
-        this.x=-this.y;
-        this.y= this.x;
+        double x=this.x;
+        double y=this.y;
+        this.x=-1*y;
+        this.y= x;
     }    
     /**
      * rotate 90 degrees clockwise
      */
     public void rotate90CW() {
-        this.x=this.y;
-        this.y=-this.x;
+        double x=this.x;
+        double y=this.y;           
+        this.x=y;
+        this.y=-1*x;
     }
-    
+
     /**
      * Return angle between this vector and other vector. <br/>
      * Angle is measured from 0 to 2*PI in the counter clockwise direction
