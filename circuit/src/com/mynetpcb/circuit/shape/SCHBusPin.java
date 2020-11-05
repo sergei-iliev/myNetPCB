@@ -1,6 +1,7 @@
 package com.mynetpcb.circuit.shape;
 
 import com.mynetpcb.circuit.unit.Circuit;
+import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
@@ -26,8 +27,16 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
+import java.util.StringTokenizer;
 
-public class SCHBusPin extends AbstractLine implements Textable{
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
     private SymbolFontTexture texture;
     
     public SCHBusPin() {
@@ -165,7 +174,34 @@ public class SCHBusPin extends AbstractLine implements Textable{
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
-    }        
+    }
+
+    @Override
+    public String toXML() {
+        // TODO Implement this method
+        return null;
+    }
+
+    @Override
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+        Element element=(Element)node;
+        Node n=element.getElementsByTagName("name").item(0);
+        texture.fromXML(n); 
+
+        NodeList nodelist = element.getElementsByTagName("wirepoints");
+        n = nodelist.item(0);
+        StringTokenizer st=new StringTokenizer(Utilities.trimCRLF(n.getTextContent()),"|");         
+        Point point = new Point();
+        StringTokenizer stock=new StringTokenizer(st.nextToken(),",");
+        point.set(Integer.parseInt(stock.nextToken()),Integer.parseInt(stock.nextToken()));  
+
+        getLinePoints().get(0).set(point);
+        stock=new StringTokenizer(st.nextToken(),",");
+        point.set(Integer.parseInt(stock.nextToken()),Integer.parseInt(stock.nextToken())); 
+        getLinePoints().get(1).set(point);  
+
+    }
+
     public static class Memento extends AbstractMemento<Circuit, SCHBusPin> {
 
         private double Ax[];

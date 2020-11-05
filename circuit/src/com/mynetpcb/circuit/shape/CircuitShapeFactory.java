@@ -40,11 +40,11 @@ return null;
                    wire.setState(memento);
                    return wire;
                 }
-        //        if(memento instanceof SCHJunction.Memento){
-        //           SCHJunction junction=new SCHJunction();
-        //           junction.setState(memento);
-        //           return junction;
-        //        }
+                if(memento instanceof SCHJunction.Memento){
+                   SCHJunction junction=new SCHJunction();
+                   junction.setState(memento);
+                   return junction;
+                }
                 if(memento instanceof SCHLabel.Memento){
                     SCHLabel label=new SCHLabel();
                     label.setState(memento);

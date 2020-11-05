@@ -1,17 +1,21 @@
 package com.mynetpcb.circuit.shape;
 
 import com.mynetpcb.circuit.unit.Circuit;
+import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Segment;
@@ -26,7 +30,15 @@ import java.awt.geom.AffineTransform;
 
 import java.lang.ref.WeakReference;
 
-public class SCHConnector extends Shape implements Textable{
+import java.util.StringTokenizer;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Node;
+
+public class SCHConnector extends Shape implements Textable,Externalizable{
+
 
     public enum Type{
        INPUT,OUTPUT;  
@@ -35,6 +47,7 @@ public class SCHConnector extends Shape implements Textable{
     public enum Style{
         BOX,ARROW,CIRCLE;  
     } 
+    
     private SymbolFontTexture texture;
     private Type type;
     private Segment segment;
@@ -80,6 +93,10 @@ public class SCHConnector extends Shape implements Textable{
             this.type=type;
             this.shape.calculatePoints();
     }
+    public Type getType(){
+        return this.type;
+    }
+    
     public void setText(String text){
         this.texture.setText(text);
         this.shape.calculatePoints();
@@ -132,6 +149,19 @@ public class SCHConnector extends Shape implements Textable{
         }else
          return   this.shape.contains(new Point(x,y));
      }
+    
+    @Override
+    public void rotate(double angle,Point origin){    
+        this.segment.rotate(angle,origin);
+        this.texture.setRotation(angle,origin);
+        this.shape.calculatePoints();                           
+    }
+    @Override
+    public void mirror(Line line) {        
+        this.segment.mirror(line);
+        this.texture.mirror(line);
+        this.shape.calculatePoints();
+    }
     @Override
     public void move(double xoff, double yoff) {        
            this.segment.move(xoff,yoff);        
@@ -217,6 +247,55 @@ public class SCHConnector extends Shape implements Textable{
             c.paint(g2,false);            
         }
     }
+    /*
+     * Fix
+     */
+    private void init(Pinable.Orientation orientation){        
+        switch (orientation) {
+        case EAST:        
+            this.segment.pe.set(this.segment.ps.x + (Utilities.PIN_LENGTH / 2), this.segment.ps.y);
+            break;
+        case WEST:
+            this.segment.pe.set(this.segment.ps.x - (Utilities.PIN_LENGTH / 2), this.segment.ps.y);           
+            break;
+        case NORTH:
+            this.segment.pe.set(this.segment.ps.x, this.segment.ps.y - (Utilities.PIN_LENGTH / 2));           
+            break;
+        case SOUTH:     
+            this.segment.pe.set(this.segment.ps.x, this.segment.ps.y + (Utilities.PIN_LENGTH / 2));
+        }   
+    }
+    @Override
+    public String toXML() {
+        // TODO Implement this method
+        return null;
+    }
+
+    @Override
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+        org.w3c.dom.Element  element= ( org.w3c.dom.Element)node;
+                
+        Node n=element.getElementsByTagName("pin").item(0); 
+        
+        n=(( org.w3c.dom.Element)n).getElementsByTagName("a").item(0);
+        StringTokenizer stock=new StringTokenizer(n.getTextContent(),",");
+        this.segment.ps.set(Double.parseDouble(stock.nextToken()),Double.parseDouble(stock.nextToken()));
+        stock.nextToken();//crap
+        init(Pinable.Orientation.values()[Byte.parseByte(stock.nextToken())]);
+        
+        n=element.getElementsByTagName("type").item(0);
+        this.type=Type.values()[Integer.parseInt(n.getTextContent())];
+                
+        String style=element.getAttribute("style");
+        setStyle(Style.values()[Integer.parseInt(style)]);
+        
+        n=element.getElementsByTagName("name").item(0);        
+        texture.fromXML(n);
+        
+        //points are calculated in BaseConnector constructor
+        this.shape.calculatePoints();
+
+    }    
     public static class ArrowShape implements StyleShape{
         private WeakReference<SCHConnector> connector;
         private Polygon polygon;
@@ -490,9 +569,72 @@ public class SCHConnector extends Shape implements Textable{
         }
     }
     static class Memento extends AbstractMemento<Circuit,SCHConnector>{
-        public Memento(MementoType mementoType){
-          super(mementoType); 
-        //  connectorTextMemento = new ChipText.Memento();
+        private double x1,x2,y1,y2;
+        
+        private Type type;
+        
+        private Style style;
+        
+        private Texture.Memento textureMemento;
+        
+        public Memento(MementoType mementoType) {
+            super(mementoType);
+            textureMemento=new SymbolFontTexture.Memento();
         }
+
+        @Override
+        public void loadStateTo(SCHConnector shape) {
+            super.loadStateTo(shape);            
+            textureMemento.loadStateTo(shape.texture);  
+            shape.segment.set(x1, y1, x2, y2);
+            shape.type=type;
+            shape.setStyle(style);
+        }
+
+        @Override
+        public void saveStateFrom(SCHConnector shape) {
+            super.saveStateFrom(shape);
+            x1=shape.segment.ps.x;
+            y1=shape.segment.ps.y;
+            x2=shape.segment.pe.x;
+            y2=shape.segment.pe.y;
+            
+            style=shape.getStyle();
+            type=shape.type;
+            textureMemento.saveStateFrom(shape.texture);
+        }
+        
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Memento)) {
+                return false;
+            }
+            Memento other = (Memento) obj;
+            return (super.equals(obj)&&textureMemento.equals(other.textureMemento)&&
+                    Utils.EQ(x1, other.x1)&&Utils.EQ(x2, other.x2)&&Utils.EQ(y1, other.y1)&&Utils.EQ(y2, other.y2)&&
+                    type==other.type&&style==other.style);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int  hash = super.hashCode()+textureMemento.hashCode();
+            hash+=Double.hashCode(x1)+Double.hashCode(x2)+Double.hashCode(y1)+Double.hashCode(y2);            
+            hash += type.hashCode();
+            hash += style.hashCode();
+            return hash;
+        }
+        @Override
+        public boolean isSameState(Unit unit) {
+            SCHConnector line = (SCHConnector) unit.getShape(getUUID());
+            return (line.getState(getMementoType()).equals(this));
+        
+        }
+
     }
+    
 }

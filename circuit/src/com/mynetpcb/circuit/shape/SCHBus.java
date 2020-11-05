@@ -8,6 +8,12 @@ import com.mynetpcb.d2.shapes.Point;
 
 import java.util.Arrays;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 public class SCHBus extends SCHWire{
     public SCHBus() {
         this.setThickness(4);
@@ -33,24 +39,24 @@ public class SCHBus extends SCHWire{
         return "Bus";
     }
     
-//    @Override
-//    public void fromXML(Node node){ 
-//        Element element=(Element)node;
-//        Node n=element.getElementsByTagName("wire").item(0);
-//        super.fromXML(n);
-//    }
-//    
-//    @Override
-//    public String toXML() {
-//        StringBuffer xml=new StringBuffer();
-//        if(getLinePoints().size()==0) {
-//            return "";
-//        }
-//        xml.append("<bus>\r\n");
-//        xml.append(super.toXML());
-//        xml.append("</bus>\r\n");
-//        return xml.toString();
-//    }
+    @Override
+    public void fromXML(Node node)throws XPathExpressionException, ParserConfigurationException {
+        Element element=(Element)node;
+        Node n=element.getElementsByTagName("wire").item(0);
+        super.fromXML(n);
+    }
+    
+    @Override
+    public String toXML() {
+        StringBuffer xml=new StringBuffer();
+        if(getLinePoints().size()==0) {
+            return "";
+        }
+        xml.append("<bus>\r\n");
+        xml.append(super.toXML());
+        xml.append("</bus>\r\n");
+        return xml.toString();
+    }
     
     public static class Memento extends AbstractMemento<Circuit, SCHBus> {
 

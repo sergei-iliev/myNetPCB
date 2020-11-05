@@ -7,6 +7,7 @@ import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.DialogFrame;
+import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
@@ -28,6 +29,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -350,8 +352,8 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         }else{
         for (Circuit circuit : source.getUnits()) {
             try {
-                Circuit copy = circuit.clone();
-                copy.getScalableTransformation().reset(0.5,10,3,13);
+                Circuit copy = circuit.clone();                
+                copy.getScalableTransformation().reset(1.2, 2, 0, ScalableTransformation.DEFAULT_MAX_SCALE_FACTOR);
                 circuitComponent.getModel().add(copy);
                 copy.notifyListeners(ShapeEvent.ADD_SHAPE);
             } catch (CloneNotSupportedException f) {
@@ -469,30 +471,28 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
             circuitComponent.Repaint();
         }
         
-//        if (e.getActionCommand().equals("load")) {
-//            //CircuitLoadDialog circuitLoadDialog = new CircuitLoadDialog(parent, "Load Project", false);
-//            
-//            AbstractLoadDialog.Builder builder=getUnitComponent().getLoadDialogBuilder();
-//            AbstractLoadDialog circuitLoadDialog =builder.setWindow(getUnitComponent().getDialogFrame().getParentFrame()).setCaption("Load Project").setEnabled(false).build();
-//            
-//            circuitLoadDialog.pack();
-//            circuitLoadDialog.setLocationRelativeTo(null); //centers on screen
-//            circuitLoadDialog.setVisible(true);
-//
-//            if (circuitLoadDialog.getSelectedModel() == null ||
-//                circuitLoadDialog.getSelectedModel().getUnit() == null) {
-//                return;
-//            }
-//
-//            LoadCircuits((CircuitContainer) circuitLoadDialog.getSelectedModel());
-//
-//            circuitLoadDialog.dispose();
-//            circuitLoadDialog = null;
-//
-//            //position on center
-//            //Rectangle r=circuitComponent.getModel().getUnit().getBoundingRect();
-//            //circuitComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
-//        }
+        if (e.getSource()==LoadButton) {            
+            AbstractLoadDialog.Builder builder=circuitComponent.getLoadDialogBuilder();
+            AbstractLoadDialog circuitLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Project").setEnabled(false).build();
+            
+            circuitLoadDialog.pack();
+            circuitLoadDialog.setLocationRelativeTo(null); //centers on screen
+            circuitLoadDialog.setVisible(true);
+
+            if (circuitLoadDialog.getSelectedModel() == null ||
+                circuitLoadDialog.getSelectedModel().getUnit() == null) {
+                return;
+            }
+
+            LoadCircuits((CircuitContainer) circuitLoadDialog.getSelectedModel());
+
+            circuitLoadDialog.dispose();
+            circuitLoadDialog = null;
+
+            //position on center
+            //Rectangle r=circuitComponent.getModel().getUnit().getBoundingRect();
+            //circuitComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
+        }
 //        if(e.getActionCommand().equals("createboard")){
 //            BoardEditorDialog boardEditorDialog = new BoardEditorDialog(parent,"Board Editor");        
 //            boardEditorDialog.setPreferredSize(new Dimension(parent.getWidth(),parent.getHeight())); 
@@ -667,7 +667,6 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
 //            }
 //        }
         if (e.getSource()==SymbolButton) {
-            //SymbolLoadDialog symbolLoadDialog = new SymbolLoadDialog(parent, "Load Symbol", true);
             AbstractLoadDialog.Builder builder=new SymbolLoadDialog.Builder();
             AbstractLoadDialog symbolLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Symbol").setEnabled(true).build();
 
@@ -722,14 +721,14 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         if (e.getSource()==ConnectorButton) {
             circuitComponent.setMode(Mode.CONNECTOR_MODE);
         }
-//        if (e.getActionCommand().equals("scalein")) {
-//            circuitComponent.ZoomIn(new Point((int) circuitComponent.getVisibleRect().getCenterX(),
-//                                              (int) circuitComponent.getVisibleRect().getCenterY()));
-//        }
-//        if (e.getActionCommand().equals("scaleout")) {
-//            circuitComponent.ZoomOut(new Point((int) circuitComponent.getVisibleRect().getCenterX(),
-//                                               (int) circuitComponent.getVisibleRect().getCenterY()));
-//        }
+        if (e.getSource()==ScaleIn) {
+            circuitComponent.zoomIn(new Point((int) circuitComponent.getVisibleRect().getCenterX(),
+                                              (int) circuitComponent.getVisibleRect().getCenterY()));
+        }
+        if (e.getSource()==ScaleOut) {
+            circuitComponent.zoomOut(new Point((int) circuitComponent.getVisibleRect().getCenterX(),
+                                               (int) circuitComponent.getVisibleRect().getCenterY()));
+        }
         if (e.getSource()==DragHeand) {
             circuitComponent.setMode(Mode.DRAGHEAND_MODE);
         }

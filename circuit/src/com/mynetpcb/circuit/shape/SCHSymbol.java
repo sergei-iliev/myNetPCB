@@ -19,6 +19,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.symbol.shape.SymbolShapeFactory;
+import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -32,9 +33,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class SCHSymbol extends Shape implements CompositeTextable,Typeable,CompositePinable,Externalizable{
     private List<Shape> shapes;
@@ -169,7 +175,63 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
 
     @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
+        Element  element= (Element)node;
+        
+        setType(element.getAttribute("type").equals("")?Symbol.Type.SYMBOL:Symbol.Type.valueOf(element.getAttribute("type")));
+        
+//        //packaging
+//        NodeList nlist=((Element)node).getElementsByTagName("footprint");
+//        if(nlist.item(0)!=null){
+//            Element e=(Element)nlist.item(0);
+//            packaging.setFootprintLibrary(e.getAttribute("library"));
+//            packaging.setFootprintCategory(e.getAttribute("category"));
+//            packaging.setFootprintFileName(e.getAttribute("filename"));
+//            packaging.setFootprintName(e.getAttribute("name"));
+//        }
+        
+        Texture reference= this.getTextureByTag("reference");        
+        Texture unit= this.getTextureByTag("unit");
+
+        Node n=element.getElementsByTagName("name").item(0);
+        if(n!=null){
+         this.displayName=n.getTextContent();  
+        }       
+        n=element.getElementsByTagName("reference").item(0);
+        if(n!=null){
+            Element ref=(Element)n;  
+            NodeList refList=ref.getElementsByTagName("label");            
+            if(refList.getLength()==0){
+                reference.fromXML(n);              //old schema 
+            }else{
+                reference.fromXML(refList.item(0));    //new schema 
+            }
+        }
+
+        n=element.getElementsByTagName("unit").item(0);
+        if(n!=null){
+            Element unt=(Element)n;  
+            NodeList unitList=unt.getElementsByTagName("label");
+            
+            if(unitList.getLength()==0){
+               unit.fromXML(n);                //old schema
+            }else{
+               unit.fromXML(unitList.item(0));    //new schema 
+            }                       
+        }
+        
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xpath = factory.newXPath();
+        try{
+        NodeList nodelist = (NodeList) xpath.evaluate("./elements/*", node, XPathConstants.NODESET);
+        AbstractShapeFactory shapeFactory=new SymbolShapeFactory();
+        for(int i=0;i<nodelist.getLength();i++){
+              n=nodelist.item(i);
+              Shape shape = shapeFactory.createShape(n);
+              this.add(shape);
+        }       
+        }catch(XPathExpressionException e){
+            e.printStackTrace(System.out);
+        }  
 
     }
 

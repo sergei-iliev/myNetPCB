@@ -24,11 +24,14 @@ import java.awt.geom.AffineTransform;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class SCHWire extends AbstractLine implements Sublineable,Externalizable {
     public SCHWire(){
@@ -86,7 +89,7 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
         if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
                 return;
         }
-        g2.setColor(isSelected() ? Color.GRAY :fillColor);
+        g2.setColor(isSelected() ? Color.BLUE :fillColor);
         
         Polyline r=this.polyline.clone();         
         
@@ -128,7 +131,24 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
 
     @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        // TODO Implement this method
+        Element e = (Element)node;
+        if(!e.getAttribute("style").equals("")){
+           //this.style = Integer.parseInt(e.getAttribute("style"));
+        }
+        
+        NodeList nodelist = e.getElementsByTagName("wirepoints");
+        for (int i = 0; i < nodelist.getLength(); i++) {
+            Node n = nodelist.item(i);
+            StringTokenizer st =
+                new StringTokenizer(Utilities.trimCRLF(n.getTextContent()), "|");
+            
+            for (; st.hasMoreElements(); ) {
+                LinePoint point = new LinePoint(0,0);
+                StringTokenizer stock=new StringTokenizer(st.nextToken(),",");
+                point.set(Double.parseDouble(stock.nextToken()),Double.parseDouble(stock.nextToken()));  
+                this.polyline.add(point);
+            }
+        } 
 
     }
     

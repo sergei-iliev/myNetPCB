@@ -2,6 +2,7 @@ package com.mynetpcb.circuit.component;
 
 
 import com.mynetpcb.circuit.container.CircuitContainer;
+import com.mynetpcb.circuit.dialog.CircuitLoadDialog;
 import com.mynetpcb.circuit.event.CircuitEventMgr;
 import com.mynetpcb.circuit.event.WireEventHandle;
 import com.mynetpcb.circuit.line.CircuitBendingProcessorFactory;
@@ -9,6 +10,7 @@ import com.mynetpcb.circuit.popup.CircuitPopupMenu;
 import com.mynetpcb.circuit.shape.SCHBus;
 import com.mynetpcb.circuit.shape.SCHBusPin;
 import com.mynetpcb.circuit.shape.SCHConnector;
+import com.mynetpcb.circuit.shape.SCHJunction;
 import com.mynetpcb.circuit.shape.SCHLabel;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.shape.SCHWire;
@@ -47,7 +49,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
         this.eventMgr = new CircuitEventMgr(this);
         this.setBackground(Color.WHITE);
         this.setParameter("snaptogrid", true);
-        //this.loadDialogBuilder = new BoardLoadDialog.Builder();
+        this.loadDialogBuilder = new CircuitLoadDialog.Builder();
         popup = new CircuitPopupMenu(this);
         bendingProcessorFactory = new CircuitBendingProcessorFactory();
         setLineBendingProcessor(bendingProcessorFactory.resolve("vhbend", null));
@@ -94,12 +96,11 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
 //                setContainerCursor(shape);               
 //                getEventMgr().setEventHandle("cursor",shape); 
 //                break;        
-//        case Mode.JUNCTION_MODE:
-//            this.setCursor(Cursor.getDefaultCursor());
-//            shape = new SCHJunction();
-//            setContainerCursor(shape);
-//            getEventMgr().setEventHandle("cursor", shape);
-//            break;
+        case Mode.JUNCTION_MODE:
+            shape = new SCHJunction();
+            setContainerCursor(shape);
+            getEventMgr().setEventHandle("cursor", shape);
+            break;
         case Mode.CONNECTOR_MODE:
             shape = new SCHConnector();            
             setContainerCursor(shape);               
