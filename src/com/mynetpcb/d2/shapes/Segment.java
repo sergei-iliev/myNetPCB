@@ -14,7 +14,10 @@ public class Segment extends GeometricFigure {
         this.ps = ps;
         this.pe = pe;
     }
-    
+    public Segment(double x1,double y1,double x2,double y2){
+        this();
+        this.set(x1, y1, x2, y2);
+    }
     @Override
     public Segment clone() {
         return new Segment(new Point(this.ps.x,this.ps.y),new Point(this.pe.x,this.pe.y));
