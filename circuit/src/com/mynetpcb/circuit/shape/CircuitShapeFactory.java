@@ -50,11 +50,11 @@ return null;
                     label.setState(memento);
                     return label;            
                 }
-        //        if(memento instanceof SCHNoConnector.Memento){
-        //            SCHNoConnector noconnector=new SCHNoConnector();
-        //            noconnector.setState(memento);
-        //            return noconnector;                        
-        //        }
+                if(memento instanceof SCHNoConnector.Memento){
+                    SCHNoConnector noconnector=new SCHNoConnector();
+                    noconnector.setState(memento);
+                    return noconnector;                        
+                }
         //        if(memento instanceof SCHNetLabel.Memento){
         //                SCHNetLabel netlabel=new SCHNetLabel();
         //                netlabel.setState(memento);

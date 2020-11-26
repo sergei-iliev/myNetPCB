@@ -61,7 +61,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
         this.requestFocusInWindow(); //***for the cancel button
         switch (getMode()) {
         case Mode.RECT_MODE:
-            shape=new RoundRect(1);
+            shape=new RoundRect();
             setContainerCursor(shape);               
             getEventMgr().setEventHandle("cursor",shape);   
             break;

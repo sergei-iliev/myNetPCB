@@ -3,6 +3,7 @@ package com.mynetpcb.ui.circuit;
 import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.container.CircuitContainer;
+import com.mynetpcb.circuit.dialog.panel.CircuitsPanel;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.circuit.unit.CircuitMgr;
@@ -49,6 +50,7 @@ import javax.swing.JToggleButton;
 
 public class CircuitInternalFrame extends AbstractInternalFrame implements DialogFrame,CommandListener,ActionListener{
     private CircuitComponent circuitComponent;
+    private CircuitsPanel circuitsPanel;
     private JPanel basePanel;
     private JTabbedPane tabbedPane = new JTabbedPane();
     
@@ -88,6 +90,8 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     private JToggleButton CoordButton = new JToggleButton();
     private JButton SymbolButton = new JButton();
     
+
+    
     public CircuitInternalFrame() {
        this(null);
     }
@@ -103,9 +107,10 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         
         //***set module component        
         circuitComponent=new CircuitComponent(this);
-       
+        circuitsPanel = new CircuitsPanel(circuitComponent);
+        
         circuitComponent.setPreferredSize(new Dimension(700,600));
-        //circuitComponent.addContainerListener(boardsPanel);
+        circuitComponent.addContainerListener(circuitsPanel);
         //circuitComponent.getModel().addUnitListener(boardsPanel);
         //circuitComponent.getModel().addShapeListener(boardsPanel);
         
@@ -287,16 +292,16 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         WestPanel.setLayout(new BorderLayout());
         basePanel.add(NorthPanel, BorderLayout.NORTH);
         //****EAST PANEL
-//        tabbedPane.setPreferredSize(new Dimension(250, 200));
-//        //***create circuit tab
-//        tabbedPane.addTab("Boards", boardsPanel);
+        tabbedPane.setPreferredSize(new Dimension(250, 200));
+        //***create circuit tab
+        tabbedPane.addTab("Circuits", circuitsPanel);
 //        //***create symbol tab
 //        tabbedPane.addTab("Footprints", footprintsPanel);
 //        tabbedPane.addChangeListener(footprintsPanel);
 //        //***create layout
 //        tabbedPane.addTab("Layers", layersPanel);
 //        tabbedPane.addChangeListener(layersPanel);
-//        basePanel.add(tabbedPane, BorderLayout.EAST);
+        basePanel.add(tabbedPane, BorderLayout.EAST);
         
         basePanel.add(SouthPanel, BorderLayout.SOUTH);
 
@@ -709,9 +714,9 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         if (e.getSource()==LabelButton) {
             circuitComponent.setMode(Mode.LABEL_MODE);
         }
-//        if (e.getActionCommand().equals("netlabel")) {
-//            circuitComponent.setMode(Mode.NETLABEL_MODE);
-//        }        
+        if (e.getSource()==NoConnectorButton) {
+            circuitComponent.setMode(Mode.NOCONNECTOR_MODE);
+        }       
 //        if (e.getActionCommand().equals("CoordOrigin")) {
 //            circuitComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
 //        }        

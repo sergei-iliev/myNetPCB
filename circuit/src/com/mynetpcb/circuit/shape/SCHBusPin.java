@@ -45,7 +45,7 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
         this.selectionRectWidth=2;
         this.polyline.points.add(new LinePoint(0, 0));
         this.polyline.points.add(new LinePoint(-8, -8));
-        this.texture=new SymbolFontTexture("label","Label",4,0,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
+        this.texture=new SymbolFontTexture("???","name",4,0,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
     }
     public SCHBusPin clone() throws CloneNotSupportedException{
         SCHBusPin copy=(SCHBusPin)super.clone();
@@ -89,7 +89,10 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
     public boolean isClickedTexture(int x, int y) {
         return this.getClickedTexture(x, y)!=null;
     }
-    
+    @Override
+    public Texture getTextureByTag(String tag) {
+        return this.texture;
+    }
     @Override
     public void setSelected(boolean selection) {        
         super.setSelected(selection);           
@@ -142,9 +145,8 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
                         return;
                 }
 
-                
-                
-                g2.setStroke(new BasicStroke((float)(this.thickness * scale.getScaleX()))); 
+                                              
+                g2.setStroke(new BasicStroke((float)(this.thickness * scale.getScaleX()),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));  
                 g2.setColor(isSelected()?Color.GRAY:fillColor);
 
 

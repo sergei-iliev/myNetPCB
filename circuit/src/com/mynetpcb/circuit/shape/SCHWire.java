@@ -89,7 +89,7 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
         if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
                 return;
         }
-        g2.setColor(isSelected() ? Color.BLUE :fillColor);
+        g2.setColor(isSelected() ? Color.GRAY :fillColor);
         
         Polyline r=this.polyline.clone();         
         
@@ -104,7 +104,7 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
         r.move(-viewportWindow.getX(),- viewportWindow.getY());
         
         double wireWidth = thickness * scale.getScaleX();
-        g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+        g2.setStroke(new BasicStroke((float)wireWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));   
         //transparent rect
         r.paint(g2, false);
         

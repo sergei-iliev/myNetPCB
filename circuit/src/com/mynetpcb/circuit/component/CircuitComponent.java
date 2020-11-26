@@ -12,6 +12,7 @@ import com.mynetpcb.circuit.shape.SCHBusPin;
 import com.mynetpcb.circuit.shape.SCHConnector;
 import com.mynetpcb.circuit.shape.SCHJunction;
 import com.mynetpcb.circuit.shape.SCHLabel;
+import com.mynetpcb.circuit.shape.SCHNoConnector;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.shape.SCHWire;
 import com.mynetpcb.circuit.unit.Circuit;
@@ -106,12 +107,12 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
             setContainerCursor(shape);               
             getEventMgr().setEventHandle("cursor",shape); 
             break;
-//        case Mode.NOCONNECTION_MODE:
-//                this.setCursor(Cursor.getDefaultCursor());
-//                shape = new SCHNoConnector();
-//                setContainerCursor(shape);               
-//                getEventMgr().setEventHandle("cursor",shape); 
-//                break;
+        case Mode.NOCONNECTOR_MODE:
+                this.setCursor(Cursor.getDefaultCursor());
+                shape = new SCHNoConnector();
+                setContainerCursor(shape);               
+                getEventMgr().setEventHandle("cursor",shape); 
+                break;
         case Mode.ORIGIN_SHIFT_MODE:  
                  getEventMgr().setEventHandle("origin",null);   
                  break;        

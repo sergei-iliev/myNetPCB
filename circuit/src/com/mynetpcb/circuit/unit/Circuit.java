@@ -6,6 +6,7 @@ import com.mynetpcb.circuit.shape.SCHBusPin;
 import com.mynetpcb.circuit.shape.SCHConnector;
 import com.mynetpcb.circuit.shape.SCHJunction;
 import com.mynetpcb.circuit.shape.SCHLabel;
+import com.mynetpcb.circuit.shape.SCHNoConnector;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.shape.SCHWire;
 import com.mynetpcb.core.capi.Grid;
@@ -161,15 +162,15 @@ public class Circuit extends Unit<Shape>{
             this.add(connector);
         }
 
-//        //***read noconnectors
-//        nodelist = (NodeList) xpath.evaluate("./symbols/noconnectors/*", node, XPathConstants.NODESET);
-//        for (int i = 0; i < nodelist.getLength(); i++) {
-//            item = nodelist.item(i);
-//            SCHNoConnector connector = new SCHNoConnector();
-//            connector.setSelected(selection);
-//            connector.fromXML(item);
-//            this.Add(connector);
-//        }
+        //***read noconnectors
+        nodelist = (NodeList) xpath.evaluate("./symbols/noconnectors/*", node, XPathConstants.NODESET);
+        for (int i = 0; i < nodelist.getLength(); i++) {
+            item = nodelist.item(i);
+            SCHNoConnector connector = new SCHNoConnector();
+            connector.setSelected(selection);
+            connector.fromXML(item);
+            this.add(connector);
+        }
 //
 //        //***read noconnectors
 //        nodelist = (NodeList) xpath.evaluate("./symbols/netlabels/*", node, XPathConstants.NODESET);

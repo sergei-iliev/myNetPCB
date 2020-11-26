@@ -18,7 +18,7 @@ public class SymbolShapeFactory  implements AbstractShapeFactory{
             return label;
         }
         if (element.getTagName().equals("rectangle")) {
-            RoundRect rect = new RoundRect(1);
+            RoundRect rect = new RoundRect();
             rect.fromXML(node);
             return rect;
         }
@@ -91,7 +91,7 @@ public class SymbolShapeFactory  implements AbstractShapeFactory{
             return triangle;
         }         
         if(memento instanceof RoundRect.Memento){
-            RoundRect rect=new RoundRect(1);
+            RoundRect rect=new RoundRect();
             rect.setState(memento);
             return rect;
         }

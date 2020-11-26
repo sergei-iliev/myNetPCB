@@ -55,7 +55,7 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
     public SCHConnector() {
         super( 1,Layer.LAYER_ALL); 
         this.selectionRectWidth=4;
-        this.texture=new SymbolFontTexture("label","Label",-4,2,Texture.Alignment.RIGHT.ordinal(),8,Font.PLAIN);     
+        this.texture=new SymbolFontTexture("label","name",-4,2,Texture.Alignment.RIGHT.ordinal(),8,Font.PLAIN);     
         this.type=Type.INPUT;
         this.displayName="Connector";
         this.segment=new Segment(new Point(0,0),new Point((Utilities.PIN_LENGTH / 2),0));            
@@ -122,6 +122,10 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
             this.shape=new CircleShape(this);         
       }
       this.shape.calculatePoints();
+    }
+    @Override
+    public Texture getTextureByTag(String string) {        
+        return texture;
     }
     @Override
     public Texture getClickedTexture(int x, int y) {

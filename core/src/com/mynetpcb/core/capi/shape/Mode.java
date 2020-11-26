@@ -51,5 +51,6 @@ public interface Mode {
     public static final int CONNECTOR_MODE = 24;
     
     public static final int JUNCTION_MODE = 25;
-    
+   
+    public static final int NOCONNECTOR_MODE = 26; 
 }
