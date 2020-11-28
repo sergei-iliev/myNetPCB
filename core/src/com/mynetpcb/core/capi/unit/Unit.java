@@ -457,9 +457,9 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
                            }
                     }
                                 
-                    if ((o1.getOrderWeight() - o2.getOrderWeight()) == 0)
+                    if ((o1.getClickableOrder() - o2.getClickableOrder()) == 0)
                         return 0;
-                    if ((o1.getOrderWeight() - o2.getOrderWeight()) > 0)
+                    if ((o1.getClickableOrder() - o2.getClickableOrder()) > 0)
                         return 1;
                     else
                         return -1;
@@ -472,13 +472,13 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
             return null;
         }
         //Text?
-        if (clickedShapes.get(0) instanceof Textable) {   
-            if(isShapeVisibleOnLayers(clickedShapes.get(0))){ 
-             //if(((Textable)clickedShapes.get(0)).getChipText().isClicked(x, y)){              
-              return (S)clickedShapes.get(0);
-             //}
-            }
-        }
+//        if (clickedShapes.get(0) instanceof Textable) {   
+//            if(isShapeVisibleOnLayers(clickedShapes.get(0))){ 
+//             //if(((Textable)clickedShapes.get(0)).getChipText().isClicked(x, y)){              
+//              return (S)clickedShapes.get(0);
+//             //}
+//            }
+//        }
 
         Collections.sort(clickedShapes,clickedShapesComparator);
         for(Shape shape:clickedShapes){

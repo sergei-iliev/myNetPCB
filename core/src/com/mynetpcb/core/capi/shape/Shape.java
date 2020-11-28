@@ -177,8 +177,8 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     }
 
     @Override
-    public long getOrderWeight(){
-       return 1;
+    public long getClickableOrder(){
+       return 100;
     }
 
     @Override

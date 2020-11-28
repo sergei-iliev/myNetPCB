@@ -56,7 +56,10 @@ public class SCHJunction extends Shape implements Externalizable{
     public void move(double xoff, double yoff) {        
         this.circle.move(xoff,yoff);
     }
-    
+    @Override
+    public long getClickableOrder() {           
+        return 1;
+    }       
     @Override
     public void rotate(double angle, Point origin) {
         this.circle.rotate(angle,origin);        

@@ -67,7 +67,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         this.arc.startAngle=Utilities.roundDouble(startAngle);
     }
     @Override
-    public long getOrderWeight() {
+    public long getClickableOrder() {
         
         return (long)arc.area();
     }

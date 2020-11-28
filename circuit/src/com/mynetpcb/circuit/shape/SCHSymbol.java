@@ -71,8 +71,12 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
         }
         return copy;    
     }
-    
-    
+    @Override
+    public long getClickableOrder(){
+        Box box = this.getBoundingShape();      
+        return (long)(box.getWidth()*box.getHeight());
+        
+    }
     @Override
     public Point alignToGrid(boolean isRequired) {
         Box r=getPinsRect();

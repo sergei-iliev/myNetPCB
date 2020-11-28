@@ -167,7 +167,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
             if(result==null){
                 result=shape;
             }else if(shape.getDrawingLayerPriority()==result.getDrawingLayerPriority()){
-                if(shape.getOrderWeight()<result.getOrderWeight()){
+                if(shape.getClickableOrder()<result.getClickableOrder()){
                     result=shape;
                 }
             }

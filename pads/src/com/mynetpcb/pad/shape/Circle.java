@@ -93,7 +93,7 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
         return this.circle.box();         
     }
     @Override
-    public long getOrderWeight(){
+    public long getClickableOrder(){
         return (long)this.circle.area(); 
     }
     

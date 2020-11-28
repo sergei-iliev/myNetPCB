@@ -56,7 +56,7 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
             return copy;
     }
     @Override
-    public long getOrderWeight(){
+    public long getClickableOrder(){
             return (long)this.roundRect.area(); 
     }
     @Override

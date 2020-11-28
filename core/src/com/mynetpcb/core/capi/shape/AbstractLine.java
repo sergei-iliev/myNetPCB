@@ -80,6 +80,9 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     public void add(double x, double y) {
          polyline.points.add(new LinePoint(x,y));
     }
+    public long getClickableOrder(){
+        return 2;
+    }
     @Override
     public boolean isClicked(int x,int y) {
                 

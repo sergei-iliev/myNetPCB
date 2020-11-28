@@ -119,7 +119,7 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         texture.print(g2, printContext,layermask);
     }
     @Override
-    public long getOrderWeight(){
+    public long getClickableOrder(){
         return 0;
     } 
     @Override

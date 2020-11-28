@@ -54,7 +54,11 @@ public class FontLabel extends Shape implements Label,Externalizable{
                     return true;
             else
                     return false;
-    }    
+    }  
+    @Override
+    public long getClickableOrder() {           
+            return 0;
+    }
     @Override
     public void setSelected(boolean selected) {
         this.texture.setSelected(selected);

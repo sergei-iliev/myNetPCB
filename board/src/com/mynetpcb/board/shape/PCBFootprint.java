@@ -218,7 +218,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         });
     }
     @Override
-    public long getOrderWeight(){
+    public long getClickableOrder(){
         return (long)getBoundingShape().area();
     }
     @Override

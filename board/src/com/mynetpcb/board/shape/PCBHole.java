@@ -56,7 +56,7 @@ public class PCBHole extends HoleShape implements PCBShape{
         return 110;
     }
     @Override
-    public long getOrderWeight() {
+    public long getClickableOrder() {
         return 3;
     }
     @Override

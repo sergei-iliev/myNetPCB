@@ -3,6 +3,7 @@ package com.mynetpcb.core.capi;
 
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.geom.AffineTransform;
 
 
@@ -29,7 +30,7 @@ public interface Moveable extends Drawable,Cloneable {
      * @return the order of the shape in Z coordinate when a 
      * click over overlapping shapes occure.
      */
-    public long getOrderWeight();
+    public long getClickableOrder();
     
 }
 

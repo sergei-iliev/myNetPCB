@@ -43,6 +43,12 @@ public class SCHNoConnector extends Shape implements Externalizable{
         copy.point=point.clone();
         return copy;
     }
+    
+    @Override
+    public long getClickableOrder() {           
+        return 3;
+    }
+    
     @Override
     public Point alignToGrid(boolean required) {        
         this.getOwningUnit().getGrid().snapToGrid(this.point); 

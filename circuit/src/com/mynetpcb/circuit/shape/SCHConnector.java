@@ -140,6 +140,10 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
         return this.getClickedTexture(x, y)!=null;
     }
     @Override
+    public long getClickableOrder() {           
+            return 4;
+    }    
+    @Override
     public boolean isClicked(int x,int y){
             Box rect = Box.fromRect(x
                                     - (this.selectionRectWidth / 2), y
