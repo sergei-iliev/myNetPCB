@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -122,6 +123,12 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
             }
         }       
         
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {        
+        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:fillColor);                      
+        g2.setStroke(new BasicStroke((float)thickness,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));          
+        this.polyline.paint(g2, false);
     }
     @Override
     public String toXML() {

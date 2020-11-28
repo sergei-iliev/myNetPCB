@@ -4,6 +4,7 @@ import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -89,7 +90,17 @@ public class SCHNoConnector extends Shape implements Externalizable{
         line.paint(g2,false);  
 
     }
-    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setColor(fillColor);
+        g2.setStroke(new BasicStroke((float)(this.thickness ),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));  
+        
+        Segment line=new Segment(this.point.x-this.selectionRectWidth, this.point.y-this.selectionRectWidth,this.point.x+this.selectionRectWidth, this.point.y+this.selectionRectWidth);                
+        line.paint(g2,false);  
+        
+        line.set(this.point.x-this.selectionRectWidth, this.point.y+this.selectionRectWidth,this.point.x+this.selectionRectWidth, this.point.y-this.selectionRectWidth);               
+        line.paint(g2,false);    
+    }
     @Override
     public String toXML() {
         // TODO Implement this method

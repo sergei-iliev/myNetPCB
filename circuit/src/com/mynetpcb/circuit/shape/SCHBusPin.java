@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
@@ -170,7 +171,15 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
         
         
                     
-     }        
+     }   
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setStroke(new BasicStroke((float)(this.thickness ),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));  
+        g2.setColor(isSelected()?Color.GRAY:fillColor);
+
+        this.polyline.paint(g2,false);        
+        this.texture.print(g2, printContext,layermask);        
+    }
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);

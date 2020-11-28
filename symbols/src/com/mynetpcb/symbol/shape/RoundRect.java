@@ -2,6 +2,7 @@ package com.mynetpcb.symbol.shape;
 
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.ResizableShape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -138,6 +139,32 @@ public class RoundRect extends ResizableShape implements Externalizable{
             Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p);            
         } 
 
+    }
+    
+    @Override
+    public void print(Graphics2D g2,PrintContext printContext,int layermask) {              
+        roundRect.setRoundRect(getX() ,getY(),getWidth(),getHeight(),rounding,rounding);
+        
+        
+        g2.setStroke(new BasicStroke((this.thickness),1,1));  
+        g2.setColor(isSelected()?Color.GRAY:fillColor); 
+
+                 
+        if(fill == Fill.EMPTY)   //***empty
+          g2.draw(roundRect);
+        if(this.getFill() == Fill.FILLED)  //***filled
+          g2.fill(roundRect);
+        if(this.getFill() == Fill.GRADIENT){   //***gradual
+            GradientPaint gp = 
+                new GradientPaint(roundRect.getBounds().x, roundRect.getBounds().y, 
+                                  Color.white, roundRect.getBounds().x, 
+                                  (roundRect.getBounds().y+roundRect.getBounds().height), isSelected()?Color.GRAY:fillColor, true);
+            g2.setPaint(gp);
+            g2.fill(roundRect);
+            g2.setColor(isSelected()?Color.GRAY:fillColor);
+            g2.draw(roundRect);
+        }      
+        
     }
     @Override
     public String toXML() {

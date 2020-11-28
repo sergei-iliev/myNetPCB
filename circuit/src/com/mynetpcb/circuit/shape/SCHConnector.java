@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.pin.Pinable;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
@@ -192,7 +193,17 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
         this.shape.paint(g2,viewportWindow, scale);
         this.texture.paint(g2,viewportWindow, scale,layersmask);
     }
-    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:fillColor); 
+
+        g2.setStroke(new BasicStroke((float)(this.thickness))); 
+        segment.paint(g2,false);
+        
+        this.shape.print(g2,printContext, layermask);
+        this.texture.print(g2,printContext,layermask);  
+        
+    }
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
@@ -206,6 +217,7 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
         boolean contains(Point pt);
         void move(double xoff,double yoff);
         void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale);
+        void print(Graphics2D g2, PrintContext printContext, int layermask);
     }
     private static class CircleShape implements StyleShape{
             private WeakReference<SCHConnector> connector;
@@ -249,6 +261,12 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
             
             g2.setColor(connector.get().isSelected()?Color.GRAY:connector.get().getFillColor()); 
             c.paint(g2,false);            
+        }
+        @Override
+        public void print(Graphics2D g2, PrintContext printContext, int layermask){
+
+            g2.setColor(connector.get().getFillColor()); 
+            circle.paint(g2,false);    
         }
     }
     /*
@@ -388,6 +406,11 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
             p.paint(g2,false);
 
         }
+        @Override
+        public void print(Graphics2D g2, PrintContext printContext, int layermask){
+            g2.setColor(connector.get().getFillColor()); 
+            polygon.paint(g2,false);            
+        }        
     }
     public static class BoxShape implements StyleShape{
         private WeakReference<SCHConnector> connector;
@@ -571,6 +594,11 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
             p.paint(g2,false);
 
         }
+        @Override
+        public void print(Graphics2D g2, PrintContext printContext, int layermask){
+            g2.setColor(connector.get().getFillColor()); 
+            polygon.paint(g2,false);             
+        }        
     }
     static class Memento extends AbstractMemento<Circuit,SCHConnector>{
         private double x1,x2,y1,y2;

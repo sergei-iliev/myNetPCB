@@ -4,6 +4,7 @@ import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -78,6 +79,13 @@ public class SCHJunction extends Shape implements Externalizable{
         c.scale(scale.getScaleX());
         c.move(-viewportWindow.getX() ,- viewportWindow.getY());        
         c.paint(g2,true);        
+    }
+    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setColor(fillColor);              
+        this.circle.paint(g2,true); 
+        
     }
     
     @Override

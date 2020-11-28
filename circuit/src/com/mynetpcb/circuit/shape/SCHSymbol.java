@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.pin.CompositePinable;
 import com.mynetpcb.core.capi.pin.Pinable;
+import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.CompositeTextable;
@@ -251,6 +252,14 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
 
     }
     
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {                        
+        for(Shape shape:this.shapes){   
+          shape.print(g2,printContext,layermask);  
+        }   
+        unit.print(g2, printContext, layermask);
+        reference.print(g2, printContext, layermask);                
+    }
     @Override
     public Texture getTextureByTag(String  tag) {
         if(tag.equals(this.reference.getTag()))

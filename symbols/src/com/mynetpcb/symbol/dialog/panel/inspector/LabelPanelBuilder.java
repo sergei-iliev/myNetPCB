@@ -1,5 +1,6 @@
 package com.mynetpcb.symbol.dialog.panel.inspector;
 
+import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.gui.button.JColorButton;
 import com.mynetpcb.core.capi.gui.button.JColorButton.ColorChangedListener;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
@@ -7,7 +8,6 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.symbol.component.SymbolComponent;
 import com.mynetpcb.symbol.shape.FontLabel;
 
 import java.awt.BorderLayout;
@@ -29,7 +29,7 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape> implements Co
     private JColorButton colorButton;
     private JComboBox orientationCombo;
 
-    public LabelPanelBuilder(SymbolComponent component) {
+    public LabelPanelBuilder(UnitComponent component) {
          super(component,new GridLayout(7,1));
         //***X        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());

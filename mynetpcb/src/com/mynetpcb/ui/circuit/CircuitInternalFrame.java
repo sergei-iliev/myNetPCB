@@ -4,6 +4,7 @@ import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.container.CircuitContainer;
 import com.mynetpcb.circuit.dialog.panel.CircuitsPanel;
+import com.mynetpcb.circuit.dialog.print.CircuitPrintDialog;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.circuit.unit.CircuitMgr;
@@ -41,6 +42,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -337,12 +339,12 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     }
     @Override
     public boolean exit() {
-//        if(boardComponent.getModel().isChanged()){                        
-//            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(this, "There is a changed element.Do you want to close?", "Close", JOptionPane.YES_NO_OPTION)) {                                                                                              
-//                return false;
-//            }                      
-//        }
-//        boardComponent.release();  
+        if(circuitComponent.getModel().isChanged()){                        
+            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(this, "There is a changed element.Do you want to close?", "Close", JOptionPane.YES_NO_OPTION)) {                                                                                              
+                return false;
+            }                      
+        }
+        circuitComponent.release();  
         this.dispose(); 
         return true;
     }
@@ -384,8 +386,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     }
     @Override
     public boolean isChanged() {
-    //return boardComponent.getModel().isChanged();
-        return false;
+       return circuitComponent.getModel().isChanged();
     }
 
     @Override
@@ -587,11 +588,11 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
             circuitComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
             circuitComponent.Repaint();
         }   
-//        if (e.getActionCommand().equals("printcircuit")) {            
-//            JDialog d=new CircuitPrintDialog(parent,circuitComponent,"Print");
-//            d.setLocationRelativeTo(null); //centers on screen
-//            d.setVisible(true);
-//        }
+        if (e.getSource()==PrintButton) {            
+            JDialog d=new CircuitPrintDialog(this.getParentFrame(),circuitComponent,"Print");
+            d.setLocationRelativeTo(null); //centers on screen
+            d.setVisible(true);
+        }
 //        if(e.getActionCommand().equals("undo")){
 //         circuitComponent.getModel().getUnit().undo(null);
 //         circuitComponent.Repaint();
