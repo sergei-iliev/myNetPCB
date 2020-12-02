@@ -104,7 +104,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
 
     @Override
     public String toXML() {
-        return "<ellipse x=\""+Utilities.roundDouble(this.ellipse.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.ellipse.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.ellipse.width,1)+"\" height=\""+Utilities.roundDouble(this.ellipse.height,1)+"\" thickness=\""+this.thickness+"\" fill=\""+this.fill.ordinal()+"\"/>";
+        return "<ellipse x=\""+Utilities.roundDouble(this.ellipse.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.ellipse.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.ellipse.width,1)+"\" height=\""+Utilities.roundDouble(this.ellipse.height,1)+"\" thickness=\""+this.thickness+"\" fill=\""+this.fill.ordinal()+"\"/>\r\n";
     }
     
     @Override

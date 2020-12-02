@@ -187,8 +187,7 @@ public class Symbol extends Unit<Shape> implements Typeable{
         StringBuffer xml = new StringBuffer();
         xml.append("<elements>\r\n");
         for (Shape e : shapes) {
-            xml.append(((Externalizable) e).toXML());
-            xml.append("\r\n"); 
+            xml.append(((Externalizable) e).toXML());            
         }
         xml.append("</elements>\r\n");
         return xml;

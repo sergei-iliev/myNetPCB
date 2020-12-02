@@ -618,7 +618,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                   this.name.toXML() +
              "</name>\r\n");     
         }
-        sb.append("</pin>");
+        sb.append("</pin>\r\n");
         return sb.toString();
     }
 

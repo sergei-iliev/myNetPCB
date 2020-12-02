@@ -107,7 +107,7 @@ public class Line  extends AbstractLine implements Externalizable {
         for (Point point : this.polyline.points) {
             sb.append(Utilities.roundDouble(point.x,1) + "," + Utilities.roundDouble(point.y,1) + ",");
         }
-        sb.append("</line>");
+        sb.append("</line>\r\n");
         return sb.toString();
     }
 

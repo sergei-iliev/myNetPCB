@@ -11,6 +11,8 @@ import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.ScalableTransformation;
+import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
+import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
@@ -37,6 +39,8 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import java.security.AccessControlException;
 
 import java.util.Collection;
 
@@ -596,6 +600,17 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
             d.setLocationRelativeTo(null); //centers on screen
             d.setVisible(true);
         }
+        if (e.getActionCommand().equals("clipboard.export")) {
+            try {
+                ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.SYSTEM,
+                                                               circuitComponent.getModel().createClipboardContent());
+            } catch (AccessControlException ace) {
+                JOptionPane.showMessageDialog(this.getParentFrame(),
+                                              "You need to use the signed applet version.",
+                                              "Security exception", JOptionPane.ERROR_MESSAGE);
+            }
+            return;
+        }        
 //        if(e.getActionCommand().equals("undo")){
 //         circuitComponent.getModel().getUnit().undo(null);
 //         circuitComponent.Repaint();
