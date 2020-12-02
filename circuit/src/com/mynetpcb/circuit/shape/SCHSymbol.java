@@ -19,6 +19,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.shape.SymbolShapeFactory;
 import com.mynetpcb.symbol.unit.Symbol;
 
@@ -174,8 +175,33 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
     }
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer xml=new StringBuffer();
+        String type="type=\""+(this.getType()==Symbol.Type.SYMBOL?Typeable.Type.SYMBOL.toString():this.getType())+"\"";
+               xml.append("<module "+type+" >\r\n");
+               //xml.append("<footprint library=\""+ (packaging.getFootprintLibrary()==null?"":packaging.getFootprintLibrary())+"\" category=\""+(packaging.getFootprintCategory()==null?"":packaging.getFootprintCategory())+"\"  filename=\""+(packaging.getFootprintFileName()==null?"":packaging.getFootprintFileName())+"\" name=\""+(packaging.getFootprintName()==null?"":packaging.getFootprintName())+"\"/>\r\n");
+               xml.append("<name>"+displayName+"</name>\r\n");
+
+               xml.append("<reference>"+(this.getTextureByTag("reference")==null?"":FontLabel.toXML(this.getTextureByTag("reference")))+"</reference>\r\n");                           
+               xml.append("<unit>"+(this.getTextureByTag("unit")==null?"":FontLabel.toXML(this.getTextureByTag("unit")))+"</unit>\r\n");
+               
+//               //***labels and connectors
+//               CircuitMgr circuitMgr = CircuitMgr.getInstance();
+//               if(circuitMgr.getChildrenByParent(getOwningUnit().getShapes(),this).size()>0){
+//                  xml.append("<children>\r\n");
+//                     Collection<Shape> children=circuitMgr.getChildrenByParent(getOwningUnit().getShapes(),this);
+//                     for(Shape child:children){
+//                       xml.append(((Externalizable)child).toXML());  
+//                     }
+//                  xml.append("</children>\r\n");
+//               }
+                  
+             xml.append("<elements>\r\n");
+             for(Shape e:shapes){
+                 xml.append(((Externalizable)e).toXML());
+             }
+             xml.append("</elements>\r\n");
+             xml.append("</module>\r\n");                 
+        return xml.toString();
     }
 
     @Override

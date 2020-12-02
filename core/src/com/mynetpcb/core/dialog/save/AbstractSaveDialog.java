@@ -245,12 +245,12 @@ protected    JButton CancelButton;
     }
     
     @Override
-    public void OnStart(Class<?> reciever) {
+    public void onStart(Class<?> reciever) {
         disableControls();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     }
     @Override
-    public void OnError(String error) {
+    public void onError(String error) {
         enableControls();
         this.setCursor(Cursor.getDefaultCursor());
         JOptionPane.showMessageDialog(this, error, "Error",
@@ -258,7 +258,7 @@ protected    JButton CancelButton;
     }
     
     @Override
-    public void OnRecive(String result, Class reciever) {
+    public void onRecive(String result, Class reciever) {
         if (reciever==JComboBox.class) {
             libraryCombo.removeActionListener(this);
             try {
@@ -289,7 +289,7 @@ protected    JButton CancelButton;
         
     }
     @Override
-    public void OnFinish(Class<?> receiver) {
+    public void onFinish(Class<?> receiver) {
            enableControls();
            this.setCursor(Cursor.getDefaultCursor());
 

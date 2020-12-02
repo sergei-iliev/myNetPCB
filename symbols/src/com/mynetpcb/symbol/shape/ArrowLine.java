@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform;
 
 import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class ArrowLine extends Shape implements Resizeable,Externalizable {
@@ -55,6 +56,10 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
         copy.line=this.line.clone();
         copy.arrow=this.arrow.clone();    
         return copy;
+   }
+   @Override
+   public long getClickableOrder() {        
+        return 4;
    }
    public int getHeadSize(){
        return this.headSize;
@@ -178,17 +183,27 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
     }
     @Override
     public String toXML() {
-        return "<arrow thickness=\"" + this.thickness + "\" fill=\"" + this.fill + "\"  head=\"" + this.headSize+ "\">" + Utilities.roundDouble(this.line.ps.x,1) + "," + Utilities.roundDouble(this.line.ps.y,1) + "," + Utilities.roundDouble(this.line.pe.x,1) + "," + Utilities.roundDouble(this.line.pe.y,1) + "</arrow>";
+        return "<arrow thickness=\"" + this.thickness + "\" fill=\"" + this.fill.index + "\"  head=\"" + this.headSize+ "\">" + Utilities.roundDouble(this.line.ps.x,1) + "," + Utilities.roundDouble(this.line.ps.y,1) + "," + Utilities.roundDouble(this.line.pe.x,1) + "," + Utilities.roundDouble(this.line.pe.y,1) + "</arrow>";
     }
 
     @Override
     public void fromXML(Node node) {
-        StringTokenizer st=new StringTokenizer(node.getTextContent(),",");      
-        this.line.ps.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));      
-        this.line.pe.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
-        this.thickness=Integer.parseInt(st.nextToken());
-        this.setHeadSize(Integer.parseInt(st.nextToken()));
-        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));    
+        Element e=(Element)node;
+        if(e.hasAttribute("thickness")){            
+            StringTokenizer st=new StringTokenizer(node.getTextContent(),",");      
+            this.line.ps.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));      
+            this.line.pe.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));  
+            this.thickness=Integer.parseInt(e.getAttribute("thickness"));
+            this.setHeadSize(Integer.parseInt(e.getAttribute("head")));
+            setFill(Fill.byIndex(Byte.parseByte(e.getAttribute("fill"))));              
+        }else{
+            StringTokenizer st=new StringTokenizer(node.getTextContent(),",");      
+            this.line.ps.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));      
+            this.line.pe.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+            this.thickness=Integer.parseInt(st.nextToken());
+            this.setHeadSize(Integer.parseInt(st.nextToken()));
+            setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));    
+        }
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {

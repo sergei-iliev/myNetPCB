@@ -347,12 +347,12 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
             CommandExecutor.INSTANCE.addTask("ReadModule",reader);              
         }    
     }
-    
-    public void OnStart(Class<?> reciever) {
+    @Override
+    public void onStart(Class<?> reciever) {
         DisabledGlassPane.block( this.getDialogFrame().getRootPane(),"Loading...");     
     }
-
-    public void OnRecive(String result,  Class reciever) {
+    @Override
+    public void onRecive(String result,  Class reciever) {
         if(reciever==Footprint.class){         
                 getModel().getUnit().clear();             
              try{  
@@ -369,7 +369,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         }
     }
 
-    public void OnFinish(Class<?> receiver) {
+    public void onFinish(Class<?> receiver) {
         DisabledGlassPane.unblock(this.getDialogFrame().getRootPane());       
         if (receiver == XMLImportTask.class) {
             FutureCommand task = CommandExecutor.INSTANCE.getTaskByName("import");
@@ -392,7 +392,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
         }    
     }
 
-    public void OnError(String error) {
+    public void onError(String error) {
         DisabledGlassPane.unblock(getDialogFrame().getRootPane());  
         JOptionPane.showMessageDialog(getDialogFrame().getParentFrame(), error, "Error",
                                       JOptionPane.ERROR_MESSAGE);      

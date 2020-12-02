@@ -9,6 +9,7 @@ import com.mynetpcb.circuit.shape.SCHLabel;
 import com.mynetpcb.circuit.shape.SCHNoConnector;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.shape.SCHWire;
+import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -60,13 +61,96 @@ public class Circuit extends Unit<Shape>{
     }
     @Override
     public StringBuffer format() {        
-        return null;
+        StringBuffer xml = new StringBuffer();
+        xml.append("<circuit width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\">\r\n");
+        xml.append("<name>" + this.getUnitName() + "</name>\r\n");
+        xml.append(format(getShapes()));        
+        xml.append("</circuit>\r\n");
+        return xml;
     }
 
     @Override
     protected StringBuffer format(Collection<Shape> collection) {
-        // TODO Implement this method
-        return null;
+        StringBuffer xml = new StringBuffer();
+
+        xml.append("<symbols>\r\n");
+        //***   Chip symbols
+        xml.append("<chips>\r\n");
+        for (Shape shape : shapes) {
+            if (shape instanceof SCHSymbol)
+                xml.append(((Externalizable) shape).toXML());
+        }
+        xml.append("</chips>\r\n");
+
+        //***   Bus symbols
+        xml.append("<busses>\r\n");
+        for (Shape shape : shapes) {
+            if (shape instanceof SCHBus)
+                xml.append(((Externalizable) shape).toXML());
+        }
+        xml.append("</busses>\r\n");
+
+        //***  BusPins
+        xml.append("<buspins>\r\n");
+        for (Shape shape : shapes) {
+            if (shape instanceof SCHBusPin)
+                xml.append(((Externalizable) shape).toXML());
+        }
+        xml.append("</buspins>\r\n");
+
+        //***   Wire symbols
+        xml.append("<wires>\r\n");
+        for (Shape shape : shapes) {
+            if ((shape instanceof SCHWire) && !(shape instanceof SCHBus) && !(shape instanceof SCHBusPin))
+                xml.append(((Externalizable) shape).toXML());
+        }
+        xml.append("</wires>\r\n");
+
+        //***   Junction symbols
+        xml.append("<junctions>\r\n");
+        for (Shape shape : shapes) {
+            if (shape instanceof SCHJunction)
+                xml.append(((Externalizable) shape).toXML());
+        }
+        xml.append("</junctions>\r\n");
+
+        //***  Labels without parent
+        xml.append("<labels>\r\n");
+        for (Shape shape : shapes) {
+            if (shape instanceof SCHLabel) {
+                xml.append(((Externalizable) shape).toXML());
+            }
+        }
+        xml.append("</labels>\r\n");
+
+        //***  Connections without parent
+        xml.append("<connectors>\r\n");
+        for (Shape shape : shapes) {
+            if (shape instanceof SCHConnector) {
+                xml.append(((Externalizable) shape).toXML());
+            }
+        }
+        xml.append("</connectors>\r\n");
+
+        //noconnectors ending
+        xml.append("<noconnectors>\r\n");
+        for (Shape shape : shapes) {
+            if (shape instanceof SCHNoConnector) {
+                xml.append(((Externalizable) shape).toXML());
+            }
+        }
+        xml.append("</noconnectors>\r\n");
+        
+//        xml.append("<netlabels>\r\n");
+//        for (Shape shape : shapes) {
+//            if (shape instanceof SCHNetLabel) {
+//                xml.append(((Externalizable) shape).toXML());
+//            }
+//        }
+//        xml.append("</netlabels>\r\n");
+        
+        xml.append("</symbols>\r\n");
+        return xml;
     }
 
     @Override

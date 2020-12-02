@@ -49,7 +49,7 @@ public class WriteUnitLocal extends Command {
     @Override
     public Void execute() {
         try {
-            monitor.OnStart(receiver);
+            monitor.onStart(receiver);
 
             Path category=repositoryRoot.resolve(libraryName).resolve(categoryName);
             if(!Files.exists(category, LinkOption.NOFOLLOW_LINKS)){
@@ -73,7 +73,7 @@ public class WriteUnitLocal extends Command {
             SwingUtilities.invokeLater(new Runnable(){
                     @Override
                     public void run() {
-                        monitor.OnFinish(receiver);  
+                        monitor.onFinish(receiver);  
                     }
                 });
         } catch (IOException e) {

@@ -48,7 +48,10 @@ public class RoundRect extends ResizableShape implements Externalizable{
         copy.resizingPoint=null;                        
         return copy;
     }
-    
+    @Override
+    public long getClickableOrder() {        
+        return (long)getBoundingShape().area();
+    }
     @Override
     public void setSelected(boolean selection) {
         super.setSelected(selection);
@@ -168,7 +171,7 @@ public class RoundRect extends ResizableShape implements Externalizable{
     }
     @Override
     public String toXML() {
-        return "<rectangle>"+upperLeft.x+","+upperLeft.y+","+getWidth()+","+getHeight()+","+this.getThickness()+","+this.getFill().index +","+this.rounding+"</rectangle>\r\n";
+        return "<rectangle>"+upperLeft.x+","+upperLeft.y+","+getWidth()+","+getHeight()+","+this.getThickness()+","+this.getFill().index +","+this.rounding+"</rectangle>";
     }
     @Override
     public void fromXML(Node node){

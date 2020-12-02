@@ -5,11 +5,14 @@ import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.container.CircuitContainer;
 import com.mynetpcb.circuit.dialog.panel.CircuitsPanel;
 import com.mynetpcb.circuit.dialog.print.CircuitPrintDialog;
+import com.mynetpcb.circuit.dialog.save.CircuitSaveDialog;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.ScalableTransformation;
+import com.mynetpcb.core.capi.config.Configuration;
+import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
@@ -113,8 +116,8 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         
         circuitComponent.setPreferredSize(new Dimension(700,600));
         circuitComponent.addContainerListener(circuitsPanel);
-        //circuitComponent.getModel().addUnitListener(boardsPanel);
-        //circuitComponent.getModel().addShapeListener(boardsPanel);
+        circuitComponent.getModel().addUnitListener(circuitsPanel);
+        circuitComponent.getModel().addShapeListener(circuitsPanel);
         
         CircuitComponent.getUnitKeyboardListener().setComponent(circuitComponent); 
         
@@ -426,23 +429,23 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     }
 
     @Override
-    public void OnStart(Class<?> c) {
+    public void onStart(Class<?> c) {
         // TODO Implement this method
     }
 
     @Override
-    public void OnRecive(String string, Class<?> c) {
+    public void onRecive(String string, Class<?> c) {
         // TODO Implement this method
 
     }
 
     @Override
-    public void OnFinish(Class<?> c) {
+    public void onFinish(Class<?> c) {
         // TODO Implement this method
     }
 
     @Override
-    public void OnError(String string) {
+    public void onError(String string) {
         // TODO Implement this method
     }
 
@@ -633,15 +636,16 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
 //            circuitComponent.fireContainerEvent(new ContainerEvent(null, ContainerEvent.DELETE_CONTAINER));            
 //            circuitComponent.componentResized(null);
 //            circuitComponent.Repaint();        
-//        }        
-//        if (e.getActionCommand().equals("saveas")) {
-//            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
-//                User.showMessageDialog(circuitComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
-//                return;
-//            }
-//
-//            (new CircuitSaveDialog(this.parent, circuitComponent,Configuration.get().isIsOnline())).build();
 //        }
+ 
+        if (e.getActionCommand().equals("SaveAs")) {
+            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
+                User.showMessageDialog(circuitComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
+                return;
+            }
+
+            (new CircuitSaveDialog(this.getParentFrame(), circuitComponent,Configuration.get().isIsOnline())).build();
+        }
 //
 //        if (e.getActionCommand().equals("save")) {
 //            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {

@@ -108,8 +108,8 @@ public class FootprintSaveDialog extends AbstractSaveDialog {
 
 
     @Override
-    public void OnRecive(String result, Class reciever) {
-        super.OnRecive(result, reciever);
+    public void onRecive(String result, Class reciever) {
+        super.onRecive(result, reciever);
         if (reciever == FootprintSaveDialog.class) {
             categoryCombo.setEditable(false);
             categoryCombo.removeAllItems();

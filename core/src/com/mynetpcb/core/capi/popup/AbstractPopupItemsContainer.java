@@ -537,7 +537,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             }
             
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);
-            unitMgr.normalizePinText(shapes);
+            //unitMgr.normalizePinText(shapes);
             getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento( MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
             getUnitComponent().Repaint();
         } 
@@ -549,7 +549,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             unitMgr.rotateBlock(shapes,(e.getActionCommand().equalsIgnoreCase("rotateleft")?-1:1)*90,r.getCenter());   
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);  
             //skip if single pin
-            unitMgr.normalizePinText(shapes);
+            //unitMgr.normalizePinText(shapes);
             getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
             getUnitComponent().Repaint();
         }

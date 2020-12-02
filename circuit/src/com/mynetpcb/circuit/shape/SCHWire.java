@@ -90,7 +90,7 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
         if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
                 return;
         }
-        g2.setColor(isSelected() ? Color.GRAY :fillColor);
+        g2.setColor(isSelected()? Color.GRAY :fillColor);
         
         Polyline r=this.polyline.clone();         
         
@@ -130,12 +130,23 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
         g2.setStroke(new BasicStroke((float)thickness,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));          
         this.polyline.paint(g2, false);
     }
+    
+    
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        if (this.polyline.points.size() == 0) {
+            return "";
+        }
+        StringBuffer sb=new StringBuffer();
+        sb.append("<wire thickness=\""+this.getThickness()+"\">");
+        sb.append("<wirepoints>");
+        for (Point point : this.polyline.points) {            
+            sb.append(Utilities.roundDouble(point.x,1) + "," + Utilities.roundDouble(point.y,1) + "|");
+        }
+        sb.append("</wirepoints>\r\n");
+        sb.append("</wire>\r\n");
+        return sb.toString();
     }
-
     @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
         Element e = (Element)node;

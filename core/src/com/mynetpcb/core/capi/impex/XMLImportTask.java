@@ -36,21 +36,21 @@ public class XMLImportTask extends CommandResult<UnitContainer> {
         XMLRootTagVerifier verifier = new XMLRootTagVerifier(file, "modules");
         UnitContainer container = null;
         try {
-            monitor.OnStart(this.receiver);  
+            monitor.onStart(this.receiver);  
 
-            if (verifier.check()&&producer.extsts("modules")) {
+            if (verifier.check()&&producer.exists("modules")) {
                 container = producer.createUnitContainerByName("modules");
             }else{
                 verifier = new XMLRootTagVerifier(file, "circuits");
-                if (verifier.check()&&producer.extsts("circuits")) {
+                if (verifier.check()&&producer.exists("circuits")) {
                     container = producer.createUnitContainerByName("circuits");
                 } else {
                     verifier = new XMLRootTagVerifier(file, "footprints");
-                    if (verifier.check()&&producer.extsts("footprints")) {
+                    if (verifier.check()&&producer.exists("footprints")) {
                         container = producer.createUnitContainerByName("footprints");
                     } else {
                         verifier = new XMLRootTagVerifier(file, "boards");
-                        if(verifier.check()&&producer.extsts("boards")){
+                        if(verifier.check()&&producer.exists("boards")){
                             container=producer.createUnitContainerByName("boards");
                         }else
                           throw new IllegalStateException("Unknown tag. Unable to import.");
@@ -74,7 +74,7 @@ public class XMLImportTask extends CommandResult<UnitContainer> {
             SwingUtilities.invokeLater(new Runnable(){
                     @Override
                     public void run() {
-                        monitor.OnFinish(receiver);   
+                        monitor.onFinish(receiver);   
                     }
                 });      
         }

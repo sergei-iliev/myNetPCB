@@ -234,7 +234,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
     }
 
     @Override
-    public void OnStart(Class<?> sender) {
+    public void onStart(Class<?> sender) {
         this.disableControls();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         if (sender==JTree.class) {
@@ -245,7 +245,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
 
 
     @Override
-    public void OnRecive(String result, Class sender) {
+    public void onRecive(String result, Class sender) {
         if (sender==JComboBox.class) {
             //***parse xml
             this.libraryCombo.removeActionListener(this);
@@ -375,14 +375,14 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
     }
 
     @Override
-    public void OnFinish(Class<?> receiver) {
+    public void onFinish(Class<?> receiver) {
         this.setCursor(Cursor.getDefaultCursor());
         this.enableControls();
     }
 
     @Override
-    public void OnError(String error) {
-        OnFinish(null);
+    public void onError(String error) {
+        onFinish(null);
         JOptionPane.showMessageDialog(this, error, "Error", JOptionPane.ERROR_MESSAGE);
     }
 

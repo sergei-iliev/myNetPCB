@@ -49,7 +49,10 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
         copy.fill = this.fill;
         return copy;
     }
-    
+    @Override
+    public long getClickableOrder() {        
+        return (long)getBoundingShape().area();
+    }
     @Override
     public Box getBoundingShape(){
       return this.shape.box();                

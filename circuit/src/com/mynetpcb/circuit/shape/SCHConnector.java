@@ -38,8 +38,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Node;
 
-public class SCHConnector extends Shape implements Textable,Externalizable{
-
+public class SCHConnector extends Shape implements Pinable,Textable,Externalizable{
 
     public enum Type{
        INPUT,OUTPUT;  
@@ -80,6 +79,16 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
                 copy.shape=new CircleShape(copy);
         }
         return copy;
+    }
+    @Override
+    public Point alignToGrid(boolean isRequired) {        
+        Point point=getOwningUnit().getGrid().positionOnGrid(segment.ps); 
+        move(point.x-segment.ps.x,point.y-segment.ps.y);
+        return null;
+    }    
+    @Override
+    public Point getPinPoint() {     
+        return this.segment.ps;
     }
     @Override
     public Box getBoundingShape() {        
@@ -185,7 +194,7 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
         if (!rect.intersects(viewportWindow)) {
                 return;
         }
-        g2.setColor(isSelected()?Color.GRAY:fillColor); 
+        g2.setColor(isSelected()?Color.BLUE:fillColor); 
 
         //utilities.drawCrosshair(g2, viewportWindow, scale,null,2,[this.segment.ps.clone()]);
         Segment line=this.segment.clone();
@@ -251,19 +260,14 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
 
         }
         @Override
-        public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-//            var rect = this.circle.box;
-//            rect.scale(scale.getScale());
-//            if (!rect.intersects(viewportWindow)) {
-//              return;
-//            }               
+        public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {              
             
             Circle c=this.circle.clone();
             c.scale(scale.getScaleX());
             c.move(-viewportWindow.getX(),- viewportWindow.getY());
             
             
-            g2.setColor(connector.get().isSelected()?Color.GRAY:connector.get().getFillColor()); 
+            g2.setColor(connector.get().isSelected()?Color.BLUE:connector.get().getFillColor()); 
             c.paint(g2,false);            
         }
         @Override
@@ -291,32 +295,67 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
             this.segment.pe.set(this.segment.ps.x, this.segment.ps.y + (Utilities.PIN_LENGTH / 2));
         }   
     }
+    private Pinable.Orientation getOrientation(){
+        if(this.segment.isHorizontal()){
+            if(this.segment.ps.x<this.segment.pe.x){
+                return Orientation.EAST;
+            }else{
+                return Orientation.WEST;           
+            }
+        }else{
+            if(this.segment.ps.y<this.segment.pe.y){
+                return Orientation.SOUTH;
+            }else{
+                return Orientation.NORTH;           
+            }            
+        }        
+    }
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb=new StringBuffer();
+        sb.append("<connector type=\""+type.ordinal()+"\" style=\""+getStyle().ordinal()+"\" >\r\n");        
+        sb.append("<name>"+texture.toXML()+"</name>\r\n");
+        sb.append("<a x=\""+Utilities.roundDouble(this.segment.ps.x,1)+"\" y=\""+Utilities.roundDouble(this.segment.ps.y,1)+"\"  orientation=\""+getOrientation().ordinal()+"\" />\r\n");        
+        sb.append("</connector>\r\n");
+        return sb.toString();
     }
 
     @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
         org.w3c.dom.Element  element= ( org.w3c.dom.Element)node;
+        if(element.hasAttribute("type")){
+            String type=element.getAttribute("type");
+            this.type=Type.values()[Integer.parseInt(type)];
+            
+            String style=element.getAttribute("style");
+            setStyle(Style.values()[Integer.parseInt(style)]);
+
+            Node n=element.getElementsByTagName("name").item(0);        
+            texture.fromXML(n);
+            
+            n=element.getElementsByTagName("a").item(0); 
+            this.segment.ps.set(Double.parseDouble(((org.w3c.dom.Element)n).getAttribute("x")),Double.parseDouble(((org.w3c.dom.Element)n).getAttribute("y")));
+            init(Pinable.Orientation.values()[Byte.parseByte(((org.w3c.dom.Element)n).getAttribute("orientation"))]);            
+        }else{   //old schema
+            Node n=element.getElementsByTagName("type").item(0);
+            this.type=Type.values()[Integer.parseInt(n.getTextContent())];
+
+            String style=element.getAttribute("style");
+            setStyle(Style.values()[Integer.parseInt(style)]);
+        
+            n=element.getElementsByTagName("name").item(0);        
+            texture.fromXML(n);
+        
+            n=element.getElementsByTagName("pin").item(0); 
+        
+            n=(( org.w3c.dom.Element)n).getElementsByTagName("a").item(0);
+            StringTokenizer stock=new StringTokenizer(n.getTextContent(),",");
+            this.segment.ps.set(Double.parseDouble(stock.nextToken()),Double.parseDouble(stock.nextToken()));
+            stock.nextToken();//crap
+            init(Pinable.Orientation.values()[Byte.parseByte(stock.nextToken())]);
+        }
                 
-        Node n=element.getElementsByTagName("pin").item(0); 
-        
-        n=(( org.w3c.dom.Element)n).getElementsByTagName("a").item(0);
-        StringTokenizer stock=new StringTokenizer(n.getTextContent(),",");
-        this.segment.ps.set(Double.parseDouble(stock.nextToken()),Double.parseDouble(stock.nextToken()));
-        stock.nextToken();//crap
-        init(Pinable.Orientation.values()[Byte.parseByte(stock.nextToken())]);
-        
-        n=element.getElementsByTagName("type").item(0);
-        this.type=Type.values()[Integer.parseInt(n.getTextContent())];
-                
-        String style=element.getAttribute("style");
-        setStyle(Style.values()[Integer.parseInt(style)]);
-        
-        n=element.getElementsByTagName("name").item(0);        
-        texture.fromXML(n);
+
         
         //points are calculated in BaseConnector constructor
         this.shape.calculatePoints();
@@ -406,7 +445,7 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());
             
-            g2.setColor(connector.get().isSelected()?Color.GRAY:connector.get().getFillColor()); 
+            g2.setColor(connector.get().isSelected()?Color.BLUE:connector.get().getFillColor()); 
             p.paint(g2,false);
 
         }
@@ -594,7 +633,7 @@ public class SCHConnector extends Shape implements Textable,Externalizable{
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());
             
-            g2.setColor(connector.get().isSelected()?Color.GRAY:connector.get().getFillColor()); 
+            g2.setColor(connector.get().isSelected()?Color.BLUE:connector.get().getFillColor()); 
             p.paint(g2,false);
 
         }

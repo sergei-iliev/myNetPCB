@@ -221,7 +221,7 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
     }
 
     @Override
-    public void OnStart(Class<?> sender) {
+    public void onStart(Class<?> sender) {
         this.disableControls();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         if (sender== JTree.class) {
@@ -231,7 +231,7 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
     }
 
     @Override
-    public void OnRecive(String result, Class sender) {
+    public void onRecive(String result, Class sender) {
         if (sender==JComboBox.class||sender==JTree.class||sender==ReadUnitsLocal.class) {
             //***parse xml
             this.symbolTree.removeTreeSelectionListener(this);
@@ -304,14 +304,14 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
     }
 
     @Override
-    public void OnFinish(Class<?> class1) {
+    public void onFinish(Class<?> clazz) {
         this.setCursor(Cursor.getDefaultCursor());
         this.enableControls();
     }
 
     @Override
-    public void OnError(String error) {
-        OnFinish(null);
+    public void onError(String error) {
+        onFinish(null);
         JOptionPane.showMessageDialog(this, error, "Error",
                                       JOptionPane.ERROR_MESSAGE);
     }

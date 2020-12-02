@@ -101,7 +101,10 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         copy.name = this.name.clone();
         return copy;
     }
-    
+    @Override
+    public long getClickableOrder() {        
+        return 1;
+    }
     public PinType getPinType(){
         return type;
     }

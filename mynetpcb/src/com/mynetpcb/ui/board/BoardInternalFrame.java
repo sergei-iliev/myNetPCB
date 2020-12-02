@@ -689,18 +689,18 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
     }
 
     @Override
-    public void OnStart(Class<?> receiver) {
+    public void onStart(Class<?> receiver) {
         if(receiver==BoardComponent.class){
             DisabledGlassPane.block(this.getRootPane(), "Saving..."); 
         }
     }
 
     @Override
-    public void OnRecive(String string, Class receiver) {
+    public void onRecive(String string, Class receiver) {
     }
     
     @Override
-    public void OnFinish(Class<?> receiver) {
+    public void onFinish(Class<?> receiver) {
         DisabledGlassPane.unblock(this.getRootPane());        
         
         if(receiver==BoardComponent.class){ 
@@ -709,7 +709,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
     }
 
     @Override
-    public void OnError(String message) {
+    public void onError(String message) {
     }
     
     /**

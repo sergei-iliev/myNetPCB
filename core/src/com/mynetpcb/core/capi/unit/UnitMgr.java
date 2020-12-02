@@ -6,7 +6,6 @@ import com.mynetpcb.core.capi.Moveable;
 import com.mynetpcb.core.capi.Ownerable;
 import com.mynetpcb.core.capi.pin.PinLineable;
 import com.mynetpcb.core.capi.pin.Pinable;
-import com.mynetpcb.core.capi.pin.Pinaware;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable;
@@ -302,14 +301,14 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 //        }
     }
 
-    public void normalizePinText(Shape shape) {
-        if (shape instanceof PinLineable) {
-            normalizePinText((PinLineable) shape);
-        }
-        if (shape instanceof Pinaware) {
-            normalizePinText(((Pinaware) shape).getPins());
-        }
-    }
+//    public void normalizePinText(Shape shape) {
+//        if (shape instanceof PinLineable) {
+//            normalizePinText((PinLineable) shape);
+//        }
+//        if (shape instanceof Pinaware) {
+//            normalizePinText(((Pinaware) shape).getPins());
+//        }
+//    }
 
     public void normalizePinText(Collection<? extends Shape> shapes) {
 //        for (Shape shape : shapes) {

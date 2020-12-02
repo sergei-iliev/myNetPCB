@@ -189,8 +189,15 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer xml=new StringBuffer();
+        xml.append("<buspin>\r\n");
+        xml.append("<name>"+texture.toXML()+"</name>\r\n");
+        xml.append("<wirepoints>");
+        xml.append(Utilities.roundDouble(getLinePoints().get(0).x,1)+","+Utilities.roundDouble(getLinePoints().get(0).y,1)+"|");
+        xml.append(Utilities.roundDouble(getLinePoints().get(1).x,1)+","+Utilities.roundDouble(getLinePoints().get(1).y,1)+"|");
+        xml.append("</wirepoints>\r\n");       
+        xml.append("</buspin>\r\n");
+        return xml.toString();
     }
 
     @Override
@@ -204,11 +211,11 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
         StringTokenizer st=new StringTokenizer(Utilities.trimCRLF(n.getTextContent()),"|");         
         Point point = new Point();
         StringTokenizer stock=new StringTokenizer(st.nextToken(),",");
-        point.set(Integer.parseInt(stock.nextToken()),Integer.parseInt(stock.nextToken()));  
+        point.set(Double.parseDouble(stock.nextToken()),Double.parseDouble(stock.nextToken())); 
 
         getLinePoints().get(0).set(point);
         stock=new StringTokenizer(st.nextToken(),",");
-        point.set(Integer.parseInt(stock.nextToken()),Integer.parseInt(stock.nextToken())); 
+        point.set(Double.parseDouble(stock.nextToken()),Double.parseDouble(stock.nextToken())); 
         getLinePoints().get(1).set(point);  
 
     }

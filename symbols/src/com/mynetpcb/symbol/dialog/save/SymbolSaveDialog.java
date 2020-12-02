@@ -114,8 +114,8 @@ public class SymbolSaveDialog extends AbstractSaveDialog{
 
 
     @Override
-    public void OnRecive(String result, Class reciever) {
-        super.OnRecive(result, reciever);
+    public void onRecive(String result, Class reciever) {
+        super.onRecive(result, reciever);
         if (reciever==SymbolSaveDialog.class) {
             categoryCombo.setEditable(false);
             categoryCombo.removeAllItems(); 

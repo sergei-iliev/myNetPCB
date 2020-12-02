@@ -1,8 +1,25 @@
 package com.mynetpcb.ui;
 
+import com.mynetpcb.board.container.BoardContainer;
+import com.mynetpcb.board.container.BoardContainerFactory;
+import com.mynetpcb.circuit.container.CircuitContainer;
+import com.mynetpcb.circuit.container.CircuitContainerFactory;
+import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
+import com.mynetpcb.core.capi.clipboard.Clipboardable;
+import com.mynetpcb.core.capi.container.UnitContainer;
+import com.mynetpcb.core.capi.container.UnitContainerProducer;
+import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
+import com.mynetpcb.core.capi.impex.ClipboardImportTask;
+import com.mynetpcb.core.capi.io.CommandExecutor;
+import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.io.FutureCommand;
 import com.mynetpcb.core.capi.popup.JPopupButton;
 import com.mynetpcb.core.dialog.config.PreferencesDialog;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.pad.container.FootprintContainer;
+import com.mynetpcb.pad.container.FootprintContainerFactory;
+import com.mynetpcb.symbol.container.SymbolContainer;
+import com.mynetpcb.symbol.container.SymbolContainerFactory;
 import com.mynetpcb.ui.board.BoardInternalFrame;
 import com.mynetpcb.ui.circuit.CircuitInternalFrame;
 import com.mynetpcb.ui.footprint.FootprintInternalFrame;
@@ -18,9 +35,15 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+
+import java.io.IOException;
+
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -33,7 +56,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-public class MainPanel extends JPanel implements InternalFrameListener,MainFrameListener, ActionListener{
+public class MainPanel extends JPanel implements InternalFrameListener,MainFrameListener,CommandListener, ActionListener{
     
     private final JDesktopPane desktop;
     private JButton symbolButton,footprintButton,boardButton, circuitButton;
@@ -221,33 +244,58 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
             d.setVisible(true);
             return;
         }
+        if(event.getActionCommand().equals("import.clipboard")){
+            if(ClipboardMgr.getInstance().isTransferDataAvailable(Clipboardable.Clipboard.SYSTEM)){  
+                try{ 
+                String content=(String)ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.SYSTEM).getTransferData(DataFlavor.stringFlavor);
+                    
+                    UnitContainerProducer unitContainerProducer=new UnitContainerProducer().withFactory("circuits", new CircuitContainerFactory()).withFactory("modules", new SymbolContainerFactory()).
+                         withFactory("footprints", new FootprintContainerFactory()).withFactory("boards", new BoardContainerFactory());
+                    
+                    
+                    CommandExecutor.INSTANCE.addTask("import",
+                                                     new ClipboardImportTask(this,
+                                                                       unitContainerProducer,
+                                                                       content, ClipboardImportTask.class));
+                
+                }catch(IOException | UnsupportedFlavorException e){
+                    e.printStackTrace();
+                     
+                }
+            }
+            
+        }
         if(event.getSource()==footprintButton){
-            selectedFrame=new FootprintInternalFrame();
-            selectedFrame.setVisible(true); //necessary as of 1.3            
-            desktop.removeAll();
-            desktop.add(selectedFrame);
-            selectedFrame.addInternalFrameListener(this);            
+            this.openInternalFrame(new FootprintInternalFrame());            
+//            selectedFrame=new FootprintInternalFrame();
+//            selectedFrame.setVisible(true); //necessary as of 1.3            
+//            desktop.removeAll();
+//            desktop.add(selectedFrame);
+//            selectedFrame.addInternalFrameListener(this);            
         }
         if(event.getSource()==boardButton){
-            selectedFrame =new BoardInternalFrame();
-            selectedFrame.setVisible(true); //necessary as of 1.3            
-            desktop.removeAll();
-            desktop.add(selectedFrame);
-            selectedFrame.addInternalFrameListener(this);
+            this.openInternalFrame(new BoardInternalFrame());
+//            selectedFrame =new BoardInternalFrame();
+//            selectedFrame.setVisible(true); //necessary as of 1.3            
+//            desktop.removeAll();
+//            desktop.add(selectedFrame);
+//            selectedFrame.addInternalFrameListener(this);
         }   
         if(event.getSource()==symbolButton){
-            selectedFrame =new SymbolInternalFrame();
-            selectedFrame.setVisible(true); //necessary as of 1.3            
-            desktop.removeAll();
-            desktop.add(selectedFrame);
-            selectedFrame.addInternalFrameListener(this);
+            this.openInternalFrame(new SymbolInternalFrame());
+//            selectedFrame =new SymbolInternalFrame();
+//            selectedFrame.setVisible(true); //necessary as of 1.3            
+//            desktop.removeAll();
+//            desktop.add(selectedFrame);
+//            selectedFrame.addInternalFrameListener(this);
         }
         if(event.getSource()==circuitButton){
-            selectedFrame =new CircuitInternalFrame();
-            selectedFrame.setVisible(true); //necessary as of 1.3            
-            desktop.removeAll();
-            desktop.add(selectedFrame);
-            selectedFrame.addInternalFrameListener(this);
+            this.openInternalFrame(new CircuitInternalFrame());
+//            selectedFrame =new CircuitInternalFrame();
+//            selectedFrame.setVisible(true); //necessary as of 1.3            
+//            desktop.removeAll();
+//            desktop.add(selectedFrame);
+//            selectedFrame.addInternalFrameListener(this);
         } 
     }
     
@@ -299,5 +347,52 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
             }else{  
                    System.exit(0);
             }   
+    }
+
+    @Override
+    public void onStart(Class<?> clazz) {
+        DisabledGlassPane.block(this.getRootPane(), "Importing..."); 
+    }
+
+    @Override
+    public void onRecive(String content, Class<?> clazz) {
+        // TODO Implement this method
+
+    }
+
+    @Override
+    public void onFinish(Class<?> clazz) {
+        DisabledGlassPane.unblock(this.getRootPane()); 
+        FutureCommand task = CommandExecutor.INSTANCE.getTaskByName("import");
+        UnitContainer unitContainer = null;
+        try {
+            unitContainer = (UnitContainer) task.get();
+        } catch (ExecutionException | InterruptedException e) {        
+            e.printStackTrace(System.out);
+        }        
+        if(unitContainer instanceof SymbolContainer){
+            this.openInternalFrame(new SymbolInternalFrame((SymbolContainer)unitContainer));
+        }else if(unitContainer instanceof FootprintContainer){
+            this.openInternalFrame(new FootprintInternalFrame((FootprintContainer)unitContainer));
+        }else if(unitContainer instanceof CircuitContainer){
+            this.openInternalFrame(new CircuitInternalFrame((CircuitContainer)unitContainer));
+        }else if(unitContainer instanceof BoardContainer){
+            this.openInternalFrame(new BoardInternalFrame((BoardContainer)unitContainer));
+        }
+    }
+
+    @Override
+    public void onError(String error) {
+        DisabledGlassPane.unblock(this.getRootPane()); 
+        JOptionPane.showMessageDialog(this.getParent(), error, "Error",
+                                      JOptionPane.ERROR_MESSAGE); 
+    }
+    
+    private void openInternalFrame(AbstractInternalFrame selectedFrame){
+        //selectedFrame=new FootprintInternalFrame();
+        selectedFrame.setVisible(true); //necessary as of 1.3            
+        desktop.removeAll();
+        desktop.add(selectedFrame);
+        selectedFrame.addInternalFrameListener(this);   
     }
 }

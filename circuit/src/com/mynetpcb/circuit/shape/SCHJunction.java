@@ -9,6 +9,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Line;
@@ -24,6 +25,7 @@ import java.util.StringTokenizer;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class SCHJunction extends Shape implements Externalizable{
@@ -100,14 +102,20 @@ public class SCHJunction extends Shape implements Externalizable{
 
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer xml = new StringBuffer();
+        xml.append("<junction x=\""+Utilities.roundDouble(circle.pc.x,1)+"\" y=\""+Utilities.roundDouble(circle.pc.y,1)+"\" />\r\n");                
+        return xml.toString();
     }
 
     @Override
     public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        StringTokenizer st = new StringTokenizer(node.getTextContent(), ",");
-        circle.pc.set(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));        
+        Element element=(Element)node;
+        if(element.hasAttributes()){
+            circle.pc.set(Double.parseDouble(element.getAttribute("x")),Double.parseDouble(element.getAttribute("y")));        
+        }else{
+            StringTokenizer st = new StringTokenizer(node.getTextContent(), ",");
+            circle.pc.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));        
+        }
     }
 
     public static class Memento extends AbstractMemento<Circuit, SCHJunction> {

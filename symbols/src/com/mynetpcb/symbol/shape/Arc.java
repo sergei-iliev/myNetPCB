@@ -45,6 +45,10 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
         copy.arc=this.arc.clone();
         return copy;
     }
+    @Override
+    public long getClickableOrder() {        
+       return (long)getBoundingShape().area();
+    }
     public Arcellipse getShape(){
         return arc;
     }    

@@ -156,7 +156,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     }
     
     @Override
-    public void OnStart(Class<?> reciever) {
+    public void onStart(Class<?> reciever) {
         this.disableControls();   
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         
@@ -166,7 +166,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     }
 
     @Override
-    public void OnRecive(String result, Class reciever) {
+    public void onRecive(String result, Class reciever) {
         if(reciever.getSimpleName().equals("JComboBox")||reciever.getSimpleName().equals("DefaultListModel")){
             try {
                 Document document = Utilities.buildDocument(result);
@@ -220,14 +220,14 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     }
 
     @Override
-    public void OnFinish(Class<?> reciever) {
+    public void onFinish(Class<?> reciever) {
         this.setCursor(Cursor.getDefaultCursor());     
         this.enableControls();         
     }
 
     @Override
-    public void OnError(String error) {
-        OnFinish(null);
+    public void onError(String error) {
+        onFinish(null);
         JOptionPane.showMessageDialog(this, error, "Error",
                                       JOptionPane.ERROR_MESSAGE);
     }

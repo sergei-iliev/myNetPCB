@@ -218,7 +218,7 @@ public class FootprintsPanel extends JPanel implements
     }
 
     @Override
-    public void OnStart(Class<?> reciever) {
+    public void onStart(Class<?> reciever) {
         if (reciever==JTree.class||reciever==SearchUnitLocal.class) {
             root.removeAllChildren();
             ((DefaultTreeModel)footprintTree.getModel()).reload();
@@ -227,7 +227,7 @@ public class FootprintsPanel extends JPanel implements
     }
 
     @Override
-    public void OnRecive(String result, Class<?> reciever) {
+    public void onRecive(String result, Class<?> reciever) {
         if (reciever==SearchableComboBox.class||reciever==JTree.class||reciever==ReadUnitsLocal.class||reciever==SearchUnitLocal.class) {
             //clear selection
             selectionPanel.Clear();
@@ -301,12 +301,12 @@ public class FootprintsPanel extends JPanel implements
     }
 
     @Override
-    public void OnFinish(Class<?> c) {
+    public void onFinish(Class<?> c) {
         DisabledGlassPane.unblock(boardComponent.getDialogFrame().getRootPane()); 
     }
 
     @Override
-    public void OnError(String error) {
+    public void onError(String error) {
         DisabledGlassPane.unblock(boardComponent.getDialogFrame().getRootPane()); 
         JOptionPane.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(), error, "Error",
                                       JOptionPane.ERROR_MESSAGE); 

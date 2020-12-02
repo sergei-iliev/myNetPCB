@@ -319,23 +319,23 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
     }
 
     @Override
-    public void OnStart(Class<?> c) {
+    public void onStart(Class<?> clazz) {
         // TODO Implement this method
     }
 
     @Override
-    public void OnRecive(String string, Class<?> c) {
+    public void onRecive(String content, Class<?> clazz) {
         // TODO Implement this method
 
     }
 
     @Override
-    public void OnFinish(Class<?> c) {
+    public void onFinish(Class<?> clazz) {
         // TODO Implement this method
     }
 
     @Override
-    public void OnError(String string) {
+    public void onError(String error) {
         // TODO Implement this method
     }
 }

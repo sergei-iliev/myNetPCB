@@ -9,6 +9,7 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
@@ -109,8 +110,9 @@ public class SCHNoConnector extends Shape implements Externalizable{
     }
     @Override
     public String toXML() {
-        // TODO Implement this method
-        return null;
+        StringBuffer sb=new StringBuffer();
+        sb.append("<noconnector x=\""+Utilities.roundDouble(point.x,1)+"\"  y=\""+Utilities.roundDouble(point.y,1)+"\"/>\r\n");
+        return sb.toString();
     }
 
     @Override
@@ -118,6 +120,10 @@ public class SCHNoConnector extends Shape implements Externalizable{
         Element element=(Element)node;
         this.point.set(Double.parseDouble(element.getAttribute("x")),Double.parseDouble(element.getAttribute("y")));        
     }
+    @Override
+    public String getDisplayName() {
+        return "NoConnection";
+    }    
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);

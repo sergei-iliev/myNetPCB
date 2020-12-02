@@ -48,7 +48,7 @@ public class WriteConnector extends Command {
             invokeErrorDialog(uee.toString());
             return null;}    
 
-        monitor.OnStart(receiver); 
+        monitor.onStart(receiver); 
         try{          
             conn = (HttpURLConnection)url.openConnection();   
             conn.setRequestMethod("POST");
@@ -92,7 +92,7 @@ public class WriteConnector extends Command {
                 response=bos.toString();
 
 //****process response for error message             
-                 monitor.OnRecive(response,receiver);                                   
+                 monitor.onRecive(response,receiver);                                   
                                   
             }else if(conn.getResponseCode()==HttpURLConnection.HTTP_NO_CONTENT){
                 //no content
@@ -118,7 +118,7 @@ public class WriteConnector extends Command {
             SwingUtilities.invokeLater(new Runnable(){
                     @Override
                     public void run() {
-                        monitor.OnFinish(receiver);  
+                        monitor.onFinish(receiver);  
                     }
                 }); 
         }catch (Exception e)   {

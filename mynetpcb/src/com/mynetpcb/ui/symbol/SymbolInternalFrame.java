@@ -359,23 +359,23 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
 
 
     @Override
-    public void OnStart(Class<?> c) {
+    public void onStart(Class<?> c) {
         // TODO Implement this method
     }
 
     @Override
-    public void OnRecive(String string, Class<?> c) {
+    public void onRecive(String string, Class<?> c) {
         // TODO Implement this method
 
     }
 
     @Override
-    public void OnFinish(Class<?> c) {
+    public void onFinish(Class<?> c) {
         // TODO Implement this method
     }
 
     @Override
-    public void OnError(String string) {
+    public void onError(String string) {
         // TODO Implement this method
     }
 

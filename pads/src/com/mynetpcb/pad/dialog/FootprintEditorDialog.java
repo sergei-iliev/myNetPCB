@@ -574,18 +574,18 @@ exit();
         }
     }
     @Override
-    public void OnStart(Class<?> receiver) {
+    public void onStart(Class<?> receiver) {
         if(receiver==FootprintComponent.class){
             DisabledGlassPane.block(this.getRootPane(), "Saving..."); 
         }
     }
 
     @Override
-    public void OnRecive(String string, Class receiver) {
+    public void onRecive(String string, Class receiver) {
     }
     
     @Override
-    public void OnFinish(Class<?> receiver) {
+    public void onFinish(Class<?> receiver) {
         DisabledGlassPane.unblock(this.getRootPane());        
         
         if(receiver==FootprintComponent.class){ 
@@ -594,7 +594,7 @@ exit();
     }
 
     @Override
-    public void OnError(String message) {
+    public void onError(String message) {
     }    
 
 /**

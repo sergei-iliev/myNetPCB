@@ -50,7 +50,7 @@ public class ReadConnector extends Command {
                   invokeErrorDialog(e.toString());
                   return null;}    
             try{                  
-                monitor.OnStart(receiver);                 
+                monitor.onStart(receiver);                 
                 conn = (HttpURLConnection)url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setUseCaches(false);
@@ -74,7 +74,7 @@ public class ReadConnector extends Command {
                       SwingUtilities.invokeAndWait(
                           new Runnable(){
                                public void run(){
-                                 monitor.OnRecive(response,ReadConnector.this.receiver); 
+                                 monitor.onRecive(response,ReadConnector.this.receiver); 
                                }                        
                           }                  
                           );  
@@ -82,7 +82,7 @@ public class ReadConnector extends Command {
                      catch(InvocationTargetException ite) {return null;}                    
                      
                 if(!Thread.currentThread().isInterrupted()){   
-                  monitor.OnFinish(receiver);
+                  monitor.onFinish(receiver);
                 } 
             }catch (Exception e)   {
                 e.printStackTrace(System.out);

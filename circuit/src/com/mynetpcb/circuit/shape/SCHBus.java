@@ -4,6 +4,7 @@ import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Point;
 
 import java.util.Arrays;
@@ -42,20 +43,25 @@ public class SCHBus extends SCHWire{
     @Override
     public void fromXML(Node node)throws XPathExpressionException, ParserConfigurationException {
         Element element=(Element)node;
-        Node n=element.getElementsByTagName("wire").item(0);
-        super.fromXML(n);
+        if(element.hasAttribute("thickness")){
+            super.fromXML(node);            
+        }else{
+            Node n=element.getElementsByTagName("wire").item(0);
+            super.fromXML(n);
+        }
     }
     
     @Override
-    public String toXML() {
-        StringBuffer xml=new StringBuffer();
-        if(getLinePoints().size()==0) {
-            return "";
+    public String toXML() {            
+        StringBuffer sb=new StringBuffer();
+        sb.append("<bus thickness=\""+this.getThickness()+"\">");
+        sb.append("<wirepoints>");
+        for (Point point : this.polyline.points) {            
+            sb.append(Utilities.roundDouble(point.x,1) + "," + Utilities.roundDouble(point.y,1) + "|");
         }
-        xml.append("<bus>\r\n");
-        xml.append(super.toXML());
-        xml.append("</bus>\r\n");
-        return xml.toString();
+        sb.append("</wirepoints>\r\n");
+        sb.append("</bus>\r\n");
+        return sb.toString();
     }
     
     public static class Memento extends AbstractMemento<Circuit, SCHBus> {

@@ -26,7 +26,7 @@ public abstract class CommandResult<V> implements Callable<V>,Commandable{
         SwingUtilities.invokeLater(new Runnable(){
                 public void run() {
                     if(monitor!=null)
-                       monitor.OnError(error);
+                       monitor.onError(error);
                 }
             });         
     }

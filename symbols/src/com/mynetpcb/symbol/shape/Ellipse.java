@@ -46,6 +46,10 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
         return copy;
     }
     @Override
+    public long getClickableOrder() {        
+        return (long)getBoundingShape().area();
+    }
+    @Override
     public Box getBoundingShape() {        
         return this.ellipse.box();                
     }
