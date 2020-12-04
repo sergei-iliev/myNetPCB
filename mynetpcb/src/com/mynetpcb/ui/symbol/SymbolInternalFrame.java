@@ -6,16 +6,14 @@ import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.config.Configuration;
-import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
+import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
 import com.mynetpcb.core.capi.io.Command;
 import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
 import com.mynetpcb.core.capi.io.WriteUnitLocal;
-import com.mynetpcb.core.capi.io.remote.WriteConnector;
-import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.popup.JPopupButton;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -359,8 +357,10 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
 
 
     @Override
-    public void onStart(Class<?> c) {
-        // TODO Implement this method
+    public void onStart(Class<?> receiver) {
+        if(receiver==SymbolComponent.class){
+            DisabledGlassPane.block(this.getRootPane(), "Saving..."); 
+        }
     }
 
     @Override
@@ -370,8 +370,12 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
     }
 
     @Override
-    public void onFinish(Class<?> c) {
-        // TODO Implement this method
+    public void onFinish(Class<?> receiver) {
+        DisabledGlassPane.unblock(this.getRootPane());        
+        
+        if(receiver==SymbolComponent.class){ 
+           symbolComponent.getModel().registerInitialState();
+        }
     }
 
     @Override
@@ -442,54 +446,70 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
                                               "Security exception", JOptionPane.ERROR_MESSAGE);
             }
             return;
-        }            
-        if (e.getActionCommand().equals("Save")||e.getActionCommand().equals("SaveAs")) {
-            //could be a freshly imported circuit with no library/project name
-            if(e.getActionCommand().equals("Save")){            
-              if (symbolComponent.getModel().getLibraryName() == null||symbolComponent.getModel().getLibraryName().length()==0) {
-                  new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline()).build();
-                  return;
-              }
-            }else{
+        }          
+        if(e.getSource()==SaveButton||e.getActionCommand().equals("Save")){
+                if (symbolComponent.getModel().getLibraryName() == null||symbolComponent.getModel().getLibraryName().length()==0) {
+                          new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline()).build();                
+                }else{
+                                //save the file
+                                if (!Configuration.get().isIsApplet()) {
+                                    Command writer =
+                                        new WriteUnitLocal(this, symbolComponent.getModel().format(),
+                                                           Configuration.get().getSymbolsRoot(),
+                                                           symbolComponent.getModel().getLibraryName(), symbolComponent.getModel().getCategoryName(),
+                                                           symbolComponent.getModel().getFileName(), true, SymbolComponent.class);
+                                    CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
+                                } else {
+//                                    Command writer =
+//                                        new WriteConnector(this, symbolComponent.getModel().format(),
+//                                                           new RestParameterMap.ParameterBuilder("/symbols").addURI(symbolComponent.getModel().getLibraryName()).addURI(symbolComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
+//                                                                                                                                                                                                                                          String.valueOf(true)).build(),
+//                                                           SymbolComponent.class);
+//                                    CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
+                                }                     
+                }
+            return;
+        }
+        if (e.getActionCommand().equals("SaveAs")) {
                 new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline()).build();
                 return;                
-            }            
-            
-            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
-                User.showMessageDialog(symbolComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
-                return;
-            }
-            //could be a freshly imported circuit with no library/project name
-            if(e.getActionCommand().equals("Save")){
-              if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
-                   User.showMessageDialog(symbolComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
-                   return;
-              }                
-              if (symbolComponent.getModel().getLibraryName() == null||symbolComponent.getModel().getLibraryName().length()==0) {
-                 (new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline())).build();
-                  return;
-              }
-            }else{
-                (new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline())).build();
-                return;                
-            }
-            
-            //save the file
-            if (!Configuration.get().isIsApplet()) {
-                Command writer =
-                    new WriteUnitLocal(this, symbolComponent.getModel().format(),
-                                       Configuration.get().getSymbolsRoot(),
-                                       symbolComponent.getModel().getLibraryName(), symbolComponent.getModel().getCategoryName(),
-                                       symbolComponent.getModel().getFileName(), true, SymbolComponent.class);
-                CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
-            } else {
-                Command writer =
-                    new WriteConnector(this, symbolComponent.getModel().format(),
-                                       new RestParameterMap.ParameterBuilder("/symbols").addURI(symbolComponent.getModel().getLibraryName()).addURI(symbolComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
-                                                                                                                                                                                                                      String.valueOf(true)).build(),
-                                       SymbolComponent.class);
-                CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
-            } 
+       
+//            
+//            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
+//                User.showMessageDialog(symbolComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
+//                return;
+//            }
+//            //could be a freshly imported circuit with no library/project name
+//            if(e.getActionCommand().equals("Save")){
+//              if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
+//                   User.showMessageDialog(symbolComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
+//                   return;
+//              }                
+//              if (symbolComponent.getModel().getLibraryName() == null||symbolComponent.getModel().getLibraryName().length()==0) {
+//                 (new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline())).build();
+//                  return;
+//              }
+//            }else{
+//                (new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline())).build();
+//                return;                
+//            }
+//            
+//            //save the file
+//            if (!Configuration.get().isIsApplet()) {
+//                Command writer =
+//                    new WriteUnitLocal(this, symbolComponent.getModel().format(),
+//                                       Configuration.get().getSymbolsRoot(),
+//                                       symbolComponent.getModel().getLibraryName(), symbolComponent.getModel().getCategoryName(),
+//                                       symbolComponent.getModel().getFileName(), true, SymbolComponent.class);
+//                CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
+//            } else {
+//                Command writer =
+//                    new WriteConnector(this, symbolComponent.getModel().format(),
+//                                       new RestParameterMap.ParameterBuilder("/symbols").addURI(symbolComponent.getModel().getLibraryName()).addURI(symbolComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
+//                                                                                                                                                                                                                      String.valueOf(true)).build(),
+//                                       SymbolComponent.class);
+//                CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
+//            } 
         } 
         if (e.getSource()==ScaleIn) {
             symbolComponent.zoomIn(new Point((int)symbolComponent.getVisibleRect().getCenterX(),

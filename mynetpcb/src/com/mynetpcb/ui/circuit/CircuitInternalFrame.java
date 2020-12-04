@@ -18,7 +18,11 @@ import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
+import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
+import com.mynetpcb.core.capi.io.Command;
+import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.io.WriteUnitLocal;
 import com.mynetpcb.core.capi.popup.JPopupButton;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -433,23 +437,29 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     }
 
     @Override
-    public void onStart(Class<?> c) {
-        // TODO Implement this method
+    public void onStart(Class<?> receiver) {
+        if(receiver==CircuitComponent.class){
+            DisabledGlassPane.block(this.getRootPane(), "Saving..."); 
+        }
     }
 
     @Override
-    public void onRecive(String string, Class<?> c) {
+    public void onRecive(String content, Class<?> receiver) {
         // TODO Implement this method
 
     }
 
     @Override
-    public void onFinish(Class<?> c) {
-        // TODO Implement this method
+    public void onFinish(Class<?> receiver) {
+        DisabledGlassPane.unblock(this.getRootPane());        
+        
+        if(receiver==CircuitComponent.class){ 
+           circuitComponent.getModel().registerInitialState();
+        }
     }
 
     @Override
-    public void onError(String string) {
+    public void onError(String error) {
         // TODO Implement this method
     }
 
@@ -653,6 +663,30 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
 //            circuitComponent.Repaint();        
 //        }
  
+
+        if(e.getSource()==SaveButton||e.getActionCommand().equals("Save")){
+                if (circuitComponent.getModel().getLibraryName() == null||circuitComponent.getModel().getLibraryName().length()==0) {
+                          new CircuitSaveDialog(this.getParentFrame(), circuitComponent,Configuration.get().isIsOnline()).build();                
+                }else{
+                                //save the file
+                                if (!Configuration.get().isIsApplet()) {
+                                    Command writer =
+                                        new WriteUnitLocal(this, circuitComponent.getModel().format(),
+                                                           Configuration.get().getCircuitsRoot(),
+                                                           circuitComponent.getModel().getLibraryName(),null,
+                                                           circuitComponent.getModel().getFileName(), true, CircuitComponent.class);
+                                    CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
+                                } else {
+        //                                    Command writer =
+        //                                        new WriteConnector(this, symbolComponent.getModel().format(),
+        //                                                           new RestParameterMap.ParameterBuilder("/symbols").addURI(symbolComponent.getModel().getLibraryName()).addURI(symbolComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
+        //                                                                                                                                                                                                                                          String.valueOf(true)).build(),
+        //                                                           SymbolComponent.class);
+        //                                    CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
+                                }                     
+                }
+            return;
+        }
         if (e.getActionCommand().equals("SaveAs")) {
             if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
                 User.showMessageDialog(circuitComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
@@ -661,7 +695,6 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
 
             (new CircuitSaveDialog(this.getParentFrame(), circuitComponent,Configuration.get().isIsOnline())).build();
         }
-//
 //        if (e.getActionCommand().equals("save")) {
 //            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
 //                User.showMessageDialog(circuitComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");

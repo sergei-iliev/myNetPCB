@@ -33,44 +33,44 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
         super(component,new GridLayout(9,1));  
         //***Module Name        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Module name"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Module name"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 moduleNameField=new JTextField(); moduleNameField.addKeyListener(this); panel.add(moduleNameField,BorderLayout.CENTER);
                 layoutPanel.add(panel);                              
         //***Widht
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Width"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Width"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 widthField=new JTextField(""); widthField.addKeyListener(this); panel.add(widthField,BorderLayout.CENTER);
                 layoutPanel.add(panel);        
          //***Height
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Height"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Height"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 heightField=new JTextField(""); heightField.addKeyListener(this); panel.add(heightField,BorderLayout.CENTER);
                 layoutPanel.add(panel); 
         
         //reference
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Reference"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Reference"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 referenceCombo=new JComboBox();referenceCombo.addActionListener(this);  panel.add(referenceCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);        
         
         //***value
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Value"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Value"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 valueCombo=new JComboBox();valueCombo.addActionListener(this);  panel.add(valueCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);        
         //***Text Layout visibility        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Text Layout Visible"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Text Layout Visible"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 textLayoutCombo=new JComboBox(trueFalse);textLayoutCombo.addActionListener(this);  panel.add(textLayoutCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel); 
         //***Coordinate X
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Origin X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Origin X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 originX=new JTextField(""); originX.addKeyListener(this); panel.add(originX,BorderLayout.CENTER);
                 layoutPanel.add(panel);        
          //***Coordinate Y
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Origin Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Origin Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 originY=new JTextField(""); originY.addKeyListener(this); panel.add(originY,BorderLayout.CENTER);
                 layoutPanel.add(panel); 
     }

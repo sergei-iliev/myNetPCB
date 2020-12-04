@@ -30,8 +30,6 @@ import com.mynetpcb.core.capi.io.Command;
 import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
 import com.mynetpcb.core.capi.io.WriteUnitLocal;
-import com.mynetpcb.core.capi.io.remote.WriteConnector;
-import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.capi.popup.JPopupButton;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -516,43 +514,71 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
             boardComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
             boardComponent.Repaint();
         }   
-
-        if (e.getActionCommand().equals("Save")||e.getActionCommand().equals("SaveAs")) {
+        if(e.getSource()==SaveButton||e.getActionCommand().equals("Save")){
+                if (boardComponent.getModel().getLibraryName() == null||boardComponent.getModel().getLibraryName().length()==0) {
+                          new BoardSaveDialog(this.getParentFrame(), boardComponent,Configuration.get().isIsOnline()).build();                
+                }else{
+                                //save the file
+                                if (!Configuration.get().isIsApplet()) {
+                                    Command writer =
+                                        new WriteUnitLocal(this, boardComponent.getModel().format(),
+                                                           Configuration.get().getBoardsRoot(),
+                                                           boardComponent.getModel().getLibraryName(),null,
+                                                           boardComponent.getModel().getFileName(), true, BoardComponent.class);
+                                    CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
+                                } else {
+        //                                    Command writer =
+        //                                        new WriteConnector(this, symbolComponent.getModel().format(),
+        //                                                           new RestParameterMap.ParameterBuilder("/symbols").addURI(symbolComponent.getModel().getLibraryName()).addURI(symbolComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
+        //                                                                                                                                                                                                                                          String.valueOf(true)).build(),
+        //                                                           SymbolComponent.class);
+        //                                    CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
+                                }                     
+                }
+            return;
+        }
+        if (e.getActionCommand().equals("SaveAs")) {
             if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
                 User.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
                 return;
             }
-            //could be a freshly imported circuit with no library/project name
-            if(e.getActionCommand().equals("Save")){
-              if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
-                   User.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
-                   return;
-              }                
-              if (boardComponent.getModel().getLibraryName() == null||boardComponent.getModel().getLibraryName().length()==0) {
-                 (new BoardSaveDialog(this.getParentFrame(), boardComponent,Configuration.get().isIsOnline())).build();
-                  return;
-              }
-            }else{
-                (new BoardSaveDialog(this.getParentFrame(), boardComponent,Configuration.get().isIsOnline())).build();
-                return;                
-            }
-            
-            //save the file
-            if (!Configuration.get().isIsApplet()) {
-                Command writer =
-                    new WriteUnitLocal(this, boardComponent.getModel().format(),
-                                       Configuration.get().getBoardsRoot(),
-                                       boardComponent.getModel().getLibraryName(), null,
-                                       boardComponent.getModel().getFileName(), true, BoardComponent.class);
-                CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
-            } else {
-                Command writer =
-                    new WriteConnector(this, boardComponent.getModel().format(),
-                                       new RestParameterMap.ParameterBuilder("/boards").addURI(boardComponent.getModel().getLibraryName()).addURI(boardComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
-                                                                                                                                                                                                                      String.valueOf(true)).build(),
-                                       BoardComponent.class);
-                CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
-            }
+
+            (new BoardSaveDialog(this.getParentFrame(), boardComponent,Configuration.get().isIsOnline())).build();
+//            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
+//                User.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
+//                return;
+//            }
+//            //could be a freshly imported circuit with no library/project name
+//            if(e.getActionCommand().equals("Save")){
+//              if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
+//                   User.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
+//                   return;
+//              }                
+//              if (boardComponent.getModel().getLibraryName() == null||boardComponent.getModel().getLibraryName().length()==0) {
+//                 (new BoardSaveDialog(this.getParentFrame(), boardComponent,Configuration.get().isIsOnline())).build();
+//                  return;
+//              }
+//            }else{
+//                (new BoardSaveDialog(this.getParentFrame(), boardComponent,Configuration.get().isIsOnline())).build();
+//                return;                
+//            }
+//            
+//            //save the file
+//            if (!Configuration.get().isIsApplet()) {
+//                Command writer =
+//                    new WriteUnitLocal(this, boardComponent.getModel().format(),
+//                                       Configuration.get().getBoardsRoot(),
+//                                       boardComponent.getModel().getLibraryName(), null,
+//                                       boardComponent.getModel().getFileName(), true, BoardComponent.class);
+//                CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
+//            } else {
+//                Command writer =
+//                    new WriteConnector(this, boardComponent.getModel().format(),
+//                                       new RestParameterMap.ParameterBuilder("/boards").addURI(boardComponent.getModel().getLibraryName()).addURI(boardComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
+//                                                                                                                                                                                                                      String.valueOf(true)).build(),
+//                                       BoardComponent.class);
+//                CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
+//            }
         }
         if (e.getSource()==FootprintButton) {           
             

@@ -18,6 +18,7 @@ import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -119,7 +120,7 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
            points.append(Utilities.roundDouble(point.y,1));
            points.append(",");
         });     
-        return "<triangle thickness=\"" + this.thickness + "\" fill=\"" + this.fill.ordinal() + "\">"+points.toString()+"</triangle>\r\n";
+        return "<triangle thickness=\"" + this.thickness + "\" fill=\"" + this.fill.index + "\">"+points.toString()+"</triangle>\r\n";
     }
 
     @Override
@@ -163,7 +164,16 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
         if (fill == Fill.EMPTY) { //framed
             //transparent rect
             a.paint(g2,false);
-        } else { //filled
+        }else if(fill==Fill.GRADIENT){ 
+            GradientPaint gp = 
+                new GradientPaint((float)a.box().getX(), (float)a.box().getY(), 
+                                  Color.white, (float)a.box().getX(), 
+                                  (float)(a.box().getY()+a.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            a.paint(g2,true);
+            g2.setColor(Color.black);
+            a.paint(g2,false);        
+        }else { //filled
             a.paint(g2,true);
         } 
         if (this.isSelected()) {
@@ -185,7 +195,17 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
         g2.setColor(Color.BLACK);  
         if (fill == Fill.EMPTY) { //framed            
             shape.paint(g2, false);
-        } else { //filled
+        }else if(fill==Fill.GRADIENT){ 
+            GradientPaint gp = 
+                new GradientPaint((float)shape.box().getX(), (float)shape.box().getY(), 
+                                  Color.white, (float)shape.box().getX(), 
+                                  (float)(shape.box().getY()+shape.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            shape.paint(g2,true);
+            g2.setColor(Color.black);
+            shape.paint(g2,false);        
+        }
+        else { //filled
             shape.paint(g2,true);
         }        
     }

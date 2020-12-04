@@ -28,28 +28,28 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
          super(component,new GridLayout(5,1));       
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 leftField=new JTextField("0");leftField.addKeyListener(this);  panel.add(leftField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
         
         //***Top        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 topField=new JTextField("0"); topField.addKeyListener(this); panel.add(topField,BorderLayout.CENTER);
                 layoutPanel.add(panel);              
         //***Thickness        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Thickness"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Thickness"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 thicknessField=new JTextField("0"); thicknessField.addKeyListener(this); panel.add(thicknessField,BorderLayout.CENTER);
                 layoutPanel.add(panel);   
         //***Fill
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Fill"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Fill"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 fillCombo=new JComboBox(Shape.Fill.values());fillCombo.addActionListener(this);  panel.add(fillCombo,BorderLayout.CENTER);
                 layoutPanel.add(panel);
         //****Round Corner
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Rounding"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(140,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Rounding"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 roundCornerField=new JTextField("");  roundCornerField.addKeyListener(this); panel.add(roundCornerField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
 

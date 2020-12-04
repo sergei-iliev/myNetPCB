@@ -6,7 +6,6 @@ import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.config.Configuration;
-import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
@@ -15,8 +14,6 @@ import com.mynetpcb.core.capi.io.Command;
 import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
 import com.mynetpcb.core.capi.io.WriteUnitLocal;
-import com.mynetpcb.core.capi.io.remote.WriteConnector;
-import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.popup.JPopupButton;
 import com.mynetpcb.core.capi.print.PrintContext;
@@ -399,55 +396,67 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
             }
             return;
         }
-        
-        if (e.getActionCommand().equals("Save")||e.getActionCommand().equals("SaveAs")) {
-
-            //could be a freshly imported circuit with no library/project name
-            if(e.getActionCommand().equals("Save")){
-              if (footprintComponent.getModel().getLibraryName() == null||footprintComponent.getModel().getLibraryName().length()==0) {
-                  new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline()).build();
-                  return;
-              }
-            }else{
+        if(e.getSource()==SaveButton||e.getActionCommand().equals("Save")){
+            if (footprintComponent.getModel().getLibraryName() == null||footprintComponent.getModel().getLibraryName().length()==0) {
                 new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline()).build();
-                return;                
-            }            
-            
-            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
-                User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
                 return;
+            }else{ 
+                        //save the file
+                        if (!Configuration.get().isIsApplet()) {
+                            Command writer =
+                                new WriteUnitLocal(this, footprintComponent.getModel().format(),
+                                                   Configuration.get().getFootprintsRoot(),
+                                                   footprintComponent.getModel().getLibraryName(), footprintComponent.getModel().getCategoryName(),
+                                                   footprintComponent.getModel().getFileName(), true, FootprintComponent.class);
+                            CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
+                        } else {
+//                            Command writer =
+//                                new WriteConnector(this, footprintComponent.getModel().format(),
+//                                                   new RestParameterMap.ParameterBuilder("/footprints").addURI(footprintComponent.getModel().getLibraryName()).addURI(footprintComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
+//                                                                                                                                                                                                                                  String.valueOf(true)).build(),
+//                                                   FootprintComponent.class);
+//                            CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
+                        }             
             }
-            //could be a freshly imported circuit with no library/project name
-            if(e.getActionCommand().equals("Save")){
-              if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
-                   User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
-                   return;
-              }                
-              if (footprintComponent.getModel().getLibraryName() == null||footprintComponent.getModel().getLibraryName().length()==0) {
-                 (new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline())).build();
-                  return;
-              }
-            }else{
-                (new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline())).build();
-                return;                
-            }
-            
-            //save the file
-            if (!Configuration.get().isIsApplet()) {
-                Command writer =
-                    new WriteUnitLocal(this, footprintComponent.getModel().format(),
-                                       Configuration.get().getFootprintsRoot(),
-                                       footprintComponent.getModel().getLibraryName(), null,
-                                       footprintComponent.getModel().getFileName(), true, FootprintComponent.class);
-                CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
-            } else {
-                Command writer =
-                    new WriteConnector(this, footprintComponent.getModel().format(),
-                                       new RestParameterMap.ParameterBuilder("/footprints").addURI(footprintComponent.getModel().getLibraryName()).addURI(footprintComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
-                                                                                                                                                                                                                      String.valueOf(true)).build(),
-                                       FootprintComponent.class);
-                CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
-            }            
+        }
+        if (e.getActionCommand().equals("SaveAs")) {            
+            new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline()).build();
+            return;                                                    
+//            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
+//                User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
+//                return;
+//            }
+//            //could be a freshly imported circuit with no library/project name
+//            if(e.getActionCommand().equals("Save")){
+//              if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
+//                   User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
+//                   return;
+//              }                
+//              if (footprintComponent.getModel().getLibraryName() == null||footprintComponent.getModel().getLibraryName().length()==0) {
+//                 (new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline())).build();
+//                  return;
+//              }
+//            }else{
+//                (new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline())).build();
+//                return;                
+//            }
+//            
+//            //save the file
+//            if (!Configuration.get().isIsApplet()) {
+//                Command writer =
+//                    new WriteUnitLocal(this, footprintComponent.getModel().format(),
+//                                       Configuration.get().getFootprintsRoot(),
+//                                       footprintComponent.getModel().getLibraryName(), null,
+//                                       footprintComponent.getModel().getFileName(), true, FootprintComponent.class);
+//                CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
+//            } else {
+//                Command writer =
+//                    new WriteConnector(this, footprintComponent.getModel().format(),
+//                                       new RestParameterMap.ParameterBuilder("/footprints").addURI(footprintComponent.getModel().getLibraryName()).addURI(footprintComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
+//                                                                                                                                                                                                                      String.valueOf(true)).build(),
+//                                       FootprintComponent.class);
+//                CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
+//            }            
              
         }
         if (e.getSource()==ScaleIn) {

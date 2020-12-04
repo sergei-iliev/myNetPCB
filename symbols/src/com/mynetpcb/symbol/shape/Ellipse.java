@@ -18,6 +18,7 @@ import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -104,7 +105,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
 
     @Override
     public String toXML() {
-        return "<ellipse x=\""+Utilities.roundDouble(this.ellipse.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.ellipse.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.ellipse.width,1)+"\" height=\""+Utilities.roundDouble(this.ellipse.height,1)+"\" thickness=\""+this.thickness+"\" fill=\""+this.fill.ordinal()+"\"/>\r\n";
+        return "<ellipse x=\""+Utilities.roundDouble(this.ellipse.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.ellipse.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.ellipse.width,1)+"\" height=\""+Utilities.roundDouble(this.ellipse.height,1)+"\" thickness=\""+this.thickness+"\" fill=\""+this.fill.index+"\"/>\r\n";
     }
     
     @Override
@@ -134,7 +135,16 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
             g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
             //transparent rect
             e.paint(g2, false);
-        } else { //filled
+        }else if(fill==Fill.GRADIENT){ 
+            GradientPaint gp = 
+                new GradientPaint((float)e.box().getX(), (float)e.box().getY(), 
+                                  Color.white, (float)e.box().getX(), 
+                                  (float)(e.box().getY()+e.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            e.paint(g2,true);
+            g2.setColor(Color.black);
+            e.paint(g2,false);
+        }else { //filled
             e.paint(g2,true);
         }
         
@@ -156,7 +166,17 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
         g2.setColor(Color.BLACK);  
         if (fill == Fill.EMPTY) { //framed            
             ellipse.paint(g2, false);
-        } else { //filled
+        }else if(fill==Fill.GRADIENT){ 
+            GradientPaint gp = 
+                new GradientPaint((float)ellipse.box().getX(), (float)ellipse.box().getY(), 
+                                  Color.white, (float)ellipse.box().getX(), 
+                                  (float)(ellipse.box().getY()+ellipse.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            ellipse.paint(g2,true);
+            g2.setColor(Color.black);
+            ellipse.paint(g2,false);
+        }         
+        else { //filled
             ellipse.paint(g2,true);
         }
     }

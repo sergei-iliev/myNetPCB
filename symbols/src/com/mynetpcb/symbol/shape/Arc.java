@@ -19,6 +19,7 @@ import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -137,7 +138,7 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     }       
     @Override
     public String toXML() {
-        return "<arc  x=\""+Utilities.roundDouble(this.arc.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.arc.width,1)+"\" height=\""+Utilities.roundDouble(this.arc.height,1)+ "\"  thickness=\""+this.thickness+"\" start=\""+Utilities.roundDouble(this.arc.startAngle,1)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle,1)+"\" fill=\""+this.fill.ordinal()+"\"/>\r\n";
+        return "<arc  x=\""+Utilities.roundDouble(this.arc.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.arc.width,1)+"\" height=\""+Utilities.roundDouble(this.arc.height,1)+ "\"  thickness=\""+this.thickness+"\" start=\""+Utilities.roundDouble(this.arc.startAngle,1)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle,1)+"\" fill=\""+this.getFill().index+"\"/>\r\n";
     }
 
     @Override
@@ -205,7 +206,16 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
             g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
             //transparent rect
             e.paint(g2, false);
-        } else { //filled
+        }else if(fill==Fill.GRADIENT){            
+            GradientPaint gp = 
+                new GradientPaint((float)e.box().getX(), (float)e.box().getY(), 
+                                  Color.white, (float)e.box().getX(), 
+                                  (float)(e.box().getY()+e.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            e.paint(g2,true);
+            g2.setColor(Color.black);
+            e.paint(g2,false);
+        }else { //filled
             e.paint(g2,true);
         }
         
@@ -228,7 +238,17 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
           g2.setStroke(new BasicStroke(thickness,1,1));    
           g2.setPaint(Color.BLACK);        
           this.arc.paint(g2,false);
-        }else{               //filled  
+        }else if(fill==Fill.GRADIENT){            
+            GradientPaint gp = 
+                new GradientPaint((float)arc.box().getX(), (float)arc.box().getY(), 
+                                  Color.white, (float)arc.box().getX(), 
+                                  (float)(arc.box().getY()+arc.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            arc.paint(g2,true);
+            g2.setColor(Color.black);
+            arc.paint(g2,false);
+        }        
+        else{               //filled  
           g2.setColor(Color.BLACK);  
           this.arc.paint(g2,true);
         }        

@@ -171,7 +171,7 @@ public class RoundRect extends ResizableShape implements Externalizable{
     }
     @Override
     public String toXML() {
-        return "<rectangle>"+upperLeft.x+","+upperLeft.y+","+getWidth()+","+getHeight()+","+this.getThickness()+","+this.getFill().index +","+this.rounding+"</rectangle>\r\n";
+        return "<rectangle>"+upperLeft.x+","+upperLeft.y+","+getWidth()+","+getHeight()+","+this.getThickness()+","+this.fill.index +","+this.rounding+"</rectangle>\r\n";
     }
     @Override
     public void fromXML(Node node){

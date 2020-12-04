@@ -26,12 +26,12 @@ public class ComponentPanelBuilder extends AbstractPanelBuilder<Shape>{
         super(component,new GridLayout(2,1));
         //***component name
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-        label=new JLabel("Name"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(100,25)); panel.add(label,BorderLayout.WEST);
+        label=new JLabel("Name"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,25)); panel.add(label,BorderLayout.WEST);
         thicknessField=new JTextField(""); thicknessField.addKeyListener(this); panel.add(thicknessField,BorderLayout.CENTER);
         layoutPanel.add(panel); 
 
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-        label=new JLabel("Type"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(100,label.getHeight())); panel.add(label,BorderLayout.WEST);
+        label=new JLabel("Type"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
         symbolTypeCombo=new JComboBox(Typeable.Type.values());symbolTypeCombo.addActionListener(this);  panel.add(symbolTypeCombo,BorderLayout.CENTER);
         layoutPanel.add(panel);  
     }
