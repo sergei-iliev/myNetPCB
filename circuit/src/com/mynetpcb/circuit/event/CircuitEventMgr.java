@@ -49,7 +49,7 @@ public class CircuitEventMgr extends EventMgr<CircuitComponent,Shape> {
          hash.put("block",new BlockEventHandle<CircuitComponent,Shape>(component,false));
          hash.put("wire",new WireEventHandle(component));                   
          hash.put("resize",new ResizeEventHandle<CircuitComponent,Shape>(component));
-//         hash.put("symbol",new SymbolEventHandle(component)); 
+         hash.put("symbol",new SymbolEventHandle(component)); 
          hash.put("cursor",new CursorEventHandle<CircuitComponent,Shape>(component));        
          hash.put("dragheand",new DragingEventHandle<CircuitComponent,Shape>(component));  
         }

@@ -174,7 +174,7 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
             this.arc.endAngle = Double.parseDouble(element.getAttribute("extend"));
             
             this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
-            this.setFill(Fill.values()[Integer.parseInt(element.getAttribute("fill"))]);
+            this.setFill(Fill.byIndex(Integer.parseInt(element.getAttribute("fill"))));
         }
         
         

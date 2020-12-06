@@ -191,7 +191,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
             this.ellipse.width=Double.parseDouble(element.getAttribute("width"));
             this.ellipse.height=Double.parseDouble(element.getAttribute("height"));  
             this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
-            this.setFill(Fill.values()[(element.getAttribute("fill")==""?0:Integer.parseInt(element.getAttribute("fill")))]);  
+            this.setFill(Fill.byIndex(element.getAttribute("fill")==""?1:Integer.parseInt(element.getAttribute("fill"))));  
         }else{
             StringTokenizer st=new StringTokenizer(node.getTextContent(),","); 
             double x=Double.parseDouble(st.nextToken());

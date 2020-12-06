@@ -12,8 +12,6 @@ public class FootprintInlineEditorDialog extends FootprintEditorDialog {
     
     public FootprintInlineEditorDialog(Window window, String caption, FootprintContainer footprintContainer) {
         super(window, caption, footprintContainer);
-        LoadButton.setEnabled(false);
-        AddFootprintButton.setEnabled(false);
     }
     
     public FootprintContainer getResult(){
@@ -22,7 +20,7 @@ public class FootprintInlineEditorDialog extends FootprintEditorDialog {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("Save")) {
+        if (e.getSource()==SaveButton) {
           result=super.footprintComponent.getModel();
           this.setVisible(false);
           return;

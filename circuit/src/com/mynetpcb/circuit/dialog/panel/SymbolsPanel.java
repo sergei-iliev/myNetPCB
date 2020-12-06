@@ -1,8 +1,8 @@
-package com.mynetpcb.board.dialog.panel;
+package com.mynetpcb.circuit.dialog.panel;
 
-import com.mynetpcb.board.component.BoardComponent;
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.unit.BoardMgr;
+import com.mynetpcb.circuit.component.CircuitComponent;
+import com.mynetpcb.circuit.shape.SCHSymbol;
+import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.container.UnitContainer;
 import com.mynetpcb.core.capi.event.ShapeEvent;
@@ -27,8 +27,8 @@ import com.mynetpcb.core.capi.tree.AttachedItem;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
-import com.mynetpcb.pad.container.FootprintContainer;
-import com.mynetpcb.pad.unit.Footprint;
+import com.mynetpcb.symbol.container.SymbolContainer;
+import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -74,18 +74,19 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-public class FootprintsPanel extends JPanel implements
+public class SymbolsPanel extends JPanel implements
                                                        MouseListener,
                                                        CommandListener,
                                                        ChangeListener,
                                                        MouseMotionListener,
                                                        ActionListener,
                                                        TreeSelectionListener,
-                                                       TreeWillExpandListener{
-    
+                                                       TreeWillExpandListener
+{
+
     private SearchableComboBox searchableComboBox;
 
-    private JTree footprintTree = new JTree();
+    private JTree symbolTree = new JTree();
 
     private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
@@ -95,41 +96,45 @@ public class FootprintsPanel extends JPanel implements
 
     private JScrollPane scrollPickerViewer = new JScrollPane();
 
-    private final BoardComponent boardComponent;
+    private final CircuitComponent circuitComponent;
 
     private boolean isPressedFlag;
     
-    public FootprintsPanel(BoardComponent boardComponent) {
-        this.boardComponent = boardComponent;
+    public SymbolsPanel(CircuitComponent circuitComponent) {
+        this.circuitComponent = circuitComponent;
 
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         searchableComboBox = new SearchableComboBox(this);
-        searchableComboBox.addActionListener(this);
+        searchableComboBox.addActionListener(this);        
         searchableComboBox.setMaximumSize(new Dimension(Short.MAX_VALUE, 24));
         this.add(searchableComboBox);   
         
         moduleListScroll.setPreferredSize(new Dimension(100, 200));
         moduleListScroll.setMaximumSize(new Dimension(Short.MAX_VALUE, 200));
         moduleListScroll.setMinimumSize(new Dimension(Short.MAX_VALUE, 200));
-        moduleListScroll.getViewport().add(footprintTree);
-        footprintTree.setShowsRootHandles(true);
-        footprintTree.setVisibleRowCount(10);
-        footprintTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        footprintTree.setEditable(false);
-        footprintTree.addTreeSelectionListener(this);
-        footprintTree.addTreeWillExpandListener(this);
-        footprintTree.setModel(new DefaultTreeModel(root));
-        footprintTree.setRootVisible(false);
+        moduleListScroll.getViewport().add(symbolTree);
+        symbolTree.setShowsRootHandles(true);
+        symbolTree.setVisibleRowCount(10);
+        symbolTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        symbolTree.setEditable(false);
+        symbolTree.addTreeSelectionListener(this);
+        symbolTree.addTreeWillExpandListener(this);
+        symbolTree.setModel(new DefaultTreeModel(root));
+        symbolTree.setRootVisible(false);
 
         this.add(moduleListScroll);
         //***add module picker
         selectionPanel=new UnitSelectionPanel();
         selectionPanel.addMouseMotionListener(this); 
         selectionPanel.setBackground(Color.WHITE);
+        selectionPanel.setEnabled(true);
         selectionPanel.getSelectionGrid().setBackgroundColor(Color.WHITE);
         selectionPanel.getSelectionGrid().setTextColor(Color.BLACK);
-        selectionPanel.setEnabled(true);
+        selectionPanel.getSelectionGrid().setScaleRatio(1.2);
+        selectionPanel.getSelectionGrid().setScaleFactor(0);
+        selectionPanel.getSelectionGrid().setMinScaleFactor(0);
+        selectionPanel.getSelectionGrid().setMaxScaleFactor(10);
         selectionPanel.setToolTipText("Drag and Drop selected module.");
         selectionPanel.addMouseListener(this);
         
@@ -140,7 +145,6 @@ public class FootprintsPanel extends JPanel implements
         this.add(scrollPickerViewer);
     }
 
-    @Override
     public void mouseClicked(MouseEvent e) {
         //***investigate the source
         if (e.getSource() != selectionPanel) {
@@ -148,18 +152,18 @@ public class FootprintsPanel extends JPanel implements
             CommandExecutor.INSTANCE.cancel();
             searchableComboBox.removeAllItems();
             root.removeAllChildren();
-            ((DefaultTreeModel)footprintTree.getModel()).reload();
+            ((DefaultTreeModel)symbolTree.getModel()).reload();
             selectionPanel.Clear();
             if (!searchableComboBox.isSearchable()) {
                 //***Read Libraries
                 if (!Configuration.get().isIsApplet()) {
                     Command reader =
-                        new ReadRepositoryLocal(this, Configuration.get().getFootprintsRoot(),
+                        new ReadRepositoryLocal(this, Configuration.get().getSymbolsRoot(),
                                                 searchableComboBox.getClass());
                     CommandExecutor.INSTANCE.addTask("ReadRepositoryLocal", reader);
                 } else {
                     Command reader =
-                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").build(),
+                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/symbols").build(),
                                           searchableComboBox.getClass());
                     CommandExecutor.INSTANCE.addTask("ReadProjects", reader);
                 }
@@ -167,80 +171,103 @@ public class FootprintsPanel extends JPanel implements
         }
     }
 
-    @Override
+
     public void mousePressed(MouseEvent e) {
         if (e.getSource() == selectionPanel){
             isPressedFlag=true;
-            boardComponent.getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
-            boardComponent.setMode(Mode.COMPONENT_MODE);
+            circuitComponent.getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+            circuitComponent.setMode(Mode.COMPONENT_MODE);
         }
     }
 
-    @Override
     public void mouseReleased(MouseEvent e) {
         if (e.getSource() == selectionPanel){
-            if(null==boardComponent.getContainerCursor()){
+            if(null==circuitComponent.getContainerCursor()){
                //ESCAPE global key press
                return; 
             }
         
-           //***drop must be in viewable area           
-            Box rect = boardComponent.getContainerCursor().getBoundingShape();
-            rect.scale( boardComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-            
-            if(rect.intersects(boardComponent.getViewportWindow())){
-                try {
-                    Shape shape = boardComponent.getContainerCursor().clone();
-                    boardComponent.getModel().getUnit().add(shape);
-                    boardComponent.getModel().getUnit().setSelected(false);
+           //***drop must be in viewable area
+           
+            Box rect = circuitComponent.getContainerCursor().getBoundingShape();
+            rect.scale( circuitComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+           
+            if(rect.intersects(circuitComponent.getViewportWindow())){
+                 try {
+                    Shape shape = circuitComponent.getContainerCursor().clone();
+                    circuitComponent.getModel().getUnit().add(shape);
+                    circuitComponent.getModel().getUnit().setSelected(false);
                     shape.setSelected(true);
+                    shape.alignToGrid(circuitComponent.getParameter("snaptogrid",Boolean.class,Boolean.FALSE)); 
                      
-                    boardComponent.Repaint(); 
+                    circuitComponent.Repaint(); 
 
-                    boardComponent.getModel().getUnit().fireShapeEvent(new ShapeEvent(shape, ShapeEvent.SELECT_SHAPE));
+                    circuitComponent.getModel().getUnit().fireShapeEvent(new ShapeEvent(shape, ShapeEvent.SELECT_SHAPE));
                     //register create with undo mgr
-                    boardComponent.getModel().getUnit().registerMemento(shape.getState(MementoType.CREATE_MEMENTO));
+                    circuitComponent.getModel().getUnit().registerMemento(shape.getState(MementoType.CREATE_MEMENTO));
                     //register placement 
-                    boardComponent.getModel().getUnit().registerMemento(shape.getState(MementoType.MOVE_MEMENTO));                     
+                    circuitComponent.getModel().getUnit().registerMemento(shape.getState(MementoType.MOVE_MEMENTO));                     
                 } catch (CloneNotSupportedException f) {
                     f.printStackTrace(System.out);
                 }
                
            }
           //***delete cursor and reset event handler
-           boardComponent.setMode(Mode.COMPONENT_MODE); 
-           boardComponent.Repaint();
+           circuitComponent.setMode(Mode.COMPONENT_MODE); 
+           circuitComponent.Repaint();
         
         }
+    }
+    public void mouseDragged(MouseEvent e) {
+        if (e.getSource() == selectionPanel) {
+            MouseEvent event=createMouseEvent(e);         
+            if (selectionPanel.getSelectionGrid().getModel().getUnit() == null ||
+                circuitComponent.getModel().getUnit() == null) {
+                return;
+            }           
+            if(isPressedFlag&&circuitComponent.getEventMgr().getTargetEventHandle()==null){
+                isPressedFlag=false;
 
+                SCHSymbol shape = CircuitMgr.getInstance().createSCHSymbol((Symbol)selectionPanel.getSelectionGrid().getModel().getUnit());
+
+                circuitComponent.getModel().getUnit().setSelected(false);
+
+            //***set chip cursor
+                shape.move(-1 * (int)shape.getBoundingShape().getCenter().x,
+                      -1 * (int)shape.getBoundingShape().getCenter().y);
+                circuitComponent.setContainerCursor(shape);
+                circuitComponent.getEventMgr().setEventHandle("cursor", shape);
+          }
+            
+                circuitComponent.mouseMoved(event);
+        
+        }     
+      
     }
 
-    @Override
+    public void mouseMoved(MouseEvent e) {
+        
+    }
     public void mouseEntered(MouseEvent e) {
-        // TODO Implement this method
     }
 
-    @Override
     public void mouseExited(MouseEvent e) {
-        // TODO Implement this method
     }
-
     @Override
-    public void onStart(Class<?> reciever) {
+    public void onStart(Class reciever) {
         if (reciever==JTree.class||reciever==SearchUnitLocal.class) {
             root.removeAllChildren();
-            ((DefaultTreeModel)footprintTree.getModel()).reload();
+            ((DefaultTreeModel)symbolTree.getModel()).reload();
         }
-        DisabledGlassPane.block(boardComponent.getDialogFrame().getRootPane(),"Loading...");  
+        DisabledGlassPane.block(circuitComponent.getDialogFrame().getRootPane(),"Loading...");      
     }
-
     @Override
-    public void onRecive(String result, Class<?> reciever) {
+    public void onRecive(String result,  Class reciever) {
         if (reciever==SearchableComboBox.class||reciever==JTree.class||reciever==ReadUnitsLocal.class||reciever==SearchUnitLocal.class) {
             //clear selection
             selectionPanel.Clear();
             //***parse xml
-            this.footprintTree.removeTreeSelectionListener(this);
+            this.symbolTree.removeTreeSelectionListener(this);
             try {
                 Document document = Utilities.buildDocument(result);
                 XPathFactory factory = XPathFactory.newInstance();
@@ -249,7 +276,6 @@ public class FootprintsPanel extends JPanel implements
 
                     expr = xpath.compile("//name");
                     NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
-               
                     if (reciever==SearchableComboBox.class) {                
                         for (int i = 0; i < nodes.getLength(); i++) {
                             Node node=nodes.item(i);
@@ -260,22 +286,22 @@ public class FootprintsPanel extends JPanel implements
                         for (int i = 0; i < nodes.getLength(); i++) {
                             Element element=(Element)nodes.item(i);
                             if(element.hasAttribute("category"))
-                                Utilities.addLibraryModule(footprintTree,root,element.getAttribute("library"),element.getTextContent(),
+                                Utilities.addLibraryModule(symbolTree,root,element.getAttribute("library"),element.getTextContent(),
                                                                              null,null);
                             else
-                                Utilities.addLibraryModule(footprintTree,root,element.getAttribute("library"),null,
+                                Utilities.addLibraryModule(symbolTree,root,element.getAttribute("library"),null,
                                                                           element.getTextContent(),element.getAttribute("fullname"));
-                               
                         }    
                     }else if(reciever==ReadUnitsLocal.class||reciever==SearchUnitLocal.class){
                         for (int i = 0; i < nodes.getLength(); i++) {
                             Element element = (Element)nodes.item(i);
-                                Utilities.addLibraryModule(footprintTree, root, element.getAttribute("library"),
+                                Utilities.addLibraryModule(symbolTree, root, element.getAttribute("library"),
                                                               element.getAttribute("category"), element.getTextContent(),
                                                               element.getAttribute("fullname"));
                         }
-                    }                
-                  footprintTree.expandPath(new TreePath(root.getPath()));
+                    }
+                
+                  symbolTree.expandPath(new TreePath(root.getPath()));
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace(System.out);
                 } catch (SAXException e) {
@@ -285,16 +311,16 @@ public class FootprintsPanel extends JPanel implements
                 } catch (XPathExpressionException e) {
                     e.printStackTrace(System.out);
                     }finally{
-                        footprintTree.addTreeSelectionListener(this);                    
+                        symbolTree.addTreeSelectionListener(this);                    
                     }              
 
 
         }
         //***module xml!
-        if (reciever==Footprint.class) {
+        if (reciever==Symbol.class) {
             selectionPanel.Clear();
             try {
-                UnitContainer model= new FootprintContainer();
+                UnitContainer model= new SymbolContainer();
                 model.parse(result);
                 selectionPanel.getSelectionGrid().setModel(model);
             } catch (Exception e) {
@@ -305,90 +331,30 @@ public class FootprintsPanel extends JPanel implements
             selectionPanel.repaint(); 
             selectionPanel.revalidate();     
         }
-
     }
-
     @Override
-    public void onFinish(Class<?> c) {
-        DisabledGlassPane.unblock(boardComponent.getDialogFrame().getRootPane()); 
+    public void onFinish(Class receiver) {
+        DisabledGlassPane.unblock(circuitComponent.getDialogFrame().getRootPane());  
     }
-
     @Override
     public void onError(String error) {
-        DisabledGlassPane.unblock(boardComponent.getDialogFrame().getRootPane()); 
-        JOptionPane.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(), error, "Error",
-                                      JOptionPane.ERROR_MESSAGE); 
+        DisabledGlassPane.unblock(circuitComponent.getDialogFrame().getRootPane()); 
+        JOptionPane.showMessageDialog(circuitComponent.getDialogFrame().getParentFrame(), error, "Error",
+                                      JOptionPane.ERROR_MESSAGE);       
     }
 
-    @Override
-    public void stateChanged(ChangeEvent e) {
-
-        JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
-        int index = sourceTabbedPane.getSelectedIndex();
-        if(index==1&&searchableComboBox.getItemCount()==0){
-            if (!searchableComboBox.isSearchable()) {
-                //***Read Libraries
-                if (!Configuration.get().isIsApplet()) {
-                    Command reader =
-                        new ReadRepositoryLocal(this, Configuration.get().getFootprintsRoot(),
-                                                searchableComboBox.getClass());
-                    CommandExecutor.INSTANCE.addTask("ReadRepositoryLocal", reader);
-                } else {
-                    Command reader =
-                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").build(),
-                                          searchableComboBox.getClass());
-                    CommandExecutor.INSTANCE.addTask("ReadProjects", reader);
-                }
-            }           
-        }
-       
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        if (e.getSource() == selectionPanel) {
-            MouseEvent event=createMouseEvent(e);         
-            if (selectionPanel.getSelectionGrid().getModel().getUnit() == null ||
-                boardComponent.getModel().getUnit() == null) {
-                return;
-            }           
-            if(isPressedFlag&&boardComponent.getEventMgr().getTargetEventHandle()==null){
-                isPressedFlag=false;
-
-                PCBFootprint shape = BoardMgr.getInstance().createPCBFootprint((Footprint)selectionPanel.getSelectionGrid().getModel().getUnit(),boardComponent.getModel().getUnit().getActiveSide());
-                boardComponent.getModel().getUnit().setSelected(false);
-
-            //***set chip cursor
-                shape.move(-1 * (int)shape.getBoundingShape().getCenter().x,
-                      -1 * (int)shape.getBoundingShape().getCenter().y);
-                boardComponent.setContainerCursor(shape);
-                boardComponent.getEventMgr().setEventHandle("cursor", shape);
-          }
-            
-                boardComponent.mouseMoved(event);
-        
-        }     
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        // TODO Implement this method
-    }
-
-    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().getClass() == SearchableComboBox.class){
           if(!searchableComboBox.isSearchable()) {
             if (!Configuration.get().isIsApplet()) {
                 Command reader =
-                    new ReadCategoriesLocal(this, Configuration.get().getFootprintsRoot(),((String) searchableComboBox.getSelectedItem()),
-                                             footprintTree.getClass());
+                    new ReadCategoriesLocal(this, Configuration.get().getSymbolsRoot(),((String) searchableComboBox.getSelectedItem()),
+                                             symbolTree.getClass());
                 CommandExecutor.INSTANCE.addTask("ReadCategoriesLocal", reader);
             } else {
                 Command reader =
-                    new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI((String)searchableComboBox.getSelectedItem()).build(),
-                                      footprintTree.getClass());
+                    new ReadConnector(this, new RestParameterMap.ParameterBuilder("/symbols").addURI((String)searchableComboBox.getSelectedItem()).build(),
+                                      symbolTree.getClass());
                 CommandExecutor.INSTANCE.addTask("ReadModules", reader);
                 
             }
@@ -396,7 +362,7 @@ public class FootprintsPanel extends JPanel implements
               if(searchableComboBox.getSelectedItem()!=null&&((String)searchableComboBox.getSelectedItem()).length()>2){
                   if (!Configuration.get().isIsApplet()) {
                       Command reader =
-                          new SearchUnitLocal(this,new FileNameLookup(new XMLTagContentLookup(Arrays.asList("//footprint/name","//footprint/value"),(String)searchableComboBox.getSelectedItem() ),(String)searchableComboBox.getSelectedItem()) ,Configuration.get().getFootprintsRoot().toString(),SearchUnitLocal.class);
+                          new SearchUnitLocal(this,new FileNameLookup(new XMLTagContentLookup(Arrays.asList("//module/name","//module/unit"),(String)searchableComboBox.getSelectedItem() ),(String)searchableComboBox.getSelectedItem()) ,Configuration.get().getSymbolsRoot().toString(),SearchUnitLocal.class);
                       CommandExecutor.INSTANCE.addTask("SearchUnitLocal", reader);
                   } else {
 
@@ -405,43 +371,65 @@ public class FootprintsPanel extends JPanel implements
               }
               
          }
-        }         
+        }  
     }
 
-    @Override
     public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode node =
-            (DefaultMutableTreeNode)footprintTree.getLastSelectedPathComponent();
+            (DefaultMutableTreeNode)symbolTree.getLastSelectedPathComponent();
 
         if (node == null) {
             return;
         }
-        
         if (null != node && node.isLeaf()) {
-            AttachedItem attachedItem=(AttachedItem)node.getUserObject();            
-            if (!Configuration.get().isIsApplet()) {
-                Command reader =
-                    new ReadUnitLocal(this, Configuration.get().getFootprintsRoot(),attachedItem.getLibrary(),(node.getLevel()==1?null:attachedItem.getCategory()),
-                                      attachedItem.getFileName(), Footprint.class);
-                CommandExecutor.INSTANCE.addTask("ReadUnitLocal", reader);
-            } else {                
-                Command reader =
-                    new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI(attachedItem.getLibrary()).addURI((node.getLevel()==1?"null":attachedItem.getCategory())).addURI(attachedItem.getFileName()).build(),
-                                      Footprint.class);
-                CommandExecutor.INSTANCE.addTask("ReadFootprint", reader);
-            }
-        }         
-    
+                AttachedItem attachedItem=(AttachedItem)node.getUserObject();
+                if (!Configuration.get().isIsApplet()) {
+                    Command reader =
+                        new ReadUnitLocal(this, Configuration.get().getSymbolsRoot(),attachedItem.getLibrary(),(node.getLevel()==1?null:attachedItem.getCategory()),
+                                          attachedItem.getFileName(), Symbol.class);
+                    CommandExecutor.INSTANCE.addTask("ReadUnitLocal", reader);
+                } else {                
+                    Command reader =
+                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/symbols").addURI(attachedItem.getLibrary()).addURI((node.getLevel()==1?"null":attachedItem.getCategory())).addURI(attachedItem.getFileName()).build(),
+                                          Symbol.class);
+                    CommandExecutor.INSTANCE.addTask("ReadSymbol", reader);
+                }
+            }  
     }
+
+    
+    //***need to create an event that is shifted in regard to Circuit Component origin
     private final  MouseEvent createMouseEvent(MouseEvent e){          
         MouseEvent event=new MouseEvent(e.getComponent(),e.getID(),e.getWhen(),e.getModifiers(),
-        (boardComponent.getWidth()+e.getX()-scrollPickerViewer.getHorizontalScrollBar().getValue()),                                        
-        (boardComponent.getHeight()+e.getY()-(int)selectionPanel.getVisibleRect().getHeight()-scrollPickerViewer.getVerticalScrollBar().getValue()),                                                                            
+        (circuitComponent.getWidth()+e.getX()-scrollPickerViewer.getHorizontalScrollBar().getValue()),                                        
+        (circuitComponent.getHeight()+e.getY()-(int)selectionPanel.getVisibleRect().getHeight()-scrollPickerViewer.getVerticalScrollBar().getValue()),                                                                            
                                     e.getClickCount(),false
                                     );      
         
         
         return event; 
+    }
+    
+    //***Component tab is focused
+    public void stateChanged(ChangeEvent e) {
+        JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
+        int index = sourceTabbedPane.getSelectedIndex();
+        if(index==1&&searchableComboBox.getItemCount()==0){
+            if (!searchableComboBox.isSearchable()) {
+                //***Read Libraries
+                if (!Configuration.get().isIsApplet()) {
+                    Command reader =
+                        new ReadRepositoryLocal(this, Configuration.get().getSymbolsRoot(),
+                                                searchableComboBox.getClass());
+                    CommandExecutor.INSTANCE.addTask("ReadRepositoryLocal", reader);
+                } else {
+                    Command reader =
+                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/symbols").build(),
+                                          searchableComboBox.getClass());
+                    CommandExecutor.INSTANCE.addTask("ReadProjects", reader);
+                }
+            }           
+        }
     }
 
     @Override
@@ -453,13 +441,13 @@ public class FootprintsPanel extends JPanel implements
         if(categoryNode.getChildCount()==0){
             if (!Configuration.get().isIsApplet()) {
                 Command reader =
-                    new ReadUnitsLocal(this, Configuration.get().getFootprintsRoot().resolve(((AttachedItem)categoryNode.getUserObject()).getLibrary()).resolve(((AttachedItem)categoryNode.getUserObject()).getCategory()),"footprints", ReadUnitsLocal.class);
+                    new ReadUnitsLocal(this, Configuration.get().getSymbolsRoot().resolve(((AttachedItem)categoryNode.getUserObject()).getLibrary()).resolve(((AttachedItem)categoryNode.getUserObject()).getCategory()),"modules", ReadUnitsLocal.class);
                 CommandExecutor.INSTANCE.addTask("ReadUnitsLocal", reader);
             } else {
                 Command reader =
-                    new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI(((AttachedItem)categoryNode.getUserObject()).getLibrary()).addURI(((AttachedItem)categoryNode.getUserObject()).getCategory()).build(),
+                    new ReadConnector(this, new RestParameterMap.ParameterBuilder("/symbols").addURI(((AttachedItem)categoryNode.getUserObject()).getLibrary()).addURI(((AttachedItem)categoryNode.getUserObject()).getCategory()).build(),
                                      ReadUnitsLocal.class);
-                CommandExecutor.INSTANCE.addTask("ReadFootprints", reader);
+                CommandExecutor.INSTANCE.addTask("ReadSymbols", reader);
             }            
         } 
     }
@@ -469,3 +457,4 @@ public class FootprintsPanel extends JPanel implements
 
     }
 }
+

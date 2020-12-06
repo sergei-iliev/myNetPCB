@@ -145,6 +145,7 @@ public class SymbolFontTexture implements Texture{
     @Override
     public void copy(Texture _copy) {
         SymbolFontTexture copy=(SymbolFontTexture)_copy;
+        this.tag=copy.tag;
         this.shape.anchorPoint.set(copy.shape.anchorPoint.x,copy.shape.anchorPoint.y); 
         this.shape.alignment = copy.shape.alignment;
         this.shape.text=copy.shape.text;

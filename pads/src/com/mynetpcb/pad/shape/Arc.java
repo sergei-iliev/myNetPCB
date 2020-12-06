@@ -246,7 +246,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
 
     @Override
     public String toXML() {
-        return "<arc copper=\""+getCopper().getName()+"\"  x=\""+Utilities.roundDouble(this.arc.pc.x)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y)+"\" radius=\""+Utilities.roundDouble(this.arc.r)+"\"  thickness=\""+this.getThickness()+"\" start=\""+Utilities.roundDouble(this.arc.startAngle)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle)+"\" fill=\""+this.getFill().ordinal()+"\" />\r\n";
+        return "<arc copper=\""+getCopper().getName()+"\"  x=\""+Utilities.roundDouble(this.arc.pc.x)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y)+"\" radius=\""+Utilities.roundDouble(this.arc.r)+"\"  thickness=\""+this.getThickness()+"\" start=\""+Utilities.roundDouble(this.arc.startAngle)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle)+"\" fill=\""+this.getFill().index+"\" />\r\n";
     }
 
     @Override
@@ -273,7 +273,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         this.setExtendAngle(Double.parseDouble(element.getAttribute("extend")));
 
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
-        this.setFill(Fill.values()[(element.getAttribute("fill")==""?0:Integer.parseInt(element.getAttribute("fill")))]);
+        this.setFill(Fill.byIndex(Integer.parseInt(element.getAttribute("fill"))==0?1:Integer.parseInt(element.getAttribute("fill")))); 
     }
 
     @Override

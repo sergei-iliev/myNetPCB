@@ -4,6 +4,7 @@ import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.container.CircuitContainer;
 import com.mynetpcb.circuit.dialog.panel.CircuitsPanel;
+import com.mynetpcb.circuit.dialog.panel.SymbolsPanel;
 import com.mynetpcb.circuit.dialog.print.CircuitPrintDialog;
 import com.mynetpcb.circuit.dialog.save.CircuitSaveDialog;
 import com.mynetpcb.circuit.shape.SCHSymbol;
@@ -66,7 +67,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     private CircuitsPanel circuitsPanel;
     private JPanel basePanel;
     private JTabbedPane tabbedPane = new JTabbedPane();
-    
+    private SymbolsPanel symbolsPanel;
     private JScrollBar vbar = new JScrollBar(JScrollBar.VERTICAL);
     private JScrollBar hbar = new JScrollBar(JScrollBar.HORIZONTAL);
     private  GridBagLayout gridBagLayout=new GridBagLayout();    
@@ -120,6 +121,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         
         //***set module component        
         circuitComponent=new CircuitComponent(this);
+        symbolsPanel = new SymbolsPanel(circuitComponent);
         circuitsPanel = new CircuitsPanel(circuitComponent);
         
         circuitComponent.setPreferredSize(new Dimension(700,600));
@@ -308,12 +310,10 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         tabbedPane.setPreferredSize(new Dimension(250, 200));
         //***create circuit tab
         tabbedPane.addTab("Circuits", circuitsPanel);
-//        //***create symbol tab
-//        tabbedPane.addTab("Footprints", footprintsPanel);
-//        tabbedPane.addChangeListener(footprintsPanel);
-//        //***create layout
-//        tabbedPane.addTab("Layers", layersPanel);
-//        tabbedPane.addChangeListener(layersPanel);
+        //***create symbol tab
+        tabbedPane.addTab("Symbols", symbolsPanel);
+        tabbedPane.addChangeListener(symbolsPanel);        
+        
         basePanel.add(tabbedPane, BorderLayout.EAST);
         
         basePanel.add(SouthPanel, BorderLayout.SOUTH);

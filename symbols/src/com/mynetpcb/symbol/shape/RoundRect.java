@@ -178,7 +178,7 @@ public class RoundRect extends ResizableShape implements Externalizable{
         StringTokenizer st=new StringTokenizer(node.getTextContent(),",");   
         init(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
         setThickness(Byte.parseByte(st.nextToken()));
-        setFill(Fill.byIndex(Byte.parseByte(st.nextToken()))); 
+        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));         
         rounding=Integer.parseInt(st.nextToken());
     }
     @Override

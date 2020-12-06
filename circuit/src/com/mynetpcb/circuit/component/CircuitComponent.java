@@ -161,8 +161,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                         else if(!(shape instanceof SCHLabel)&&(shape instanceof Textable)&&( ((Textable)shape).getClickedTexture(scaledEvent.getX(), scaledEvent.getY())!=null)) 
                              getEventMgr().setEventHandle("texture", shape);
                         else if(shape instanceof SCHSymbol)
-                            //getEventMgr().setEventHandle("symbol",shape);
-                            getEventMgr().setEventHandle("move",shape);
+                            getEventMgr().setEventHandle("symbol",shape);                            
                         else    
                              getEventMgr().setEventHandle("move",shape);
                     }else{                    

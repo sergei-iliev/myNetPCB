@@ -73,6 +73,17 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
         return copy;    
     }
     @Override
+    public void clear() {    
+          this.shapes.forEach(shape->{
+                      shape.setOwningUnit(null);
+                      shape.clear();
+                      shape=null;
+         });
+         this.shapes.clear();    
+         this.unit.clear();
+         this.reference.clear();         
+    }    
+    @Override
     public long getClickableOrder(){
         Box box = this.getBoundingShape();      
         return (long)(box.getWidth()*box.getHeight());
@@ -93,7 +104,9 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
             return;   
       shapes.add(shape);  
     }
-    
+    public Collection<? extends Shape> getShapes() {
+        return this.shapes;
+    } 
     @Override
     public Box getBoundingShape(){
         Box r = new Box();

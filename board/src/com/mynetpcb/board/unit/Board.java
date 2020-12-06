@@ -263,10 +263,9 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
            coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), -1);
         }
         //ruler
-        ruler.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),
-                    Layer.Copper.All.getLayerMaskID());
+        ruler.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);
         //frame
-        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), -1);
+        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);
 
     }
     @Override

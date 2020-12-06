@@ -18,15 +18,11 @@ import com.mynetpcb.core.capi.io.CommandListener;
 import com.mynetpcb.core.capi.io.WriteUnitLocal;
 import com.mynetpcb.core.capi.io.remote.WriteConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
-import com.mynetpcb.core.capi.layer.Layer;
-import com.mynetpcb.core.capi.popup.JPopupButton;
-import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.container.FootprintContainer;
@@ -90,10 +86,9 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame,Comman
     private JToggleButton SolidRegionButton = new JToggleButton();
     private ButtonGroup group = new ButtonGroup();
 
-    protected JPopupButton AddFootprintButton = new JPopupButton(this);
-    private JButton PrintButton = new JButton();
-    private JButton SaveButton = new JButton();
-    protected JButton LoadButton = new JButton();
+
+    
+    protected JButton SaveButton = new JButton();
     private JButton ScaleIn = new JButton();
     private JButton ScaleOut = new JButton();
     private JButton RotateLeft = new JButton();
@@ -220,31 +215,12 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame,Comman
         MeasureButton.addActionListener(this);
         MeasureButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/measure.png"));
         
-        //***construct Top Buttons Panel
-
-        AddFootprintButton.setToolTipText("Add footprint");
-        AddFootprintButton.setPreferredSize(new Dimension(35, 35));
-        AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
-        AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
-                           addSeparator().addMenu("Export to Clipboard","export.clipboard").
-                           addSeparator().addMenu("Exit","exit"); 
-        
-        PrintButton.addActionListener(this);
-        PrintButton.setToolTipText("Print footprint");
-        PrintButton.setPreferredSize(new Dimension(35, 35));
-        PrintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/print.png"));
 
         SaveButton.addActionListener(this);
         SaveButton.setToolTipText("Save Footprint");
-        SaveButton.setActionCommand("Save");  //for inline editing
         SaveButton.setPreferredSize(new Dimension(35, 35));
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
 
-        LoadButton.addActionListener(this);
-        LoadButton.setToolTipText("Load Footprint");
-        //LoadButton.setEnabled(false);
-        LoadButton.setPreferredSize(new Dimension(35, 35));
-        LoadButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/folder.png"));
 
         ScaleIn.addActionListener(this);
         ScaleIn.setToolTipText("Scale In");
@@ -276,10 +252,7 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame,Comman
         PositionToCenter.addActionListener(this);
         PositionToCenter.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/tocenter.png"));
 
-        NorthPanel.add(AddFootprintButton);
-        NorthPanel.add(PrintButton);
         NorthPanel.add(SaveButton);
-        NorthPanel.add(LoadButton);
         NorthPanel.add(ScaleIn);
         NorthPanel.add(ScaleOut);
         NorthPanel.add(RotateLeft);
@@ -403,30 +376,7 @@ exit();
             footprintComponent.getModel().fireUnitEvent(new UnitEvent(footprint, UnitEvent.SELECT_UNIT));
             footprintComponent.Repaint();
         }
-        if (e.getSource()==LoadButton) {
-                        AbstractLoadDialog.Builder builder=new FootprintLoadDialog.Builder();
-                        AbstractLoadDialog footprintLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Footprint").setEnabled(false).build();
 
-
-                        footprintLoadDialog.pack();
-                        footprintLoadDialog.setLocationRelativeTo(null); //centers on screen
-                        footprintLoadDialog.setVisible(true);
-            
-                        if(footprintLoadDialog.getSelectedModel()==null){
-                          return;
-                        }
-            
-                        LoadFootprints((FootprintContainer)footprintLoadDialog.getSelectedModel());
-            
-                        footprintLoadDialog.dispose();
-                        footprintLoadDialog=null;
-                        setButtonGroup(Mode.COMPONENT_MODE);
-            
-                        //position on center
-                        //Rectangle r=footprintComponent.getModel().getUnit().getBoundingRect();
-                        //footprintComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
-
-        }
         if (footprintComponent.getModel().getUnit() == null) {
             return;
         }
@@ -541,14 +491,6 @@ exit();
         
         if (e.getSource()==LabelButton) {
             footprintComponent.setMode(Mode.LABEL_MODE);
-        }
-        
-        if (e.getSource()==PrintButton) {
-            PrintContext printContext=new PrintContext();
-            printContext.setIsMirrored(false);
-            printContext.setLayermaskId(Layer.LAYER_ALL);
-            printContext.setTag("pads");
-            footprintComponent.print(printContext);
         }
         
         if (e.getSource()==DragHeand) {

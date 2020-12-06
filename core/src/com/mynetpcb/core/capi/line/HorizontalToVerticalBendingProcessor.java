@@ -5,7 +5,6 @@ import com.mynetpcb.d2.shapes.Utils;
 
 public class HorizontalToVerticalBendingProcessor extends LineBendingProcessor{
 
-
     @Override
     public boolean addLinePoint(Point point) {
         if(this.getLine().getLinePoints().size()==0){

@@ -203,7 +203,7 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
 
     @Override
     public String toXML() {
-        return "<circle copper=\""+getCopper().getName()+"\" x=\""+Utilities.roundDouble(this.circle.pc.x)+"\" y=\""+Utilities.roundDouble(this.circle.pc.y)+"\" radius=\""+Utilities.roundDouble(this.circle.r)+"\"  thickness=\""+this.getThickness()+"\" fill=\""+this.getFill().ordinal()+"\"/>\r\n";
+        return "<circle copper=\""+getCopper().getName()+"\" x=\""+Utilities.roundDouble(this.circle.pc.x)+"\" y=\""+Utilities.roundDouble(this.circle.pc.y)+"\" radius=\""+Utilities.roundDouble(this.circle.r)+"\"  thickness=\""+this.getThickness()+"\" fill=\""+this.getFill().index+"\"/>\r\n";
 
     }
 
@@ -226,7 +226,8 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
         }
         
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
-        this.setFill(Fill.values()[(element.getAttribute("fill")==""?0:Integer.parseInt(element.getAttribute("fill")))]);     
+        
+        this.setFill(Fill.byIndex(Integer.parseInt(element.getAttribute("fill"))==0?1:Integer.parseInt(element.getAttribute("fill"))));     
 
     }
 

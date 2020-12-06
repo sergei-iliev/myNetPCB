@@ -128,8 +128,8 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
         Element element =(Element)node;
         if(element.hasAttribute("thickness")){        
             
-            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
-            this.setFill(Fill.values()[(element.getAttribute("fill")==""?0:Integer.parseInt(element.getAttribute("fill")))]);  
+            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));            
+            this.setFill(Fill.byIndex(Integer.parseInt(element.getAttribute("fill"))));
             StringTokenizer st=new StringTokenizer(node.getTextContent(),",");
             
             this.shape.points.get(0).set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
