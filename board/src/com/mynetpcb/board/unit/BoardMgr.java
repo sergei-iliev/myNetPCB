@@ -6,11 +6,14 @@ import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.unit.UnitMgr;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.container.FootprintContainer;
 import com.mynetpcb.pad.shape.GlyphLabel;
 import com.mynetpcb.pad.unit.Footprint;
+
+import javax.swing.JFrame;
 
 public final class BoardMgr extends UnitMgr {
     private static BoardMgr circuitMgr;
@@ -40,12 +43,12 @@ public final class BoardMgr extends UnitMgr {
             if (shape instanceof GlyphLabel) {
                 if (((GlyphLabel)shape).getTexture().getTag().equals("value")) {
                     pcbfootprint.getTextureByTag("value").copy(((GlyphLabel)shape).getTexture());
-                    //pcbfootprint.getTextureByTag("value").setLayermaskId(shape.getCopper().getLayerMaskID());
+                    ((GlyphTexture)pcbfootprint.getTextureByTag("value")).setLayermaskId(((GlyphLabel)shape).getCopper().getLayerMaskID());
                     continue;
                 }
                 if (((GlyphLabel)shape).getTexture().getTag().equals("reference")) {
                     pcbfootprint.getTextureByTag("reference").copy(((GlyphLabel)shape).getTexture());
-                    //pcbfootprint.getTextureByTag("reference").setLayermaskId(shape.getCopper().getLayerMaskID());
+                    ((GlyphTexture)pcbfootprint.getTextureByTag("reference")).setLayermaskId(((GlyphLabel)shape).getCopper().getLayerMaskID());
                     continue;
                 }
             }
@@ -114,7 +117,7 @@ public final class BoardMgr extends UnitMgr {
         alignBlock(copy.getUnit().getGrid(),copy.getUnit().getShapes());
         
         FootprintInlineEditorDialog footprintEditorDialog =
-            new FootprintInlineEditorDialog(null, "Footprint Inline Editor",copy);
+            new FootprintInlineEditorDialog((JFrame)unitComponent.getDialogFrame().getParentFrame(), "Footprint Inline Editor",copy);
         footprintEditorDialog.pack();
         footprintEditorDialog.setLocationRelativeTo(null); //centers on screen
         footprintEditorDialog.setFocusable(true);

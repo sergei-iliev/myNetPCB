@@ -547,7 +547,7 @@ public class GlyphTexture implements Texture {
 
         private double Ay;
 
-        //private int id;
+        private int layermaskId;
         
         private List<Glyph> glyphs;
 
@@ -563,7 +563,7 @@ public class GlyphTexture implements Texture {
         public void loadStateTo(Texture _symbol) {
             GlyphTexture symbol=(GlyphTexture)_symbol;
             symbol.anchorPoint.set(Ax, Ay);
-            //symbol.id=this.id;
+            symbol.layermaskId=this.layermaskId;
             symbol.text = this.text;           
             symbol.size = this.size;
             symbol.width=this.width;
@@ -586,7 +586,7 @@ public class GlyphTexture implements Texture {
             GlyphTexture symbol=(GlyphTexture)_symbol;
             Ax = symbol.anchorPoint.x;
             Ay = symbol.anchorPoint.y;
-            //this.id=symbol.id;
+            this.layermaskId=symbol.layermaskId;
             this.text = symbol.text;        
             this.size = symbol.size;
             this.thickness = symbol.thickness;
@@ -604,11 +604,7 @@ public class GlyphTexture implements Texture {
                 }
             }
         }
-        
-//        @Override
-//        public int getId() {            
-//            return id;
-//        }
+
         
         public void clear() {
             this.glyphs.clear();
@@ -625,7 +621,7 @@ public class GlyphTexture implements Texture {
             GlyphTexture.Memento other = (GlyphTexture.Memento) obj;
             return (
                     //other.id==this.id&&
-                    other.size == this.size &&other.width == this.width&&other.height == this.height &&
+                    other.size == this.size &&other.layermaskId==this.layermaskId&&other.width == this.width&&other.height == this.height &&
                     other.thickness == this.thickness && other.text.equals(this.text) && Utils.EQ(other.Ax,this.Ax) &&
                     Utils.EQ(other.Ay,this.Ay)&&Utils.EQ(other.rotate,this.rotate)&&this.mirrored==other.mirrored) && other.glyphs.equals(this.glyphs);
         }
@@ -633,7 +629,7 @@ public class GlyphTexture implements Texture {
         @Override
         public int hashCode() {
             int hash =
-                31 +/*this.id*/+ this.size +this.width+this.height + this.thickness + this.text.hashCode() + Double.hashCode(Ax) + Double.hashCode(Ay) +Double.hashCode(rotate) +
+                31 +this.layermaskId+ this.size +this.width+this.height + this.thickness + this.text.hashCode() + Double.hashCode(Ax) + Double.hashCode(Ay) +Double.hashCode(rotate) +
                 Boolean.hashCode(this.mirrored)+
                 this.glyphs.hashCode();
 

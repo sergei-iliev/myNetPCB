@@ -10,6 +10,8 @@ import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.unit.Symbol;
 
+import javax.swing.JFrame;
+
 public class CircuitMgr extends UnitMgr {
     private static CircuitMgr circuitMgr;
 
@@ -97,7 +99,7 @@ public class CircuitMgr extends UnitMgr {
         this.alignBlock(copy.getUnit().getGrid(),copy.getUnit().getShapes());
         
         SymbolInlineEditorDialog symbolEditorDialog =
-            new SymbolInlineEditorDialog(null, "Symbol Inline Editor",copy);
+            new SymbolInlineEditorDialog((JFrame)unitComponent.getDialogFrame().getParentFrame(), "Symbol Inline Editor",copy);
         symbolEditorDialog.pack();
         symbolEditorDialog.setLocationRelativeTo(null); //centers on screen
         symbolEditorDialog.setFocusable(true);

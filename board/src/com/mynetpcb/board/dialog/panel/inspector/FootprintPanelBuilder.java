@@ -97,6 +97,7 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
         if(e.getSource()==layerCombo){
             ((PCBFootprint)getTarget()).setSide((Layer.Side)layerCombo.getSelectedItem()); 
             getComponent().getModel().getUnit().getShapes().reorder();
+            getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
             getComponent().Repaint();
         }
     }

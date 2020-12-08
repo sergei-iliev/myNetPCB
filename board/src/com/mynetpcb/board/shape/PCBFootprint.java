@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.layer.ClearanceTarget;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
@@ -346,7 +347,29 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     public Collection<Point> getPinPoints() {
         return Collections.emptySet();
     }
+    @Override
+    public  Box getPinsRect(){
+        Box r = new Box();
+        double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+        boolean  isPinnable=false;
+        //***empty schematic,element,package
+        if (shapes.size() == 0) {
+            return null;
+        }
 
+        for (Shape shape : shapes) {
+            if(shape instanceof Pinable){
+              Point p=((Pinable)shape).getPinPoint();
+              x1=Math.min(x1,p.x );
+              y1=Math.min(y1,p.y);
+              x2=Math.max(x2,p.x);
+              y2=Math.max(y2,p.y);             
+              isPinnable=true;
+            }
+        }
+        r.setRect(x1, y1, x2 - x1, y2 - y1);
+        return r;        
+    }
     @Override
     public String toXML() {
         StringBuffer xml=new StringBuffer();
