@@ -8,8 +8,10 @@ import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.container.UnitContainer;
 import com.mynetpcb.core.capi.container.UnitContainerProducer;
+import com.mynetpcb.core.capi.gui.filter.ImpexFileFilter;
 import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
 import com.mynetpcb.core.capi.impex.ClipboardImportTask;
+import com.mynetpcb.core.capi.impex.XMLImportTask;
 import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
 import com.mynetpcb.core.capi.io.FutureCommand;
@@ -48,6 +50,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -244,6 +247,34 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
             d.setVisible(true);
             return;
         }
+        if(event.getActionCommand().equals("import.xml")){
+            JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+            fc.setDialogTitle("Import");
+            fc.setAcceptAllFileFilterUsed(false);
+            fc.addChoosableFileFilter(new ImpexFileFilter(".xml"));
+            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                try {
+                    String targetFile ;
+                    if (fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml")) {
+                        targetFile=fc.getSelectedFile().getAbsolutePath();
+                    } else {
+                        targetFile= fc.getSelectedFile().getAbsolutePath() + ".xml";
+                    }
+                    
+                    UnitContainerProducer unitContainerProducer=new UnitContainerProducer().withFactory("circuits", new CircuitContainerFactory()).withFactory("modules", new SymbolContainerFactory()).
+                         withFactory("footprints", new FootprintContainerFactory()).withFactory("boards", new BoardContainerFactory());
+                    
+                    
+                    CommandExecutor.INSTANCE.addTask("import",
+                                                     new XMLImportTask(this,
+                                                                       unitContainerProducer,
+                                                                       targetFile, XMLImportTask.class));
+                } catch (Exception ioe) {
+                    ioe.printStackTrace(System.out);
+                    return;
+                }
+            }            
+        }
         if(event.getActionCommand().equals("import.clipboard")){
             if(ClipboardMgr.getInstance().isTransferDataAvailable(Clipboardable.Clipboard.SYSTEM)){  
                 try{ 
@@ -266,36 +297,16 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
             
         }
         if(event.getSource()==footprintButton){
-            this.openInternalFrame(new FootprintInternalFrame());            
-//            selectedFrame=new FootprintInternalFrame();
-//            selectedFrame.setVisible(true); //necessary as of 1.3            
-//            desktop.removeAll();
-//            desktop.add(selectedFrame);
-//            selectedFrame.addInternalFrameListener(this);            
+            this.openInternalFrame(new FootprintInternalFrame());                      
         }
         if(event.getSource()==boardButton){
             this.openInternalFrame(new BoardInternalFrame());
-//            selectedFrame =new BoardInternalFrame();
-//            selectedFrame.setVisible(true); //necessary as of 1.3            
-//            desktop.removeAll();
-//            desktop.add(selectedFrame);
-//            selectedFrame.addInternalFrameListener(this);
         }   
         if(event.getSource()==symbolButton){
             this.openInternalFrame(new SymbolInternalFrame());
-//            selectedFrame =new SymbolInternalFrame();
-//            selectedFrame.setVisible(true); //necessary as of 1.3            
-//            desktop.removeAll();
-//            desktop.add(selectedFrame);
-//            selectedFrame.addInternalFrameListener(this);
         }
         if(event.getSource()==circuitButton){
             this.openInternalFrame(new CircuitInternalFrame());
-//            selectedFrame =new CircuitInternalFrame();
-//            selectedFrame.setVisible(true); //necessary as of 1.3            
-//            desktop.removeAll();
-//            desktop.add(selectedFrame);
-//            selectedFrame.addInternalFrameListener(this);
         } 
     }
     

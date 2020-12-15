@@ -8,6 +8,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.CompositeTextable;
 import com.mynetpcb.core.capi.text.Texture;
+import com.mynetpcb.core.capi.text.Texture.Alignment;
 import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -87,7 +88,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         
         this.segment=new Segment();
         this.type = PinType.COMPLEX;
-        this.style = Style.FALLING_EDGE_CLOCK;
+        this.style = Style.LINE;
         this.fillColor=Color.BLACK;
         this.name=new SymbolFontTexture("XXX","name",-8,0,Texture.Alignment.RIGHT.ordinal(),8,Font.PLAIN);
         this.number=new SymbolFontTexture("1","number",10,-4,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
@@ -163,23 +164,38 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                     }                    
     } 
     public void rotate(double angle,Point origin){    
+            Texture.Orientation pinorientation=this.segment.isHorizontal()?Texture.Orientation.HORIZONTAL:Texture.Orientation.VERTICAL;
+            
             //read current position 
             Position oposname= Position.findPositionToLine(this.name.getAnchorPoint().x,this.name.getAnchorPoint().y,this.segment.ps,this.segment.pe);
             Position oposnumber= Position.findPositionToLine(this.number.getAnchorPoint().x,this.number.getAnchorPoint().y,this.segment.ps,this.segment.pe);
             
+            Alignment oalignmentname=Texture.Alignment.from(this.name.shape.alignment);   
+            Alignment oalignmentnumber=Texture.Alignment.from(this.number.shape.alignment);   
+        
             this.segment.rotate(angle,origin);
             this.orientation=orientation.rotate(angle>0?false:true);
             this.name.rotate(angle,origin);
             this.number.rotate(angle,origin);
             
+            if(oalignmentname.getOrientation()!=pinorientation){  //pin and text different orientation
+              this.normalizeText(this.name,oalignmentname, angle);  
+            }else{  //pin and text same orientation
             //read new position
-            Position nposname=Position.findPositionToLine(this.name.getAnchorPoint().x,this.name.getAnchorPoint().y,this.segment.ps,this.segment.pe);        
-            this.normalizeText(this.name,oposname,nposname);
-
+              Position nposname=Position.findPositionToLine(this.name.getAnchorPoint().x,this.name.getAnchorPoint().y,this.segment.ps,this.segment.pe);        
+              this.normalizeText(this.name,oposname,nposname);            
+            }
             
-            Position nposnumber=Position.findPositionToLine(this.number.getAnchorPoint().x,this.number.getAnchorPoint().y,this.segment.ps,this.segment.pe);  
-            this.normalizeText(this.number,oposnumber,nposnumber);			
+            if(oalignmentnumber.getOrientation()!=pinorientation){  //pin and text different orientation
+                this.normalizeText(this.number,oalignmentnumber, angle);  
+            }else{  //pin and text same orientation        
+                Position nposnumber=Position.findPositionToLine(this.number.getAnchorPoint().x,this.number.getAnchorPoint().y,this.segment.ps,this.segment.pe);  
+                this.normalizeText(this.number,oposnumber,nposnumber);                    
+            }
+            
+            
     }
+    //pin and text have same orientation
     private void normalizeText(SymbolFontTexture text,Position opos,Position npos){
             if(opos==npos){
                return;      
@@ -187,12 +203,20 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
 
             text.mirror(new Line(this.segment.ps,this.segment.pe));      
     }
-    @Override
-    public void move(double xoffset,double yoffset) {
-        this.segment.move(xoffset,yoffset);
-        this.name.move(xoffset,yoffset);
-        this.number.move(xoffset,yoffset);
+    //pin and text have different orientation
+    private void normalizeText(SymbolFontTexture text,Alignment alignment,double angle){
+        if(angle<0){  //clockwise              
+            if(alignment.getOrientation() == Texture.Orientation.HORIZONTAL){
+                text.shape.anchorPoint.set(text.shape.anchorPoint.x+(text.shape.metrics.ascent-text.shape.metrics.descent),text.shape.anchorPoint.y);            
+            }
+        }else{                   
+            if(alignment.getOrientation() == Texture.Orientation.VERTICAL){
+                text.shape.anchorPoint.set(text.shape.anchorPoint.x,text.shape.anchorPoint.y+(text.shape.metrics.ascent-text.shape.metrics.descent));                   
+            }
+        }
     }
+    
+    
     @Override
     public void mirror(Line line) {
         
@@ -215,6 +239,13 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         this.normalizeText(this.name,oposname,nposname);
         this.normalizeText(this.number,oposnumber,nposnumber);          
     }
+    
+    @Override
+    public void move(double xoffset,double yoffset) {
+        this.segment.move(xoffset,yoffset);
+        this.name.move(xoffset,yoffset);
+        this.number.move(xoffset,yoffset);
+    }    
     /*
      * keep text orientation too, observing text normalization
      */

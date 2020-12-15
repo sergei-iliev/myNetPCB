@@ -1,16 +1,22 @@
 package com.mynetpcb.core.capi.pin;
 
+import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.d2.shapes.Point;
 
 
 public interface Pinable {
     public enum Orientation {
-        NORTH,
-        SOUTH,
-        WEST,
-        EAST;
+        NORTH(Texture.Orientation.VERTICAL),
+        SOUTH(Texture.Orientation.VERTICAL),
+        WEST(Texture.Orientation.HORIZONTAL),
+        EAST(Texture.Orientation.HORIZONTAL);
         
-
+        private final Texture.Orientation orientation;
+        
+        private Orientation(Texture.Orientation orientation){
+          this.orientation=orientation;    
+        }
+        
         public Orientation rotate(boolean isClockwise) {
             if (isClockwise) {
                 if (this == NORTH)
@@ -32,7 +38,11 @@ public interface Pinable {
                     return NORTH;
             }
         }
-
+        
+        public Texture.Orientation getOrientation(){
+            return this.orientation;
+        }
+        
         public Orientation mirror(boolean isHorizontal) {
             if (isHorizontal) {
                 if (this == EAST)

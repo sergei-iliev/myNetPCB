@@ -66,7 +66,8 @@ public class PinPanelBuilder  extends  AbstractPanelBuilder<Shape> {
     @Override
     public void updateUI() {
         Pin pin=(Pin) getTarget();
-        setSelectedItem(pinTypeCombo,pin.getPinType().ordinal());
+        
+        setSelectedItem(pinTypeCombo,pin.getPinType());
         setSelectedItem(orientationCombo,pin.getOrientation());
         setSelectedItem(styleCombo,pin.getStyle());
         nameField.setText(pin.getTextureByTag("name").getText());
