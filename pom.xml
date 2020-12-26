@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.mynetpcb</groupId>
+    <artifactId>mynetpcb-project</artifactId>
+    <packaging>pom</packaging>
+    <version>2.0</version>
+    <name>myNetPCB Project</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<deploy.dir>../../deploy/lib</deploy.dir>
+	</properties>
+ 
+    <modules>
+		<module>2d</module>
+        <module>core</module>
+        <module>pads</module>
+		<module>gerber</module>		
+		<module>symbols</module>
+		<module>board</module>
+		<module>circuit</module>
+		<module>mynetpcb</module>		
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+<plugin>
+    <artifactId>maven-resources-plugin</artifactId>
+    <version>3.0.2</version>
+    <executions>
+        <execution>
+            <id>copy-files-on-build</id>
+            <phase>validate</phase>
+            <goals>
+                <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+                <outputDirectory>${deploy.dir}</outputDirectory>
+                <resources>
+                    <resource>
+                        <directory>/target</directory>
+							<includes>
+								<include>**/*.jar</include>
+							</includes>
+                    </resource>
+                </resources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>				
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

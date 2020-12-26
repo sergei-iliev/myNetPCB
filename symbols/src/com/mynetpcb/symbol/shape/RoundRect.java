@@ -13,8 +13,10 @@ import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.symbol.unit.Symbol;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -102,12 +104,15 @@ public class RoundRect extends ResizableShape implements Externalizable{
         if(this.getFill() == Fill.FILLED)  //***filled
           g2.fill(roundRect);
         if(this.getFill() == Fill.GRADIENT){   //***gradual
+            Composite originalComposite = g2.getComposite();
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
             GradientPaint gp = 
                 new GradientPaint(roundRect.getBounds().x, roundRect.getBounds().y, 
                                   Color.white, roundRect.getBounds().x, 
                                   (roundRect.getBounds().y+roundRect.getBounds().height), isSelected()?Color.GRAY:fillColor, true);
             g2.setPaint(gp);
             g2.fill(roundRect);
+            g2.setComposite(originalComposite);
             g2.setColor(isSelected()?Color.GRAY:fillColor);
             g2.draw(roundRect);
         }      

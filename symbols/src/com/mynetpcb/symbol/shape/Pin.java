@@ -163,6 +163,10 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
                             return false;
                     }                    
     } 
+    /*
+    * CODE REPEAT WITH FONTLABEL
+    */
+    @Override
     public void rotate(double angle,Point origin){    
             Texture.Orientation pinorientation=this.segment.isHorizontal()?Texture.Orientation.HORIZONTAL:Texture.Orientation.VERTICAL;
             
@@ -179,7 +183,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
             this.number.rotate(angle,origin);
             
             if(oalignmentname.getOrientation()!=pinorientation){  //pin and text different orientation
-              this.normalizeText(this.name,oalignmentname, angle);  
+              this.normalizeText(this.name,oalignmentname.getOrientation(), angle);  
             }else{  //pin and text same orientation
             //read new position
               Position nposname=Position.findPositionToLine(this.name.getAnchorPoint().x,this.name.getAnchorPoint().y,this.segment.ps,this.segment.pe);        
@@ -187,7 +191,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
             }
             
             if(oalignmentnumber.getOrientation()!=pinorientation){  //pin and text different orientation
-                this.normalizeText(this.number,oalignmentnumber, angle);  
+                this.normalizeText(this.number,oalignmentnumber.getOrientation(), angle);  
             }else{  //pin and text same orientation        
                 Position nposnumber=Position.findPositionToLine(this.number.getAnchorPoint().x,this.number.getAnchorPoint().y,this.segment.ps,this.segment.pe);  
                 this.normalizeText(this.number,oposnumber,nposnumber);                    
@@ -204,25 +208,44 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
             text.mirror(new Line(this.segment.ps,this.segment.pe));      
     }
     //pin and text have different orientation
-    private void normalizeText(SymbolFontTexture text,Alignment alignment,double angle){
+    private void normalizeText(SymbolFontTexture text,Texture.Orientation orientation,double angle){
         if(angle<0){  //clockwise              
-            if(alignment.getOrientation() == Texture.Orientation.HORIZONTAL){
+            if(orientation == Texture.Orientation.HORIZONTAL){
                 text.shape.anchorPoint.set(text.shape.anchorPoint.x+(text.shape.metrics.ascent-text.shape.metrics.descent),text.shape.anchorPoint.y);            
             }
         }else{                   
-            if(alignment.getOrientation() == Texture.Orientation.VERTICAL){
+            if(orientation == Texture.Orientation.VERTICAL){
                 text.shape.anchorPoint.set(text.shape.anchorPoint.x,text.shape.anchorPoint.y+(text.shape.metrics.ascent-text.shape.metrics.descent));                   
             }
         }
     }
     
-    
+    //pin and text have different orientation
+    private void normalizeText(SymbolFontTexture text,Alignment alignment,boolean isVertical){
+        if (isVertical) { //right-left mirroring
+            if (text.shape.alignment == alignment.ordinal()) {
+                text.shape.anchorPoint.set(text.shape.anchorPoint.x +
+                                        (text.shape.metrics.ascent - text.shape.metrics.descent),text.shape.anchorPoint.y);
+            }
+        } else { //***top-botom mirroring          
+            if (text.shape.alignment == alignment.ordinal()) {
+                text.shape.anchorPoint.set(text.shape.anchorPoint.x,text.shape.anchorPoint.y +(text.shape.metrics.ascent - text.shape.metrics.descent));
+            }
+        }  
+    }
+    /*
+     * CODE REPEAT WITH FONTLABEL
+     */
     @Override
     public void mirror(Line line) {
+        Texture.Orientation pinorientation=this.segment.isHorizontal()?Texture.Orientation.HORIZONTAL:Texture.Orientation.VERTICAL;
         
         Position oposname= Position.findPositionToLine(this.name.shape.anchorPoint.x,this.name.shape.anchorPoint.y,this.segment.ps,this.segment.pe);
         Position oposnumber= Position.findPositionToLine(this.number.shape.anchorPoint.x,this.number.shape.anchorPoint.y,this.segment.ps,this.segment.pe);
-              
+        
+        Alignment oalignmentname=Texture.Alignment.from(this.name.shape.alignment);   
+        Alignment oalignmentnumber=Texture.Alignment.from(this.number.shape.alignment);   
+        
         this.segment.mirror(line);    
         if(line.isVertical()){ //left-right               
                 this.orientation = this.orientation.mirror(true);   
@@ -232,12 +255,20 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         this.name.mirror(line);
         this.number.mirror(line);
         
-              //read new position
-        Position nposname=Position.findPositionToLine(this.name.shape.anchorPoint.x,this.name.shape.anchorPoint.y,this.segment.ps,this.segment.pe);              
-        Position nposnumber=Position.findPositionToLine(this.number.shape.anchorPoint.x,this.number.shape.anchorPoint.y,this.segment.ps,this.segment.pe);        
+        if(oalignmentname.getOrientation()!=pinorientation){  //pin and text different orientation
+            this.normalizeText(this.name,oalignmentname, line.isVertical()); 
+        }else{
+            Position nposname=Position.findPositionToLine(this.name.shape.anchorPoint.x,this.name.shape.anchorPoint.y,this.segment.ps,this.segment.pe);                              
+            this.normalizeText(this.name,oposname,nposname);                     
+        }
         
-        this.normalizeText(this.name,oposname,nposname);
-        this.normalizeText(this.number,oposnumber,nposnumber);          
+        if(oalignmentnumber.getOrientation()!=pinorientation){  //pin and text different orientation
+            this.normalizeText(this.number,oalignmentnumber,line.isVertical()); 
+        }else{
+            Position nposnumber=Position.findPositionToLine(this.number.shape.anchorPoint.x,this.number.shape.anchorPoint.y,this.segment.ps,this.segment.pe);            
+            this.normalizeText(this.number,oposnumber,nposnumber);     
+        }
+                
     }
     
     @Override

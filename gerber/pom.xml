@@ -2,29 +2,34 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
-			
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.mynetpcb</groupId>
         <artifactId>mynetpcb-project</artifactId>
         <version>2.0</version>
-    </parent>	
+    </parent>
 
-    <artifactId>core</artifactId>
-    <packaging>jar</packaging>	
+    <artifactId>gerber</artifactId>
+    <packaging>jar</packaging>
+	
 
     <dependencies>
         <dependency>
             <groupId>com.mynetpcb</groupId>
-            <artifactId>d2</artifactId>
+            <artifactId>core</artifactId>
             <version>2.0</version>
-        </dependency>        
-	</dependencies>
+        </dependency>
+        <dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>pads</artifactId>
+            <version>2.0</version>
+        </dependency>		
+    </dependencies>
 	
 	<build>
 	<outputDirectory>classes</outputDirectory>
 	<sourceDirectory>src</sourceDirectory>
-	<finalName>core</finalName>
+	<finalName>gerber</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -37,20 +42,5 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
-    <resources>
-        <resource>
-            <directory>src/com/mynetpcb/core/images</directory>
-			<targetPath>com/mynetpcb/core/images</targetPath>
-        </resource>
-        <resource>
-            <directory>src/com/mynetpcb/core/fonts</directory>
-			<targetPath>com/mynetpcb/core/fonts</targetPath>
-        </resource>
-    </resources>
-	
     </build>
-	
-	
-	
 </project>
