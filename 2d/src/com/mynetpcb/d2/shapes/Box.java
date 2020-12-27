@@ -1,14 +1,34 @@
 package com.mynetpcb.d2.shapes;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
-public class Box extends Shape {
-    private java.awt.Rectangle rect;
+import java.util.Collection;
+
+public class Box extends GeometricFigure {
+    private Rectangle rect=new Rectangle();
     public Point min,max;
     
     public Box(){
        this(0,0,0,0); 
     }
+    public Box(Collection<Point> points){
+            double x=Integer.MAX_VALUE,y=Integer.MAX_VALUE;
+            for(Point point:points){
+               x=Math.min(x,point.x);
+               y=Math.min(y,point.y);
+            }  
+            this.min=new Point(x,y);
+    
+            x=Integer.MIN_VALUE;
+            y=Integer.MIN_VALUE;
+                for(Point point:points){
+               x=Math.max(x,point.x);
+               y=Math.max(y,point.y);
+            }  
+            this.max=new Point(x,y);       
+        } 
+   
     public Box(double x1,double y1,double x2,double y2) {
         this.min = new Point(x1,y1);
         this.max = new Point(x2,y2);
@@ -26,6 +46,17 @@ public class Box extends Shape {
     @Override
     public Box clone() {
         return new Box(this.min.x,this.min.y,this.max.x,this.max.y);
+    }
+    public void grow(double offset){
+        this.min.x-=offset;
+        this.min.y-=offset;
+        
+        this.max.x+=offset;
+        this.max.y+=offset;
+
+    }
+    public double area(){
+        return this.getWidth()*this.getHeight();
     }
     public Point getCenter() {
         return new Point( (this.min.x + this.max.x)/2, (this.min.y + this.max.y)/2 );
@@ -55,7 +86,7 @@ public class Box extends Shape {
         }
         return false;
        
-    }
+    }    
     public boolean contains(Point point){
       
         if(this.min.x<=point.x&&point.x<=this.max.x){
@@ -88,7 +119,11 @@ public class Box extends Shape {
     @Override
     public void paint(Graphics2D g2, boolean fill) {
        rect.setRect(getX(),getY(), getWidth(), getHeight());
-       g2.draw(rect);
+       if(fill){
+         g2.fill(rect);   
+       }else{
+         g2.draw(rect);
+       }
     }
 
     @Override

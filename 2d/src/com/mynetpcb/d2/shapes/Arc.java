@@ -2,15 +2,21 @@ package com.mynetpcb.d2.shapes;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
 
-public class Arc  extends Shape{
+import java.util.ArrayList;
+import java.util.List;
+
+public class Arc  extends GeometricFigure{
     public Point pc;
     public double r ;
     public double startAngle ;
     public double endAngle; 
+    
     private Arc2D cache=new Arc2D.Double();
     
+    public Arc(){
+        
+    }
     public Arc(Point pc,double  r,double startAngle,double endAngle) {
       this.pc = pc;
       this.r = r;
@@ -22,7 +28,29 @@ public class Arc  extends Shape{
     public Arc clone() {        
         return new Arc(this.pc.clone(),this.r,this.startAngle,this.endAngle); 
     }
-    public double getArea(){
+    public Box box(){
+        List<Point> points=new ArrayList<>();        
+        Point p1=this.pc.clone();p1.translate(this.r, 0);
+        if(p1.on(this)){
+           points.add(p1);  
+        }
+        Point p2=this.pc.clone();p2.translate(0,this.r);
+        if(p2.on(this)){
+           points.add(p2);  
+        }
+        Point p3=this.pc.clone();p3.translate(-this.r,0);
+        if(p3.on(this)){
+           points.add(p3);  
+        }
+        Point p4=this.pc.clone();p4.translate(0,-this.r);
+        if(p4.on(this)){
+           points.add(p4);  
+        }
+      points.add(this.getStart());   points.add(this.getEnd());  
+      return new Box(points);         
+    }
+   
+    public double area(){
        return  ( Math.PI * this.r*this.r ) * ( this.getSweep() / 360 );   
     }
     public Point getCenter(){
@@ -50,17 +78,19 @@ public class Arc  extends Shape{
     public double getSweep(){
             return Math.abs(this.endAngle);
     }
-//    get box(){
-//      return new d2.Box([this.start,this.end,this.middle]);         
-//    }
-    public Point[] getVertices() {
+
+    public Point[] vertices() {
         return new Point[]{getStart(),getCenter(),getMiddle()};
     }
     public boolean contains(Point pt){
-            //is outside of the circle
-            if (Utils.GE(this.pc.distanceTo(pt), this.r)){
-             return false;
-            }    
+                
+            //is on circle
+            if (!Utils.EQ(this.pc.distanceTo(pt), this.r)){
+                //is outside of the circle
+                if (Utils.GE(this.pc.distanceTo(pt), this.r)){
+                    return false;
+                }                
+            }
             Line l=new Line(this.pc,this.getMiddle());
             Point projectionPoint=l.projectionPoint(pt);
             
@@ -91,20 +121,19 @@ public class Arc  extends Shape{
     public void rotate(double angle) {
         this.rotate(angle,new Point(0,0));
     }    
-//    public void mirror(line){
-//            this.pc.mirror(line);
-//            this.endAngle=-1*this.endAngle;
-//            if(line.isVertical){
-//                    if(this.startAngle>=0&&this.startAngle<=180){
-//                      this.startAngle=180-this.startAngle;  
-//                    }else{
-//                      this.startAngle=180+(360-this.startAngle);            
-//                    }
-//            }else{
-//                    this.startAngle=360-this.startAngle; 
-//            }       
-//            
-//    }
+    public void mirror(Line line){
+        this.pc.mirror(line);
+        this.endAngle=-1*this.endAngle;
+        if(line.isVertical()){
+                if(this.startAngle>=0&&this.startAngle<=180){
+                  this.startAngle=180-this.startAngle;  
+                }else{
+                  this.startAngle=180+(360-this.startAngle);            
+                }
+        }else{
+                this.startAngle=360-this.startAngle; 
+        }                        
+    }
     public void scale(double alpha){
        this.pc.scale(alpha);
        this.r*=alpha;

@@ -5,10 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Polygon extends Shape{
+public class Polygon extends GeometricFigure{
     public List<Point> points=new LinkedList<>();
     public GeneralPath polygon=new GeneralPath();
 
@@ -21,7 +23,25 @@ public class Polygon extends Shape{
         return copy;
     }
     
+    public Box box(){
+      return new Box(this.points);       
+    }
+    
+    public double area(){
+        
+          int l = points.size();
+          long det = 0;
+          List<Point> local=new ArrayList<>(points);
+          local.add(points.get(0));
 
+                    
+          for (int i = 0; i < l; i++){
+            det += local.get(i).x * local.get(i + 1).y
+              - local.get(i).y * local.get(i + 1).x;
+          }
+          return Math.abs(det/ 2);                
+    }
+    
     public boolean contains(Point pt){    
        return this.contains(pt.x,pt.y);                     
     }
@@ -65,24 +85,24 @@ public class Polygon extends Shape{
 
       return inside;           
     }
-    public void move(int offsetX,int offsetY){
+    public void move(double offsetX,double offsetY){
         this.points.forEach(point->{
             point.move(offsetX,offsetY);
         }); 
     }
-//    public void mirror(line){
-//            this.points.forEach(point=>{
-//            point.mirror(line);
-//        });         
-//    }
+    public void mirror(Line line){
+         this.points.forEach(point->{
+            point.mirror(line);
+         });         
+    }
     public void scale(double alpha){
         this.points.forEach(point->{
             point.scale(alpha);
         });         
     }
    
-    public Point[] getVertices() {
-        return this.points.stream().toArray(n->new Point[n]); 
+    public List<Point> vertices() {
+        return this.points;
     } 
     
     @Override

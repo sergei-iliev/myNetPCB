@@ -13,11 +13,11 @@ import java.awt.geom.Line2D;
  * @input height - relative but still height
  * @warning obround may change its width and height - it should recalculate its size
  */
-public class Obround extends Shape {
-    private Point pc;
-    private double width;
-    private double height;
-    private Point ps, pe;
+public class Obround extends GeometricFigure {
+    public Point pc;
+    public double width;
+    public double height;
+    public Point ps, pe;
     private Line2D cache = new Line2D.Double();
     
     public Obround(Point pt, double width, double height) {
@@ -26,10 +26,12 @@ public class Obround extends Shape {
         this.height = height;
         this.reset();
     }
-
+    public Obround(double x,double y, double width, double height) {
+        this(new Point(x,y),width,height);
+    }
     @Override
     public Obround clone() {
-        Obround copy = new Obround(this.pc, this.width, this.height);
+        Obround copy = new Obround(new Point(this.pc.x,this.pc.y), this.width, this.height);
         copy.ps.x = this.ps.x;
         copy.ps.y = this.ps.y;
 
@@ -37,7 +39,14 @@ public class Obround extends Shape {
         copy.pe.y = this.pe.y;
         return copy;
     }
-
+    public Box box(){
+             return new Box(
+                    Math.min(this.ps.x, this.pe.x),
+                    Math.min(this.ps.y, this.pe.y),
+                    Math.max(this.ps.x, this.pe.x),
+                    Math.max(this.ps.y, this.pe.y)
+                );                  
+    }
     private void reset() {
         double w = 0, h = 0;
         if (this.width > this.height) { //horizontal
@@ -55,16 +64,11 @@ public class Obround extends Shape {
         }
     }
 
-    public void setWidth(double width) {
-        this.width = width;
-        this.reset();
+    public void setSize(double width,double height){
+      this.height = height;
+      this.width=width;
+      this.reset();                         
     }
-
-    public void setHeight(double height) {
-        this.height = height;
-        this.reset();
-    }
-
     /**
     if (x-x1)/(x2-x1) = (y-y1)/(y2-y1) = alpha (a constant), then the point C(x,y) will lie on the line between pts 1 & 2.
     If alpha < 0.0, then C is exterior to point 1.
@@ -104,6 +108,11 @@ public class Obround extends Shape {
         return this.pc;
     }
 
+    public void mirror(Line line){
+        this.pc.mirror(line);
+        this.ps.mirror(line);
+        this.pe.mirror(line);        
+    }
     @Override
     public void rotate(double angle, Point center) {
         this.pc.rotate(angle, center);
@@ -132,22 +141,24 @@ public class Obround extends Shape {
     }
 
     public void grow(double offset) {
-        if (this.width >= this.height) {
-            this.height += 2 * offset;
+        if(Utils.GE(width,height)){
+            this.height +=  2*offset;
         } else {
-            this.width += 2 * offset;
+            this.width +=  2*offset;
         }
     }
-
+    public double getDiameter(){
+        if(Utils.GE(width,height))
+          return this.height;
+        else
+          return this.width;        
+    }
+    
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         Stroke s=g2.getStroke();
-        double lineWidth;
-        if(this.width>=this.height)
-          lineWidth =this.height;
-        else
-          lineWidth =this.width;
         
+        double lineWidth=this.getDiameter();
         cache.setLine(this.ps.x, this.ps.y,this.pe.x, this.pe.y);       
         g2.setStroke(new BasicStroke((float) lineWidth,BasicStroke.JOIN_ROUND, BasicStroke.CAP_ROUND));
    

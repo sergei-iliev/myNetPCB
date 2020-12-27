@@ -18,6 +18,7 @@ import com.mynetpcb.core.capi.io.FutureCommand;
 import com.mynetpcb.core.capi.popup.JPopupButton;
 import com.mynetpcb.core.dialog.config.PreferencesDialog;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.core.utils.VersionUtils;
 import com.mynetpcb.pad.container.FootprintContainer;
 import com.mynetpcb.pad.container.FootprintContainerFactory;
 import com.mynetpcb.symbol.container.SymbolContainer;
@@ -33,6 +34,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -139,8 +141,16 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         return panel;
     }
     private JPanel createFooter(){
-        JPanel  forthRowPanel=new JPanel(new GridLayout(1, 1));
-        forthRowPanel.setBackground(Color.white);
+        JPanel  forthRowPanel=new JPanel(new BorderLayout());
+        forthRowPanel.setBackground(Color.WHITE);        
+        JPanel versionPanel = new JPanel();
+        versionPanel.setBackground(Color.WHITE);
+        versionPanel.setLayout(new FlowLayout(FlowLayout.RIGHT,10,10));
+        JLabel label=new JLabel("Version: "+VersionUtils.MYNETPCB_VERSION);
+        label.setFont(new Font(label.getFont().getName(), Font.BOLD+Font.ITALIC,14));
+        versionPanel.add(label);
+        forthRowPanel.add(versionPanel, BorderLayout.PAGE_END);
+        
         return forthRowPanel;
     }
     private JPanel createBody(){
