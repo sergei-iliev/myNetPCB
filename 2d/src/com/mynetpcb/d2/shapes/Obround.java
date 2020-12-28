@@ -39,14 +39,47 @@ public class Obround extends GeometricFigure {
         copy.pe.y = this.pe.y;
         return copy;
     }
-    public Box box(){
-             return new Box(
-                    Math.min(this.ps.x, this.pe.x),
-                    Math.min(this.ps.y, this.pe.y),
-                    Math.max(this.ps.x, this.pe.x),
-                    Math.max(this.ps.y, this.pe.y)
-                );                  
+    public Box box(){             
+             
+        double r=this.getDiameter()/2;
+        //first point
+        Vector v=new Vector(this.pe,this.ps);
+        Vector n=v.normalize();
+        double a=this.ps.x +r*n.x;
+        double b=this.ps.y +r*n.y;                         
+                                        
+        v.rotate90CW();
+        Vector norm=v.normalize();
+        
+        double x=a +r*norm.x;
+        double y=b +r*norm.y;                      
+        Point pa=new Point(x,y);
+        
+        norm.invert();
+        x=a +r*norm.x;
+        y=b +r*norm.y;                  
+        Point pb=new Point(x,y);
+        //second point
+        v=new Vector(this.ps,this.pe);
+        n=v.normalize();
+        double c=this.pe.x +r*n.x;
+        double d=this.pe.y +r*n.y;                         
+        
+        v.rotate90CW();
+        norm=v.normalize();
+        
+        x=c +r*norm.x;
+        y=d +r*norm.y;                  
+        Point pc=new Point(x,y);
+        
+        norm.invert();
+        x=c +r*norm.x;
+        y=d +r*norm.y;                  
+        Point pd=new Point(x,y);
+        
+        return new Box(pa,pb,pc,pd);                                
     }
+    
     private void reset() {
         double w = 0, h = 0;
         if (this.width > this.height) { //horizontal

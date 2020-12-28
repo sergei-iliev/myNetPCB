@@ -12,6 +12,22 @@ public class Box extends GeometricFigure {
     public Box(){
        this(0,0,0,0); 
     }
+    public Box(Point ...points){
+        double x=Integer.MAX_VALUE,y=Integer.MAX_VALUE;
+        for(Point point:points){
+           x=Math.min(x,point.x);
+           y=Math.min(y,point.y);
+        }  
+        this.min=new Point(x,y);
+        
+        x=Integer.MIN_VALUE;
+        y=Integer.MIN_VALUE;
+            for(Point point:points){
+           x=Math.max(x,point.x);
+           y=Math.max(y,point.y);
+        }  
+        this.max=new Point(x,y);               
+    }
     public Box(Collection<Point> points){
             double x=Integer.MAX_VALUE,y=Integer.MAX_VALUE;
             for(Point point:points){

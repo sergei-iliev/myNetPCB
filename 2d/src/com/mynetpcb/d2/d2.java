@@ -1,8 +1,10 @@
 package com.mynetpcb.d2;
 
 import com.mynetpcb.d2.shapes.BaseFontText;
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.FontText;
 import com.mynetpcb.d2.shapes.GeometricFigure;
+import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.BorderLayout;
@@ -114,11 +116,14 @@ public class d2 extends  JFrame {
 //           line1.rotate(2);
 //           d2Component.add(line1);
 //           
-//           Obround obround=new Obround(new Point(500,100),50,20);        
-//           d2Component.add(obround);
-//           Obround obround1=obround.clone();
-//           obround1.rotate(10,new Point(0,0));
-//           d2Component.add(obround1);
+           Obround obround=new Obround(new Point(500,100),50,20);        
+           d2Component.add(obround);
+           Obround obround1=obround.clone();
+           obround1.rotate(10,new Point(0,0));
+           d2Component.add(obround1);
+           
+           Box b=obround.box();
+           d2Component.add(b);
 //           
 //           RoundRectangle roundRect=new RoundRectangle(600, 100, 80, 40, 9);                      
 //           d2Component.add(roundRect);

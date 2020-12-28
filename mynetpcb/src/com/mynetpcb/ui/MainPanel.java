@@ -147,7 +147,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         versionPanel.setBackground(Color.WHITE);
         versionPanel.setLayout(new FlowLayout(FlowLayout.RIGHT,10,10));
         JLabel label=new JLabel("Version: "+VersionUtils.MYNETPCB_VERSION);
-        label.setFont(new Font(label.getFont().getName(), Font.BOLD+Font.ITALIC,14));
+        label.setFont(new Font(label.getFont().getName(), Font.BOLD+Font.ITALIC,16));
         versionPanel.add(label);
         forthRowPanel.add(versionPanel, BorderLayout.PAGE_END);
         
