@@ -199,7 +199,8 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                         getEventMgr().setEventHandle("texture", shape);
                     } else if (shape instanceof PCBFootprint) {
                         getEventMgr().setEventHandle("symbol", shape);
-                    } else
+                
+                    }else
                         getEventMgr().setEventHandle("move", shape);
                 } else {
                     getEventMgr().setEventHandle("component", null);

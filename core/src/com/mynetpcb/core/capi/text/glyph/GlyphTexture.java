@@ -48,7 +48,8 @@ public class GlyphTexture implements Texture {
     
     private boolean isSelected;
     
-    private double rotate;
+    private double rotation;
+    
     private boolean mirrored;
     
     public GlyphTexture(String text,String tag, int x, int y, int size) {
@@ -63,7 +64,7 @@ public class GlyphTexture implements Texture {
         this.width=0;
         this.layermaskId=Layer.SILKSCREEN_LAYER_FRONT;
         this.isSelected=false;
-        this.rotate=0;
+        this.rotation=0;
         this.mirrored=false;        
         
         this.setSize(size);
@@ -73,7 +74,7 @@ public class GlyphTexture implements Texture {
         this.anchorPoint.set(copy.anchorPoint.x,copy.anchorPoint.y); 
         this.text = copy.text;
         this.tag = copy.tag; 
-        this.rotate=copy.rotate;
+        this.rotation=copy.rotation;
         this.mirrored=copy.mirrored;        
         this.fillColor=copy.fillColor;
         this.thickness=copy.thickness;
@@ -163,7 +164,7 @@ public class GlyphTexture implements Texture {
         
         //rotate
         this.glyphs.forEach(glyph->{
-            glyph.rotate(this.rotate,this.anchorPoint);                  
+            glyph.rotate(this.rotation,this.anchorPoint);                  
         });
     }
     @Override
@@ -228,7 +229,7 @@ public class GlyphTexture implements Texture {
            if(this.mirrored){
                glyph.mirror(ln);                        
            }
-           glyph.rotate(this.rotate,this.anchorPoint);            
+           glyph.rotate(this.rotation,this.anchorPoint);            
            
         });
             
@@ -258,7 +259,7 @@ public class GlyphTexture implements Texture {
         Layer.Copper copper=Layer.Side.change(this.layermaskId);
         this.fillColor=copper.getColor();
         this.layermaskId=copper.getLayerMaskID();
-        this.rotate=angle;
+        this.rotation=angle;
     }
     @Override
     public Box getBoundingShape() {
@@ -271,11 +272,11 @@ public class GlyphTexture implements Texture {
     public Rectangle getBoundingRect(){
         if(this.mirrored){
             Rectangle rect= new Rectangle(this.anchorPoint.x-this.width,this.anchorPoint.y-this.height,this.width,this.height);
-            rect.rotate(this.rotate,this.anchorPoint);
+            rect.rotate(this.rotation,this.anchorPoint);
             return rect;
          }else{     
             Rectangle rect= new Rectangle(this.anchorPoint.x,this.anchorPoint.y-this.height,this.width,this.height);
-            rect.rotate(this.rotate,this.anchorPoint);
+            rect.rotate(this.rotation,this.anchorPoint);
             return rect;
          }  
     }    
@@ -297,27 +298,27 @@ public class GlyphTexture implements Texture {
             });              
     }
     public double getRotation(){
-        return this.rotate;
+        return this.rotation;
     }
     public void setRotation(double rotate,Point pt){
-            double alpha=rotate-this.rotate;
+            double alpha=rotate-this.rotation;
             this.anchorPoint.rotate(alpha,pt);
             this.glyphs.forEach(glyph->{
                glyph.rotate(alpha,pt);   
             });  
-            this.rotate=rotate;     
+            this.rotation=rotate;     
     }
     
     public void rotate(double rotate,Point pt){
             //fix angle
-            double alpha=this.rotate+rotate;
+            double alpha=this.rotation+rotate;
             if(alpha>=360){
                     alpha-=360;
             }
             if(alpha<0){
              alpha+=360; 
             }       
-            this.rotate=alpha;
+            this.rotation=alpha;
             //rotate anchor point
             this.anchorPoint.rotate(rotate,pt);
             //rotate glyphs
@@ -461,7 +462,7 @@ public class GlyphTexture implements Texture {
             sb.append(",,");
             sb.append(this.thickness);sb.append(",");
             sb.append(this.size);sb.append(",");
-            sb.append(this.rotate);
+            sb.append(this.rotation);
             return sb.toString();
         }
     }
@@ -495,9 +496,9 @@ public class GlyphTexture implements Texture {
         }catch(NoSuchElementException e){        
             
         }
-        this.rotate=0;
+        this.rotation=0;
         try{
-           this.rotate=(Double.parseDouble(st[6]));
+           this.rotation=(Double.parseDouble(st[6]));
         }catch(Exception e){        
             
         }        
@@ -570,7 +571,7 @@ public class GlyphTexture implements Texture {
             symbol.height=this.height;
             symbol.thickness = this.thickness;
             symbol.glyphs.clear();
-            symbol.rotate=this.rotate;
+            symbol.rotation=this.rotate;
             symbol.mirrored=this.mirrored;
             
             for (Glyph glyph : this.glyphs) {
@@ -592,7 +593,7 @@ public class GlyphTexture implements Texture {
             this.thickness = symbol.thickness;
             this.width=symbol.width;
             this.height=symbol.height;
-            this.rotate=symbol.rotate;
+            this.rotate=symbol.rotation;
             this.mirrored=symbol.mirrored;
 
             this.glyphs = new ArrayList<>(symbol.glyphs.size());

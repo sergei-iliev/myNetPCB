@@ -20,6 +20,7 @@ import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
+import com.mynetpcb.d2.shapes.Segment;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -30,9 +31,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
+
+
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -61,12 +65,12 @@ public class PCBTrack extends TrackShape implements PCBShape{
     }
 
     @Override
-    public Collection<Shape> getNetShapes(Collection<UUID> selected) {
+    public Collection<Shape> getNetShapes(Collection<UUID> selectedShapes) {
         Collection<Shape> net=new ArrayList<>(); 
         //1. via
         Collection<PCBVia> vias=getOwningUnit().getShapes(PCBVia.class);         
         for(PCBVia via:vias ){
-            if(selected.contains(via.getUUID())){
+            if(selectedShapes.contains(via.getUUID())){
                 continue;
             }
             if(this.polyline.intersect(via.getOuter())){
@@ -80,7 +84,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
             if(track==this){
                 continue;
             }
-            if(selected.contains(track.getUUID())){
+            if(selectedShapes.contains(track.getUUID())){
                 continue;
             }
             //my points on another
@@ -103,6 +107,25 @@ public class PCBTrack extends TrackShape implements PCBShape{
             }            
             
         } 
+        //my track crossing other track on same layer
+        for(PCBTrack track:sameSideTracks ){
+            if(track==this){
+                continue;
+            }
+            if(selectedShapes.contains(track.getUUID())){
+                continue;
+            }            
+            for(Segment segment:this.getSegments()){
+              //is my segment crossing anyone elses's?
+                for(Segment other:track.getSegments()){
+                    if(segment.intersect(other)){
+                        net.add(track);
+                        break;
+                    }
+                }
+            }
+            
+        }
         //3.Footprint pads on me
         Collection<PCBFootprint> footprints=getOwningUnit().getShapes(PCBFootprint.class);         
         //the other side
@@ -115,7 +138,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
                     if(pad.getPadDrawing().contains(pt)){  //found pad on track -> investigate both SMD and THROUGH_HOLE
                        if(pad.getType()==PadShape.Type.SMD){
                            for(PCBTrack track:sameSideTracks ){  //each track on SAME layer
-                            if(selected.contains(track.getUUID())){
+                            if(selectedShapes.contains(track.getUUID())){
                                continue;
                             }
                             //another points on me
@@ -128,7 +151,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
                            }                              
                        }else{ 
                         for(PCBTrack track:oppositeSideTracks ){  //each track on OPPOSITE layer
-                         if(selected.contains(track.getUUID())){
+                         if(selectedShapes.contains(track.getUUID())){
                             continue;
                          }
                          //another points on me

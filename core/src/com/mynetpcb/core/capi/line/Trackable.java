@@ -4,10 +4,10 @@ package com.mynetpcb.core.capi.line;
 import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.Unitable;
-
-
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Segment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,6 +33,25 @@ public interface Trackable<P extends Point> extends Drawable,Unitable<Unit>{
      * @return the points the track consists of
      */
      public List<P> getLinePoints();  
+     
+     /**
+     *
+     * @return list of all constracting segments
+     */
+     public  default List<Segment> getSegments(){
+         List<Segment> list=new ArrayList<>();
+         Point prevPoint = this.getLinePoints().get(0);        
+         for(Point point :this.getLinePoints()){                          
+             if(prevPoint.equals(point)){                        
+                 prevPoint = point;
+                 continue;
+             }                       
+             list.add(new Segment(prevPoint.x,prevPoint.y,point.x,point.y));
+             
+             prevPoint = point;
+         }
+         return list;         
+     }
     
 /**
      * Add new point to the track

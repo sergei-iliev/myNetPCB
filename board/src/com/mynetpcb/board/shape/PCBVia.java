@@ -78,14 +78,13 @@ public class PCBVia extends ViaShape implements PCBShape{
     public Collection<Shape> getNetShapes(Collection<UUID> selected) {
         Collection<Shape> net=new ArrayList<>(); 
         Collection<PCBTrack> tracks=getOwningUnit().getShapes(PCBTrack.class); 
-        Polyline polyline=new Polyline();
+
         for(PCBTrack track:tracks){
             if(selected.contains(track.getUUID())){
                 continue;
             }            
-            polyline.points.clear();
-            polyline.points.addAll(track.getLinePoints());
-            if(polyline.intersect(outer)){
+
+            if(track.polyline.intersect(outer)){
                net.add(track); 
             }
         }

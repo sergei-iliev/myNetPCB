@@ -31,7 +31,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
 
     protected Point resizingPoint;    
     
-    protected Polyline<LinePoint> polyline;
+    public Polyline<LinePoint> polyline;
     
     protected double rotate;
     

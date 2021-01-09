@@ -96,6 +96,33 @@ public class Segment extends GeometricFigure {
         }        
         return false;
     }
+    //https://github.com/psalaets/line-intersect
+    public boolean intersect(Segment other){
+          double x1=this.ps.x, y1=this.ps.y, x2=this.pe.x, y2=this.pe.y, x3=other.ps.x, y3=other.ps.y, x4=other.pe.x, y4=other.pe.y; 
+          double denom = ((y4 - y3) * (x2 - x1)) - ((x4 - x3) * (y2 - y1));
+          double numeA = ((x4 - x3) * (y1 - y3)) - ((y4 - y3) * (x1 - x3));
+          double numeB = ((x2 - x1) * (y1 - y3)) - ((y2 - y1) * (x1 - x3));
+
+          if (denom == 0) {
+            if (numeA == 0 && numeB == 0) {
+              return true;  //COLINEAR;
+            }
+            return false; //PARALLEL;
+          }
+
+          double uA = numeA / denom;
+          double uB = numeB / denom;
+
+          if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
+            return true;
+            //return intersecting({
+            //  x: x1 + (uA * (x2 - x1)),
+            //  y: y1 + (uA * (y2 - y1))
+            //});
+          }
+
+          return false;
+    }
     /**
      * Liang-Barsky function by Daniel White 
      * 
