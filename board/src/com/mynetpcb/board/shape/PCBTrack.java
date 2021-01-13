@@ -78,7 +78,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
             }
         }
         //2.track on same layer
-        Collection<PCBTrack> sameSideTracks=getOwningUnit().getShapes(PCBTrack.class,this.copper.getLayerMaskID());         
+        List<PCBTrack> sameSideTracks=getOwningUnit().getShapes(PCBTrack.class,this.copper.getLayerMaskID());         
         Circle circle=new Circle(new Point(),0);
         for(PCBTrack track:sameSideTracks ){
             if(track==this){
@@ -129,41 +129,65 @@ public class PCBTrack extends TrackShape implements PCBShape{
         //3.Footprint pads on me
         Collection<PCBFootprint> footprints=getOwningUnit().getShapes(PCBFootprint.class);         
         //the other side
-        Collection<PCBTrack> oppositeSideTracks=getOwningUnit().getShapes(PCBTrack.class,Layer.Side.change(this.copper.getLayerMaskID()).getLayerMaskID());
+        List<PCBTrack> oppositeSideTracks=getOwningUnit().getShapes(PCBTrack.class,Layer.Side.change(this.copper.getLayerMaskID()).getLayerMaskID());
+        Collection<PCBTrack> bothSideTracks=new ArrayList<PCBTrack>();
+        bothSideTracks.addAll(sameSideTracks);
+        bothSideTracks.addAll(oppositeSideTracks);
         
         for(PCBFootprint footprint:footprints){
             Collection<PadShape> pads=footprint.getPads();
             for(PadShape pad:pads){              
                 for(Point pt:this.polyline.points){
                     if(pad.getPadDrawing().contains(pt)){  //found pad on track -> investigate both SMD and THROUGH_HOLE
-                       if(pad.getType()==PadShape.Type.SMD){
-                           for(PCBTrack track:sameSideTracks ){  //each track on SAME layer
-                            if(selectedShapes.contains(track.getUUID())){
-                               continue;
-                            }
-                            //another points on me
-                            for(Point p:track.polyline.points){
-                                if(pad.getPadDrawing().contains(p)){
-                                  net.add(track);
-                                  break;
-                                }
-                             }   
-                           }                              
-                       }else{ 
-                        for(PCBTrack track:oppositeSideTracks ){  //each track on OPPOSITE layer
-                         if(selectedShapes.contains(track.getUUID())){
-                            continue;
-                         }
-                         //another points on me
-                         for(Point p:track.polyline.points){
-                             if(pad.getPadDrawing().contains(p)){
-                               net.add(track);
-                               break;
-                             }
-                         }
-                        }     
-                      }
-                    }                 
+                                for(PCBTrack track:bothSideTracks ){  //each track on SAME layer
+                                    //2 track points bound by pad
+                                    for(Point p:track.polyline.points){
+                                        if(pad.getPadDrawing().contains(p)){
+                                              if(selectedShapes.contains(track.getUUID())){
+                                                  continue;
+                                              }
+                                              //track and pad should be on the same layer
+                                              if((this.copper.getLayerMaskID()&pad.getCopper().getLayerMaskID())!=0){
+                                                  if((track.copper.getLayerMaskID()&pad.getCopper().getLayerMaskID())!=0){ 
+                                                        net.add(track);
+                                                        break;
+                                                  }
+                                              }
+                                        }
+                                    } 
+                                    
+                                }                        
+                    }
+                    
+//                    if(pad.getPadDrawing().contains(pt)){  //found pad on track -> investigate both SMD and THROUGH_HOLE
+//                       if(pad.getType()==PadShape.Type.SMD){
+//                           for(PCBTrack track:sameSideTracks ){  //each track on SAME layer
+//                            if(selectedShapes.contains(track.getUUID())){
+//                               continue;
+//                            }
+//                            //another points on me
+//                            for(Point p:track.polyline.points){
+//                                if(pad.getPadDrawing().contains(p)){
+//                                  net.add(track);
+//                                  break;
+//                                }
+//                             }   
+//                           }                              
+//                       }else{ 
+//                        for(PCBTrack track:oppositeSideTracks ){  //each track on OPPOSITE layer
+//                         if(selectedShapes.contains(track.getUUID())){
+//                            continue;
+//                         }
+//                         //another points on me
+//                         for(Point p:track.polyline.points){
+//                             if(pad.getPadDrawing().contains(p)){
+//                               net.add(track);
+//                               break;
+//                             }
+//                         }
+//                        }     
+//                      }
+//                    }                 
                 }
             }
         }

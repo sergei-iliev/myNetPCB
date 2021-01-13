@@ -410,7 +410,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
     }
     
     private void openInternalFrame(AbstractInternalFrame selectedFrame){
-        //selectedFrame=new FootprintInternalFrame();
+        this.selectedFrame=selectedFrame;
         selectedFrame.setVisible(true); //necessary as of 1.3            
         desktop.removeAll();
         desktop.add(selectedFrame);

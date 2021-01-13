@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -33,6 +34,7 @@ import java.util.Collection;
 
 import javax.imageio.ImageIO;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -70,7 +72,7 @@ public class Circuit extends Unit<Shape>{
     }
 
     @Override
-    protected StringBuffer format(Collection<Shape> collection) {
+    protected StringBuffer format(Collection<Shape> shapes) {
         StringBuffer xml = new StringBuffer();
 
         xml.append("<symbols>\r\n");
@@ -278,10 +280,13 @@ public class Circuit extends Unit<Shape>{
     }
 
     @Override
-    protected void parseClipboardSelection(String string) throws XPathExpressionException, ParserConfigurationException,
+    protected void parseClipboardSelection(String xml) throws XPathExpressionException, ParserConfigurationException,
                                                                  SAXException, IOException {
-        // TODO Implement this method
-
+    
+        Node node =
+            DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8"))).getDocumentElement();
+        parseSelection(node, true);
+        
     }
 
     private WeakReference<PrintContext> context;
