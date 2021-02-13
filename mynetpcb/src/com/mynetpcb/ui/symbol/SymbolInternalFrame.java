@@ -214,7 +214,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         
         //***construct Top Buttons Panel
 
-        AddFootprintButton.setToolTipText("Add symbol");
+        //AddFootprintButton.setToolTipText("Add symbol");
         AddFootprintButton.setPreferredSize(new Dimension(35, 35));
         AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
         AddFootprintButton.addMenu("Create symbols bundle","Create").addMenu("Add symbol to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
@@ -222,18 +222,18 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
                            addSeparator().addMenu("Exit","exit"); 
         
         PrintButton.addActionListener(this);
-        PrintButton.setToolTipText("Print symbol");
+        PrintButton.setToolTipText("Print Symbol");
         PrintButton.setPreferredSize(new Dimension(35, 35));
         PrintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/print.png"));
 
         SaveButton.addActionListener(this);
-        SaveButton.setToolTipText("Save symbol");
+        SaveButton.setToolTipText("Save Symbols Project");
         SaveButton.setActionCommand("Save");  //for inline editing
         SaveButton.setPreferredSize(new Dimension(35, 35));
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
 
         LoadButton.addActionListener(this);
-        LoadButton.setToolTipText("Load Footprint");
+        LoadButton.setToolTipText("Load Symbols Project");
         //LoadButton.setEnabled(false);
         LoadButton.setPreferredSize(new Dimension(35, 35));
         LoadButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/folder.png"));

@@ -209,7 +209,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         
         //***construct Top Buttons Panel
 
-        AddFootprintButton.setToolTipText("Add footprint");
+        //AddFootprintButton.setToolTipText("Add footprint");
         AddFootprintButton.setPreferredSize(new Dimension(35, 35));
         AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
         AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
@@ -217,18 +217,18 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
                            addSeparator().addMenu("Exit","exit"); 
         
         PrintButton.addActionListener(this);
-        PrintButton.setToolTipText("Print footprint");
+        PrintButton.setToolTipText("Print Footprint");
         PrintButton.setPreferredSize(new Dimension(35, 35));
         PrintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/print.png"));
 
         SaveButton.addActionListener(this);
-        SaveButton.setToolTipText("Save Footprint");
+        SaveButton.setToolTipText("Save Footprints Project");
         SaveButton.setActionCommand("Save");  //for inline editing
         SaveButton.setPreferredSize(new Dimension(35, 35));
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
 
         LoadButton.addActionListener(this);
-        LoadButton.setToolTipText("Load Footprint");
+        LoadButton.setToolTipText("Load Footprints Project");
         //LoadButton.setEnabled(false);
         LoadButton.setPreferredSize(new Dimension(35, 35));
         LoadButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/folder.png"));
