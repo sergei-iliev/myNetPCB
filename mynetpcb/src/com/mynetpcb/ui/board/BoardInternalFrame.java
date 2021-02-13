@@ -260,26 +260,26 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         MeasureButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/measure.png"));
         
         //***construct Top Buttons Panel
-        AddBoardButton.setToolTipText("Add board");
+        //AddBoardButton.setToolTipText("Add board");
         AddBoardButton.setPreferredSize(new Dimension(35, 35));
         AddBoardButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
         AddBoardButton.addMenu("Create new boards project","Create").addMenu("Add board to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
             .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSubMenu("export","Gerber RS-274X/X2", "export.gerber").addSeparator().addMenu("Exit","exit");
     
         PrintButton.addActionListener(this);
-        PrintButton.setToolTipText("Print footprint");
+        PrintButton.setToolTipText("Print Boear");
         PrintButton.setPreferredSize(new Dimension(35, 35));
         PrintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/print.png"));
         
         
         SaveButton.addActionListener(this);
         SaveButton.setActionCommand("Save");
-        SaveButton.setToolTipText("Save Board");
+        SaveButton.setToolTipText("Save Boards Project");
         SaveButton.setPreferredSize(new Dimension(35, 35));
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
        
         LoadButton.addActionListener(this);
-        LoadButton.setToolTipText("Load Board");
+        LoadButton.setToolTipText("Load Boards Project");
         LoadButton.setPreferredSize(new Dimension(35, 35));
         LoadButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/folder.png"));
 
@@ -358,9 +358,9 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
 
         leftButtonGroupPanel.setLayout(new BoxLayout(leftButtonGroupPanel, BoxLayout.Y_AXIS));
         leftButtonGroupPanel.setBorder(BorderFactory.createEmptyBorder(35, 4, 0, 4));
-        leftButtonGroupPanel.add(FootprintButton);
-        leftButtonGroupPanel.add(javax.swing.Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(SelectionButton);
+        leftButtonGroupPanel.add(javax.swing.Box.createRigidArea(new Dimension(5, 5)));
+        leftButtonGroupPanel.add(FootprintButton);
         leftButtonGroupPanel.add(javax.swing.Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(EllipseButton);
         leftButtonGroupPanel.add(javax.swing.Box.createRigidArea(new Dimension(5, 5)));

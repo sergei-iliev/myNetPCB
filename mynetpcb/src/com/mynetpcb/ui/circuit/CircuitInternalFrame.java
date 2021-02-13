@@ -227,25 +227,25 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         CoordButton.setPreferredSize(new Dimension(35, 35));
         
         //***construct Top Buttons Panel
-        AddBoardButton.setToolTipText("Add Circuit");
+        //AddBoardButton.setToolTipText("Add Circuit");
         AddBoardButton.setPreferredSize(new Dimension(35, 35));
         AddBoardButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
         AddBoardButton.addMenu("Create new circuits project","Create").addMenu("Add circuit to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
             .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSubMenu("export","Gerber RS-274X/X2", "export.gerber").addSeparator().addMenu("Exit","exit");
         
         PrintButton.addActionListener(this);
-        PrintButton.setToolTipText("Print footprint");
+        PrintButton.setToolTipText("Print Circuit");
         PrintButton.setPreferredSize(new Dimension(35, 35));
         PrintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/print.png"));
         
         
         SaveButton.addActionListener(this);
-        SaveButton.setToolTipText("Save Board");
+        SaveButton.setToolTipText("Save Circuits Project");
         SaveButton.setPreferredSize(new Dimension(35, 35));
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
         
         LoadButton.addActionListener(this);
-        LoadButton.setToolTipText("Load Board");
+        LoadButton.setToolTipText("Load Circuits Project");
         LoadButton.setPreferredSize(new Dimension(35, 35));
         LoadButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/folder.png"));
 
