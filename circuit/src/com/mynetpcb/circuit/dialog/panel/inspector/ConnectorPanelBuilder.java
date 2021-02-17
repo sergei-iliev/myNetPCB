@@ -80,7 +80,7 @@ public class ConnectorPanelBuilder extends AbstractPanelBuilder<Shape> {
             return;
         SCHConnector connector = (SCHConnector)getTarget();
         if (e.getSource() == nameField) {
-            connector.getTextureByTag("name").setText(nameField.getText());
+            connector.setText(nameField.getText());
             getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
             getComponent().Repaint();
         }
