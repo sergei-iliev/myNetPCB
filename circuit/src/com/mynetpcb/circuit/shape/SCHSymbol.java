@@ -34,6 +34,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.util.Objects;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -47,7 +49,7 @@ import org.w3c.dom.NodeList;
 public class SCHSymbol extends Shape implements CompositeTextable,Typeable,CompositePinable,Externalizable{
     private List<Shape> shapes;
     private Typeable.Type type;
-    private SymbolFontTexture reference,unit; 
+    private SymbolFontTexture reference,unit;     
     
     public SCHSymbol() {
         super(1,Layer.LAYER_ALL);
@@ -370,17 +372,20 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
         
         private SymbolFontTexture.Memento unit,reference;
 
+        private String displayName;
+        
         public Memento(MementoType operationType){
            super(operationType);
            mementoList=new LinkedList<AbstractMemento>();
            unit=new SymbolFontTexture.Memento();
-           reference=new SymbolFontTexture.Memento();              
+           reference=new SymbolFontTexture.Memento();                      
         }
         
         public void loadStateTo(SCHSymbol symbol) {
           super.loadStateTo(symbol);
           unit.loadStateTo(symbol.unit); 
-          reference.loadStateTo(symbol.reference);                  
+          reference.loadStateTo(symbol.reference);                           
+          symbol.setDisplayName(displayName);
           /*
            * Symbol is recreated with empty shapes in it
            */
@@ -402,7 +407,7 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
             super.saveStateFrom(symbol);
             this.unit.saveStateFrom(symbol.unit);
             this.reference.saveStateFrom(symbol.reference);
-            
+            displayName=symbol.getDisplayName();
             for(Shape ashape:symbol.shapes){
                 mementoList.add(ashape.getState(mementoType));     
             }            
@@ -414,6 +419,7 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
             for(AbstractMemento memento:mementoList){
               memento.clear();  
             }
+            displayName=null;
             mementoList.clear();
         }
 
@@ -429,7 +435,7 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
             Memento other=(Memento)obj;
             
     
-            return  super.equals(obj)&&                
+            return  super.equals(obj)&&Objects.equals(this.displayName, other.displayName)&&                
                    mementoList.equals(other.mementoList)&&
                    reference.equals(other.reference)&&
                    unit.equals(other.unit);         
@@ -439,6 +445,7 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
         @Override
         public int hashCode(){
             int hash=super.hashCode(); 
+            hash+=Objects.hashCode(displayName);
             hash+=this.mementoList.hashCode();
             hash+=this.unit.hashCode()+this.reference.hashCode();
             return hash;  
