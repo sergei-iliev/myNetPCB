@@ -330,8 +330,8 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
 
                     BoardMgr.getInstance().rotateBlock(shapes,
                                            ((e.getKeyCode() ==KeyEvent.VK_A) ?
-                                                                              -1 :
-                                                                              1) *
+                                                                              1 :
+                                                                              -1) *
                                                                              90,
                                                                              center); 
                     BoardMgr.getInstance().alignBlock(getModel().getUnit().getGrid(), shapes);
@@ -345,38 +345,38 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
 
                 }
             }
-            if (e.getModifiers() == ActionEvent.SHIFT_MASK) {
-                if (e.getKeyCode() == KeyEvent.VK_Q || e.getKeyCode() == KeyEvent.VK_A) {
-                    Collection<Shape> shapes = getModel().getUnit().getSelectedShapes();
-                    if (shapes.size() == 0) {
-                        return true;
-                    }
-                    //***notify undo manager
-                    getModel().getUnit().registerMemento(shapes.size() > 1 ?
-                                                         new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes) :
-                                                         shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-                    Box r = getModel().getUnit().getShapesRect(shapes);
-                    Point center=r.getCenter();
-                    Point p=getModel().getUnit().getGrid().positionOnGrid(center); 
-                    
-                    if(e.getKeyCode() == KeyEvent.VK_Q){
-                        BoardMgr.getInstance().mirrorBlock(getModel().getUnit().getSelectedShapes(),new com.mynetpcb.d2.shapes.Line(new Point(p.x - 10, p.y),
-                                                              new Point(p.x + 10, p.y)));
-                                           
-                    }else{
-                        BoardMgr.getInstance().mirrorBlock(getModel().getUnit().getSelectedShapes(),new com.mynetpcb.d2.shapes.Line(
-                                new Point(p.x, p.y - 10),
-                                          new Point(p.x, p.y + 10)));
-                    }
-                    BoardMgr.getInstance().alignBlock(getModel().getUnit().getGrid(), shapes);
-                    //***notify undo manager
-                    getModel().getUnit().registerMemento(shapes.size() > 1 ?
-                                                         new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes) :
-                                                         shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-                    Repaint();
-                    return true;
-                }
-            }
+//            if (e.getModifiers() == ActionEvent.SHIFT_MASK) {
+//                if (e.getKeyCode() == KeyEvent.VK_Q || e.getKeyCode() == KeyEvent.VK_A) {
+//                    Collection<Shape> shapes = getModel().getUnit().getSelectedShapes();
+//                    if (shapes.size() == 0) {
+//                        return true;
+//                    }
+//                    //***notify undo manager
+//                    getModel().getUnit().registerMemento(shapes.size() > 1 ?
+//                                                         new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes) :
+//                                                         shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+//                    Box r = getModel().getUnit().getShapesRect(shapes);
+//                    Point center=r.getCenter();
+//                    Point p=getModel().getUnit().getGrid().positionOnGrid(center); 
+//                    
+//                    if(e.getKeyCode() == KeyEvent.VK_Q){
+//                        BoardMgr.getInstance().mirrorBlock(getModel().getUnit().getSelectedShapes(),new com.mynetpcb.d2.shapes.Line(new Point(p.x - 10, p.y),
+//                                                              new Point(p.x + 10, p.y)));
+//                                           
+//                    }else{
+//                        BoardMgr.getInstance().mirrorBlock(getModel().getUnit().getSelectedShapes(),new com.mynetpcb.d2.shapes.Line(
+//                                new Point(p.x, p.y - 10),
+//                                          new Point(p.x, p.y + 10)));
+//                    }
+//                    BoardMgr.getInstance().alignBlock(getModel().getUnit().getGrid(), shapes);
+//                    //***notify undo manager
+//                    getModel().getUnit().registerMemento(shapes.size() > 1 ?
+//                                                         new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes) :
+//                                                         shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+//                    Repaint();
+//                    return true;
+//                }
+//            }
         }
         //***single CTRL press for the mouse menu
         if (e.getModifiers() == ActionEvent.CTRL_MASK) {
