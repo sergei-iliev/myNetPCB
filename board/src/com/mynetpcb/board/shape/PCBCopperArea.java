@@ -199,12 +199,6 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     }
 
     @Override
-    public void reverse(double d, double d2) {
-        // TODO Implement this method
-
-    }
-
-    @Override
     public void removePoint(double d, double d2) {
         // TODO Implement this method
 
