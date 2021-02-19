@@ -1,6 +1,7 @@
 package com.mynetpcb.circuit.popup;
 
 import com.mynetpcb.circuit.component.CircuitComponent;
+import com.mynetpcb.circuit.shape.SCHBus;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
@@ -8,6 +9,7 @@ import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 
 import java.awt.event.ActionEvent;
@@ -167,14 +169,15 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
             //getUnitComponent().Repaint();
         }
         if (e.getActionCommand().equalsIgnoreCase("Resume")) {
-//            if (getTarget() instanceof SCHBus) {
-//                getUnitComponent().getDialogFrame().setButtonGroup(CircuitComponent.BUS_MODE);
-//                getUnitComponent().setMode(CircuitComponent.BUS_MODE);
-//            } else {
-//                getUnitComponent().getDialogFrame().setButtonGroup(CircuitComponent.WIRE_MODE);
-//                getUnitComponent().setMode(CircuitComponent.WIRE_MODE);
-//            }
-            getUnitComponent().resumeLine((Trackable)getTarget(),"line", x, y);
+            if (getTarget() instanceof SCHBus) {
+                getUnitComponent().getDialogFrame().setButtonGroup(Mode.BUS_MODE);
+                getUnitComponent().setMode(Mode.BUS_MODE); 
+            } else {
+                getUnitComponent().getDialogFrame().setButtonGroup(Mode.WIRE_MODE);
+                getUnitComponent().setMode(Mode.WIRE_MODE); 
+                
+            }           
+            getUnitComponent().resumeLine((Trackable)getTarget(),"wire", x, y);
         }
 
 
