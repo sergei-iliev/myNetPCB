@@ -32,11 +32,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
-
-
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -106,7 +105,8 @@ public class PCBTrack extends TrackShape implements PCBShape{
                 }   
             }            
             
-        } 
+        }   
+         
         //my track crossing other track on same layer
         for(PCBTrack track:sameSideTracks ){
             if(track==this){
@@ -140,7 +140,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
                 for(Point pt:this.polyline.points){
                     if(pad.getPadDrawing().contains(pt)){  //found pad on track -> investigate both SMD and THROUGH_HOLE
                                 for(PCBTrack track:bothSideTracks ){  //each track on SAME layer
-                                    //2 track points bound by pad
+                                    //2 traback points bound by pad
                                     for(Point p:track.polyline.points){
                                         if(pad.getPadDrawing().contains(p)){
                                               if(selectedShapes.contains(track.getUUID())){
@@ -158,7 +158,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
                                     
                                 }                        
                     }
-                    
+/*                    
 //                    if(pad.getPadDrawing().contains(pt)){  //found pad on track -> investigate both SMD and THROUGH_HOLE
 //                       if(pad.getType()==PadShape.Type.SMD){
 //                           for(PCBTrack track:sameSideTracks ){  //each track on SAME layer
@@ -187,9 +187,11 @@ public class PCBTrack extends TrackShape implements PCBShape{
 //                         }
 //                        }     
 //                      }
-//                    }                 
+//                    }  
+*/                    
                 }
             }
+       
         }
         return net;
     }
@@ -268,12 +270,21 @@ public class PCBTrack extends TrackShape implements PCBShape{
         Polyline r=this.polyline.clone();   
         
         // draw floating point
-        if (this.isFloating()) {
-            Point p = this.floatingMidPoint.clone();                              
-            r.add(p); 
-            
-            p = this.floatingEndPoint.clone();
-            r.add(p);                                     
+        if (this.isFloating()) {            
+            //front
+            if(this.getResumeState()==ResumeState.ADD_AT_FRONT){
+                Point p = this.floatingMidPoint.clone();                              
+                r.points.add(0,p); 
+                
+                p = this.floatingEndPoint.clone();
+                r.points.add(0,p);                
+            }else{
+                Point p = this.floatingMidPoint.clone();                              
+                r.add(p); 
+                            
+                p = this.floatingEndPoint.clone();
+                r.add(p);                                
+            }            
         }
         
         r.scale(scale.getScaleX());
@@ -397,6 +408,8 @@ public class PCBTrack extends TrackShape implements PCBShape{
 
         private int clearance;
         
+        private ResumeState resumeState;
+        
         public Memento(MementoType mementoType) {
             super(mementoType);
 
@@ -407,14 +420,19 @@ public class PCBTrack extends TrackShape implements PCBShape{
             super.loadStateTo(shape);
             shape.polyline.points.clear();
             for (int i = 0; i < Ax.length; i++) {
-                shape.add(new Point(Ax[i], Ay[i]));
-            }
-            //***reset floating start point
-            if (shape.polyline.points.size() > 0) {
-                shape.floatingStartPoint.set(shape.polyline.points.get(shape.polyline.points.size() - 1));
-                shape.reset();
+                shape.getLinePoints().add(new LinePoint(Ax[i], Ay[i]));
             }
             shape.clearance=clearance;
+            shape.resumeState=resumeState;
+            //***reset floating start point
+            if (shape.polyline.points.size() > 0) {
+                if(shape.getResumeState()==ResumeState.ADD_AT_END){
+                  shape.floatingStartPoint.set(shape.polyline.points.get(shape.polyline.points.size() - 1));
+                }else{
+                  shape.floatingStartPoint.set(shape.polyline.points.get(0));  
+                }
+                shape.reset();
+            }
         }
         
         @Override
@@ -425,8 +443,9 @@ public class PCBTrack extends TrackShape implements PCBShape{
             for (int i = 0; i < shape.polyline.points.size(); i++) {
                 Ax[i] = (shape.polyline.points.get(i)).x;
                 Ay[i] = (shape.polyline.points.get(i)).y;
-            }
+            }            
             this.clearance=shape.clearance;
+            this.resumeState=shape.resumeState;
         }
 
         @Override
@@ -446,16 +465,16 @@ public class PCBTrack extends TrackShape implements PCBShape{
             }
             Memento other = (Memento)obj;
             
-            return (super.equals(obj)&&this.clearance==other.clearance&&
+            return (super.equals(obj)&&this.clearance==other.clearance&&Objects.equals(this.resumeState, other.resumeState)&&
                     Arrays.equals(Ax, other.Ax) && Arrays.equals(Ay, other.Ay));
 
         }
 
         @Override
         public int hashCode() {
-            int  hash = super.hashCode()+this.clearance;
+            int  hash = super.hashCode()+this.clearance+Objects.hashCode(resumeState);
             hash += Arrays.hashCode(Ax);
-            hash += Arrays.hashCode(Ay);
+            hash += Arrays.hashCode(Ay);            
             return hash;
         }
         @Override
