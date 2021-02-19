@@ -115,7 +115,8 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
         }
         return false;
     }
-    public void Detach(){
+    @Override
+    public void detach(){
         if(getTarget()!=null){
           if(getComponent().getLineBendingProcessor().getLine()!=null)
               getComponent().getLineBendingProcessor().release(); 
