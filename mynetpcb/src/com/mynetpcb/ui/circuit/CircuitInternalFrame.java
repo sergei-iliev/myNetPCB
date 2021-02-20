@@ -231,7 +231,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         AddBoardButton.setPreferredSize(new Dimension(35, 35));
         AddBoardButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
         AddBoardButton.addMenu("Create new circuits project","Create").addMenu("Add circuit to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
-            .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSubMenu("export","Gerber RS-274X/X2", "export.gerber").addSeparator().addMenu("Exit","exit");
+            .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSeparator().addMenu("Exit","exit");
         
         PrintButton.addActionListener(this);
         PrintButton.setToolTipText("Print Circuit");

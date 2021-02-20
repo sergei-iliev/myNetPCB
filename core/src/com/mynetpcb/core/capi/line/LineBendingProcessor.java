@@ -65,7 +65,12 @@ public abstract class LineBendingProcessor {
      */
     public boolean isOverlappedPoint(Point pointToAdd){
         if(getLine().getLinePoints().size()>0){
-          Point lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1); 
+            Point lastPoint;
+            if(getLine().getResumeState()==Trackable.ResumeState.ADD_AT_END){  
+                lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1); 
+            }else{
+                lastPoint=(Point)getLine().getLinePoints().get(0); 
+            }
             //***is this the same point as last one?   
           if(Utils.EQ(pointToAdd.x,lastPoint.x)&&Utils.EQ(pointToAdd.y,lastPoint.y))
             return true;    
@@ -78,11 +83,17 @@ public abstract class LineBendingProcessor {
      */
     public boolean isPointOnLine(Point pointToAdd){
          if(getLine().getLinePoints().size()>=2){
-              Point lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1);  
-              Point lastlastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-2); 
+             Point lastPoint,lastlastPoint;
+             if(getLine().getResumeState()==Trackable.ResumeState.ADD_AT_END){  
+                lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1);  
+                lastlastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-2); 
+             }else{
+                lastPoint=(Point)getLine().getLinePoints().get(0);  
+                lastlastPoint=(Point)getLine().getLinePoints().get(1);                  
+             }
             //***check if point to add overlaps last last point
             if(lastlastPoint.equals(pointToAdd)){
-              getLine().deleteLastPoint();
+              //getLine().deleteLastPoint();
               lastPoint.set(pointToAdd);  
               return true;
             }

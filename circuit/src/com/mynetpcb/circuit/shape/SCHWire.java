@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
+import com.mynetpcb.core.capi.line.Trackable.ResumeState;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -24,6 +25,7 @@ import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -35,6 +37,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class SCHWire extends AbstractLine implements Sublineable,Externalizable {
+    
+    
     public SCHWire(){
         super(1,Layer.LAYER_NONE);  
         this.fillColor=Color.BLACK;
@@ -48,6 +52,7 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
             copy.floatingMidPoint = new Point();
             copy.floatingEndPoint = new Point();
             copy.resizingPoint=null;
+            copy.resumeState=ResumeState.ADD_AT_END;
             copy.polyline=this.polyline.clone();
             return copy;
     }  
@@ -94,13 +99,25 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
         
         Polyline r=this.polyline.clone();         
         
+        
         // draw floating point
         if (this.isFloating()) {
-            Point p = this.floatingMidPoint.clone(); 
-            r.add(p);
-            p = this.floatingEndPoint.clone();
-            r.add(p);
-        }
+            //front
+            //front
+            if(this.getResumeState()==ResumeState.ADD_AT_FRONT){
+                Point p = this.floatingMidPoint.clone();                              
+                r.points.add(0,p); 
+                
+                p = this.floatingEndPoint.clone();
+                r.points.add(0,p);                
+            }else{
+                Point p = this.floatingMidPoint.clone();                              
+                r.add(p); 
+                            
+                p = this.floatingEndPoint.clone();
+                r.add(p);                                
+            }
+        }        
         r.scale(scale.getScaleX());
         r.move(-viewportWindow.getX(),- viewportWindow.getY());
         
@@ -183,6 +200,8 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
 
         private double Ay[];
         
+        private ResumeState resumeState;
+        
         public Memento(MementoType mementoType) {
             super(mementoType);
 
@@ -193,13 +212,19 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
             super.loadStateTo(shape);
             shape.polyline.points.clear();
             for (int i = 0; i < Ax.length; i++) {
-                shape.add(new Point(Ax[i], Ay[i]));
-            }
+                shape.getLinePoints().add(new LinePoint(Ax[i], Ay[i]));
+            }            
+            shape.resumeState=resumeState;
             //***reset floating start point
             if (shape.polyline.points.size() > 0) {
-                shape.floatingStartPoint.set((Point)shape.polyline.points.get(shape.polyline.points.size() - 1));
+                if(shape.getResumeState()==ResumeState.ADD_AT_END){
+                  shape.floatingStartPoint.set(shape.polyline.points.get(shape.polyline.points.size() - 1));
+                }else{
+                  shape.floatingStartPoint.set(shape.polyline.points.get(0));  
+                }
                 shape.reset();
             }
+            
         }
 
         @Override
@@ -208,9 +233,10 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
             Ax = new double[shape.polyline.points.size()];
             Ay = new double[shape.polyline.points.size()];
             for (int i = 0; i < shape.polyline.points.size(); i++) {
-                Ax[i] = ((Point)shape.polyline.points.get(i)).x;
-                Ay[i] = ((Point)shape.polyline.points.get(i)).y;
+                Ax[i] = (shape.polyline.points.get(i)).x;
+                Ay[i] = (shape.polyline.points.get(i)).y;
             }
+            this.resumeState=shape.resumeState;
         }
 
         @Override
@@ -229,14 +255,14 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
                 return false;
             }
             Memento other = (Memento) obj;
-            return (super.equals(obj)&&
+            return (super.equals(obj)&&Objects.equals(this.resumeState, other.resumeState)&&
                     Arrays.equals(Ax, other.Ax) && Arrays.equals(Ay, other.Ay));
 
         }
 
         @Override
         public int hashCode() {
-            int  hash = super.hashCode();
+            int  hash = super.hashCode()+Objects.hashCode(resumeState);
             hash += Arrays.hashCode(Ax);
             hash += Arrays.hashCode(Ay);
             return hash;

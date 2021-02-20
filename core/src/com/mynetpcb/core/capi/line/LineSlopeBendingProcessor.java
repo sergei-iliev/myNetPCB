@@ -6,6 +6,14 @@ import com.mynetpcb.d2.shapes.Point;
 
 public class LineSlopeBendingProcessor extends LineBendingProcessor{
 
+//    @Override
+//    public void initialize(Trackable line) {        
+//        super.initialize(line);
+//        if(this.getLine().getLinePoints().size()>1){
+//            this.getLine().deleteLastPoint();
+//            this.getLine().getOwningUnit().registerMemento(((Stateable)getLine()).getState(MementoType.MOVE_MEMENTO)); 
+//        }
+//    }
 
     @Override
     public boolean addLinePoint(Point point) {
@@ -42,8 +50,14 @@ public class LineSlopeBendingProcessor extends LineBendingProcessor{
     @Override
     public void moveLinePoint(double x, double y) {
         if(getLine().getLinePoints().size()>1){
-            Point lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1);  
-            Point lastlastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-2);  
+            Point lastPoint,lastlastPoint;
+            if(getLine().getResumeState()==Trackable.ResumeState.ADD_AT_FRONT){
+                lastPoint=(Point)getLine().getLinePoints().get(0);  
+                lastlastPoint=(Point)getLine().getLinePoints().get(1);  
+            }else{
+               lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1);  
+               lastlastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-2);  
+            }
             if(this.isSlopeInterval(lastPoint, lastlastPoint)){
                this.handleLine(x, y);
             }else{

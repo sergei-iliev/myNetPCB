@@ -86,15 +86,28 @@ public class WireEventHandle extends EventHandle<CircuitComponent,Shape>{
     public void resizingEvent(){
         getComponent().Repaint();        
     } 
-    
+
     @Override
     public void keyPressed(KeyEvent keyEvent) { 
-        if(keyEvent.getKeyCode()==KeyEvent.VK_SPACE){   
+        if(keyEvent.getKeyCode()==KeyEvent.VK_SPACE){
             LineBendingProcessor lineBendingProcessor=getComponent().getBendingProcessorFactory().resolve(getComponent().getLineBendingProcessor());
             getComponent().setLineBendingProcessor(lineBendingProcessor);
         }
+                        
     }
-    public void Detach(){
+    
+    @Override
+    public boolean forwardKeyPress(KeyEvent keyEvent) {
+        if(keyEvent.getKeyCode()==KeyEvent.VK_ESCAPE){  
+            getComponent().getLineBendingProcessor().release();
+            getComponent().getEventMgr().resetEventHandle();
+            getComponent().Repaint();
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public void detach(){
         if(getTarget()!=null){
           if(getComponent().getLineBendingProcessor().getLine()!=null)
               getComponent().getLineBendingProcessor().release(); 

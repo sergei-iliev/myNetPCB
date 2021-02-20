@@ -284,12 +284,6 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
     }
 
     @Override
-    public void reverse(double x, double y) {
-        // TODO Implement this method
-
-    }
-
-    @Override
     public void removePoint(double x, double y) {
         // TODO Implement this method
 

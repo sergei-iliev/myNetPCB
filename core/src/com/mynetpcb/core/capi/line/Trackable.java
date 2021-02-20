@@ -16,6 +16,10 @@ import java.util.List;
  * @author Sergey Iliev
  */
 public interface Trackable<P extends Point> extends Drawable,Unitable<Unit>{
+    public enum ResumeState{
+        ADD_AT_FRONT,ADD_AT_END
+    }
+    
     public enum JoinType{
         JOIN_MITER,
         JOIN_ROUND,
@@ -58,7 +62,7 @@ public interface Trackable<P extends Point> extends Drawable,Unitable<Unit>{
      * @param point
      */
      public void add(Point point); 
-
+    
      public void add(double x,double y); 
 
 /**
@@ -105,12 +109,19 @@ public interface Trackable<P extends Point> extends Drawable,Unitable<Unit>{
     
     public void deleteLastPoint();
     
+    public default ResumeState getResumeState(){return null;}
     /*
      * revers wire points ordering
      * if point is null -> reverse unconditionally
      * otherwise make this a last point
      */
-    public void reverse(double x,double y);
+    //@Deprecated
+    //public void reverse(double x,double y);
+    
+    /*
+     * Resume drawing - could be at the front or end of the existing line
+     */
+    public default void resumeLine(double x,double y){};
     /*
      * remove point
      */

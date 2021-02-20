@@ -272,8 +272,8 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
 
                     FootprintMgr.getInstance().rotateBlock(shapes,
                                            ((e.getKeyCode() ==KeyEvent.VK_A) ?
-                                                                              -1 :
-                                                                              1) *
+                                                                              1 :
+                                                                              -1) *
                                                                              90,
                                                                              center); 
                     FootprintMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);                     

@@ -546,7 +546,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
             Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);  
             UnitMgr unitMgr = new UnitMgr();
-            unitMgr.rotateBlock(shapes,(e.getActionCommand().equalsIgnoreCase("rotateleft")?-1:1)*90,r.getCenter());   
+            unitMgr.rotateBlock(shapes,(e.getActionCommand().equalsIgnoreCase("rotateleft")?1:-1)*90,r.getCenter());   
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);  
             //skip if single pin
             //unitMgr.normalizePinText(shapes);
@@ -554,11 +554,11 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().Repaint();
         }
         if(e.getActionCommand().equalsIgnoreCase("deleteunit")){  
-            if(getUnitComponent().getModel().isChanged(getUnitComponent().getModel().getUnit().getUUID())){                        
-                if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(getUnitComponent().getDialogFrame().getParentFrame(), "There are unsaved changes. Do you want to continue?", "Delete", JOptionPane.YES_NO_OPTION)) {                                       
+            //if(getUnitComponent().getModel().isChanged(getUnitComponent().getModel().getUnit().getUUID())){                        
+            if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(getUnitComponent().getDialogFrame().getParentFrame(), "Are you sure you want to delete '"+getUnitComponent().getModel().getUnit().getUnitName()+"' ?", "Delete", JOptionPane.YES_NO_OPTION)) {                                       
                     return;
-                }                      
-            }
+            }                      
+            //}
             getUnitComponent().getModel().delete(getUnitComponent().getModel().getUnit().getUUID());
             if (getUnitComponent().getModel().getUnits().size() > 0) {
                 getUnitComponent().getModel().setActiveUnit(0);

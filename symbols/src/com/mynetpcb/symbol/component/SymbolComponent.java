@@ -241,8 +241,8 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
 
                     SymbolMgr.getInstance().rotateBlock(shapes,
                                            ((e.getKeyCode() ==KeyEvent.VK_A) ?
-                                                                              -1 :
-                                                                              1) *
+                                                                              1 :
+                                                                              -1) *
                                                                              90,
                                                                              center); 
                     SymbolMgr.getInstance().alignBlock(getModel().getUnit().getGrid(),shapes);                     

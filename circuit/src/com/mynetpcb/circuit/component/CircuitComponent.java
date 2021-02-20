@@ -25,15 +25,22 @@ import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
+import com.mynetpcb.core.capi.undo.CompositeMemento;
+import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+
+import java.util.Collection;
 
 /**
  * The Board Component GUI
@@ -67,7 +74,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
             Cursor cursor =
                     Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),
                                                                                          "/com/mynetpcb/core/images/cursor_cross.png").getImage(),
-                                                                   new Point(16,
+                                                                   new java.awt.Point(16,
                                                                              16),
                                                                    "Wire");
             this.setCursor(cursor);
@@ -76,7 +83,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
             cursor =
                     Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),
                                                                                          "/com/mynetpcb/core/images/cursor_cross_bus.png").getImage(),
-                                                                   new Point(16,
+                                                                   new java.awt.Point(16,
                                                                              16),
                                                                    "Bus");
             this.setCursor(cursor);
@@ -194,7 +201,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                         if (wire.isEndPoint(scaledEvent.getX(),
                                             scaledEvent.getY())) {
                             //***do we need to reorder
-                            wire.reverse(scaledEvent.getX(),scaledEvent.getY());
+                        //    wire.reverse(scaledEvent.getX(),scaledEvent.getY());
                         } else {
                             shape = new SCHWire();                        
                             getModel().getUnit().add(shape);
@@ -229,7 +236,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                         if (bus.isEndPoint(scaledEvent.getX(),
                                             scaledEvent.getY())) {
                             //***do we need to reorder
-                            bus.reverse(scaledEvent.getX(),scaledEvent.getY());
+                            //bus.reverse(scaledEvent.getX(),scaledEvent.getY());
                         } else {
                             shape = new SCHBus();                        
                             getModel().getUnit().add(shape);
@@ -246,6 +253,79 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
         }
 
         super.mousePressed(event);
+    }   
+    @Override
+    protected boolean defaultKeyPress(KeyEvent e) {
+        if (super.defaultKeyPress(e)) {
+            return true;
+        }
+        if (e.getModifiersEx() != 0) {
+            if (e.getModifiers() == ActionEvent.CTRL_MASK) {
+                if (e.getKeyCode() == KeyEvent.VK_Q ||e.getKeyCode() == KeyEvent.VK_A) {
+                    
+                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes();
+                    if(shapes.size()==0){
+                       return true; 
+                    }   
+                    //***notify undo manager                    
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+                    Box r = getModel().getUnit().getShapesRect(shapes);
+                    Point center=r.getCenter();
+                    
+                    CircuitMgr.getInstance().rotateBlock(shapes,
+                                           ((e.getKeyCode() ==KeyEvent.VK_A) ?
+                                                                              1 :
+                                                                              -1) *
+                                                                             90,
+                                                                             center); 
+                    CircuitMgr.getInstance().alignBlock(getModel().getUnit().getGrid(), shapes);
+
+                    //***notify undo manager
+                    getModel().getUnit().registerMemento(shapes.size() > 1 ?
+                                                         new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes) :
+                                                         shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+                    Repaint();
+                    return true;         
+                    
+                }
+            }
+            if (e.getModifiers() == ActionEvent.SHIFT_MASK) {
+                if (e.getKeyCode() == KeyEvent.VK_Q ||
+                    e.getKeyCode() == KeyEvent.VK_A) {
+                    Collection<Shape> shapes= getModel().getUnit().getSelectedShapes();
+                    if(shapes.size()==0){
+                       return true; 
+                    } 
+                    //***notify undo manager
+                    getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+                    //***notify undo manager
+                    getModel().getUnit().registerMemento(shapes.size() > 1 ?
+                                                         new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes) :
+                                                         shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+                    Box r = getModel().getUnit().getShapesRect(shapes);
+                    Point center=r.getCenter();
+                    Point p=getModel().getUnit().getGrid().positionOnGrid(center); 
+                    
+                    if(e.getKeyCode() == KeyEvent.VK_Q){
+                        CircuitMgr.getInstance().mirrorBlock(getModel().getUnit().getSelectedShapes(),new com.mynetpcb.d2.shapes.Line(new Point(p.x - 10, p.y),
+                                                              new Point(p.x + 10, p.y)));
+                                           
+                    }else{
+                        CircuitMgr.getInstance().mirrorBlock(getModel().getUnit().getSelectedShapes(),new com.mynetpcb.d2.shapes.Line(
+                                new Point(p.x, p.y - 10),
+                                          new Point(p.x, p.y + 10)));
+                    }
+                    CircuitMgr.getInstance().alignBlock(getModel().getUnit().getGrid(), shapes);
+                    //***notify undo manager
+                    getModel().getUnit().registerMemento(shapes.size() > 1 ?
+                                                         new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes) :
+                                                         shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+                    Repaint();
+                    return true;                
+                }
+            }
+        }
+        return false;
     }    
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
