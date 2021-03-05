@@ -1,6 +1,5 @@
 package com.mynetpcb.ui.symbol;
 
-import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
@@ -17,6 +16,7 @@ import com.mynetpcb.core.capi.io.WriteUnitLocal;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.popup.JPopupButton;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;

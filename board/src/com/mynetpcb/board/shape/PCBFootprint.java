@@ -173,6 +173,24 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         
     }
     @Override
+    public boolean isVisibleOnLayers(int layermasks){
+        for(Shape shape:this.shapes){
+           if(shape.isVisibleOnLayers(layermasks))
+             return true;
+        }
+        return false;
+    }  
+    @Override
+    public boolean isClicked(int x, int y, int layermasks) {
+        for(Shape shape:this.shapes){
+            if(shape.isVisibleOnLayers(layermasks)){
+                if(shape.isClicked(x, y))
+                  return true;
+            }             
+        }
+        return false;   
+    }
+    @Override
     public boolean isClicked(int x, int y) {
         Box r=this.getBoundingShape();
         if(!r.contains(x,y)){

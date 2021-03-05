@@ -1,7 +1,6 @@
 package com.mynetpcb.core.capi.unit;
 
 
-import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.Frameable;
 import com.mynetpcb.core.capi.Grid;
@@ -22,6 +21,7 @@ import com.mynetpcb.core.capi.pin.PinLineable;
 import com.mynetpcb.core.capi.print.PrintCallable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -429,7 +429,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
                           continue;
                         }
                     }
-                    if(shape.isClicked(x, y)){
+                    if(this.isShapeVisibleOnLayers(shape)&&shape.isClicked(x, y)){
                        orderElements.add(shape);
                        continue; 
                     }                    
@@ -481,14 +481,14 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
 //        }
 
         Collections.sort(clickedShapes,clickedShapesComparator);
-        for(Shape shape:clickedShapes){
-            if(!isShapeVisibleOnLayers(shape)){             
-               continue;              
-            }
-            
-            return (S)shape;
-        }
-        return null;  
+//        for(Shape shape:clickedShapes){
+//            if(!isShapeVisibleOnLayers(shape)){             
+//               continue;              
+//            }
+//            
+//            return (S)shape;
+//        }
+        return (S)clickedShapes.get(0);                            
     }
 
     public int getWidth() {

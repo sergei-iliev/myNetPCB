@@ -139,10 +139,8 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
                           continue;
                         }
                     }
-                    if(shapes.get(i).isClicked(x, y)){
-                        if(isShapeVisibleOnLayers(shapes.get(i))){
-                         orderElements.add(shapes.get(i));                         
-                        }
+                    if(isShapeVisibleOnLayers(shapes.get(i))&&shapes.get(i).isClicked(x, y,getLayerMaskID())){                        
+                         orderElements.add(shapes.get(i));                                                 
                     }                    
                     
                 }        

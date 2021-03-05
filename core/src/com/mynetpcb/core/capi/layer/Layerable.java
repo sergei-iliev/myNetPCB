@@ -29,6 +29,11 @@ public interface Layerable {
      */
     public boolean isVisibleOnLayers(int layermasks);
 
+    /*
+     * Is shape clicked in regard to visible layers
+     */
+    public boolean isClicked(int x,int y,int layermaskId);
+    
     /**
      * Sets the viewing side {TOP,BOTTOM}
      * Mirroring happens around the line

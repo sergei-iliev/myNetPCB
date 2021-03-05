@@ -1,7 +1,7 @@
 package com.mynetpcb.core.capi.panel;
 
 
-import com.mynetpcb.core.capi.CoordinateSystem;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;

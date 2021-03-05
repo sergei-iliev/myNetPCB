@@ -25,6 +25,7 @@ import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
 import com.mynetpcb.core.capi.io.WriteUnitLocal;
 import com.mynetpcb.core.capi.popup.JPopupButton;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
@@ -770,9 +771,15 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         if (e.getSource()==NoConnectorButton) {
             circuitComponent.setMode(Mode.NOCONNECTOR_MODE);
         }       
-//        if (e.getActionCommand().equals("CoordOrigin")) {
-//            circuitComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
-//        }        
+        if (e.getSource()==CoordButton){
+            if(CoordButton.getModel().isSelected()){
+                circuitComponent.getModel().getUnit().setCoordinateSystem(new CoordinateSystem(circuitComponent.getModel().getUnit(),2));
+                circuitComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+            }else{
+                circuitComponent.getModel().getUnit().deleteCoordinateSystem(); 
+                circuitComponent.setMode(Mode.COMPONENT_MODE); 
+            }            
+        }        
         if (e.getSource()==JunctionButton) {
             circuitComponent.setMode(Mode.JUNCTION_MODE);
         }

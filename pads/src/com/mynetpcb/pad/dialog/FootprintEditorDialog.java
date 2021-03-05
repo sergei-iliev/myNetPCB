@@ -1,7 +1,7 @@
 package com.mynetpcb.pad.dialog;
 
 
-import com.mynetpcb.core.capi.CoordinateSystem;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;

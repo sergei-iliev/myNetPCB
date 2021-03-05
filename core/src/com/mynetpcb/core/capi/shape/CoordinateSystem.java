@@ -1,7 +1,7 @@
-package com.mynetpcb.core.capi;
+package com.mynetpcb.core.capi.shape;
 
 
-import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
