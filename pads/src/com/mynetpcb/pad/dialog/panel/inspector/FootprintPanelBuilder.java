@@ -33,7 +33,7 @@ public class FootprintPanelBuilder extends AbstractPanelBuilder<Shape>{
     
     private JComboBox unitsCombo,gridCombo,referenceCombo,valueCombo;
     
-    JTextField originX,originY;
+    
         
     public FootprintPanelBuilder(FootprintComponent component) {
         super(component,new GridLayout(9,1));  

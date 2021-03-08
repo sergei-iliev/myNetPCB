@@ -27,7 +27,6 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
     
     private JComboBox textLayoutCombo,referenceCombo,valueCombo;
     
-    JTextField originX,originY;
         
     public SymbolPanelBuilder(SymbolComponent component) {
         super(component,new GridLayout(9,1));  

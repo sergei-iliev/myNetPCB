@@ -24,7 +24,6 @@ public class BoardPanelBuilder extends AbstractPanelBuilder< Shape> {
 
     private JComboBox unitsCombo, gridCombo;
 
-    private JTextField originX, originY;
 
     public BoardPanelBuilder(BoardComponent component) {
         super(component, new GridLayout(8, 1));        

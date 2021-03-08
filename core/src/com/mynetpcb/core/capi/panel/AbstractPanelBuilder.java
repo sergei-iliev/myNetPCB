@@ -1,9 +1,9 @@
 package com.mynetpcb.core.capi.panel;
 
 
-import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.shape.Shape;
 
 import java.awt.Component;
@@ -54,7 +54,9 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
   
   protected JComboBox fillCombo,parentCombo,layerCombo;
   
-  protected JComboBox styleCombo;  
+  protected JComboBox styleCombo;
+  
+  protected  JTextField originX,originY;
     
     public AbstractPanelBuilder(UnitComponent component,LayoutManager layoutManager) {
        layoutPanel=new JPanel(layoutManager);

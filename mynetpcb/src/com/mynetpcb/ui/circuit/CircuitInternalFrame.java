@@ -301,8 +301,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         group.add(LabelButton);
         group.add(ConnectorButton);
         group.add(NoConnectorButton);
-        group.add(NetLabelButton);
-        group.add(CoordButton);
+        group.add(NetLabelButton);        
         group.add(DragHeand);
         
         WestPanel.setLayout(new BorderLayout());

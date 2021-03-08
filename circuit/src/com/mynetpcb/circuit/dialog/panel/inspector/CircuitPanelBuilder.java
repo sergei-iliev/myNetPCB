@@ -20,7 +20,7 @@ public class CircuitPanelBuilder extends AbstractPanelBuilder<Shape> {
     private JTextField circuitNameField,widthField,heightField;
     
     public CircuitPanelBuilder(CircuitComponent component) {
-        super(component,new GridLayout(3,1));        
+        super(component,new GridLayout(5,1));        
                 //***Circuit Name        
                         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                         label=new JLabel("Circuit name"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(100,24)); panel.add(label,BorderLayout.WEST);
@@ -35,12 +35,17 @@ public class CircuitPanelBuilder extends AbstractPanelBuilder<Shape> {
                         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                         label=new JLabel("Height"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(100,24)); panel.add(label,BorderLayout.WEST);
                         heightField=new JTextField(""); heightField.addKeyListener(this); panel.add(heightField,BorderLayout.CENTER);
-                        layoutPanel.add(panel);   
+                        layoutPanel.add(panel);                       
         
     }
 
 
-
+    @Override
+    public void updateUI() {
+        circuitNameField.setText(getComponent().getModel().getUnit()!=null?getComponent().getModel().getUnit().getUnitName():""); 
+        widthField.setText(String.valueOf(getComponent().getModel().getUnit()!=null?getComponent().getModel().getUnit().getWidth():"0"));
+        heightField.setText(String.valueOf(getComponent().getModel().getUnit()!=null?getComponent().getModel().getUnit().getHeight():"0"));    
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -62,12 +67,6 @@ public class CircuitPanelBuilder extends AbstractPanelBuilder<Shape> {
         getComponent().Repaint();
         
     }
-    
-    @Override
-    public void updateUI() {
-        circuitNameField.setText(getComponent().getModel().getUnit()!=null?getComponent().getModel().getUnit().getUnitName():""); 
-        widthField.setText(String.valueOf(getComponent().getModel().getUnit()!=null?getComponent().getModel().getUnit().getWidth():"0"));
-        heightField.setText(String.valueOf(getComponent().getModel().getUnit()!=null?getComponent().getModel().getUnit().getHeight():"0"));       
-    }
+
 }
 
