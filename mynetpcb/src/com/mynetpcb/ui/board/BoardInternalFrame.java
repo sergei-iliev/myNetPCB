@@ -583,18 +583,18 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         if (e.getSource()==FootprintButton) {           
             
             AbstractLoadDialog.Builder builder=new FootprintLoadDialog.Builder();
-            AbstractLoadDialog symbolLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Footprint").setEnabled(true).build();
+            AbstractLoadDialog footprintLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Footprint").setEnabled(true).build();
 
-            symbolLoadDialog.pack();
-            symbolLoadDialog.setLocationRelativeTo(null); //centers on screen
-            symbolLoadDialog.setVisible(true);
+            footprintLoadDialog.pack();
+            footprintLoadDialog.setLocationRelativeTo(null); //centers on screen
+            footprintLoadDialog.setVisible(true);
 
-            if (symbolLoadDialog.getSelectedModel() == null) {
+            if (footprintLoadDialog.getSelectedModel() == null) {
                 return;
             }
             boardComponent.setMode(Mode.FOOTPRINT_MODE);
 
-            Footprint footprint = (Footprint) symbolLoadDialog.getSelectedModel().getUnit();
+            Footprint footprint = (Footprint) footprintLoadDialog.getSelectedModel().getUnit();
             PCBFootprint pcbfootprint = BoardMgr.getInstance().createPCBFootprint(footprint,boardComponent.getModel().getUnit().getActiveSide());
             //            //***set chip cursor
             pcbfootprint.move(-1 * (int) pcbfootprint.getBoundingShape().getCenter().x,
@@ -603,8 +603,8 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
             boardComponent.setContainerCursor(pcbfootprint);
             boardComponent.getEventMgr().setEventHandle("cursor", pcbfootprint);
 
-            symbolLoadDialog.dispose();
-            symbolLoadDialog = null;
+            footprintLoadDialog.dispose();
+            footprintLoadDialog = null;
             this.boardComponent.requestFocusInWindow(); //***enable keyboard clicks
 
         }

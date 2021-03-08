@@ -103,7 +103,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
     private void Init(boolean enabled) {
         this.setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        this.setPreferredSize(new Dimension(489, 543));
+        this.setPreferredSize(new Dimension(689, 543));
         basePanel.setLayout(new BorderLayout());
         basePanel.setPreferredSize(new Dimension(400, 300));
         leftPanel.setPreferredSize(new Dimension(150, 10));

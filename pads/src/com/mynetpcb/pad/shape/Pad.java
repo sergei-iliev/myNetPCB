@@ -325,8 +325,10 @@ public class Pad extends PadShape{
     }
     public void setSelected (boolean selection) {
         super.setSelected(selection);
-        this.number.setSelected(selection);
-        this.netvalue.setSelected(selection);
+        if(this.isControlPointVisible){
+            this.number.setSelected(selection);
+            this.netvalue.setSelected(selection);
+        }
     }
     @Override
     public PadShape.Shape getShapeType() {
