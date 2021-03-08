@@ -166,13 +166,13 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         
         padNumber.setText(pad.getTextureByTag("number").getText());
         numberSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getSize())));
-        numberX.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(pad.getTextureByTag("number").getAnchorPoint().x))));
-        numberY.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(pad.getTextureByTag("number").getAnchorPoint().y))));
+        numberX.setText(toUnitX(pad.getTextureByTag("number").getAnchorPoint().x));
+        numberY.setText(toUnitY(pad.getTextureByTag("number").getAnchorPoint().y));
         
         padNetName.setText(pad.getTextureByTag("netvalue").getText());        
         netvalueSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getSize())));
-        netvalueX.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getAnchorPoint().x))));
-        netvalueY.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getAnchorPoint().y))));
+        netvalueX.setText(toUnitX(pad.getTextureByTag("netvalue").getAnchorPoint().x));
+        netvalueY.setText(toUnitY(pad.getTextureByTag("netvalue").getAnchorPoint().y));
         
         widthField.setText(String.valueOf(Grid.COORD_TO_MM(pad.getWidth())));
         if(pad.getShapeType() == Pad.Shape.CIRCULAR||pad.getShapeType()==Pad.Shape.POLYGON){
