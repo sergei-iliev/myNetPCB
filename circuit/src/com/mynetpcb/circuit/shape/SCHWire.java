@@ -51,8 +51,7 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
             copy.floatingStartPoint = new Point();
             copy.floatingMidPoint = new Point();
             copy.floatingEndPoint = new Point();
-            copy.resizingPoint=null;
-            copy.resumeState=ResumeState.ADD_AT_END;
+            copy.resizingPoint=null;            
             copy.polyline=this.polyline.clone();
             return copy;
     }  

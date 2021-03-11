@@ -21,9 +21,7 @@ public class LineEventHandle <U extends UnitComponent,S extends Shape> extends E
         super.attach();
         LineBendingProcessor lineBendingProcessor=getComponent().getBendingProcessorFactory().resolve(null);
         lineBendingProcessor.initialize((Trackable)getTarget());
-        getComponent().setLineBendingProcessor(lineBendingProcessor);
-        
-        
+        getComponent().setLineBendingProcessor(lineBendingProcessor);        
     }    
     @Override
     protected void clear() {   

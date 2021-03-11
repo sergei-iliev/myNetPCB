@@ -376,9 +376,15 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         Polyline r=this.polyline.clone();   
         
         // draw floating point
-        if (this.isFloating()) {
-            Point p = this.floatingEndPoint.clone();                              
-            r.add(p); 
+        if (this.isFloating()) {                                                    
+            if(this.getResumeState()==ResumeState.ADD_AT_FRONT){                
+                Point p = this.floatingEndPoint.clone();
+                r.points.add(0,p);                
+            }else{
+                            
+                Point p = this.floatingEndPoint.clone();
+                r.add(p);                                
+            }            
         }
         
         r.scale(scale.getScaleX());

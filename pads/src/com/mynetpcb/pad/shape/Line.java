@@ -2,6 +2,8 @@ package com.mynetpcb.pad.shape;
 
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.line.LinePoint;
+import com.mynetpcb.core.capi.line.Trackable.ResumeState;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -16,6 +18,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import org.w3c.dom.Element;
@@ -98,6 +101,7 @@ public class Line extends AbstractLine implements Externalizable{
 
         private double Ay[];
         private double rotate;
+        private ResumeState resumeState;
         
         public Memento(MementoType mementoType) {
             super(mementoType);
@@ -109,11 +113,16 @@ public class Line extends AbstractLine implements Externalizable{
             super.loadStateTo(shape);
             shape.polyline.points.clear();
             for (int i = 0; i < Ax.length; i++) {
-                shape.add(new Point(Ax[i], Ay[i]));
+                shape.polyline.points.add(new LinePoint(Ax[i], Ay[i]));
             }
+            shape.resumeState=resumeState;
             //***reset floating start point
             if (shape.polyline.points.size() > 0) {
-                shape.floatingStartPoint.set((Point)shape.polyline.points.get(shape.polyline.points.size() - 1));
+                if(shape.getResumeState()==ResumeState.ADD_AT_END){
+                  shape.floatingStartPoint.set(shape.polyline.points.get(shape.polyline.points.size() - 1));
+                }else{
+                  shape.floatingStartPoint.set(shape.polyline.points.get(0));  
+                }
                 shape.reset();
             }
         }
@@ -128,6 +137,7 @@ public class Line extends AbstractLine implements Externalizable{
                 Ay[i] = ((Point)shape.polyline.points.get(i)).y;
             }
             this.rotate=shape.rotate;
+            this.resumeState=shape.resumeState; 
         }
 
         @Override
@@ -146,14 +156,14 @@ public class Line extends AbstractLine implements Externalizable{
                 return false;
             }
             Memento other = (Memento) obj;
-            return (super.equals(obj)&&
+            return (super.equals(obj)&&Objects.equals(this.resumeState, other.resumeState)&&
                     Arrays.equals(Ax, other.Ax) && Arrays.equals(Ay, other.Ay));
 
         }
 
         @Override
         public int hashCode() {
-            int  hash = super.hashCode();
+            int  hash = super.hashCode()+Objects.hashCode(resumeState);
             hash += Arrays.hashCode(Ax);
             hash += Arrays.hashCode(Ay);
             return hash;
