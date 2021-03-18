@@ -405,5 +405,8 @@ public class Circuit extends Unit<Shape>{
         printcircuit.clear();
         printcircuit = null;
     }
-
+    @Override
+    public String toString() {
+        return "circuit";
+    }
 }

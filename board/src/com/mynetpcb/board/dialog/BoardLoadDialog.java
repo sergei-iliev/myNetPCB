@@ -85,10 +85,10 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     } 
     private void Init(boolean enabled){
         this.setResizable(false);  
-        this.setPreferredSize(new Dimension(489, 343));
+        this.setPreferredSize(new Dimension(689, 543));
         basePanel.setLayout(borderLayout1);
         basePanel.setPreferredSize(new Dimension(400, 300));
-        leftPanel.setPreferredSize(new Dimension(150, 10));
+        leftPanel.setPreferredSize(new Dimension(200, 10));
         leftPanel.setLayout(borderLayout2);
         bottomPanel.setPreferredSize(new Dimension(10, 40));
         leftPanel.add(projectCombo, BorderLayout.NORTH);

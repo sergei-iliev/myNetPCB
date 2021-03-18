@@ -290,10 +290,10 @@ public class Symbol extends Unit<Shape> implements Typeable{
 //        return packaging;
 //    }
 //
-//    @Override
-//    public String toString() {
-//        return "symbol";
-//    }
+    @Override
+    public String toString() {
+        return "symbol";
+    }
 
 
     }

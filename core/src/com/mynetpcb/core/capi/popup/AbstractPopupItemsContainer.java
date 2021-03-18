@@ -9,7 +9,6 @@ import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
-import com.mynetpcb.core.capi.gui.filter.ImpexFileFilter;
 import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
@@ -18,6 +17,7 @@ import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.UnitMgr;
+import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
-import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -153,13 +153,13 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         //***separator
         chipMenu.put("Separator",null); 
         //connectors
-        submenu=new LinkedHashMap<String,JMenuItem>(); 
-        item = new JMenuItem("Bind");item.setActionCommand("Bind");
-        submenu.put("Bind",item);
-        item = new JMenuItem("Unbind");item.setActionCommand("Unbind");
-        submenu.put("Unbind",item);         
-        chipMenu.put("ChildConnectors",submenu);     
-        chipMenu.put("Separator1",null); 
+//        submenu=new LinkedHashMap<String,JMenuItem>(); 
+//        item = new JMenuItem("Bind");item.setActionCommand("Bind");
+//        submenu.put("Bind",item);
+//        item = new JMenuItem("Unbind");item.setActionCommand("Unbind");
+//        submenu.put("Unbind",item);         
+//        chipMenu.put("ChildConnectors",submenu);     
+//        chipMenu.put("Separator1",null); 
         //wires
         submenu=new LinkedHashMap<String,JMenuItem>(); 
         item=new JMenuItem("Disconnect");item.setActionCommand("DisconnectWires");
@@ -270,8 +270,8 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         //***separator
         unitMenu.put("Separator2",null);
 
-        item=new JMenuItem("Import to Project");item.setActionCommand("ImportUnit");                                                 
-        unitMenu.put("ImportUnit",item);
+        //item=new JMenuItem("Import to Project");item.setActionCommand("ImportUnit");                                                 
+        //unitMenu.put("ImportUnit",item);
 
         item=new JMenuItem("Load");item.setActionCommand("LoadUnit");                                                 
         unitMenu.put("LoadUnit",item);
@@ -508,22 +508,22 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         if(e.getActionCommand().equalsIgnoreCase("reload")){
             getUnitComponent().reload();
         }
-        if (e.getActionCommand().equalsIgnoreCase("ImportUnit")) {
-            JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-            fc.setDialogTitle("Import to Project");
-            fc.setAcceptAllFileFilterUsed(false);
-            fc.addChoosableFileFilter(new ImpexFileFilter(".xml"));
-            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-
-                    if (fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml")) {
-                        getUnitComponent()._import(fc.getSelectedFile().getAbsolutePath());                        
-                    } else {
-                        getUnitComponent()._import( fc.getSelectedFile().getAbsolutePath() + ".xml");                        
-                    }
-                  
-            }          
-          return;
-        }
+//        if (e.getActionCommand().equalsIgnoreCase("ImportUnit")) {
+//            JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+//            fc.setDialogTitle("Import to Project");
+//            fc.setAcceptAllFileFilterUsed(false);
+//            fc.addChoosableFileFilter(new ImpexFileFilter(".xml"));
+//            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+//
+//                    if (fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml")) {
+//                        getUnitComponent()._import(fc.getSelectedFile().getAbsolutePath());                        
+//                    } else {
+//                        getUnitComponent()._import( fc.getSelectedFile().getAbsolutePath() + ".xml");                        
+//                    }
+//                  
+//            }          
+//          return;
+//        }
         if(e.getActionCommand().equalsIgnoreCase("topbottom")||e.getActionCommand().equalsIgnoreCase("leftright")){   
             Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes();
             Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
@@ -671,43 +671,43 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }
         
         if (e.getActionCommand().equalsIgnoreCase("LoadUnit")) {
-            throw new IllegalStateException("REWORK abdstract");
-//            AbstractLoadDialog.Builder builder=getUnitComponent().getLoadDialogBuilder();
-//            AbstractLoadDialog loadDialog =builder.setWindow(getUnitComponent().getDialogFrame().getParentFrame()).setCaption("Load "+getUnitComponent().getModel().getUnit().toString()).setEnabled(true).build();
-//            
-//            loadDialog.pack();
-//            loadDialog.setLocationRelativeTo(null); //centers on screen
-//            loadDialog.setVisible(true);
-//
-//            if(loadDialog.getSelectedModel()==null||loadDialog.getSelectedModel().getUnit()==null){
-//                loadDialog.dispose();
-//                loadDialog=null;
-//                return;
-//            }
-//            UnitMgr unitMgr=new UnitMgr();
-//            try {
-//                unitMgr.Load(getUnitComponent().getModel().getUnit(),loadDialog.getSelectedModel().getUnit());
-//            } catch (CloneNotSupportedException f) {
-//                            f.printStackTrace(System.out);
-//                        }
-//                        
-//            loadDialog.dispose();
-//            loadDialog=null;
-//                        
-//            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.RENAME_UNIT));
-//            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.SELECT_UNIT));
-//            getUnitComponent().getModel().setActiveUnit(getUnitComponent().getModel().getUnit().getUUID());
-//                        
-//                        //***refresh scrollbars
-//            getUnitComponent().componentResized(null);             
-//            getUnitComponent().Repaint();
-//            
-//                        //position on center
-//            Box r=getUnitComponent().getModel().getUnit().getBoundingRect();
-//            getUnitComponent().setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
-//            
-//            getUnitComponent().requestFocusInWindow(); //***for the cancel button  
-//            return;                        
+            
+            AbstractLoadDialog.Builder builder=getUnitComponent().getLoadDialogBuilder();
+            AbstractLoadDialog loadDialog =builder.setWindow((JFrame)getUnitComponent().getDialogFrame().getParentFrame()).setCaption("Load "+getUnitComponent().getModel().getUnit().toString()).setEnabled(true).build();
+            
+            loadDialog.pack();
+            loadDialog.setLocationRelativeTo(null); //centers on screen
+            loadDialog.setVisible(true);
+
+            if(loadDialog.getSelectedModel()==null||loadDialog.getSelectedModel().getUnit()==null){
+                loadDialog.dispose();
+                loadDialog=null;
+                return;
+            }
+            UnitMgr unitMgr=new UnitMgr();
+            try {
+                unitMgr.Load(getUnitComponent().getModel().getUnit(),loadDialog.getSelectedModel().getUnit());
+            } catch (CloneNotSupportedException f) {
+                            f.printStackTrace(System.out);
+                        }
+                        
+            loadDialog.dispose();
+            loadDialog=null;
+                        
+            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.RENAME_UNIT));
+            getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.SELECT_UNIT));
+            getUnitComponent().getModel().setActiveUnit(getUnitComponent().getModel().getUnit().getUUID());
+                        
+                        //***refresh scrollbars
+            getUnitComponent().componentResized(null);             
+            getUnitComponent().Repaint();
+            
+                        //position on center
+            Box r=getUnitComponent().getModel().getUnit().getBoundingRect();
+            getUnitComponent().setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+            
+            getUnitComponent().requestFocusInWindow(); //***for the cancel button  
+            return;                        
         }           
         
     }

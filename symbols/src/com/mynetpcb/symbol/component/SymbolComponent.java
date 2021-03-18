@@ -15,6 +15,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.symbol.container.SymbolContainer;
+import com.mynetpcb.symbol.dialog.SymbolLoadDialog;
 import com.mynetpcb.symbol.event.SymbolEventMgr;
 import com.mynetpcb.symbol.popup.SymbolPopupMenu;
 import com.mynetpcb.symbol.shape.Arc;
@@ -49,7 +50,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
         this.eventMgr=new SymbolEventMgr(this);
         this.setMode(Mode.COMPONENT_MODE);
         this.setBackground(Color.WHITE);
-        //this.loadDialogBuilder=new FootprintLoadDialog.Builder();
+        this.loadDialogBuilder=new SymbolLoadDialog.Builder();
         this.popup=new SymbolPopupMenu(this);
         bendingProcessorFactory=new DefaultBendingProcessorFactory();
         setLineBendingProcessor(bendingProcessorFactory.resolve("defaultbend",null));

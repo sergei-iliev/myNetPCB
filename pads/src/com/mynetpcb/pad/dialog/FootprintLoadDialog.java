@@ -106,7 +106,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
         this.setPreferredSize(new Dimension(689, 543));
         basePanel.setLayout(new BorderLayout());
         basePanel.setPreferredSize(new Dimension(400, 300));
-        leftPanel.setPreferredSize(new Dimension(150, 10));
+        leftPanel.setPreferredSize(new Dimension(200, 10));
         leftPanel.setLayout(new BorderLayout());
         bottomPanel.setPreferredSize(new Dimension(10, 40));
         leftPanel.add(libraryCombo, BorderLayout.NORTH);

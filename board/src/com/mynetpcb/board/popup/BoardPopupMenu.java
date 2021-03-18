@@ -108,7 +108,7 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
        chipMenu.remove("Mirror");
        chipMenu.remove("SelectPackage");
        chipMenu.remove("Separator");
-       chipMenu.remove("ChildConnectors");
+       //chipMenu.remove("ChildConnectors");
     }
 
     public void registerChipPopup(MouseScaledEvent e, Shape target) {
