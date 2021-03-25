@@ -148,10 +148,10 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
          
         item=new JMenuItem("Delete");item.setActionCommand("Delete");
         chipMenu.put("Delete",item);       
-        item=new JMenuItem("Assign Package"); item.setActionCommand("AssignPackage");
-        chipMenu.put("SelectPackage",item);      
+        //item=new JMenuItem("Assign Package"); item.setActionCommand("AssignPackage");
+        //chipMenu.put("SelectPackage",item);      
         //***separator
-        chipMenu.put("Separator",null); 
+        //chipMenu.put("Separator",null); 
         //connectors
 //        submenu=new LinkedHashMap<String,JMenuItem>(); 
 //        item = new JMenuItem("Bind");item.setActionCommand("Bind");
@@ -161,12 +161,12 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
 //        chipMenu.put("ChildConnectors",submenu);     
 //        chipMenu.put("Separator1",null); 
         //wires
-        submenu=new LinkedHashMap<String,JMenuItem>(); 
-        item=new JMenuItem("Disconnect");item.setActionCommand("DisconnectWires");
-        submenu.put("DisconnectWires",item); 
-        item=new JMenuItem("Connect");item.setActionCommand("ConnectWires");
-        submenu.put("ConnectWires",item);     
-        chipMenu.put("Wire ends",submenu);    
+//        submenu=new LinkedHashMap<String,JMenuItem>(); 
+//        item=new JMenuItem("Disconnect");item.setActionCommand("DisconnectWires");
+//        submenu.put("DisconnectWires",item); 
+//        item=new JMenuItem("Connect");item.setActionCommand("ConnectWires");
+//        submenu.put("ConnectWires",item);     
+//        chipMenu.put("Wire ends",submenu);    
          
     }
     private void createBasicMenuItems(){

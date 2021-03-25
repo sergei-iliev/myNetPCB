@@ -105,16 +105,16 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
     @Override
     protected void createBlockMenuItems() {
         super.createBlockMenuItems();
-        blockMenu.put("Separator1", null);
-        //wires
-        Map<String, JMenuItem> submenu = new LinkedHashMap<String, JMenuItem>();
-        JMenuItem item = new JMenuItem("Disconnect");
-        item.setActionCommand("DisconnectWires");
-        submenu.put("DisconnectWires", item);
-        item = new JMenuItem("Connect");
-        item.setActionCommand("ConnectWires");
-        submenu.put("ConnectWires", item);
-        blockMenu.put("Wire ends", submenu);
+//        blockMenu.put("Separator1", null);
+//        //wires
+//        Map<String, JMenuItem> submenu = new LinkedHashMap<String, JMenuItem>();
+//        JMenuItem item = new JMenuItem("Disconnect");
+//        item.setActionCommand("DisconnectWires");
+//        submenu.put("DisconnectWires", item);
+//        item = new JMenuItem("Connect");
+//        item.setActionCommand("ConnectWires");
+//        submenu.put("ConnectWires", item);
+//        blockMenu.put("Wire ends", submenu);
 
     }
 

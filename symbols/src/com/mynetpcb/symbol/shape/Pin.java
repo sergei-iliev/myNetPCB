@@ -90,8 +90,8 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         this.type = PinType.COMPLEX;
         this.style = Style.LINE;
         this.fillColor=Color.BLACK;
-        this.name=new SymbolFontTexture("XXX","name",-8,0,Texture.Alignment.RIGHT.ordinal(),8,Font.PLAIN);
-        this.number=new SymbolFontTexture("1","number",10,-4,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
+        this.name=new SymbolFontTexture("XXX","name",-8,2,Texture.Alignment.RIGHT.ordinal(),8,Font.PLAIN);
+        this.number=new SymbolFontTexture("1","number",10,-1,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
         this.init(Orientation.EAST);        
     }
     @Override
