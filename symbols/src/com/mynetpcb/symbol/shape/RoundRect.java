@@ -176,10 +176,10 @@ public class RoundRect extends ResizableShape implements Externalizable{
     }
     @Override
     public String toXML() {
-        return "<rectangle>"+upperLeft.x+","+upperLeft.y+","+getWidth()+","+getHeight()+","+this.getThickness()+","+this.fill.index +","+this.rounding+"</rectangle>\r\n";
+        return "<rectangle>"+Utilities.roundDouble(upperLeft.x,1)+","+Utilities.roundDouble(upperLeft.y,1)+","+getWidth()+","+getHeight()+","+this.getThickness()+","+this.fill.index +","+this.rounding+"</rectangle>\r\n";
     }
     @Override
-    public void fromXML(Node node){
+    public void fromXML(Node node){        
         StringTokenizer st=new StringTokenizer(node.getTextContent(),",");   
         init(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
         setThickness(Byte.parseByte(st.nextToken()));

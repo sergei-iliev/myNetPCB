@@ -769,7 +769,10 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         }
         if (e.getSource()==NoConnectorButton) {
             circuitComponent.setMode(Mode.NOCONNECTOR_MODE);
-        }       
+        }   
+        if (e.getSource()==NetLabelButton) {
+            circuitComponent.setMode(Mode.NETLABEL_MODE);
+        }         
         if (e.getSource()==CoordButton){
             if(CoordButton.getModel().isSelected()){
                 circuitComponent.getModel().getUnit().setCoordinateSystem(new CoordinateSystem(circuitComponent.getModel().getUnit(),2));

@@ -55,11 +55,11 @@ return null;
                     noconnector.setState(memento);
                     return noconnector;                        
                 }
-        //        if(memento instanceof SCHNetLabel.Memento){
-        //                SCHNetLabel netlabel=new SCHNetLabel();
-        //                netlabel.setState(memento);
-        //                return netlabel;                        
-        //        }        
+                if(memento instanceof SCHNetLabel.Memento){
+                        SCHNetLabel netlabel=new SCHNetLabel();
+                        netlabel.setState(memento);
+                        return netlabel;                        
+                }        
                 throw new IllegalStateException("Unknown memento type: "+memento.getClass().getCanonicalName());        
             
     }

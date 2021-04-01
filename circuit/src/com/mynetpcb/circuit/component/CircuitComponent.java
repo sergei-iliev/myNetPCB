@@ -12,6 +12,7 @@ import com.mynetpcb.circuit.shape.SCHBusPin;
 import com.mynetpcb.circuit.shape.SCHConnector;
 import com.mynetpcb.circuit.shape.SCHJunction;
 import com.mynetpcb.circuit.shape.SCHLabel;
+import com.mynetpcb.circuit.shape.SCHNetLabel;
 import com.mynetpcb.circuit.shape.SCHNoConnector;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.shape.SCHWire;
@@ -79,6 +80,11 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                                                                    "Wire");
             this.setCursor(cursor);
             break;
+        case Mode.NETLABEL_MODE:
+            shape=new SCHNetLabel();
+            setContainerCursor(shape);               
+            getEventMgr().setEventHandle("cursor",shape); 
+            break;         
         case Mode.BUS_MODE:
             cursor =
                     Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),

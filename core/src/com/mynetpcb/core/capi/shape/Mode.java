@@ -53,4 +53,7 @@ public interface Mode {
     public static final int JUNCTION_MODE = 25;
    
     public static final int NOCONNECTOR_MODE = 26; 
+    
+    public static final int NETLABEL_MODE = 27; 
+    
 }

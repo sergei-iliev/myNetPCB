@@ -8,6 +8,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
@@ -236,6 +237,7 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
             shape.headSize = headSize;
             shape.line.ps.set(x1, y1);
             shape.line.pe.set(x2,y2);
+            shape.setHeadSize(headSize);
         }
 
         @Override
@@ -262,13 +264,15 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
                     Double.hashCode(this.x2)+Double.hashCode(this.y2);                   
             return hash;            
         }
-
-        public boolean isSameState(Symbol unit) {
-            boolean flag = super.isSameState(unit);
-            ArrowLine other = (ArrowLine) unit.getShape(this.getUUID());
-            return flag&&(this.headSize==other.headSize)&&
-            Utils.EQ(this.x1, other.line.ps.x)&&Utils.EQ(this.y1, other.line.ps.y)&&    
-            Utils.EQ(this.x2, other.line.pe.x)&&Utils.EQ(this.y2, other.line.pe.y);          
+        @Override
+        public boolean isSameState(Unit unit) {
+//            boolean flag = super.isSameState(unit);
+//            ArrowLine other = (ArrowLine) unit.getShape(this.getUUID());
+//            return flag&&(this.headSize==other.headSize)&&
+//            Utils.EQ(this.x1, other.line.ps.x)&&Utils.EQ(this.y1, other.line.ps.y)&&    
+//            Utils.EQ(this.x2, other.line.pe.x)&&Utils.EQ(this.y2, other.line.pe.y);   
+             ArrowLine other = (ArrowLine) unit.getShape(this.getUUID());
+             return (other.getState(getMementoType()).equals(this));
         }
     }    
     

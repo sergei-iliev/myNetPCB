@@ -177,7 +177,7 @@ public class SCHConnector extends Shape implements Pinable,Textable,Externalizab
     @Override
     public void mirror(Line line) {        
         this.segment.mirror(line);
-        this.texture.mirror(line);
+        this.texture.setMirror(line);
         this.shape.calculatePoints();
     }
     @Override

@@ -18,6 +18,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 
@@ -114,21 +115,19 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
         super.move(xoffset,yoffset);
         this.texture.move(xoffset,yoffset);
     }
+    
+    @Override
+    public void mirror(Line line) {        
+        super.mirror(line);
+        this.texture.setMirror(line);
+    }
+    
     @Override
     public void rotate(double angle, Point origin) {
         
         super.rotate(angle,origin);
-        Orientation oldorientation=Alignment.getOrientation(this.texture.shape.alignment);            
-        this.texture.rotate(angle,origin);
-           if(angle<0){  //clockwise              
-                   if(oldorientation == Orientation.HORIZONTAL){
-                           this.texture.shape.anchorPoint.set(this.texture.shape.anchorPoint.x+(this.texture.shape.metrics.ascent-this.texture.shape.metrics.descent),this.texture.shape.anchorPoint.y);            
-                   }
-           }else{                   
-                   if(oldorientation == Orientation.VERTICAL){
-                           this.texture.shape.anchorPoint.set(this.texture.shape.anchorPoint.x,this.texture.shape.anchorPoint.y+(this.texture.shape.metrics.ascent-this.texture.shape.metrics.descent));                   
-                   }
-           }
+        this.texture.setRotation(angle, origin);
+        
     }
     
     @Override

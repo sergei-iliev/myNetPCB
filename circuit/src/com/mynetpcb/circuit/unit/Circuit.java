@@ -6,6 +6,7 @@ import com.mynetpcb.circuit.shape.SCHBusPin;
 import com.mynetpcb.circuit.shape.SCHConnector;
 import com.mynetpcb.circuit.shape.SCHJunction;
 import com.mynetpcb.circuit.shape.SCHLabel;
+import com.mynetpcb.circuit.shape.SCHNetLabel;
 import com.mynetpcb.circuit.shape.SCHNoConnector;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.shape.SCHWire;
@@ -143,13 +144,13 @@ public class Circuit extends Unit<Shape>{
         }
         xml.append("</noconnectors>\r\n");
         
-//        xml.append("<netlabels>\r\n");
-//        for (Shape shape : shapes) {
-//            if (shape instanceof SCHNetLabel) {
-//                xml.append(((Externalizable) shape).toXML());
-//            }
-//        }
-//        xml.append("</netlabels>\r\n");
+        xml.append("<netlabels>\r\n");
+        for (Shape shape : shapes) {
+            if (shape instanceof SCHNetLabel) {
+                xml.append(((Externalizable) shape).toXML());
+            }
+        }
+        xml.append("</netlabels>\r\n");
         
         xml.append("</symbols>\r\n");
         return xml;
@@ -267,16 +268,16 @@ public class Circuit extends Unit<Shape>{
             connector.fromXML(item);
             this.add(connector);
         }
-//
-//        //***read noconnectors
-//        nodelist = (NodeList) xpath.evaluate("./symbols/netlabels/*", node, XPathConstants.NODESET);
-//        for (int i = 0; i < nodelist.getLength(); i++) {
-//            item = nodelist.item(i);
-//            SCHNetLabel netlabel = new SCHNetLabel();
-//            netlabel.setSelected(selection);
-//            netlabel.fromXML(item);
-//            this.Add(netlabel);
-//        }
+
+        //***read noconnectors
+        nodelist = (NodeList) xpath.evaluate("./symbols/netlabels/*", node, XPathConstants.NODESET);
+        for (int i = 0; i < nodelist.getLength(); i++) {
+            item = nodelist.item(i);
+            SCHNetLabel netlabel = new SCHNetLabel();
+            netlabel.setSelected(selection);
+            netlabel.fromXML(item);
+            this.add(netlabel);
+        }
     }
 
     @Override

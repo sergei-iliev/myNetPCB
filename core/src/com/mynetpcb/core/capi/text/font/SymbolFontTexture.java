@@ -121,6 +121,23 @@ public class SymbolFontTexture implements Texture{
                 this.shape.alignment = alignment.mirror(false).ordinal();            
         }        
     }
+    /*
+     * Take into account alignment changes 
+     */
+    public void setMirror(Line line) {  
+        Alignment alignment=Texture.Alignment.from(this.shape.alignment); 
+        this.mirror(line);      
+        if (line.isVertical()) { //right-left mirroring
+            if (this.shape.alignment == alignment.ordinal()) {
+                this.shape.anchorPoint.set(this.shape.anchorPoint.x +
+                                        (this.shape.metrics.ascent - this.shape.metrics.descent),this.shape.anchorPoint.y);
+            }
+        } else { //***top-botom mirroring          
+            if (this.shape.alignment == alignment.ordinal()) {
+                this.shape.anchorPoint.set(this.shape.anchorPoint.x,this.shape.anchorPoint.y +(this.shape.metrics.ascent - this.shape.metrics.descent));
+            }
+        }         
+    }
 
     @Override
     public Box getBoundingShape() {        

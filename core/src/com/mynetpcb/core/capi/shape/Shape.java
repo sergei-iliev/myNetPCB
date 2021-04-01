@@ -42,7 +42,10 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
         }
     
         public static Fill byIndex(int index){
-          return Fill.values()[index-1];    
+            if(index==0){
+                return Fill.values()[0];    
+            }
+            return Fill.values()[index-1];    
         }
         
     }
