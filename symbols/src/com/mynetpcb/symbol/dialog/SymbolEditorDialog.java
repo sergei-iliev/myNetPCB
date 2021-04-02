@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
@@ -259,7 +260,7 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         NorthPanel.add(RotateRight); 
         NorthPanel.add(DragHeand);
         NorthPanel.add(PositionToCenter);
-        NorthPanel.add(AssignPackage);
+        //NorthPanel.add(AssignPackage);
         
         EastPanel.setLayout(new BorderLayout());
         EastPanel.setPreferredSize(new Dimension(220, 200));
@@ -273,8 +274,7 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         group.add(ArrowButton);
         group.add(TriangleButton);
         group.add(PinButton);
-        group.add(LabelButton);
-        group.add(CoordButton);
+        group.add(LabelButton);        
         group.add(DragHeand);
         
         WestPanel.setLayout(new BorderLayout());
@@ -398,7 +398,13 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
             symbolComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
         }
         if (e.getSource()==CoordButton) {
-            symbolComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+            if(CoordButton.getModel().isSelected()){
+                symbolComponent.getModel().getUnit().setCoordinateSystem(new CoordinateSystem(symbolComponent.getModel().getUnit(),2));
+                symbolComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+            }else{
+                symbolComponent.getModel().getUnit().deleteCoordinateSystem(); 
+                symbolComponent.setMode(Mode.COMPONENT_MODE); 
+            }
         }
         //if(e.getActionCommand().equals("assignfootprint")){            
              //FootprintMgr.getInstance().assignPackage(this, symbolComponent.getModel().getUnit().getPackaging());
