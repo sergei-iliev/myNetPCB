@@ -382,7 +382,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         circuitComponent.getModel().registerInitialState();
         circuitComponent.getModel().setLibraryName(source!=null?source.getLibraryName():null);
         circuitComponent.getModel().setCategoryName(source!=null?source.getCategoryName():null);
-        circuitComponent.getModel().setFileName(source!=null?source.getFileName():"Boards");
+        circuitComponent.getModel().setFileName(source!=null?source.getFileName():"Circuits");
         circuitComponent.getModel().setDesignerName(source!=null?source.getDesignerName():"");
         circuitComponent.getModel().setActiveUnit(0);
         circuitComponent.componentResized(null);
