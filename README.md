@@ -12,7 +12,7 @@ https://sourceforge.net/projects/mynetpcb/
 ![myNetPCB](/screenshots/mynetpcb.png)
 ![Symbols](/screenshots/symbols.png)
 ![Circuit](/screenshots/circuit.png)
-![Board](/screenshots/board-c.png)
+![Board](/screenshots/board.png)
 ![PCB](/screenshots/pcb.png)
 > **Features:**
 
