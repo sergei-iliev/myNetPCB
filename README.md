@@ -11,6 +11,7 @@ https://sourceforge.net/projects/mynetpcb/
 
 ![myNetPCB](/screenshots/mynetpcb.png)
 ![Symbols](/screenshots/symbols.png)
+![Footprints](/screenshots/footprints.png)
 ![Circuit](/screenshots/circuit.png)
 ![Board](/screenshots/board.png)
 ![PCB](/screenshots/pcb.png)
