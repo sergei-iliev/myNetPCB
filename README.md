@@ -1,7 +1,7 @@
 
 ![myNetPCB](screenshots/logo.png?raw=true "myNetPCB") 
 # myNetPCB
-PCB Layout and Schematic capture tool for Win/Linux/Mac</br>
+PCB Layout and Schematic capture tool for Win/Linux/Mac</br></br></br>
 **Features:**
 
 > - Design circtuis
