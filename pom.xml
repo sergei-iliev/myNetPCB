@@ -37,6 +37,7 @@
                         <target>1.8</target>
                     </configuration>
                 </plugin>
+<!--                 
 <plugin>
     <artifactId>maven-resources-plugin</artifactId>
     <version>3.0.2</version>
@@ -60,8 +61,39 @@
             </configuration>
         </execution>
     </executions>
-</plugin>				
+</plugin>
+ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>                        
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <outputDirectory>${deploy.dir}</outputDirectory>                  
+					<archive>
+						<manifest>
+							<mainClass>com.mynetpcb.ui.myNetPCB</mainClass>
+						</manifest>
+					</archive>                    
+                </configuration>
+<!-- mvn clean compile assembly:single -->
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+    
+            </plugin>
             </plugins>
         </pluginManagement>
+    
     </build>
 </project>
