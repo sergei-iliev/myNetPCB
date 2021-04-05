@@ -3,17 +3,16 @@ package com.mynetpcb.board.dialog.panel.inspector;
 import com.mynetpcb.board.component.BoardComponent;
 import com.mynetpcb.board.shape.PCBCopperArea;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
-
 import com.mynetpcb.core.pad.shape.PadShape;
+import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -104,7 +103,7 @@ public class CopperAreaPanelBuilder extends AbstractPanelBuilder<Shape>{
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
         PCBCopperArea area=(PCBCopperArea)getTarget();
         if(e.getSource()==this.clearanceField){
-           area.setClearance(Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
+           area.setClearance((int)Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
         }
         if(e.getSource()==this.leftField){
            Point p=area.getResizingPoint(); 

@@ -1,54 +1,44 @@
 package com.mynetpcb.circuit.shape;
 
-
-import com.mynetpcb.circuit.popup.CircuitPopupMenu;
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Moveable;
-import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.Pinaware;
 import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.event.MouseScaledEvent;
-import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
-import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.ChipText;
-import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Textable;
-import com.mynetpcb.core.capi.text.font.FontTexture;
+import com.mynetpcb.core.capi.text.Texture;
+import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
-import com.mynetpcb.symbol.shape.Pin;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polygon;
+import com.mynetpcb.d2.shapes.Segment;
+import com.mynetpcb.d2.shapes.Utils;
+import com.mynetpcb.d2.shapes.Vector;
 
-import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Composite;
+import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Node;
 
-
-public class SCHConnector extends Shape implements Pinaware<Pin>,Ownerable<Shape>,Textable,Externalizable{
+public class SCHConnector extends Shape implements Pinable,Textable,Externalizable{
 
     public enum Type{
        INPUT,OUTPUT;  
@@ -58,271 +48,175 @@ public class SCHConnector extends Shape implements Pinaware<Pin>,Ownerable<Shape
         BOX,ARROW,CIRCLE;  
     } 
     
-    private ChipText text;
- 
-    private WeakReference<Shape> weakParentRef;
-    
-    private Pin pin;
-    
+    private SymbolFontTexture texture;
     private Type type;
-    
-    private BasicStyle style;
-    
+    private Segment segment;
+    private StyleShape shape;
     public SCHConnector() {
-      super(0,0,0,0,1,0);              
-      text=new ChipText();
-      text.Add(new FontTexture("connector","???",0,0, Text.Alignment.LEFT,Utilities.POINT_TO_POINT));
-      text.setFillColor(Color.BLACK);
-      this.pin=new Pin(0,0);
-      this.pin.setType(Pin.Type.SIMPLE);
-      this.pin.setOrientation(Pin.Orientation.WEST);
-      this.pin.setSelected(false);
-      this.type=Type.OUTPUT;
-      style=new BoxStyle();      
-    }
-    public SCHConnector clone() throws CloneNotSupportedException {
-       SCHConnector copy=(SCHConnector)super.clone();
-       copy.weakParentRef=null;
-       copy.text=text.clone();
-       copy.pin=pin.clone();
-       copy.setStyle(style.getStyle());
-       return copy;
+        super( 1,Layer.LAYER_ALL); 
+        this.selectionRectWidth=4;
+        this.texture=new SymbolFontTexture("label","name",-4,2,Texture.Alignment.RIGHT.ordinal(),8,Font.PLAIN);     
+        this.type=Type.INPUT;
+        this.displayName="Connector";
+        this.segment=new Segment(new Point(0,0),new Point((Utilities.PIN_LENGTH / 2),0));            
+        this.shape=new BoxShape(this);        
     }
     
     @Override
-    public Method showContextPopup()throws NoSuchMethodException, SecurityException{
-        return CircuitPopupMenu.class.getDeclaredMethod("registerTextureMethod",new Class[] {MouseScaledEvent.class,Shape.class});        
+    public SCHConnector clone() throws CloneNotSupportedException {
+        SCHConnector copy=(SCHConnector)super.clone();
+        copy.type=this.type;
+        copy.segment=this.segment.clone();
+        copy.texture =this.texture.clone(); 
+        switch(this.getStyle()){
+        case BOX:
+                copy.shape=new BoxShape(copy);
+                break;
+        case ARROW:
+                copy.shape=new ArrowShape(copy);
+                break;
+        case CIRCLE:
+                copy.shape=new CircleShape(copy);
+        }
+        return copy;
     }
-    
     @Override
     public Point alignToGrid(boolean isRequired) {        
-        Point point=getOwningUnit().getGrid().positionOnGrid(pin.getX(),pin.getY()); 
-        Move(point.x-pin.getX(),point.y-pin.getY());
+        Point point=getOwningUnit().getGrid().positionOnGrid(segment.ps); 
+        move(point.x-segment.ps.x,point.y-segment.ps.y);
         return null;
-    }
-    public void Clear() {
-      pin.Clear();
-      text.clear();
-      style=null;
-      setOwningUnit(null);
-      setOwner(null);
-    }
-    public String getName(){
-      return text.get(0).getText();  
-    }
-    
-    public void setName(String text){
-       this.text.get(0).setText(text);
-       style.calculatePoints();
-    } 
-    public Pin.Orientation getOrientation(){
-        return pin.getOrientation();
-    }
-    
-    public void setOrientation(Pin.Orientation orientation){
-        this.pin.setOrientation(orientation); 
-        switch(orientation){
-        case NORTH:
-            text.get(0).setOrientation(Text.Orientation.VERTICAL);
-            break;
-        case SOUTH:      
-            text.get(0).setOrientation(Text.Orientation.VERTICAL);
-            break;
-        case EAST:  
-            text.get(0).setOrientation(Text.Orientation.HORIZONTAL);
-            break;
-        case WEST:                       
-            text.get(0).setOrientation(Text.Orientation.HORIZONTAL);            
-            break;
-        }
-        style.calculatePoints();
-    }
-    
-    public void setSelected(boolean isSelected) {
-        super.setSelected(isSelected);
-        text.setSelected(isSelected);
-    } 
-    
-    public Shape getOwner() {
-        if(weakParentRef!=null&&weakParentRef.get()!=null){
-          return weakParentRef.get();       
-        }
-        return null;
-    }
-
-    public void setOwner(Shape parent) {
-        if(parent==null){
-         /*
-          * nulify
-          */
-            if(this.weakParentRef!=null&&this.weakParentRef.get()!=null){
-                this.weakParentRef.clear();  
-                this.weakParentRef=null;
-            }
-        }else{
-          /*
-           * assign
-           */
-          if(this.weakParentRef!=null&&this.weakParentRef.get()!=null){
-              this.weakParentRef.clear();  
-          }
-          this.weakParentRef=new WeakReference<Shape>(parent);  
-        } 
-    }
-    public Style getStyle(){
-        return style.getStyle();
-    }
-    
-    public void setStyle(Style style){
-        switch(style){
-            case BOX:
-                 this.style= new BoxStyle(); 
-                 break;
-            case ARROW:
-                 this.style= new ArrowStyle();      
-                 break;
-            case CIRCLE:
-                 this.style= new CircleStyle();                 
-        }
-    }
-    
+    }    
     @Override
-    public java.awt.Shape calculateShape() {
-        return style.getBoundingRect();
-    }
-    public void Move(int xoffset, int yoffset) {
-       pin.Move(xoffset,yoffset);
-       style.Move(xoffset, yoffset);    
-       text.Move(xoffset,yoffset);
-    }
-    public void Rotate(AffineTransform rotation) {
-        pin.Rotate(rotation);       
-        text.Rotate(rotation);       
-        style.calculatePoints();
-    }
-    
-    @Override
-    public Point getCenter() {    
-        return new Point(pin.getX(),pin.getY());
-    }
-    
-//    @Override
-//    public void Rotate(Moveable.Rotate type) {
-//        switch(type){
-//        case LEFT:
-//            Rotate(AffineTransform.getRotateInstance(Math.PI/2,pin.getX(),pin.getY()));
-//            break;
-//        case RIGHT:
-//            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,pin.getX(),pin.getY()));
-//        }
-//    }
-    
-    public void Mirror(Point A,Point B) {
-      pin.Mirror(A,B);
-      text.Mirror(A,B);
-      style.calculatePoints();
-    }
-    
-//    @Override
-//    public void Mirror(Moveable.Mirror type) {
-//        switch(type){
-//        case HORIZONTAL:
-//            Mirror(new Point(pin.getX()-10,pin.getY()),new Point(pin.getX()+10,pin.getY()));
-//            break;
-//        case VERTICAL:
-//            Mirror(new Point(pin.getX(),pin.getY()-10),new Point(pin.getX(),pin.getY()+10));
-//        }
-//        
-//    }
-    public void Translate(AffineTransform translate) {
-        pin.Translate(translate);  
-        text.Translate(translate);    
-        style.calculatePoints();    
-    }
-    public boolean isClicked(int x, int y) {
-      return style.isClicked(x,y);            
-    }
-    
-    @Override
-    public long getOrderWeight() {
-        return 1;
+    public Point getPinPoint() {     
+        return this.segment.ps;
     }
     @Override
-    public String getDisplayName() {
-        return "Connector";
+    public Box getBoundingShape() {        
+        return segment.box();
     }
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
-        Rectangle2D scaledRect = Utilities.getScaleRect(getBoundingShape().getBounds() ,scale); 
-        if(!scaledRect.intersects(viewportWindow)){
-          return;   
-        }
-        
-        g2.setColor(isSelected()?Color.GRAY:fillColor); 
-        style.Paint(g2,viewportWindow,scale);
-    }
-    @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-        g2.setColor(Color.BLACK); 
-        style.Print(g2,printContext,layermask);  
-    }
-
-    @Override
-    public Rectangle getPinsRect() {
-        return new Rectangle(pin.getX(), pin.getY(), 0,0);
-    }
-    
-    @Override
-    public Pin getPin(int x, int y) {
-        return null;
-    }
-    
-    @Override
-    public Collection<Pin> getPins() {
-        return Arrays.asList(pin);
-    }
-    
-    @Override
-    public ChipText getChipText() {
-        return text;
+    public void setSelected (boolean selection) {
+            super.setSelected(selection);
+            this.texture.setSelected(selection);            
+    }       
+    public void setType(Type type){
+            this.type=type;
+            this.shape.calculatePoints();
     }
     public Type getType(){
-      return type;  
+        return this.type;
     }
     
-    public void setType(Type type){
-      this.type=type;
-      style.calculatePoints();
+    public void setText(String text){
+        this.texture.setText(text);
+        this.shape.calculatePoints();
+    }   
+    public Style getStyle(){
+            if(this.shape instanceof ArrowShape){
+                    return  Style.ARROW;
+            }else if(this.shape instanceof BoxShape){
+                    return  Style.BOX;
+            }else{
+                    return  Style.CIRCLE;
+            }
     }
-    public String toXML() {
-        StringBuffer sb=new StringBuffer();
-        sb.append("<connector style=\""+getStyle().ordinal()+"\">\r\n");
-        sb.append("<type>"+type.ordinal()+"</type>\r\n");
-        sb.append("<name>"+text.get(0).toXML()+"</name>\r\n");
-        sb.append(pin.toXML());        
-        sb.append("</connector>\r\n");
-        return sb.toString();
+    public void setStyle(Style shape){
+      switch(shape){
+      case ARROW:
+            this.shape=new ArrowShape(this);  
+            break;
+      case BOX:
+            this.shape=new BoxShape(this);
+            break;
+      case CIRCLE:
+            this.shape=new CircleShape(this);         
+      }
+      this.shape.calculatePoints();
     }
+    @Override
+    public Texture getTextureByTag(String string) {        
+        return texture;
+    }
+    @Override
+    public Texture getClickedTexture(int x, int y) {
+        if(this.texture.isClicked(x, y))
+            return this.texture;        
+        else
+        return null;
+    }
+    @Override
+    public boolean isClickedTexture(int x, int y) {        
+        return this.getClickedTexture(x, y)!=null;
+    }
+    @Override
+    public long getClickableOrder() {           
+            return 4;
+    }    
+    @Override
+    public boolean isClicked(int x,int y){
+            Box rect = Box.fromRect(x
+                                    - (this.selectionRectWidth / 2), y
+                                    - (this.selectionRectWidth / 2), this.selectionRectWidth,
+                                    this.selectionRectWidth);
+              
+            if (Utils.intersectLineRectangle(
+                            this.segment.ps,this.segment.pe, rect.min, rect.max)) {                 
+                            return true;
+            }else if(this.texture.isClicked(x,y)){
+            return true;
+        }else
+         return   this.shape.contains(new Point(x,y));
+     }
+    
+    @Override
+    public void rotate(double angle,Point origin){    
+        this.segment.rotate(angle,origin);
+        this.texture.setRotation(angle,origin);
+        this.shape.calculatePoints();                           
+    }
+    @Override
+    public void mirror(Line line) {        
+        this.segment.mirror(line);
+        this.texture.setMirror(line);
+        this.shape.calculatePoints();
+    }
+    @Override
+    public void move(double xoff, double yoff) {        
+           this.segment.move(xoff,yoff);        
+           this.shape.move(xoff,yoff);
+           this.texture.move(xoff,yoff);                
+    }
+    
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {
+        Box rect = this.segment.box();
+        rect.scale(scale.getScaleX());           
+        if (!rect.intersects(viewportWindow)) {
+                return;
+        }
+        g2.setColor(isSelected()?Color.BLUE:fillColor); 
 
-    public void fromXML(Node node)throws XPathExpressionException,ParserConfigurationException{
-        org.w3c.dom.Element  element= ( org.w3c.dom.Element)node;
-        //packageName=element.getAttribute("packagename")==null?"":element.getAttribute("packagename");        
-        Node n=element.getElementsByTagName("pin").item(0); 
-        pin.fromXML(n);
+        //utilities.drawCrosshair(g2, viewportWindow, scale,null,2,[this.segment.ps.clone()]);
+        Segment line=this.segment.clone();
+        line.scale(scale.getScaleX());
+        line.move(-viewportWindow.getX(),- viewportWindow.getY());
+        g2.setStroke(new BasicStroke((float)(this.thickness * scale.getScaleX()))); 
+        line.paint(g2,false);
         
-        n=element.getElementsByTagName("type").item(0);
-        this.type=Type.values()[Integer.parseInt(n.getTextContent())];
-                
-        String style=element.getAttribute("style");
-        setStyle(Style.values()[Integer.parseInt(style)]);
-        
-        n=element.getElementsByTagName("name").item(0);        
-        text.get(0).fromXML(n);
-        
-        //points are calculated in BaseConnector constructor
-        this.style.calculatePoints();
+        this.shape.paint(g2,viewportWindow, scale);
+        this.texture.paint(g2,viewportWindow, scale,layersmask);
     }
-    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:fillColor); 
+
+        g2.setStroke(new BasicStroke((float)(this.thickness))); 
+        segment.paint(g2,false);
+        
+        this.shape.print(g2,printContext, layermask);
+        this.texture.print(g2,printContext,layermask);  
+        
+    }
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
@@ -330,519 +224,492 @@ public class SCHConnector extends Shape implements Pinaware<Pin>,Ownerable<Shape
         return memento;
     }
     
-    @Override
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
-        //this.setOwner(getOwningUnit().getSymbol(memento.getParentUUID()));
-        //this.setSelected(false);
+    private interface StyleShape{
+        
+        void calculatePoints();
+        boolean contains(Point pt);
+        void move(double xoff,double yoff);
+        void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale);
+        void print(Graphics2D g2, PrintContext printContext, int layermask);
     }
-    //***************************************************************************************************************
-    private abstract class BasicStyle{
-        protected static final int POINTER_DEPTH=4;  
-        
-        protected boolean recalculate=true;
-        
-        protected final int pointsNumber;
-        
-        protected final Point[] points= {new Point(),new Point(),new Point(),new Point(),new Point()};
-        
-        private BasicStyle(int pointsNumber){
-          this.pointsNumber=pointsNumber;  
-          calculatePoints();
+    private static class CircleShape implements StyleShape{
+            private WeakReference<SCHConnector> connector;
+            private Circle circle;
+            
+        public CircleShape(SCHConnector connector){
+            this.connector=new WeakReference<>(connector);
+            this.circle=new Circle(new Point(0,0),4);
+            this.calculatePoints();            
         }
-        
-        protected abstract Style getStyle();
-        
-        protected abstract void calculatePoints();
-        
-        protected abstract void Paint(Graphics2D g2,ViewportWindow viewportWindow, AffineTransform scale);
-        
-        protected abstract void Print(Graphics2D g2,PrintContext printContext,int layermask) ;
-        
-        private void Move(int xoffset,int yoffset){
-            for(int i=0;i<points.length;i++){
-                 points[i].setLocation(points[i].x+xoffset,points[i].y+yoffset);
-            }  
+        @Override
+        public void calculatePoints(){
+            Vector v=new Vector(this.connector.get().segment.pe,this.connector.get().segment.ps);
+            Vector norm=v.normalize();                         
+            double x=this.connector.get().segment.ps.x +4*norm.x;
+            double y=this.connector.get().segment.ps.y + 4*norm.y;                         
+                          
+            this.circle.pc.set(x,y);             
+        }
+        @Override
+        public boolean contains(Point pt) {
+            return this.circle.contains(pt);
+        }
+        @Override
+        public void move(double xoff, double yoff) {
+            this.circle.move(xoff,yoff);
+
+        }
+        @Override
+        public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {              
+            
+            Circle c=this.circle.clone();
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(),- viewportWindow.getY());
+            
+            
+            g2.setColor(connector.get().isSelected()?Color.BLUE:connector.get().getFillColor()); 
+            c.paint(g2,false);            
+        }
+        @Override
+        public void print(Graphics2D g2, PrintContext printContext, int layermask){
+
+            g2.setColor(connector.get().getFillColor()); 
+            circle.paint(g2,false);    
+        }
+    }
+    /*
+     * Fix
+     */
+    private void init(Pinable.Orientation orientation){        
+        switch (orientation) {
+        case EAST:        
+            this.segment.pe.set(this.segment.ps.x + (Utilities.PIN_LENGTH / 2), this.segment.ps.y);
+            break;
+        case WEST:
+            this.segment.pe.set(this.segment.ps.x - (Utilities.PIN_LENGTH / 2), this.segment.ps.y);           
+            break;
+        case NORTH:
+            this.segment.pe.set(this.segment.ps.x, this.segment.ps.y - (Utilities.PIN_LENGTH / 2));           
+            break;
+        case SOUTH:     
+            this.segment.pe.set(this.segment.ps.x, this.segment.ps.y + (Utilities.PIN_LENGTH / 2));
+        }   
+    }
+    private Pinable.Orientation getOrientation(){
+        if(this.segment.isHorizontal()){
+            if(this.segment.ps.x<this.segment.pe.x){
+                return Orientation.EAST;
+            }else{
+                return Orientation.WEST;           
+            }
+        }else{
+            if(this.segment.ps.y<this.segment.pe.y){
+                return Orientation.SOUTH;
+            }else{
+                return Orientation.NORTH;           
+            }            
         }        
-        
-        public boolean isClicked(int x, int y) {
-            if(pin.isClicked(x,y))
-              return true;
-            else{
-                GeneralPath figure = new GeneralPath(GeneralPath.WIND_EVEN_ODD, pointsNumber);
-                figure.moveTo((float)points[0].getX(), (float)points[0].getY());
-                for (int index = 1; index < pointsNumber; index++) {
-                      figure.lineTo((float)points[index].getX(), (float)points[index].getY());
-                }
-                figure.closePath();  
-                
-                return figure.contains(x,y);
-            }
-        }
-        
-        public Rectangle getBoundingRect() {
-            int x1=Integer.MAX_VALUE,y1=Integer.MAX_VALUE,x2=Integer.MIN_VALUE,y2=Integer.MIN_VALUE; 
-            
-            for(int i=0;i<pointsNumber;i++){
-                x1=Math.min(x1,points[i].x);
-                y1=Math.min(y1,points[i].y);
-                x2=Math.max(x2,points[i].x);
-                y2=Math.max(y2,points[i].y);                        
-            }                
-            return new Rectangle(x1,y1,x2-x1,y2-y1);
-        }
     }
-    private class BoxStyle extends BasicStyle{
-        private BoxStyle(){
-          super(5);  
-        }
-        
-        protected  Style getStyle(){
-            return Style.BOX;
-        }
-        
-        public void Paint(Graphics2D g2,ViewportWindow viewportWindow, AffineTransform scale) {            
-            pin.Paint(g2,viewportWindow,scale,Layer.LAYER_ALL);
-            
-            FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);
-            GeneralPath temporal=(GeneralPath)provider.getShape();
-            
-            temporal.moveTo(points[0].getX(),points[0].getY());
-            for(int i=1;i<points.length;i++){            
-                  temporal.lineTo(points[i].getX(),points[i].getY());       
-            } 
-            temporal.closePath();  
-            AffineTransform translate= AffineTransform.getTranslateInstance(-viewportWindow.x,-viewportWindow.y);
-            
-            temporal.transform(scale);
-            temporal.transform(translate);
-                        
-            g2.draw(temporal);              
-            text.Paint(g2,viewportWindow,scale,-1);
-              //***draw selection
-              if(isSelected()){
-                  AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);   
-                  Composite originalComposite = g2.getComposite();
-                  g2.setPaint(Color.gray);                      
-                  g2.setComposite(composite );
-                  g2.fill(temporal);
-                  g2.setComposite(originalComposite);
-              }        
-           provider.reset();
-        }
-        
-        protected void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-            pin.Print(g2, printContext, layermask);
-            FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);
-            GeneralPath temporal=(GeneralPath)provider.getShape();
-            
-            temporal.moveTo(points[0].getX(),points[0].getY());
-            for(int i=1;i<points.length;i++){            
-                  temporal.lineTo(points[i].getX(),points[i].getY());       
-            } 
-            temporal.closePath(); 
-            g2.draw(temporal);
-            
-            text.get(0).Print(g2,printContext,layermask);
-            
-            provider.reset();
-            
-        }
-        protected void calculatePoints(){
-          final int BEGIN_TEXT_OFFSET=4;      
-          int pointToPoint = Utilities.POINT_TO_POINT;
+    @Override
+    public String toXML() {
+        StringBuffer sb=new StringBuffer();
+        sb.append("<connector type=\""+type.ordinal()+"\" style=\""+getStyle().ordinal()+"\" >\r\n");        
+        sb.append("<name>"+texture.toXML()+"</name>\r\n");
+        sb.append("<a x=\""+Utilities.roundDouble(this.segment.ps.x,1)+"\" y=\""+Utilities.roundDouble(this.segment.ps.y,1)+"\"  orientation=\""+getOrientation().ordinal()+"\" />\r\n");        
+        sb.append("</connector>\r\n");
+        return sb.toString();
+    }
 
-          Rectangle2D textRect=null;
-            switch(type){
-              case INPUT:
+    @Override
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+        org.w3c.dom.Element  element= ( org.w3c.dom.Element)node;
+        if(element.hasAttribute("type")){
+            String type=element.getAttribute("type");
+            this.type=Type.values()[Integer.parseInt(type)];
+            
+            String style=element.getAttribute("style");
+            setStyle(Style.values()[Integer.parseInt(style)]);
+
+            Node n=element.getElementsByTagName("name").item(0);        
+            texture.fromXML(n);
+            
+            n=element.getElementsByTagName("a").item(0); 
+            this.segment.ps.set(Double.parseDouble(((org.w3c.dom.Element)n).getAttribute("x")),Double.parseDouble(((org.w3c.dom.Element)n).getAttribute("y")));
+            init(Pinable.Orientation.values()[Byte.parseByte(((org.w3c.dom.Element)n).getAttribute("orientation"))]);            
+        }else{   //old schema
+            Node n=element.getElementsByTagName("type").item(0);
+            this.type=Type.values()[Integer.parseInt(n.getTextContent())];
+
+            String style=element.getAttribute("style");
+            setStyle(Style.values()[Integer.parseInt(style)]);
+        
+            n=element.getElementsByTagName("name").item(0);        
+            texture.fromXML(n);
+        
+            n=element.getElementsByTagName("pin").item(0); 
+        
+            n=(( org.w3c.dom.Element)n).getElementsByTagName("a").item(0);
+            StringTokenizer stock=new StringTokenizer(n.getTextContent(),",");
+            this.segment.ps.set(Double.parseDouble(stock.nextToken()),Double.parseDouble(stock.nextToken()));
+            stock.nextToken();//crap
+            init(Pinable.Orientation.values()[Byte.parseByte(stock.nextToken())]);
+        }
                 
-                   switch(pin.getOrientation()){
-                       case NORTH://north
-                              text.get(0).setAlignment(Text.Alignment.TOP);
-                              textRect=text.getTextureByTag("connector").getBoundingShape().getBounds();
-                              points[0].setLocation(pin.getX(),pin.getY());  
-                              points[1].setLocation(pin.getX()-pointToPoint/2,pin.getY()+POINTER_DEPTH);
-                              points[2].setLocation(pin.getX()-pointToPoint/2,pin.getY()+POINTER_DEPTH+textRect.getWidth()+BEGIN_TEXT_OFFSET);
-                              points[3].setLocation(pin.getX()+pointToPoint/2,pin.getY()+POINTER_DEPTH+textRect.getWidth()+BEGIN_TEXT_OFFSET);
-                              points[4].setLocation(pin.getX()+pointToPoint/2,pin.getY()+POINTER_DEPTH);                               
-                             
-                              break;
-                       case SOUTH: //south
-                              text.get(0).setAlignment(Text.Alignment.BOTTOM); 
-                              textRect=text.getTextureByTag("connector").getBoundingShape().getBounds();
-                              points[0].setLocation(pin.getX()-pointToPoint/2,pin.getY()-textRect.getWidth()-POINTER_DEPTH-BEGIN_TEXT_OFFSET);
-                              points[1].setLocation(pin.getX()-pointToPoint/2,pin.getY()-POINTER_DEPTH);                          
-                              points[2].setLocation(pin.getX(),pin.getY());
-                              points[3].setLocation(pin.getX()+pointToPoint/2,pin.getY()-POINTER_DEPTH);
-                              points[4].setLocation(pin.getX()+pointToPoint/2,pin.getY()-textRect.getWidth()-POINTER_DEPTH-BEGIN_TEXT_OFFSET);                  
 
-                              break;
-                       case WEST://west
-                              text.get(0).setAlignment(Text.Alignment.LEFT); 
-                              textRect=text.getTextureByTag("connector").getBoundingShape().getBounds();
-                              points[0].setLocation(pin.getX(),pin.getY());
-                              points[1].setLocation(pin.getX()+POINTER_DEPTH,pin.getY()+pointToPoint/2);
-                              points[2].setLocation(pin.getX()+textRect.getWidth()+POINTER_DEPTH+BEGIN_TEXT_OFFSET,pin.getY()+pointToPoint/2);
-                              points[3].setLocation(pin.getX()+textRect.getWidth()+POINTER_DEPTH+BEGIN_TEXT_OFFSET,pin.getY()-pointToPoint/2); 
-                              points[4].setLocation(pin.getX()+POINTER_DEPTH,pin.getY()-pointToPoint/2);                  
+        
+        //points are calculated in BaseConnector constructor
+        this.shape.calculatePoints();
 
-                              break;        
-                       case EAST: //east
-                              text.get(0).setAlignment(Text.Alignment.RIGHT); 
-                              textRect=text.getTextureByTag("connector").getBoundingShape().getBounds();
-                              points[0].setLocation(pin.getX()-textRect.getWidth()-POINTER_DEPTH-BEGIN_TEXT_OFFSET,pin.getY()-pointToPoint/2);
-                              points[1].setLocation(pin.getX()-textRect.getWidth()-POINTER_DEPTH-BEGIN_TEXT_OFFSET,pin.getY()+pointToPoint/2);
-                              points[2].setLocation(pin.getX()-POINTER_DEPTH,pin.getY()+pointToPoint/2);
-                              points[3].setLocation(pin.getX(),pin.getY());
-                              points[4].setLocation(pin.getX()-POINTER_DEPTH,pin.getY()-pointToPoint/2);                                     
-                             
-                       
-                   }            
-              break;
+    }    
+    public static class ArrowShape implements StyleShape{
+        private WeakReference<SCHConnector> connector;
+        private Polygon polygon;
+        
+        public ArrowShape(SCHConnector connector){
+            this.connector=new WeakReference<>(connector);
+            this.polygon=new Polygon();
+            this.calculatePoints();            
+        }
+            
+        
+        @Override
+        public void calculatePoints() {
+            this.polygon.points.clear();
+            
+            switch(this.connector.get().type) {
             case OUTPUT:
-                
-                   switch(pin.getOrientation()){
-                       case NORTH:  //north
-                              text.get(0).setAlignment(Text.Alignment.TOP);
-                              textRect=text.getTextureByTag("connector").getBoundingShape().getBounds();
-                              points[0].setLocation(pin.getX()-pointToPoint/2,pin.getY());
-                              points[1].setLocation(pin.getX()-pointToPoint/2,pin.getY()+textRect.getWidth()+BEGIN_TEXT_OFFSET);
-                              points[2].setLocation(pin.getX(),pin.getY()+textRect.getWidth()+POINTER_DEPTH+BEGIN_TEXT_OFFSET);
-                              points[3].setLocation(pin.getX()+pointToPoint/2,pin.getY()+textRect.getWidth()+BEGIN_TEXT_OFFSET);
-                              points[4].setLocation(pin.getX()+pointToPoint/2,pin.getY());                                                            
-                              break;
-                       case SOUTH:  //south
-                              text.get(0).setAlignment(Text.Alignment.BOTTOM); 
-                              textRect=text.getTextureByTag("connector").getBoundingShape().getBounds();
-                              points[0].setLocation(pin.getX()-pointToPoint/2,pin.getY());
-                              points[1].setLocation(pin.getX()+pointToPoint/2,pin.getY());                          
-                              points[2].setLocation(pin.getX()+pointToPoint/2,pin.getY()-textRect.getWidth()-BEGIN_TEXT_OFFSET);
-                              points[3].setLocation(pin.getX(),pin.getY()-textRect.getWidth()-POINTER_DEPTH-BEGIN_TEXT_OFFSET);
-                              points[4].setLocation(pin.getX()-pointToPoint/2,pin.getY()-textRect.getWidth()-BEGIN_TEXT_OFFSET);                                            
-                              break;
-
-                       case WEST:  //west 
-                              text.get(0).setAlignment(Text.Alignment.LEFT); 
-                              textRect=text.getTextureByTag("connector").getBoundingShape().getBounds();
-                              points[0].setLocation(pin.getX(),pin.getY()-pointToPoint/2);
-                              points[1].setLocation(pin.getX(),pin.getY()+pointToPoint/2);
-                              points[2].setLocation(pin.getX()+textRect.getWidth()+BEGIN_TEXT_OFFSET,pin.getY()+pointToPoint/2);
-                              points[3].setLocation(pin.getX()+textRect.getWidth()+POINTER_DEPTH+BEGIN_TEXT_OFFSET,pin.getY()); 
-                              points[4].setLocation(pin.getX()+textRect.getWidth()+BEGIN_TEXT_OFFSET,pin.getY()-pointToPoint/2);                                                
-                              break;        
-                       case EAST: //east
-                              text.get(0).setAlignment(Text.Alignment.RIGHT);                        
-                              textRect=text.getTextureByTag("connector").getBoundingShape().getBounds();
-                              points[0].setLocation(pin.getX()-textRect.getWidth()-BEGIN_TEXT_OFFSET,pin.getY()-pointToPoint/2);
-                              points[1].setLocation(pin.getX()-textRect.getWidth()-POINTER_DEPTH-BEGIN_TEXT_OFFSET,pin.getY());
-                              points[2].setLocation(pin.getX()-textRect.getWidth()-BEGIN_TEXT_OFFSET,pin.getY()+pointToPoint/2);
-                              points[3].setLocation(pin.getX(),pin.getY()+pointToPoint/2);
-                              points[4].setLocation(pin.getX(),pin.getY()-pointToPoint/2);                                     
-                   }
-              
-              break;  
-            }
-           
+                    Vector v=new Vector(this.connector.get().segment.pe,this.connector.get().segment.ps);
+                    Vector norm=v.normalize();                         
+                    double x=this.connector.get().segment.ps.x +4*norm.x;
+                    double y=this.connector.get().segment.ps.y + 4*norm.y;                                                         
+                    this.polygon.points.add(new Point(x,y));
+            
+                    Vector v1=v.clone();
+                    v1.rotate90CCW();
+                    norm=v1.normalize();                    
+                    x=this.connector.get().segment.ps.x +4*norm.x;
+                    y=this.connector.get().segment.ps.y + 4*norm.y;                                                             
+                    this.polygon.points.add(new Point(x,y));
+            
+                    Vector v2=v.clone();
+                    v2.rotate90CW();
+                    norm=v2.normalize();                    
+                    x=this.connector.get().segment.ps.x +4*norm.x;
+                    y=this.connector.get().segment.ps.y + 4*norm.y;                                                             
+                    this.polygon.points.add(new Point(x,y));
+                    break;
+                    
+            case INPUT:
+                    v=new Vector(this.connector.get().segment.pe,this.connector.get().segment.ps);
+                    norm=v.normalize();                         
+                    double xx=this.connector.get().segment.ps.x +4*norm.x;
+                    double yy=this.connector.get().segment.ps.y + 4*norm.y;                                                                
+                    
+                    v1=v.clone();
+                    v1.rotate90CCW();
+                    norm=v1.normalize();                    
+                    x=xx +4*norm.x;
+                    y=yy + 4*norm.y;                                                          
+                    this.polygon.points.add(new Point(x,y));
+                    
+                    v1=v.clone();
+                    v1.rotate90CW();
+                    norm=v1.normalize();                    
+                    x=xx +4*norm.x;
+                    y=yy + 4*norm.y;                                                              
+                    this.polygon.points.add(new Point(x,y));
+                    
+                    this.polygon.points.add(this.connector.get().segment.ps.clone());
+            }        
         }
 
+        @Override
+        public boolean contains(Point pt) {
+            return this.polygon.contains(pt);
+        }
 
+        @Override
+        public void move(double xoff, double yoff) {
+            this.polygon.move(xoff,yoff);
+        }
+
+        @Override
+        public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+//            var rect = this.polygon.box;
+//            rect.scale(scale.getScale());
+//            if (!rect.intersects(viewportWindow)) {
+//              return;
+//            }               
+            
+            Polygon p=this.polygon.clone();
+            p.scale(scale.getScaleX());
+            p.move(-viewportWindow.getX(),- viewportWindow.getY());
+            
+            g2.setColor(connector.get().isSelected()?Color.BLUE:connector.get().getFillColor()); 
+            p.paint(g2,false);
+
+        }
+        @Override
+        public void print(Graphics2D g2, PrintContext printContext, int layermask){
+            g2.setColor(connector.get().getFillColor()); 
+            polygon.paint(g2,false);            
+        }        
     }
-    private class ArrowStyle extends BasicStyle{
-        private ArrowStyle(){
-           super(3); 
-        }
-        protected  Style getStyle(){
-            return Style.ARROW;
-        }
-        public void Paint(Graphics2D g2,ViewportWindow viewportWindow, AffineTransform scale) {
-            pin.Paint(g2,viewportWindow, scale,Layer.LAYER_ALL);
-            
-            FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);
-            GeneralPath temporal=(GeneralPath)provider.getShape();
-            
-            temporal.moveTo(points[0].getX(),points[0].getY());
-            for(int i=1;i<3;i++){            
-                  temporal.lineTo(points[i].getX(),points[i].getY());       
-            } 
-            temporal.closePath();  
-            AffineTransform translate= AffineTransform.getTranslateInstance(-viewportWindow.x,-viewportWindow.y);
-            
-            temporal.transform(scale);
-            temporal.transform(translate);
-                        
-            g2.draw(temporal);              
-            text.Paint(g2,viewportWindow,scale,-1);
-              //***draw selection
-              if(isSelected()){
-                  AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);   
-                  Composite originalComposite = g2.getComposite();
-                  g2.setPaint(Color.gray);                      
-                  g2.setComposite(composite );
-                  g2.fill(temporal);
-                  g2.setComposite(originalComposite);
-              }        
-            provider.reset();
-              
+    public static class BoxShape implements StyleShape{
+        private WeakReference<SCHConnector> connector;
+        private Polygon polygon;
+        
+        public BoxShape(SCHConnector connector){
+            this.connector=new WeakReference<>(connector);
+            this.polygon=new Polygon();
+            this.calculatePoints();            
         }
         
-        protected void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-            pin.Print(g2, printContext, layermask);
-            FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);
-            GeneralPath temporal=(GeneralPath)provider.getShape();
+        @Override
+        public void calculatePoints() {
+            this.polygon.points.clear();
+            Box rect=this.connector.get().texture.shape.box();
+            double width=2+rect.getWidth(); 
+            double height=2+rect.getHeight();
             
-            temporal.moveTo(points[0].getX(),points[0].getY());
-            for(int i=1;i<3;i++){            
-                  temporal.lineTo(points[i].getX(),points[i].getY());       
-            } 
-            temporal.closePath(); 
-            g2.draw(temporal);
-            
-            text.get(0).Print(g2,printContext,layermask);
-            
-            provider.reset();
-            
-        }
-        
-        protected void calculatePoints(){      
-            int pointToPoint = Utilities.POINT_TO_POINT;            
-
-            switch(type){
-              case INPUT:
-                
-                   switch(pin.getOrientation()){
-                       case NORTH://north
-                            points[0].setLocation(pin.getX(),pin.getY());
-                            points[1].setLocation(pin.getX()-pointToPoint/2,pin.getY()+POINTER_DEPTH);
-                            points[2].setLocation(pin.getX()+pointToPoint/2,pin.getY()+POINTER_DEPTH);                              
-                              break;
-                       case SOUTH: //south
-                            points[0].setLocation(pin.getX(),pin.getY());
-                            points[1].setLocation(pin.getX()-pointToPoint/2,pin.getY()-POINTER_DEPTH);
-                            points[2].setLocation(pin.getX()+pointToPoint/2,pin.getY()-POINTER_DEPTH); 
-                              break;
-                       case WEST://west
-                            points[0].setLocation(pin.getX(),pin.getY());
-                            points[1].setLocation(pin.getX()+POINTER_DEPTH,pin.getY()-pointToPoint/2);
-                            points[2].setLocation(pin.getX()+POINTER_DEPTH,pin.getY()+pointToPoint/2);                            
-                              break;        
-                       case EAST: //east
-                            points[0].setLocation(pin.getX(),pin.getY());
-                            points[1].setLocation(pin.getX()-POINTER_DEPTH,pin.getY()-pointToPoint/2);
-                            points[2].setLocation(pin.getX()-POINTER_DEPTH,pin.getY()+pointToPoint/2);                              
-                                                                 
-                   }            
-              break;
+            switch(this.connector.get().type) {
             case OUTPUT:
-                
-                   switch(pin.getOrientation()){
-                       case NORTH:  //north
-                            points[0].setLocation(pin.getX(),pin.getY()+POINTER_DEPTH);
-                            points[1].setLocation(pin.getX()-pointToPoint/2,pin.getY());
-                            points[2].setLocation(pin.getX()+pointToPoint/2,pin.getY());                        
-                              break;
-                       case SOUTH:  //south
-                            points[0].setLocation(pin.getX(),pin.getY()-POINTER_DEPTH);
-                            points[1].setLocation(pin.getX()-pointToPoint/2,pin.getY());
-                            points[2].setLocation(pin.getX()+pointToPoint/2,pin.getY());                            
-                              break;
-                       case WEST:  //west 
-                            points[0].setLocation(pin.getX()+POINTER_DEPTH,pin.getY());
-                            points[1].setLocation(pin.getX(),pin.getY()+pointToPoint/2);
-                            points[2].setLocation(pin.getX(),pin.getY()-pointToPoint/2);                              
-                            break;                       
-                       case EAST: //east
-                            points[0].setLocation(pin.getX()-POINTER_DEPTH,pin.getY());
-                            points[1].setLocation(pin.getX(),pin.getY()+pointToPoint/2);
-                            points[2].setLocation(pin.getX(),pin.getY()-pointToPoint/2);   
-                        }
-              
-              break;  
-            }
-            
+            if(this.connector.get().segment.isVertical()){
+                    Vector v=new Vector(this.connector.get().segment.pe,this.connector.get().segment.ps);
+                    Vector v1=v.clone();
+                    v1.rotate90CCW();
+                    Vector norm=v1.normalize();                        
+                    double xx=this.connector.get().segment.ps.x +4*norm.x;
+                    double yy=this.connector.get().segment.ps.y + 4*norm.y;                                                                
+                    this.polygon.points.add(new Point(xx,yy));
+                    
+                    Vector v2=v.clone();
+                    v2.rotate90CW();
+                    norm=v2.normalize();                    
+                    double x=this.connector.get().segment.ps.x +4*norm.x;
+                    double y=this.connector.get().segment.ps.y + 4*norm.y;                                                         
+                    this.polygon.points.add(new Point(x,y));
+                    
+                    v2.rotate90CCW();
+                    norm=v2.normalize();                    
+                    x=x +height*norm.x;
+                    y=y +height*norm.y;                                                           
+                    this.polygon.points.add(new Point(x,y));
+                    
+                    norm=v.normalize();                     
+                    x=this.connector.get().segment.ps.x +(4+height)*norm.x;
+                    y=this.connector.get().segment.ps.y +(4+height)*norm.y;                                                             
+                    this.polygon.points.add(new Point(x,y));
+
+                    
+                    v1.rotate90CW();
+                    norm=v1.normalize();                    
+                    xx=xx +height*norm.x;
+                    yy=yy +height*norm.y;                                                         
+                    this.polygon.points.add(new Point(xx,yy));                          
+            }else{
+                    Vector v=new Vector(this.connector.get().segment.pe,this.connector.get().segment.ps);
+                            
+                            Vector v1=v.clone();
+                            v1.rotate90CCW();
+                            Vector norm=v1.normalize();                        
+                            double xx=this.connector.get().segment.ps.x +4*norm.x;
+                            double yy=this.connector.get().segment.ps.y + 4*norm.y;                                                                
+                            this.polygon.points.add(new Point(xx,yy));
+                            
+                            Vector v2=v.clone();
+                            v2.rotate90CW();
+                            norm=v2.normalize();                    
+                            double x=this.connector.get().segment.ps.x +4*norm.x;
+                            double y=this.connector.get().segment.ps.y + 4*norm.y;                                                         
+                            this.polygon.points.add(new Point(x,y));
+                            
+                            v2.rotate90CCW();
+                            norm=v2.normalize();                    
+                            x=x +width*norm.x;
+                            y=y +width*norm.y;                                                            
+                            this.polygon.points.add(new Point(x,y));
+                            
+                            norm=v.normalize();                     
+                            x=this.connector.get().segment.ps.x +(4+width)*norm.x;
+                            y=this.connector.get().segment.ps.y +(4+width)*norm.y;                                                              
+                            this.polygon.points.add(new Point(x,y));
+
+                            
+                            v1.rotate90CW();
+                            norm=v1.normalize();                    
+                            xx=xx +width*norm.x;
+                            yy=yy +width*norm.y;                                                          
+                            this.polygon.points.add(new Point(xx,yy));                          
+             }
+            break;
+            case INPUT:
+            if(this.connector.get().segment.isVertical()){
+                            Vector v=new Vector(this.connector.get().segment.pe,this.connector.get().segment.ps);                                                                                               
+                            Vector norm=v.normalize();                         
+                            double xx=this.connector.get().segment.ps.x +4*norm.x;
+                            double yy=this.connector.get().segment.ps.y + 4*norm.y;                                                                
+                            
+                            
+                            
+                            Vector v1=v.clone();
+                            v1.rotate90CCW();
+                            norm=v1.normalize();                    
+                            xx=(xx) +4*norm.x;
+                            yy=(yy) +4*norm.y;                                                            
+                            this.polygon.points.add(new Point(xx,yy));
+                            
+                            norm=v.normalize();                     
+                            double x=xx +height*norm.x;
+                            double y=yy +height*norm.y;                                                              
+                            this.polygon.points.add(new Point(x,y));
+
+                            v1=v.clone();
+                            v1.rotate90CW();
+                            norm=v1.normalize();                    
+                            x=x +8*norm.x;
+                            y=y +8*norm.y;                                                                
+                            this.polygon.points.add(new Point(x,y));
+                            
+                            v1.rotate90CW();
+                            norm=v1.normalize();                    
+                            x=x +height*norm.x;
+                            y=y +height*norm.y;                                                           
+                            this.polygon.points.add(new Point(x,y));
+                            
+                            this.polygon.points.add(this.connector.get().segment.ps.clone());
+                    }else{
+                            Vector v=new Vector(this.connector.get().segment.pe,this.connector.get().segment.ps);                                                                                               
+                            Vector norm=v.normalize();                         
+                            double xx=this.connector.get().segment.ps.x +4*norm.x;
+                            double yy=this.connector.get().segment.ps.y + 4*norm.y;                                                                
+                            
+                            
+                            
+                            Vector v1=v.clone();
+                            v1.rotate90CCW();
+                            norm=v1.normalize();                    
+                            xx=(xx) +4*norm.x;
+                            yy=(yy) +4*norm.y;                                                            
+                            this.polygon.points.add(new Point(xx,yy));
+                            
+                            norm=v.normalize();                     
+                            double x=xx +width*norm.x;
+                            double y=yy +width*norm.y;                                                               
+                            this.polygon.points.add(new Point(x,y));
+
+                            v1=v.clone();
+                            v1.rotate90CW();
+                            norm=v1.normalize();                    
+                            x=x +8*norm.x;
+                            y=y +8*norm.y;                                                                
+                            this.polygon.points.add(new Point(x,y));
+                            
+                            v1.rotate90CW();
+                            norm=v1.normalize();                    
+                            x=x +width*norm.x;
+                            y=y +width*norm.y;                                                            
+                            this.polygon.points.add(new Point(x,y));
+                            
+                            this.polygon.points.add(this.connector.get().segment.ps.clone()); 
+                    }
+                    break;
+            }            
         }
 
+        @Override
+        public boolean contains(Point pt) {
+            return this.polygon.contains(pt);
+        }
+
+        @Override
+        public void move(double xoff, double yoff) {
+            this.polygon.move(xoff,yoff);
+        }
+
+        @Override
+        public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+            Polygon p=this.polygon.clone();
+            p.scale(scale.getScaleX());
+            p.move(-viewportWindow.getX(),- viewportWindow.getY());
+            
+            g2.setColor(connector.get().isSelected()?Color.BLUE:connector.get().getFillColor()); 
+            p.paint(g2,false);
+
+        }
+        @Override
+        public void print(Graphics2D g2, PrintContext printContext, int layermask){
+            g2.setColor(connector.get().getFillColor()); 
+            polygon.paint(g2,false);             
+        }        
     }
-    private class CircleStyle extends BasicStyle{
-
-        private CircleStyle(){
-          super(4);  
-        }
-        protected  Style getStyle(){
-            return Style.CIRCLE;
-        }
-        public void Paint(Graphics2D g2,ViewportWindow viewportWindow, AffineTransform scale) {
-            pin.Paint(g2,viewportWindow,scale,Layer.LAYER_ALL);
-            
-            Point2D[] scaledPoints=new Point2D[points.length];
-            scale.transform(points,0,scaledPoints,0,points.length);
-            
-            FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-            Ellipse2D figure=(Ellipse2D)provider.getShape();
-            
-            figure.setFrame(scaledPoints[0].getX()-viewportWindow.x,scaledPoints[0].getY()-viewportWindow.y,Math.abs(scaledPoints[0].getX()-scaledPoints[1].getX()),Math.abs(scaledPoints[0].getX()-scaledPoints[1].getX()));                                  
-            g2.draw(figure);  
-            provider.reset();
-            
-            provider =ShapeFlyweightFactory.getProvider(Line2D.class);
-            Line2D line=(Line2D)provider.getShape();
-            
-            line.setLine(scaledPoints[0].getX()-viewportWindow.x,scaledPoints[0].getY()-viewportWindow.y, scaledPoints[2].getX()-viewportWindow.x,scaledPoints[2].getY()-viewportWindow.y);
-            g2.draw(line);
-            
-            line.setLine(scaledPoints[1].getX()-viewportWindow.x,scaledPoints[1].getY()-viewportWindow.y, scaledPoints[3].getX()-viewportWindow.x,scaledPoints[3].getY()-viewportWindow.y);
-            g2.draw(line);            
-            provider.reset();
-            
-            text.Paint(g2,viewportWindow,scale,Layer.Copper.None.getLayerMaskID());
-            
-            if(isSelected()){
-                AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);   
-                Composite originalComposite = g2.getComposite();
-                g2.setPaint(Color.gray);                      
-                g2.setComposite(composite );
-                g2.fill(figure);
-                g2.setComposite(originalComposite);
-            }               
-            
-            
-        }
-        
-        protected void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-            pin.Print(g2, printContext, layermask);
-
-            
-            FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-            Ellipse2D figure=(Ellipse2D)provider.getShape();
-            
-            figure.setFrame(points[0].x,points[0].y,Math.abs(points[0].x-points[1].x),Math.abs(points[0].x-points[1].x));                                  
-            g2.draw(figure);  
-            provider.reset();
-            
-            provider =ShapeFlyweightFactory.getProvider(Line2D.class);
-            Line2D line=(Line2D)provider.getShape();
-            
-            line.setLine(points[0].x,points[0].y, points[2].x,points[2].y);
-            g2.draw(line);
-            
-            line.setLine(points[1].x,points[1].y, points[3].x,points[3].y);
-            g2.draw(line);            
-            provider.reset();
-            
-            text.get(0).Print(g2,printContext,layermask);
-            
-        }
-        
-        protected void calculatePoints(){        
-            int pointToPoint = Utilities.POINT_TO_POINT;               
-                   switch(pin.getOrientation()){
-                       case NORTH://north
-                            points[0].setLocation(pin.getX()-pointToPoint/2,pin.getY());
-                            points[1].setLocation(pin.getX()+pointToPoint/2,pin.getY());
-                            points[2].setLocation(pin.getX()+pointToPoint/2,pin.getY()+pointToPoint);                              
-                            points[3].setLocation(pin.getX()-pointToPoint/2,pin.getY()+pointToPoint);                             
-                              break;
-                       case SOUTH: //south
-                            points[0].setLocation(pin.getX()-pointToPoint/2,pin.getY()-pointToPoint);
-                            points[1].setLocation(pin.getX()+pointToPoint/2,pin.getY()-pointToPoint);
-                            points[2].setLocation(pin.getX()+pointToPoint/2,pin.getY());                              
-                            points[3].setLocation(pin.getX()-pointToPoint/2,pin.getY()); 
-                              break;
-                       case WEST://west
-                            points[0].setLocation(pin.getX(),pin.getY()-pointToPoint/2);
-                            points[1].setLocation(pin.getX()+pointToPoint,pin.getY()-pointToPoint/2);
-                            points[2].setLocation(pin.getX()+pointToPoint,pin.getY()+pointToPoint/2);                              
-                            points[3].setLocation(pin.getX(),pin.getY()+pointToPoint/2);                    
-                              break;        
-                       case EAST: //east
-                            points[0].setLocation(pin.getX()-pointToPoint,pin.getY()-pointToPoint/2);
-                            points[1].setLocation(pin.getX(),pin.getY()-pointToPoint/2);
-                            points[2].setLocation(pin.getX(),pin.getY()+pointToPoint/2);                              
-                            points[3].setLocation(pin.getX()-pointToPoint,pin.getY()+pointToPoint/2);                                     
-                   }             
-        }
-            
-        
-    }
-
     static class Memento extends AbstractMemento<Circuit,SCHConnector>{
-        private ChipText.Memento connectorTextMemento;
-        
-        private AbstractMemento pinMemento;
+        private double x1,x2,y1,y2;
         
         private Type type;
         
         private Style style;
         
+        private Texture.Memento textureMemento;
         
-        public Memento(MementoType mementoType){
-          super(mementoType); 
-          connectorTextMemento = new ChipText.Memento();
+        public Memento(MementoType mementoType) {
+            super(mementoType);
+            textureMemento=new SymbolFontTexture.Memento();
         }
-        
+
+        @Override
         public void loadStateTo(SCHConnector shape) {
-          super.loadStateTo(shape);          
-          if(shape.type!=this.type){
-             shape.setType(this.type);          
-          }
-          if(shape.getStyle()!=this.style){
-             shape.setStyle(this.style);           
-          }
-          //symbol.packageName=this.packageName;
-          shape.pin.setState(this.pinMemento);
-          connectorTextMemento.loadStateTo(shape.getChipText());
-          shape.style.calculatePoints();
+            super.loadStateTo(shape);            
+            textureMemento.loadStateTo(shape.texture);  
+            shape.segment.set(x1, y1, x2, y2);
+            shape.type=type;
+            shape.setStyle(style);
         }
-        
+
+        @Override
         public void saveStateFrom(SCHConnector shape) {
             super.saveStateFrom(shape);
-            this.style=shape.getStyle();
-            this.type=shape.type;
-            connectorTextMemento.saveStateFrom(shape.getChipText());
-            this.pinMemento=shape.pin.getState(mementoType);        
-        }
-
-        public void Clear() {
-            super.Clear();
-            pinMemento.Clear();
-            connectorTextMemento.Clear();
-        }      
-        
-        @Override
-        public boolean equals(Object obj){
-            if(this==obj){
-              return true;  
-            }
-            if(!(obj instanceof Memento)){
-              return false;  
-            }
+            x1=shape.segment.ps.x;
+            y1=shape.segment.ps.y;
+            x2=shape.segment.pe.x;
+            y2=shape.segment.pe.y;
             
-            Memento other=(Memento)obj;
+            style=shape.getStyle();
+            type=shape.type;
+            textureMemento.saveStateFrom(shape.texture);
+        }
+        
 
-            return(this.getUUID().equals(other.getUUID()) &&
-                   getMementoType().equals(other.getMementoType())&&
-                   type==other.type&&
-                   style==other.style&&
-                   connectorTextMemento.equals(other.connectorTextMemento)&&
-                   pinMemento.equals(other.pinMemento)
-                );            
-          
-        }
-        
         @Override
-        public int hashCode(){
-          int hash=getUUID().hashCode();
-          hash+=getMementoType().hashCode();
-          hash+=type.hashCode();
-          hash+=style.hashCode();
-          hash+=connectorTextMemento.hashCode();
-          hash+=pinMemento.hashCode();
-          return hash;
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Memento)) {
+                return false;
+            }
+            Memento other = (Memento) obj;
+            return (super.equals(obj)&&textureMemento.equals(other.textureMemento)&&
+                    Utils.EQ(x1, other.x1)&&Utils.EQ(x2, other.x2)&&Utils.EQ(y1, other.y1)&&Utils.EQ(y2, other.y2)&&
+                    type==other.type&&style==other.style);
+
         }
-        
-        public boolean isSameState(Circuit unit) {
-            SCHConnector connector=(SCHConnector)unit.getShape(getUUID());
-            return (connector.getState(getMementoType()).equals(this));               
+
+        @Override
+        public int hashCode() {
+            int  hash = super.hashCode()+textureMemento.hashCode();
+            hash+=Double.hashCode(x1)+Double.hashCode(x2)+Double.hashCode(y1)+Double.hashCode(y2);            
+            hash += type.hashCode();
+            hash += style.hashCode();
+            return hash;
         }
+        @Override
+        public boolean isSameState(Unit unit) {
+            SCHConnector line = (SCHConnector) unit.getShape(getUUID());
+            return (line.getState(getMementoType()).equals(this));
         
+        }
+
     }
+    
 }

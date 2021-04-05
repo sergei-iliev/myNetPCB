@@ -5,14 +5,14 @@ package com.mynetpcb.board.dialog.save;
 import com.mynetpcb.board.dialog.print.BoardPrintDialog;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.capi.component.UnitComponent;
-import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.gerber.Excelon;
 import com.mynetpcb.gerber.Gerber;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,7 +30,7 @@ import javax.swing.border.TitledBorder;
 
 public class GerberExportDialog extends BoardPrintDialog implements ActionListener{
     
-    public GerberExportDialog(Window owner, UnitComponent unitComponent) {
+    public GerberExportDialog(Frame owner, UnitComponent unitComponent) {
         super(owner, unitComponent, "Export "+unitComponent.getModel().getUnit().getUnitName());
         this.setSize(460, 220);
         this.printButton.setText("Export");

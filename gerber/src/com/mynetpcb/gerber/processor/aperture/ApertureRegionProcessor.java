@@ -8,17 +8,15 @@ import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.shape.PadShape;
-import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
-import com.mynetpcb.gerber.aperture.type.ObroundAperture;
-import com.mynetpcb.gerber.aperture.type.PolygonAperture;
-import com.mynetpcb.gerber.aperture.type.RectangleAperture;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
-
-import java.awt.Rectangle;
+import com.mynetpcb.pad.shape.Pad;
+import com.mynetpcb.pad.shape.pad.CircularShape;
 
 import java.util.Collection;
 import java.util.List;
@@ -56,65 +54,63 @@ public class ApertureRegionProcessor implements Processor{
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
         for(FootprintShape footprint:footprints){
             //check if footprint in copper area
-            if(!source.getBoundingShape().intersects(footprint.getBoundingShape().getBounds())){
+            if(!source.getBoundingShape().intersects(footprint.getBoundingShape())){
                continue; 
             }
-            Collection<PadShape> pads=footprint.getPins();
-            for(PadShape pad:pads){            
+            Collection<Pad> pads=(Collection<Pad>)footprint.getPads();
+            for(Pad pad:pads){            
                 // is pad  within copper area
-                Rectangle rect = pad.getBoundingShape().getBounds();
-                rect.grow(source.getClearance(), source.getClearance());
+                Box rect = pad.getBoundingShape();
+                rect.grow(source.getClearance());
                 
                 if(!(source).getBoundingShape().intersects(rect)){
                    continue; 
                 }
 
-                if(Utilities.isSameNet(source,pad)){
-                    //is this THERMAL pad
-                    if(source.getPadConnection()==PadShape.PadConnection.THERMAL){
-                      //add drawing line    
-                      switch(pad.getShape()){
-                      case CIRCULAR: 
-                         CircleAperture apperture=new CircleAperture();
-                         apperture.setDiameter(pad.getWidth()/2);
-                         dictionary.add(apperture);  
-                      break;
-                      case OVAL: case RECTANGULAR:
-                         apperture=new CircleAperture();
-                         apperture.setDiameter(pad.getWidth()/2);
-                         dictionary.add(apperture); 
-                          
-                         apperture=new CircleAperture();
-                         apperture.setDiameter(pad.getHeight()/2);
-                         dictionary.add(apperture);                           
-                       break;
-                      }
-                    }else{
-                       //there is no clearence when both Copper area and Pad have the same Net value
-                       continue;
-                    }
-                }
+//                if(pad.isSameNet(source)){
+//                    //is this THERMAL pad
+//                    if(source.getPadConnection()==PadShape.PadConnection.THERMAL){
+//                      //add drawing line    
+//                      switch(pad.getShape()){
+//                      case CIRCULAR: 
+//                         CircleAperture apperture=new CircleAperture();
+//                         apperture.setDiameter(pad.getWidth()/2);
+//                         dictionary.add(apperture);  
+//                      break;
+//                      case OVAL: case RECTANGULAR:
+//                         apperture=new CircleAperture();
+//                         apperture.setDiameter(pad.getWidth()/2);
+//                         dictionary.add(apperture); 
+//                          
+//                         apperture=new CircleAperture();
+//                         apperture.setDiameter(pad.getHeight()/2);
+//                         dictionary.add(apperture);                           
+//                       break;
+//                      }
+//                    }else{
+//                       //there is no clearence when both Copper area and Pad have the same Net value
+//                       continue;
+//                    }
+//                }
                 ApertureDefinition apperture=null;
+                double diameter;
                 if(pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){                    
-                    switch(pad.getShape()){
+                    switch(pad.getShapeType()){
                     case CIRCULAR:                                                
                         apperture=new CircleAperture();
-                        ((CircleAperture)apperture).setDiameter(pad.getWidth()+(2*source.getClearance()));
+                        diameter=((CircularShape)pad.getPadDrawing()).getDiameter();
+                        ((CircleAperture)apperture).setDiameter(diameter+(2*source.getClearance()));
                         break;
-                    case OVAL:                        
-                        apperture=new ObroundAperture();
-                        ((ObroundAperture)apperture).setX(pad.getWidth()+(2*source.getClearance()));
-                        ((ObroundAperture)apperture).setY(pad.getHeight()+(2*source.getClearance())); 
+                    case OVAL:                         
+                        apperture=new CircleAperture();  
+                        diameter=((Obround)pad.getPadDrawing().getGeometricFigure()).getDiameter();
+                        ((CircleAperture)apperture).setDiameter(diameter+(2*source.getClearance())); 
                         break;
-                    case RECTANGULAR:
-                        apperture=new RectangleAperture();
-                        ((RectangleAperture)apperture).setX(pad.getWidth()+(2*source.getClearance()));
-                        ((RectangleAperture)apperture).setY(pad.getHeight()+(2*source.getClearance())); 
-                        break;
-                    case POLYGON:
-                        apperture= new PolygonAperture();
-                        ((PolygonAperture)apperture).setDiameter(pad.getWidth()+(2*source.getClearance()));
-                        ((PolygonAperture)apperture).setVerticesNumber(6);
+                    case RECTANGULAR:case POLYGON:
+                        //add default
+                        CircleAperture circle=new CircleAperture();
+                        circle.setDiameter(Grid.MM_TO_COORD(1));
+                        dictionary.add(circle);  
                     }                    
                                  
                 }else{
@@ -132,40 +128,38 @@ public class ApertureRegionProcessor implements Processor{
             }    
     }
     }
+
     private void processTracks(Unit<? extends Shape> board,CopperAreaShape source){
         for(TrackShape track:board.<TrackShape>getShapes(TrackShape.class,source.getCopper().getLayerMaskID())){
             
-            if(Utilities.isSameNet(source,track)){
+            if(track.isSameNet(source)){
                 continue;
             }
             
-            int lineThickness;
-            if(track.getClearance()!=0){
-              lineThickness=(track.getThickness()+2*track.getClearance());
-            }else{
-              lineThickness=(track.getThickness()+2*source.getClearance());
-            }
+            int lineThickness=(track.getThickness()+2*(track.getClearance()!=0?track.getClearance():source.getClearance()));
+          
             
             CircleAperture circle=new CircleAperture();
             circle.setDiameter(lineThickness);            
             dictionary.add(circle);                           
         }
     }
+
     private  void  processVias(Unit<? extends Shape> board,CopperAreaShape source){
         //select vias of the region layer
         for(ViaShape via:board.<ViaShape>getShapes(ViaShape.class,source.getCopper().getLayerMaskID())){          
-            if(Utilities.isSameNet(source,via)){
+            if(via.isSameNet(source)){
                 continue;
             }
-            Rectangle rect=via.getBoundingShape().getBounds();             
-            rect.grow(via.getClearance()!=0?via.getClearance():source.getClearance(),via.getClearance()!=0?via.getClearance():source.getClearance());
+            Box rect=via.getBoundingShape();             
+            rect.grow(via.getClearance()!=0?via.getClearance():source.getClearance());
 
             if(!source.getBoundingShape().intersects(rect)){
                continue; 
             }
             
             CircleAperture circle=new CircleAperture();
-            circle.setDiameter((int)rect.getWidth());            
+            circle.setDiameter(rect.getWidth());            
             dictionary.add(circle);                         
         }            
     }

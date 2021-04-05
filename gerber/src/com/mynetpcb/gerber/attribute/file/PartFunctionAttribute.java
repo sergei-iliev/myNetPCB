@@ -2,7 +2,6 @@ package com.mynetpcb.gerber.attribute.file;
 
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 
-
 /*
  * Single part only
  */

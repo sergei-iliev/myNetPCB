@@ -1,38 +1,29 @@
 package com.mynetpcb.gerber.aperture.type;
 
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.d2.shapes.Utils;
 
 import java.util.Objects;
 
 public class CircleAperture extends ApertureDefinition {
-        private int diameter;
-        
-        private int hole;
+        private double diameter;
         
         public CircleAperture(){
             super(ApertureDefinition.ApertureShape.CIRCLE);
         }
-        public CircleAperture(int code,int diameter,int hole){
-          this();
+        
+        public CircleAperture(int code,double diameter){
+          super(ApertureDefinition.ApertureShape.CIRCLE);
           this.diameter=diameter;
-          this.hole=hole;
           setCode(code);
         }
         
-        public void setDiameter(int diameter) {
+        public void setDiameter(double diameter) {
             this.diameter = diameter;
         }
 
-        public int getDiameter() {
+        public double getDiameter() {
             return diameter;
-        }
-
-        public void setHole(int hole) {
-            this.hole = hole;
-        }
-
-        public double getHole() {
-            return hole;
         }
         
         @Override
@@ -44,14 +35,13 @@ public class CircleAperture extends ApertureDefinition {
                 return false;
             }
             CircleAperture other = (CircleAperture)obj;
-            return Objects.equals(this.getAttribute(),other.getAttribute())&&this.getDiameter()==other.getDiameter()&&this.getHole()==other.getHole();
+            return Objects.equals(this.getAttribute(),other.getAttribute())&&Utils.EQ(this.getDiameter(),other.getDiameter());
         }
         
         @Override
         public int hashCode() {
             int hash = 31;
-            hash += this.getDiameter();
-            hash += this.getHole();
+            hash += Double.hashCode(this.getDiameter());
             hash+=this.getAttribute()==null?0:this.getAttribute().hashCode();
             return hash;
         }
@@ -62,9 +52,6 @@ public class CircleAperture extends ApertureDefinition {
             sb.append("%ADD");
             sb.append(String.valueOf(code));
             sb.append("C,"+Grid.COORD_TO_MM(diameter));
-            //if(hole!=0){
-            //    sb.append("X"+Grid.COORD_TO_MM(hole));
-            //}
             sb.append("*%");
             return sb.toString();
         }

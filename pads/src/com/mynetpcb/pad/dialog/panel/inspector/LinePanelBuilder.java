@@ -1,18 +1,17 @@
 package com.mynetpcb.pad.dialog.panel.inspector;
 
-
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.pad.component.FootprintComponent;
+import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.shape.Line;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -22,14 +21,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-
-/**
- * @author Sergey Iliev
- */
 public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
         
-    public LinePanelBuilder(FootprintComponent component) {
-       super(component,new GridLayout(6,1));
+    public LinePanelBuilder(UnitComponent component) {
+       super(component,new GridLayout(4,1));
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -89,9 +84,10 @@ public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
            p.y= fromUnitY(topField.getText());  
         }
         if(e.getSource()==this.thicknessField){
-           line.setThickness(Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));
+           line.setThickness((int)Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));
         }
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint(); 
     }
 }
+

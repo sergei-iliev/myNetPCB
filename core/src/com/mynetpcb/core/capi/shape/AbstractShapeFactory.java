@@ -6,9 +6,9 @@ import com.mynetpcb.core.capi.unit.Unit;
 
 import org.w3c.dom.Node;
 
-public interface AbstractShapeFactory<U extends Unit,S extends Shape> {
+public interface AbstractShapeFactory {
     
-    public S createShape(Node node);
+    public Shape createShape(Node node);
     
-    public S  createShape(U unit,AbstractMemento memento); 
+    public Shape  createShape(AbstractMemento memento); 
 }

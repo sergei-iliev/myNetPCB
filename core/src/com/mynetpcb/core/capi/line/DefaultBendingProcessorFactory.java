@@ -1,6 +1,5 @@
 package com.mynetpcb.core.capi.line;
 
-
 public class DefaultBendingProcessorFactory extends AbstractBendingProcessorFactory{
 
     @Override
@@ -27,4 +26,5 @@ public class DefaultBendingProcessorFactory extends AbstractBendingProcessorFact
         }
     }
 }
+
 

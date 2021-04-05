@@ -3,7 +3,6 @@ package com.mynetpcb.gerber.aperture.type;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 import com.mynetpcb.gerber.capi.Printable;
 
-
 public abstract class ApertureDefinition implements Printable{
     public enum ApertureShape
     {

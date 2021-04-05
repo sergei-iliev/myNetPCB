@@ -1,25 +1,17 @@
 package com.mynetpcb.pad.event;
 
-import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
-import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.pad.component.FootprintComponent;
-
 import com.mynetpcb.pad.shape.Arc;
-
-import java.awt.Point;
-
-import javax.swing.SwingUtilities;
 
 public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape>  extends EventHandle<U,S>{
     
-    int centerX;
-    int centerY;
+    double centerX;
+    double centerY;
     
     public ArcStartAngleEventHandle(U component) {
         super(component);        
@@ -75,7 +67,7 @@ public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape> 
 
 
     @Override
-    protected void Clear() {
+    protected void clear() {
 
     }
 }

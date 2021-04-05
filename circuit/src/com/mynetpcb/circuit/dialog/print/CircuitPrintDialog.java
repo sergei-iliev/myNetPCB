@@ -25,7 +25,7 @@ public class CircuitPrintDialog extends PrintDialog implements ChangeListener{
     private JRadioButton actualSize,fitToPageSize,customSize;    
     
     public CircuitPrintDialog(Window owner, UnitComponent unitComponent,String caption) {
-        super(owner,unitComponent,caption);
+        super(owner,unitComponent,caption,null);
         this.setSize(350, 200); 
     }
     

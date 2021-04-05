@@ -4,7 +4,7 @@ import com.mynetpcb.board.dialog.print.BoardPrintDialog;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.print.PrintContext;
 
-import java.awt.Window;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 
 public class BoardImageExportDialog extends BoardPrintDialog implements ActionListener{
     
-    public BoardImageExportDialog(Window owner, UnitComponent unitComponent) {
+    public BoardImageExportDialog(Frame owner, UnitComponent unitComponent) {
         super(owner, unitComponent,  "Export "+unitComponent.getModel().getUnit().getUnitName());
         this.setSize(460, 270);
         this.printButton.setText("Export");
@@ -59,7 +59,7 @@ public class BoardImageExportDialog extends BoardPrintDialog implements ActionLi
                                               JOptionPane.ERROR_MESSAGE); 
                 return;
           }           
-          unitComponent.get().Export(targetFile.getText(), createContext());
+          unitComponent.get().export(targetFile.getText(), createContext());
           return;
         }
         super.actionPerformed(e);

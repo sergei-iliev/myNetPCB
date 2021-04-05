@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.popup;
 
 
+//import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.component.UnitComponent;
@@ -8,23 +9,23 @@ import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
-import com.mynetpcb.core.capi.gui.filter.ImpexFileFilter;
 import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.UnitMgr;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
 
 import java.lang.ref.WeakReference;
 
@@ -34,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
-import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -58,7 +59,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
     
     protected Map<String,Object> lineMenu;
     
-    protected Map<String,Object> lineSelectMenu;
+    protected Map<String,Object> lineSelectMenu =new LinkedHashMap<String,Object>();;
     
     protected Map<String,Object> chipMenu;
     
@@ -82,7 +83,6 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         
     public void registerLinePopup(MouseScaledEvent e, Shape target) {
         initializePopupMenu(e, target, lineMenu);
-        Map<String,JMenuItem> submenu=(Map<String,JMenuItem>)lineMenu.get("Bending");
         this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
     }
 
@@ -148,25 +148,25 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
          
         item=new JMenuItem("Delete");item.setActionCommand("Delete");
         chipMenu.put("Delete",item);       
-        item=new JMenuItem("Assign Package"); item.setActionCommand("AssignPackage");
-        chipMenu.put("SelectPackage",item);      
+        //item=new JMenuItem("Assign Package"); item.setActionCommand("AssignPackage");
+        //chipMenu.put("SelectPackage",item);      
         //***separator
-        chipMenu.put("Separator",null); 
+        //chipMenu.put("Separator",null); 
         //connectors
-        submenu=new LinkedHashMap<String,JMenuItem>(); 
-        item = new JMenuItem("Bind");item.setActionCommand("Bind");
-        submenu.put("Bind",item);
-        item = new JMenuItem("Unbind");item.setActionCommand("Unbind");
-        submenu.put("Unbind",item);         
-        chipMenu.put("ChildConnectors",submenu);     
-        chipMenu.put("Separator1",null); 
+//        submenu=new LinkedHashMap<String,JMenuItem>(); 
+//        item = new JMenuItem("Bind");item.setActionCommand("Bind");
+//        submenu.put("Bind",item);
+//        item = new JMenuItem("Unbind");item.setActionCommand("Unbind");
+//        submenu.put("Unbind",item);         
+//        chipMenu.put("ChildConnectors",submenu);     
+//        chipMenu.put("Separator1",null); 
         //wires
-        submenu=new LinkedHashMap<String,JMenuItem>(); 
-        item=new JMenuItem("Disconnect");item.setActionCommand("DisconnectWires");
-        submenu.put("DisconnectWires",item); 
-        item=new JMenuItem("Connect");item.setActionCommand("ConnectWires");
-        submenu.put("ConnectWires",item);     
-        chipMenu.put("Wire ends",submenu);    
+//        submenu=new LinkedHashMap<String,JMenuItem>(); 
+//        item=new JMenuItem("Disconnect");item.setActionCommand("DisconnectWires");
+//        submenu.put("DisconnectWires",item); 
+//        item=new JMenuItem("Connect");item.setActionCommand("ConnectWires");
+//        submenu.put("ConnectWires",item);     
+//        chipMenu.put("Wire ends",submenu);    
          
     }
     private void createBasicMenuItems(){
@@ -177,8 +177,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
       basicMenu.put("Delete",item); 
     }
     
-    private void createLineSelectMenuItems(){
-        lineSelectMenu=new LinkedHashMap<String,Object>();
+    protected void createLineSelectMenuItems(){       
         
         JMenuItem item=new JMenuItem("Clone"); item.setActionCommand("clone");       
         lineSelectMenu.put("Clone",item);  
@@ -196,8 +195,15 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         item=new JMenuItem("Delete Bending point"); item.setActionCommand("DeleteBendingPoint");                                                                                    
         lineSelectMenu.put("DeleteBendingPoint",item); 
         
-        //***separator
         lineSelectMenu.put("Separator1",null);
+        
+        item=new JMenuItem("Send To Back"); item.setActionCommand("SendToBack");                                                                   
+        lineSelectMenu.put("SendToBack",item);
+        item=new JMenuItem("Bring To Front"); item.setActionCommand("BringToFront");                                                                   
+        lineSelectMenu.put("BringToFront",item);
+        
+        //***separator
+        lineSelectMenu.put("Separator2",null);
         
         item=new JMenuItem("Delete"); item.setActionCommand("Delete");       
         lineSelectMenu.put("Delete",item);  
@@ -236,10 +242,10 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         submenu.put("LeftRight",item);
         item = new JMenuItem("Top - Bottom");item.setActionCommand("TopBottom");item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.SHIFT_MASK));
         submenu.put("TopBottom",item);       
-        shapeMenu.put("Mirror",submenu);
+        shapeMenu.put("Mirror",submenu);        
         
         //***separator
-        shapeMenu.put("Separator2",null);         
+        shapeMenu.put("Separator3",null);         
         
         item=new JMenuItem("Delete"); item.setActionCommand("Delete");        
         shapeMenu.put("Delete",item);     
@@ -264,8 +270,8 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         //***separator
         unitMenu.put("Separator2",null);
 
-        item=new JMenuItem("Import to Project");item.setActionCommand("ImportUnit");                                                 
-        unitMenu.put("ImportUnit",item);
+        //item=new JMenuItem("Import to Project");item.setActionCommand("ImportUnit");                                                 
+        //unitMenu.put("ImportUnit",item);
 
         item=new JMenuItem("Load");item.setActionCommand("LoadUnit");                                                 
         unitMenu.put("LoadUnit",item);
@@ -291,11 +297,11 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
 
         initializePopupMenu(e, target, lineSelectMenu);
 
-        Trackable wire = (Trackable)target;
+        Trackable trackable = (Trackable)target;
         //***insert logic behind menu options availability
-        if (wire.isBendingPointClicked(e.getX(), e.getY())!= null) {
+        if (trackable.isBendingPointClicked(e.getX(), e.getY())!= null) {
             //***is this an end point
-            if (wire.isEndPoint(e.getX(), e.getY())) {
+            if (trackable.isEndPoint(e.getX(), e.getY())) {
                 this.setEnabled(lineSelectMenu, "Resume", true);
             } else {
                 this.setEnabled(lineSelectMenu, "Resume", false);
@@ -476,11 +482,11 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         
         if (e.getActionCommand().equalsIgnoreCase("cancelwiring")) {
             //****empty circuit space could be right clicked without a wire beneath
-            getUnitComponent().getLineBendingProcessor().Release();  
+            getUnitComponent().getLineBendingProcessor().release();  
             getTarget().setSelected(false);
             getUnitComponent().getEventMgr().resetEventHandle();
-            getUnitComponent().getDialogFrame().setButtonGroup(0x00);
-            getUnitComponent().setMode(0x00);
+            getUnitComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+            getUnitComponent().setMode(Mode.COMPONENT_MODE);
             getUnitComponent().Repaint(); 
 
         }
@@ -493,73 +499,73 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
                 getUnitComponent().getEventMgr().resetEventHandle();
                 getUnitComponent().getModel().getUnit().delete(getTarget().getUUID());
             }
-            //else{
-            //    getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
-            //}
+            else{
+                getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
+            }
 
             getUnitComponent().Repaint();
         }
         if(e.getActionCommand().equalsIgnoreCase("reload")){
-            getUnitComponent().Reload();
+            getUnitComponent().reload();
         }
-        if (e.getActionCommand().equalsIgnoreCase("ImportUnit")) {
-            JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-            fc.setDialogTitle("Import to Project");
-            fc.setAcceptAllFileFilterUsed(false);
-            fc.addChoosableFileFilter(new ImpexFileFilter(".xml"));
-            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-
-                    if (fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml")) {
-                        getUnitComponent().Import(fc.getSelectedFile().getAbsolutePath());                        
-                    } else {
-                        getUnitComponent().Import( fc.getSelectedFile().getAbsolutePath() + ".xml");                        
-                    }
-                  
-            }          
-          return;
-        }
+//        if (e.getActionCommand().equalsIgnoreCase("ImportUnit")) {
+//            JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+//            fc.setDialogTitle("Import to Project");
+//            fc.setAcceptAllFileFilterUsed(false);
+//            fc.addChoosableFileFilter(new ImpexFileFilter(".xml"));
+//            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+//
+//                    if (fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml")) {
+//                        getUnitComponent()._import(fc.getSelectedFile().getAbsolutePath());                        
+//                    } else {
+//                        getUnitComponent()._import( fc.getSelectedFile().getAbsolutePath() + ".xml");                        
+//                    }
+//                  
+//            }          
+//          return;
+//        }
         if(e.getActionCommand().equalsIgnoreCase("topbottom")||e.getActionCommand().equalsIgnoreCase("leftright")){   
-            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
-            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-            Point p=getUnitComponent().getModel().getUnit().getGrid().positionOnGrid((int)r.getCenterX(),(int)r.getCenterY());      
+            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes();
+            Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            Point p=getUnitComponent().getModel().getUnit().getGrid().positionOnGrid(r.getCenter());      
             UnitMgr unitMgr = new UnitMgr();
             if(e.getActionCommand().equalsIgnoreCase("topbottom")){
-                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Point(p.x-10,p.y),new Point(p.x+10,p.y));
+                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit().getSelectedShapes(),new Line(new Point(p.x-10,p.y),new Point(p.x+10,p.y)));
             }else{
-                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit(),new Point(p.x,p.y-10),new Point(p.x,p.y+10));
+                unitMgr.mirrorBlock(getUnitComponent().getModel().getUnit().getSelectedShapes(),new Line(new Point(p.x,p.y-10),new Point(p.x,p.y+10)));
             }
             
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);
-            unitMgr.normalizePinText(shapes);
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento( MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            //unitMgr.normalizePinText(shapes);
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento( MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
             getUnitComponent().Repaint();
         } 
         if(e.getActionCommand().equalsIgnoreCase("rotateleft")||e.getActionCommand().equalsIgnoreCase("rotateright")){ 
-            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false);
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);  
+            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes();
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);  
             UnitMgr unitMgr = new UnitMgr();
-            unitMgr.rotateBlock(shapes,AffineTransform.getRotateInstance((e.getActionCommand().equalsIgnoreCase("rotateleft")?-1:1)*Math.PI/2,r.getCenterX(),r.getCenterY()));   
+            unitMgr.rotateBlock(shapes,(e.getActionCommand().equalsIgnoreCase("rotateleft")?1:-1)*90,r.getCenter());   
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),shapes);  
             //skip if single pin
-            unitMgr.normalizePinText(shapes);
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            //unitMgr.normalizePinText(shapes);
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
             getUnitComponent().Repaint();
         }
         if(e.getActionCommand().equalsIgnoreCase("deleteunit")){  
-            if(getUnitComponent().getModel().isChanged(getUnitComponent().getModel().getUnit().getUUID())){                        
-                if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(getUnitComponent().getDialogFrame().getParentFrame(), "There are unsaved changes. Do you want to continue?", "Delete", JOptionPane.YES_NO_OPTION)) {                                       
+            //if(getUnitComponent().getModel().isChanged(getUnitComponent().getModel().getUnit().getUUID())){                        
+            if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(getUnitComponent().getDialogFrame().getParentFrame(), "Are you sure you want to delete '"+getUnitComponent().getModel().getUnit().getUnitName()+"' ?", "Delete", JOptionPane.YES_NO_OPTION)) {                                       
                     return;
-                }                      
-            }
-            getUnitComponent().getModel().Delete(getUnitComponent().getModel().getUnit().getUUID());
+            }                      
+            //}
+            getUnitComponent().getModel().delete(getUnitComponent().getModel().getUnit().getUUID());
             if (getUnitComponent().getModel().getUnits().size() > 0) {
                 getUnitComponent().getModel().setActiveUnit(0);
                 getUnitComponent().revalidate();
                 getUnitComponent().getModel().fireUnitEvent(new UnitEvent(getUnitComponent().getModel().getUnit(), UnitEvent.SELECT_UNIT));
             }else{
-                getUnitComponent().Clear();
+                getUnitComponent().clear();
                 getUnitComponent().fireContainerEvent(new ContainerEvent(null, ContainerEvent.DELETE_CONTAINER));
             }
             getUnitComponent().componentResized(null);
@@ -574,38 +580,38 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }
         
         if(e.getActionCommand().equals("Undo")){
-         getUnitComponent().getModel().getUnit().Undo(null);
+         getUnitComponent().getModel().getUnit().undo(null);
          getUnitComponent().Repaint();
          getUnitComponent().revalidate();
          return;
         }
         
         if(e.getActionCommand().equals("Redo")){
-         getUnitComponent().getModel().getUnit().Redo();
+         getUnitComponent().getModel().getUnit().redo();
          getUnitComponent().Repaint();
          getUnitComponent().revalidate();        
          return;
         }   
         if (e.getActionCommand().equalsIgnoreCase("delete")) {
               UnitMgr unitMgr=new UnitMgr();
-              getUnitComponent().getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).Add(getUnitComponent().getModel().getUnit().getSelectedShapes(false)));
-              unitMgr.deleteBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(false));
+              getUnitComponent().getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).add(getUnitComponent().getModel().getUnit().getSelectedShapes()));
+              unitMgr.deleteBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes());
               getUnitComponent().Repaint();            
        
         }        
         
         if(e.getActionCommand().equalsIgnoreCase("clone")){  
             UnitMgr unitMgr = new UnitMgr();
-            unitMgr.cloneBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes(true));
-            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(false); 
-            Rectangle r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
+            unitMgr.cloneBlock(getUnitComponent().getModel().getUnit(),getUnitComponent().getModel().getUnit().getSelectedShapes());
+            Collection<Shape> shapes= getUnitComponent().getModel().getUnit().getSelectedShapes(); 
+            Box r=getUnitComponent().getModel().getUnit().getShapesRect(shapes);
             unitMgr.moveBlock(shapes,
-                                 r.width,r.height);
+                                 r.getWidth(),r.getHeight());
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),
                                   shapes);
             
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.CREATE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.CREATE_MEMENTO));                                            
-            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                                                                  
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.CREATE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.CREATE_MEMENTO));                                            
+            getUnitComponent().getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                                                                  
             getUnitComponent().Repaint();
             //***emit property event change
             if (shapes.size() == 1) {
@@ -622,22 +628,22 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().getModel().getUnit().setSelected(false);
             getUnitComponent().getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.LOCAL));
             unitMgr.locateBlock(getUnitComponent().getModel().getUnit(),
-                                                 getUnitComponent().getModel().getUnit().getSelectedShapes(false),
+                                                 getUnitComponent().getModel().getUnit().getSelectedShapes(),
                                                  x, y);
 
             unitMgr.alignBlock(getUnitComponent().getModel().getUnit().getGrid(),
-                                                getUnitComponent().getModel().getUnit().getSelectedShapes(false));
+                                                getUnitComponent().getModel().getUnit().getSelectedShapes());
             getUnitComponent().Repaint();            
         } 
         if(e.getActionCommand().equals("positiontocenter")){
             Unit unit=getUnitComponent().getModel().getUnit();
-            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(unit.getShapes()));  
-            int x=(int)unit.getBoundingRect().getCenterX();
-            int y=(int)unit.getBoundingRect().getCenterY();
+            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(unit.getShapes()));  
+            int x=(int)unit.getBoundingRect().getCenter().x;
+            int y=(int)unit.getBoundingRect().getCenter().y;
             UnitMgr unitMgr=new UnitMgr();
             unitMgr.moveBlock(unit.getShapes(), (unit.getWidth()/2)-x, (unit.getHeight()/2)-y);
             unitMgr.alignBlock(unit.getGrid(),unit.getShapes());
-            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(unit.getShapes())); 
+            unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(unit.getShapes())); 
             //scroll to center
             getUnitComponent().setScrollPosition((unit.getWidth()/2), (unit.getHeight()/2));
             getUnitComponent().Repaint();
@@ -660,14 +666,14 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }
         
         if (e.getActionCommand().equalsIgnoreCase("AddBendingPoint")) {
-             ((Trackable)getTarget()).insertPoint(x, y);
-             
+             ((Trackable)getTarget()).insertPoint(x, y);             
              getUnitComponent().Repaint();
         }
         
         if (e.getActionCommand().equalsIgnoreCase("LoadUnit")) {
+            
             AbstractLoadDialog.Builder builder=getUnitComponent().getLoadDialogBuilder();
-            AbstractLoadDialog loadDialog =builder.setWindow(getUnitComponent().getDialogFrame().getParentFrame()).setCaption("Load "+getUnitComponent().getModel().getUnit().toString()).setEnabled(true).build();
+            AbstractLoadDialog loadDialog =builder.setWindow((JFrame)getUnitComponent().getDialogFrame().getParentFrame()).setCaption("Load "+getUnitComponent().getModel().getUnit().toString()).setEnabled(true).build();
             
             loadDialog.pack();
             loadDialog.setLocationRelativeTo(null); //centers on screen
@@ -697,8 +703,8 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().Repaint();
             
                         //position on center
-            Rectangle r=getUnitComponent().getModel().getUnit().getBoundingRect();
-            getUnitComponent().setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
+            Box r=getUnitComponent().getModel().getUnit().getBoundingRect();
+            getUnitComponent().setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
             
             getUnitComponent().requestFocusInWindow(); //***for the cancel button  
             return;                        

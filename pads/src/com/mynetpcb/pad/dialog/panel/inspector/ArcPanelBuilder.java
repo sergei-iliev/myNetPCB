@@ -1,12 +1,12 @@
 package com.mynetpcb.pad.dialog.panel.inspector;
 
-
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.shape.Arc;
 
 import java.awt.BorderLayout;
@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-
 public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
 
   private JTextField startAngField,extAngField; 
@@ -33,14 +32,14 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 layerCombo=new JComboBox(Layer.PCB_SYMBOL_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);        
-        //***Left        
+        //***X        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("Center X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 leftField=new JTextField("0");leftField.addKeyListener(this);  panel.add(leftField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
-        //***Top        
+        //***Y        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("Center Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 topField=new JTextField("0"); topField.addKeyListener(this); panel.add(topField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
                
@@ -75,12 +74,15 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void updateUI() {
         Arc arc=(Arc)getTarget();  
-        
-        leftField.setText(toUnitX(arc.getX() ));
-        topField.setText(toUnitY(arc.getY())); 
+        leftField.setEnabled(arc.getResizingPoint()==null?false:true);  
+        topField.setEnabled(arc.getResizingPoint()==null?false:true);
+  
+        leftField.setText(toUnitX(arc.getResizingPoint()==null?0:Utilities.roundDouble(arc.getResizingPoint().x)));
+        topField.setText(toUnitY(arc.getResizingPoint()==null?0:Utilities.roundDouble(arc.getResizingPoint().y))); 
+
         
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(arc.getThickness())));    
-        widthField.setText(String.valueOf(Grid.COORD_TO_MM(arc.getWidth())));
+        widthField.setText(toUnit(arc.getRadius()));
         
         setSelectedItem(layerCombo, (getTarget()).getCopper());
         setSelectedIndex(fillCombo,(getTarget().getFill()==Shape.Fill.EMPTY?0:1)); 
@@ -107,19 +109,19 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
         Arc arc=(Arc)getTarget();
       
         if(e.getSource()==this.thicknessField){
-           getTarget().setThickness(Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
+            getTarget().setThickness((int)Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
         }
         
         if(e.getSource()==this.leftField){
-           getTarget().setX(Grid.MM_TO_COORD(Double.parseDouble(leftField.getText())));           
+         getTarget().getCenter().x=(Grid.MM_TO_COORD(Double.parseDouble(leftField.getText())));          
         }
         
         if(e.getSource()==this.topField){            
-           getTarget().setY(Grid.MM_TO_COORD(Double.parseDouble(topField.getText())));             
+          getTarget().getCenter().y=(Grid.MM_TO_COORD(Double.parseDouble(topField.getText())));             
         }
         
         if(e.getSource()==this.widthField){
-           getTarget().setWidth(Grid.MM_TO_COORD(Double.parseDouble(widthField.getText()))); 
+            ((Arc)getTarget()).setRadius(Grid.MM_TO_COORD(Double.parseDouble(widthField.getText()))); 
         }
         
         if(e.getSource()==startAngField){

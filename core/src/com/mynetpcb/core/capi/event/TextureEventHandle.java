@@ -26,7 +26,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
 
     
     @Override
-    protected void Clear() {
+    protected void clear() {
         if(texture!=null){
             texture.clear();  
             texture=null;
@@ -50,7 +50,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
             if(getTarget().showContextPopup()!=null){                
                getTarget().showContextPopup().invoke(getComponent().getPopupMenu(),e, getTarget());
             }else{   
-               getComponent().getPopupMenu().registerChipPopup(e, getTarget()); 
+               //getComponent().getPopupMenu().registerChipPopup(e, getTarget()); 
             }
             }catch(Exception ex){
                 ex.printStackTrace(System.out);
@@ -62,7 +62,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
         getComponent().getModel().getUnit().setSelected(false);               
         getTarget().setSelected(true); 
 
-         texture= new WeakReference<Texture>(((Textable)getTarget()).getChipText().getClickedTexture(e.getX(),e.getY()));  
+         texture= new WeakReference<Texture>(((Textable)getTarget()).getClickedTexture(e.getX(),e.getY()));  
          getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
          
          getComponent().Repaint();
@@ -70,7 +70,16 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
     }
 
     public void mouseScaledReleased(MouseScaledEvent e) {
-        getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
+//        if(getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)==Boolean.TRUE){
+//            getTarget().getOwningUnit().getGrid().snapToGrid(texture.get().getAnchorPoint()); 
+//        }
+        //***update PropertiesPanel           
+        getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
+        
+        
+        //***Undo processor
+        getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));           
+        getComponent().Repaint();            
     }
 
     public void mouseScaledDragged(MouseScaledEvent e) {       
@@ -78,7 +87,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
         int new_my = e.getY();        
         
         
-        texture.get().Move(new_mx - mx, new_my - my);
+        texture.get().move(new_mx - mx, new_my - my);
         getTarget().getOwningUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
             
         // update our data

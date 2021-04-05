@@ -1,9 +1,9 @@
 package com.mynetpcb.board.dialog.print;
 
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.dialog.print.PrintDialog;
-import com.mynetpcb.core.pad.Layer;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,7 +24,7 @@ public class BoardPrintDialog extends PrintDialog {
     protected JCheckBox mirrorcb;
     
     public BoardPrintDialog(Window owner, UnitComponent unitComponent,String caption) {
-        super(owner, unitComponent,caption);        
+        super(owner, unitComponent,caption,"d:\\sergei");        
     }
 
     protected JPanel initDialogContent(){

@@ -2,8 +2,8 @@ package com.mynetpcb.core.capi.event;
 
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.d2.shapes.Point;
 
-import java.awt.Point;
 
 public class MeasureEventHandle  <U extends UnitComponent,S extends Shape> extends EventHandle<U,S>{
     
@@ -13,14 +13,14 @@ public class MeasureEventHandle  <U extends UnitComponent,S extends Shape> exten
     }
 
     @Override
-    protected void Clear() {
+    protected void clear() {
  
     }
     
     @Override
-    public void Detach() {
+    public void detach() {
         getComponent().getModel().getUnit().getRuler().setResizingPoint(null);
-        super.Detach();
+        super.detach();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class MeasureEventHandle  <U extends UnitComponent,S extends Shape> exten
     public void mouseScaledMove(MouseScaledEvent e) {
         int new_mx = e.getX();
         int new_my = e.getY();
-        getComponent().getModel().getUnit().getRuler().Resize(new_mx - mx, new_my - my,null);
+        getComponent().getModel().getUnit().getRuler().resize(new_mx - mx, new_my - my,null);
         // update our data
         mx = new_mx;
         my = new_my;

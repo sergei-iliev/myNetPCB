@@ -21,10 +21,12 @@ import com.mynetpcb.core.capi.io.remote.ReadConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.capi.io.search.FileNameLookup;
 import com.mynetpcb.core.capi.io.search.XMLTagContentLookup;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.tree.AttachedItem;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.pad.container.FootprintContainer;
 import com.mynetpcb.pad.unit.Footprint;
 
@@ -35,7 +37,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Rectangle2D;
 
 import java.io.IOException;
 
@@ -170,8 +171,8 @@ public class FootprintsPanel extends JPanel implements
     public void mousePressed(MouseEvent e) {
         if (e.getSource() == selectionPanel){
             isPressedFlag=true;
-            boardComponent.getDialogFrame().setButtonGroup(BoardComponent.COMPONENT_MODE);
-            boardComponent.setMode(BoardComponent.COMPONENT_MODE);
+            boardComponent.getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+            boardComponent.setMode(Mode.COMPONENT_MODE);
         }
     }
 
@@ -183,12 +184,14 @@ public class FootprintsPanel extends JPanel implements
                return; 
             }
         
-           //***drop must be in viewable area
-           Rectangle2D rect=Utilities.getScaleRect(boardComponent.getContainerCursor().getBoundingShape().getBounds(), boardComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation());
-           if(boardComponent.getViewportWindow().contains(rect.getCenterX(),rect.getCenterY())){
+           //***drop must be in viewable area           
+            Box rect = boardComponent.getContainerCursor().getBoundingShape();
+            rect.scale( boardComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+            
+            if(rect.intersects(boardComponent.getViewportWindow())){
                 try {
                     Shape shape = boardComponent.getContainerCursor().clone();
-                    boardComponent.getModel().getUnit().Add(shape);
+                    boardComponent.getModel().getUnit().add(shape);
                     boardComponent.getModel().getUnit().setSelected(false);
                     shape.setSelected(true);
                      
@@ -205,7 +208,7 @@ public class FootprintsPanel extends JPanel implements
                
            }
           //***delete cursor and reset event handler
-           boardComponent.setMode(BoardComponent.COMPONENT_MODE); 
+           boardComponent.setMode(Mode.COMPONENT_MODE); 
            boardComponent.Repaint();
         
         }
@@ -223,7 +226,7 @@ public class FootprintsPanel extends JPanel implements
     }
 
     @Override
-    public void OnStart(Class<?> reciever) {
+    public void onStart(Class<?> reciever) {
         if (reciever==JTree.class||reciever==SearchUnitLocal.class) {
             root.removeAllChildren();
             ((DefaultTreeModel)footprintTree.getModel()).reload();
@@ -232,7 +235,7 @@ public class FootprintsPanel extends JPanel implements
     }
 
     @Override
-    public void OnRecive(String result, Class<?> reciever) {
+    public void onRecive(String result, Class<?> reciever) {
         if (reciever==SearchableComboBox.class||reciever==JTree.class||reciever==ReadUnitsLocal.class||reciever==SearchUnitLocal.class) {
             //clear selection
             selectionPanel.Clear();
@@ -292,7 +295,7 @@ public class FootprintsPanel extends JPanel implements
             selectionPanel.Clear();
             try {
                 UnitContainer model= new FootprintContainer();
-                model.Parse(result);
+                model.parse(result);
                 selectionPanel.getSelectionGrid().setModel(model);
             } catch (Exception e) {
                 e.printStackTrace(System.out);            
@@ -306,12 +309,12 @@ public class FootprintsPanel extends JPanel implements
     }
 
     @Override
-    public void OnFinish(Class<?> c) {
+    public void onFinish(Class<?> c) {
         DisabledGlassPane.unblock(boardComponent.getDialogFrame().getRootPane()); 
     }
 
     @Override
-    public void OnError(String error) {
+    public void onError(String error) {
         DisabledGlassPane.unblock(boardComponent.getDialogFrame().getRootPane()); 
         JOptionPane.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(), error, "Error",
                                       JOptionPane.ERROR_MESSAGE); 
@@ -356,8 +359,8 @@ public class FootprintsPanel extends JPanel implements
                 boardComponent.getModel().getUnit().setSelected(false);
 
             //***set chip cursor
-                shape.Move(-1 * (int)shape.getBoundingShape().getBounds().getCenterX(),
-                      -1 * (int)shape.getBoundingShape().getBounds().getCenterY());
+                shape.move(-1 * (int)shape.getBoundingShape().getCenter().x,
+                      -1 * (int)shape.getBoundingShape().getCenter().y);
                 boardComponent.setContainerCursor(shape);
                 boardComponent.getEventMgr().setEventHandle("cursor", shape);
           }

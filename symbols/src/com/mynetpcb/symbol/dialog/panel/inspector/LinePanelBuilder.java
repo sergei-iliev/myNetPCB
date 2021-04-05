@@ -1,17 +1,15 @@
 package com.mynetpcb.symbol.dialog.panel.inspector;
 
-
+import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.symbol.component.SymbolComponent;
+import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.symbol.shape.Line;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JLabel;
@@ -19,30 +17,27 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-
-/**
- * @author Sergey Iliev
- */
 public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
-    
-    public LinePanelBuilder(SymbolComponent component) {
-       super(component,new GridLayout(3,1));
+        
+    public LinePanelBuilder(UnitComponent component) {
+       super(component,new GridLayout(3,1));        
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                leftField=new JTextField("0.0");leftField.addKeyListener(this);  panel.add(leftField,BorderLayout.CENTER);
+                label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,24)); panel.add(label,BorderLayout.WEST);
+                leftField=new JTextField("0");leftField.addKeyListener(this);  panel.add(leftField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
         
         //***Top        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,24)); panel.add(label,BorderLayout.WEST);
                 topField=new JTextField("0"); topField.addKeyListener(this); panel.add(topField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
         //***Thickness       
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
-                label=new JLabel("Thickness"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Thickness"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,24)); panel.add(label,BorderLayout.WEST);
                 thicknessField=new JTextField("0"); thicknessField.addKeyListener(this); panel.add(thicknessField,BorderLayout.CENTER);
                 layoutPanel.add(panel);         
+                
     }
 
     @Override
@@ -54,11 +49,6 @@ public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
         leftField.setText(toUnitX(p==null?0:p.x));
         topField.setText(toUnitY(p==null?0:p.y)); 
         thicknessField.setText(String.valueOf((line.getThickness())));
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        
     }
     
     @Override
@@ -72,7 +62,7 @@ public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
         
         if(e.getSource()==this.topField){
            Point p=line.getResizingPoint();
-           p.y=fromUnitY(topField.getText());  
+           p.y= fromUnitY(topField.getText());  
         }
         if(e.getSource()==this.thicknessField){
            line.setThickness((Integer.parseInt(thicknessField.getText())));

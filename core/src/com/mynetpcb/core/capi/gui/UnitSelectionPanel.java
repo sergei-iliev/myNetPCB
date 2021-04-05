@@ -25,7 +25,7 @@ public class UnitSelectionPanel extends JPanel implements MouseListener{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);   
         Graphics2D g2 = (Graphics2D)g;
-        selectionGrid.Paint(g2);
+        selectionGrid.paint(g2);
         g2.dispose();
     } 
     @Override
@@ -45,11 +45,11 @@ public class UnitSelectionPanel extends JPanel implements MouseListener{
     }
     public void Clear(){
       setSize(1, 1); 
-      selectionGrid.Clear();  
+      selectionGrid.clear();  
     }
     public void Release(){
       this.Clear();
-      selectionGrid.Release(); 
+      selectionGrid.release(); 
       this.removeMouseListener(this);
     }
 

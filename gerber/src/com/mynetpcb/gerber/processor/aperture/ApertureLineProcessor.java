@@ -1,6 +1,5 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -45,3 +44,4 @@ public class ApertureLineProcessor implements Processor{
         dictionary.add(circle); 
     }
 }
+

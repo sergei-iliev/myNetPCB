@@ -23,10 +23,10 @@ public final class GraphicsStateContext {
     private FunctionCommand interpolationCommand;
     private final LevelPolarityCommand levelPolarityCommand;
     private final NumberFormat formatter;
-    private final StringBufferEx sb;
+    private final StringBufferExt sb;
     private final SetApertureCodeCommand currentApertureCommand;
     
-    public GraphicsStateContext( ApertureDictionary apertureDictionary, CommandDictionary commandDictionary,StringBufferEx sb){
+    public GraphicsStateContext( ApertureDictionary apertureDictionary, CommandDictionary commandDictionary,StringBufferExt sb){
         this.apertureDictionary = apertureDictionary;
         this.commandDictionary = commandDictionary;
         this.currentAperture=new RectangleAperture();
@@ -40,7 +40,7 @@ public final class GraphicsStateContext {
     }
 
 
-    public StringBufferEx getOutput(){
+    public StringBufferExt getOutput(){
       return sb;  
     }
     public CommandDictionary getCommandDictionary(){

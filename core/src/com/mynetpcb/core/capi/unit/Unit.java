@@ -1,51 +1,44 @@
 package com.mynetpcb.core.capi.unit;
 
 
-import com.mynetpcb.core.board.CompositeLayerable;
-import com.mynetpcb.core.capi.ClickableOrderItem;
-import com.mynetpcb.core.capi.CoordinateSystem;
 import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.Frameable;
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.PinLineable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.Ruler;
 import com.mynetpcb.core.capi.ScalableTransformation;
-import com.mynetpcb.core.capi.SortedList;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.Event;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeEventDispatcher;
 import com.mynetpcb.core.capi.event.ShapeListener;
-import com.mynetpcb.core.capi.line.Sublineable;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
+import com.mynetpcb.core.capi.layer.DefaultOrderedList;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.layer.OrderedList;
+import com.mynetpcb.core.capi.pin.PinLineable;
 import com.mynetpcb.core.capi.print.PrintCallable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
-import com.mynetpcb.core.capi.shape.Container;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Textable;
-import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
-import com.mynetpcb.core.capi.undo.Memento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.capi.undo.Stateable;
 import com.mynetpcb.core.capi.undo.UndoCallback;
 import com.mynetpcb.core.capi.undo.UndoProvider;
 import com.mynetpcb.core.capi.undo.Undoable;
-import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.d2.shapes.Box;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import java.io.IOException;
@@ -69,14 +62,14 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 
-public abstract class Unit<S extends Shape> implements Container,ShapeEventDispatcher, PrintCallable,Undoable, Stateable, Cloneable,Clipboardable {
+public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, PrintCallable,Undoable, Cloneable,Clipboardable {
     private UUID uuid;
 
     private int width, height;
 
     protected Grid grid;
     
-    protected List<S> shapes;
+    protected OrderedList<S> shapes;
 
     protected String unitName;
 
@@ -97,8 +90,12 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
     protected Frameable frame;
     
     public Unit(int width, int height) {
+        this(width,height,new DefaultOrderedList<>());
+    }
+    
+    public Unit(int width, int height,OrderedList<S> list) {
         uuid = UUID.randomUUID();
-        shapes = new SortedList<S>();
+        shapes = list;
         scalableTransformation = new ScalableTransformation();
         shapeListeners = new EventListenerList();
         this.grid = new Grid(0.8, Grid.Units.MM);
@@ -106,10 +103,10 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         this.height = height;
         this.unitName = "Uknown";
         undoProvider = new UndoProvider();
-        coordinateSystem=new CoordinateSystem(this);
         this.frame=new UnitFrame(width,height);
         this.ruler=new Ruler();
     }
+    
     public Object clone() throws CloneNotSupportedException { 
       Unit copy=(Unit)super.clone();
       copy.frame=new UnitFrame(this.width,this.height);
@@ -118,17 +115,20 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
       copy.uuid=UUID.randomUUID();
       copy.shapeListeners = new EventListenerList();
       copy.undoProvider = new UndoProvider();
-      copy.grid=(Grid)this.grid.clone();
+      copy.grid=this.grid.clone();
       copy.ruler=new Ruler();
-      copy.coordinateSystem =new CoordinateSystem(copy);
-      copy.shapes=new SortedList<S>();
-      UnitMgr unitMgr=new UnitMgr();
-      unitMgr.cloneBlock(this, copy);
-      
+      copy.shapes=this.shapes.clone();         
+            for (S shape : shapes) {
+                    try {
+                        copy.add(shape.clone());
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace(System.out);
+                    }      
+            }
       copy.scalableTransformation=this.scalableTransformation.clone();
-      copy.unitName=this.unitName;
       return copy;
     }
+    
     public void setScrollPositionValue(int scrollPositionXValue, int scrollPositionYValue) {
         this.scrollPositionXValue = scrollPositionXValue;
         this.scrollPositionYValue = scrollPositionYValue;
@@ -156,11 +156,22 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         return coordinateSystem;
     }
     
+    public void setCoordinateSystem(CoordinateSystem coordinateSystem){
+        this.coordinateSystem=coordinateSystem;
+    }
+    public void deleteCoordinateSystem(){
+        if(coordinateSystem!=null){ 
+          coordinateSystem.clear();
+        }
+        coordinateSystem=null;
+    }
+    
+    
     public UUID getUUID() {
         return uuid;
     }
 
-    public void Add(S shape) {
+    public void add(S shape) {
         if (shape == null)
             return;
         
@@ -172,7 +183,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         this.fireShapeEvent(new ShapeEvent(shape, Event.ADD_SHAPE));
     }
 
-    public void Clear() {
+    public void clear() {
         //***go through all lists and delete them
         for (; shapes.size() > 0; ) {
             this.delete(shapes.get(0).getUUID());
@@ -181,8 +192,8 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         //undoProvider.Clear();
     }
 
-    public void Release() {
-        this.Clear();
+    public void release() {
+        this.clear();
         //***clear listeners list
         for (int i = 0; i < shapeListeners.getListenerList().length; i++) {
             shapeListeners.getListenerList()[i] = null;
@@ -202,10 +213,10 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
                 //***kill strong references
                 shape.setOwningUnit(null);
                 //***kill strong references
-                if (shape instanceof Ownerable) {
-                    ((Ownerable)shape).setOwner(null);
-                }
-                shape.Clear();
+//                if (shape instanceof Ownerable) {
+//                    ((Ownerable)shape).setOwner(null);
+//                }
+                shape.clear();
                 shape = null;
                 return;
             }
@@ -230,12 +241,9 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
      * exclude those that are owned by others,count parents only
      */
 
-    public Collection<S> getSelectedShapes(boolean parentsOnly) {
+    public Collection<S> getSelectedShapes() {
         Collection<S> v = new ArrayList<S>(20);
         for (S shape : shapes) {
-            if (parentsOnly && shape instanceof Ownerable && ((Ownerable)shape).getOwner() != null) {
-                continue;
-            }
             if (shape.isSelected()) {
                 v.add(shape);
             }
@@ -261,7 +269,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             }
         }
     }
-    private boolean isShapeVisibleOnLayers(Shape shape){
+    protected boolean isShapeVisibleOnLayers(Shape shape){
         if(this instanceof CompositeLayerable){
           if(shape.isVisibleOnLayers(((CompositeLayerable)this).getLayerMaskID())){
             return true;
@@ -272,22 +280,23 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         //default
         return true;
     }
-    public void setSelected(Rectangle r) {
+    public void setSelected(Box rect) {
+
         for (S shape : shapes) {
             if(!isShapeVisibleOnLayers(shape)){
                 continue;
             }
-            if (shape.isInRect(r)) {
+            if (shape.isInRect(rect)) {
                 shape.setSelected(true);
             }else{
-                if(shape instanceof Sublineable&& ((Sublineable)shape).isSublineInRect(r)){
-                    ((Sublineable)shape).setSublineSelected(r, true);  
-                }
+                //if(shape instanceof Sublineable&& ((Sublineable)shape).isSublineInRect(rect)){
+                //    ((Sublineable)shape).setSublineSelected(rect, true);  
+                //}
             }
         }
     }
 
-    public List<S> getShapes() {
+    public OrderedList<S> getShapes() {
         return shapes;
     }
     public <M extends Drawable> List<M> getShapes(Class<?> clazz,int layermask) {
@@ -304,7 +313,6 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
     public <M extends Drawable> List<M> getShapes(Class<?> clazz) {
         ArrayList<M> list = new ArrayList<M>();
         for (S s : shapes) {
-            
             if (clazz.isAssignableFrom(s.getClass())) {
                 list.add((M)s);
             }
@@ -344,13 +352,13 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
     * The Bounding rectangle based on all elements in the Unit
     */
 
-    public Rectangle getBoundingRect() {
+    public Box getBoundingRect() {
         return getShapesRect(this.shapes);
     }
 
-    public Rectangle getShapesRect(Collection<S> shapes) {
-        Rectangle r = new Rectangle();
-        int x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+    public Box getShapesRect(Collection<S> shapes) {
+        Box r = new Box();
+        double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
 
         //***empty schematic,element,package
         if (shapes.size() == 0) {
@@ -358,13 +366,13 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         }
 
         for (Shape shape : shapes) {
-            Rectangle tmp = shape.getBoundingShape().getBounds();
+            Box tmp = shape.getBoundingShape();
             
             if (tmp != null) {
-                x1 = Math.min(x1, tmp.x);
-                y1 = Math.min(y1, tmp.y);
-                x2 = Math.max(x2, tmp.x + tmp.width);
-                y2 = Math.max(y2, tmp.y + tmp.height);
+                x1 = Math.min(x1, tmp.min.x);
+                y1 = Math.min(y1, tmp.min.y);
+                x2 = Math.max(x2, tmp.max.x );
+                y2 = Math.max(y2, tmp.max.y);
             }
 
             //isolate simple pin text/SIMPLE_TEXT
@@ -372,16 +380,16 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
                  continue;
             }
            
-            if (shape instanceof Textable) {
-                tmp = ((Textable)shape).getChipText().getBoundingShape();
-                
-                if (tmp != null) {
-                    x1 = Math.min(x1, tmp.x);
-                    y1 = Math.min(y1, tmp.y);
-                    x2 = Math.max(x2, tmp.x+ tmp.width);
-                    y2 = Math.max(y2, tmp.y+tmp.height);
-                }
-            }
+//            if (shape instanceof Textable) {
+//                tmp = ((Textable)shape).getChipText().getBoundingShape();
+//                
+//                if (tmp != null) {
+//                    x1 = Math.min(x1, tmp.x);
+//                    y1 = Math.min(y1, tmp.y);
+//                    x2 = Math.max(x2, tmp.x+ tmp.width);
+//                    y2 = Math.max(y2, tmp.y+tmp.height);
+//                }
+//            }
 
 
         }
@@ -394,9 +402,9 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         this.frame.setSize(width, height);
     }
 
-    public abstract StringBuffer Format();
+    public abstract StringBuffer format();
 
-    public abstract void Parse(Node node) throws XPathExpressionException, ParserConfigurationException;
+    public abstract void parse(Node node) throws XPathExpressionException, ParserConfigurationException;
 
     /*
      * is junshion click
@@ -411,16 +419,17 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             return Optional.empty();
         }                
     }
+    
     protected List<Shape> buildClickedShapesList(int x, int y, boolean isTextIncluded) {
         List<Shape> orderElements = new ArrayList<>();
-                for (Shape shape : this.<Shape>getShapes()) {
+                for (Shape shape : this.shapes) {
                     if (isTextIncluded && shape instanceof Textable) {                   
-                        if(((Textable)shape).getChipText().isClicked(x, y)){ 
+                        if(((Textable)shape).isClickedTexture(x, y)){ 
                           orderElements.add(0,shape);
                           continue;
                         }
                     }
-                    if(shape.isClicked(x, y)){
+                    if(this.isShapeVisibleOnLayers(shape)&&shape.isClicked(x, y)){
                        orderElements.add(shape);
                        continue; 
                     }                    
@@ -448,9 +457,9 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
                            }
                     }
                                 
-                    if ((o1.getOrderWeight() - o2.getOrderWeight()) == 0)
+                    if ((o1.getClickableOrder() - o2.getClickableOrder()) == 0)
                         return 0;
-                    if ((o1.getOrderWeight() - o2.getOrderWeight()) > 0)
+                    if ((o1.getClickableOrder() - o2.getClickableOrder()) > 0)
                         return 1;
                     else
                         return -1;
@@ -463,99 +472,24 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             return null;
         }
         //Text?
-        if (clickedShapes.get(0) instanceof Textable) {   
-            if(isShapeVisibleOnLayers(clickedShapes.get(0))){ 
-             //if(((Textable)clickedShapes.get(0)).getChipText().isClicked(x, y)){              
-              return (S)clickedShapes.get(0);
-             //}
-            }
-        }
+//        if (clickedShapes.get(0) instanceof Textable) {   
+//            if(isShapeVisibleOnLayers(clickedShapes.get(0))){ 
+//             //if(((Textable)clickedShapes.get(0)).getChipText().isClicked(x, y)){              
+//              return (S)clickedShapes.get(0);
+//             //}
+//            }
+//        }
 
         Collections.sort(clickedShapes,clickedShapesComparator);
-        for(Shape shape:clickedShapes){
-            if(!isShapeVisibleOnLayers(shape)){             
-               continue;              
-            }
-            
-            return (S)shape;
-        }
-        return null;  
-    }
-//    protected List<ClickableOrderItem> buildClickableOrderItem(int x, int y, boolean isTextIncluded) {
-//        List<ClickableOrderItem> orderElements = new ArrayList<ClickableOrderItem>();
-//        int index = 0;
-//        for (Shape shape : getShapes()) {
-//            if (isTextIncluded && shape instanceof Textable) {                   
-//                if(((Textable)shape).getChipText().isClicked(x, y)){ 
-//                  orderElements.add(new ClickableOrderItem(index, 0,shape.getCopper().getLayerMaskID()));
-//                }
-//            }
-//            if(!shape.isClicked(x, y)){
-//               index++;
-//               continue; 
-//            }
-//            //***give selected a higher priority
-//            orderElements.add(new ClickableOrderItem(index,
-//                                                     (shape.isSelected() && shape.getOrderWeight() > 1 ? 2 : shape.getOrderWeight()),shape.getCopper().getLayerMaskID()));
-//
-//            index++;
-//        }
-//
-//        return orderElements;
-//    }
-      
-    
-//    public S getClickedShape(int x, int y, boolean isTextIncluded) {
-//        List<ClickableOrderItem> orderedElements = buildClickableOrderItem(x,y,isTextIncluded);
-//        Collections.sort(orderedElements, new Comparator<ClickableOrderItem>() {
-//                public int compare(ClickableOrderItem o1, ClickableOrderItem o2) {
-//                    if(Unit.this instanceof CompositeLayerable){
-//                       //both on same side
-//                        Layer.Side s1=Layer.Side.resolve(o1.getLayerMaskID());
-//                        Layer.Side s2=Layer.Side.resolve(o2.getLayerMaskID());
-//                        Layer.Side active=((CompositeLayerable)Unit.this).getActiveSide();
-//                        //active layer has presedense
-//                        if(s1!=s2){
-//                            if(s1==active){
-//                               return -1;
-//                            }else{
-//                               return 1;
-//                            }
-//                        }
-//                    }
-//                    
-//                    if ((o1.getOrderWeight() - o2.getOrderWeight()) == 0)
-//                        return 0;
-//                    if ((o1.getOrderWeight() - o2.getOrderWeight()) > 0)
-//                        return 1;
-//                    else
-//                        return -1;
-//                }
-//            });
-//
-//        for (ClickableOrderItem orderedElement : orderedElements) {
-//            S shape = shapes.get(orderedElement.getElementIndex());
+//        for(Shape shape:clickedShapes){
 //            if(!isShapeVisibleOnLayers(shape)){             
-//                continue;              
+//               continue;              
 //            }
-//            //***could be textable
-//            if ((shape instanceof Textable) && (orderedElement.getOrderWeight() == 0)) {
-//                Texture texture = ((Textable)shape).getChipText().getClickedTexture(x, y);
-//                if (texture != null) {
-//                    return shape;
-//                }
-//            } else {
-//                /*
-//                buildClickableOrderItem garantees that shape is clicked
-//                */
-//                //if (shape.isClicked(x, y)) {
-//                    return shape;
-//                //}
-//            }
+//            
+//            return (S)shape;
 //        }
-//
-//        return null;
-//    }
+        return (S)clickedShapes.get(0);                            
+    }
 
     public int getWidth() {
         return width;
@@ -597,7 +531,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         
     }
     
-    public BufferedImage getImage(Rectangle2D clipRect, AffineTransform transformation,Color background) {
+    public BufferedImage getImage(Box clipRect, AffineTransform transformation,Color background) {
 
         int width = (int)(getWidth() * transformation.getScaleX());
         int height = (int)(getHeight() * transformation.getScaleX());
@@ -610,7 +544,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         g2.fillRect(0, 0, width, height);
         ViewportWindow vw = new ViewportWindow(0, 0, width, height);
         for (S shape : shapes) {
-            shape.Paint(g2, vw, transformation,-1);
+            shape.paint(g2, vw, transformation,-1);
         }
         try{
         bi =bi.getSubimage((Double.compare(clipRect.getX(),0) < 0 ? 0 : (int)clipRect.getX()), 
@@ -625,43 +559,48 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         return bi;
 
     }
+    /*
+    @Override
     public AbstractMemento getState(MementoType operationType){
-        switch(operationType){
-          case ROTATE_UNIT_MEMENTO:
-            Memento memento= new Memento(operationType); 
-            memento.saveStateFrom(this);
-            return memento; 
-        default:
-           return new CompositeMemento(operationType).Add(shapes);
-        }        
+//        switch(operationType){
+//          case ROTATE_UNIT_MEMENTO:
+//            Memento memento= new Memento(operationType); 
+//            memento.saveStateFrom(this);
+//            return memento; 
+//        default:
+           return new CompositeMemento(operationType).add(shapes);
+//        }        
     }
-    
+    @Override
     public void setState(AbstractMemento memento){        
-        switch(memento.getMementoType()){
-         case ROTATE_UNIT_MEMENTO:
-            ((Memento)memento).loadStateTo(this);       
-            break;
-        default:  
+//        switch(memento.getMementoType()){
+//         case ROTATE_UNIT_MEMENTO:
+//            ((Memento)memento).loadStateTo(this);       
+//            break;
+//        default:  
           CompositeMemento compositeMemento=(CompositeMemento)memento;
           List<AbstractMemento> list=compositeMemento.getMementoList();
           for(AbstractMemento amemento:list){
               Shape shape = this.getShape(amemento.getUUID());
               shape.setState(amemento);           
           }
-        }
+//        }
     }
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow) {
+*/
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for (S shape : shapes) {
-            shape.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+            shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
         }
         grid.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation());
         //coordinate system
-        coordinateSystem.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        if(this.coordinateSystem!=null){
+           coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        }
         //ruler
-        ruler.Paint(g2, viewportWindow,  scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        ruler.paint(g2, viewportWindow,  scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
         //frame
-        frame.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
                 
     }
 
@@ -717,15 +656,15 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         }
     }
     
-    protected abstract StringBuffer Format(Collection<S> shapes);
+    protected abstract StringBuffer format(Collection<S> shapes);
     
     public Transferable createClipboardContent() {         
             StringBuffer xml=new StringBuffer();        
             xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
-            Collection<S> list=this.getSelectedShapes(false);
+            Collection<S> list=this.getSelectedShapes();
             if(list.size()>0){
                xml.append("<clipboard>");
-               xml.append(Format(list));
+               xml.append(format(list));
                 xml.append("</clipboard>");
                return new StringSelection(xml.toString());
             }else{
@@ -740,7 +679,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
         undoProvider.registerMemento(memento);
     }
     @Override
-    public boolean Undo(UndoCallback undocallback) {
+    public boolean undo(UndoCallback undocallback) {
         AbstractMemento memento=null;
         //***skip duplicates
         while(true){
@@ -792,18 +731,19 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             }
                 
             for(AbstractMemento state:mementos){
-                S element=(S)shapeFactory.createShape(this, state);
-                this.Add(element);                 
+                S element=(S)shapeFactory.createShape(state);
+                this.add(element);                 
                 fireShapeEvent(new ShapeEvent(element, ShapeEvent.SELECT_SHAPE));
             }   
             }
             break;
-        case  ROTATE_UNIT_MEMENTO:
-            this.setState(memento);             
-            return true;
+//        case  ROTATE_UNIT_MEMENTO:
+//            this.setState(memento);             
+//            return true;
         default:
             if(memento instanceof CompositeMemento){
-               this.setState(memento); 
+               //this.setState(memento); 
+                ((CompositeMemento)memento).loadStateTo(this);
             }else{
                Shape element = this.getShape(memento.getUUID());
                element.setState(memento);
@@ -816,7 +756,7 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
     }
     
     //Is resizing required
-    public boolean Redo() {
+    public boolean redo() {
         AbstractMemento memento=null;
         //***skip duplicates
         while(true){
@@ -848,8 +788,8 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             }
                 
             for(AbstractMemento state:mementos){
-                S shape=(S)shapeFactory.createShape(this, state);
-                this.Add(shape);                 
+                S shape=(S)shapeFactory.createShape(state);
+                this.add(shape);                 
                 fireShapeEvent(new ShapeEvent(shape, ShapeEvent.SELECT_SHAPE));
             }   
             }
@@ -870,12 +810,13 @@ public abstract class Unit<S extends Shape> implements Container,ShapeEventDispa
             }
             }
             break;
-        case  ROTATE_UNIT_MEMENTO:
-            this.setState(memento); 
-            return true;
+//        case  ROTATE_UNIT_MEMENTO:
+//            this.setState(memento); 
+//            return true;
         default:            
             if(memento instanceof CompositeMemento){
-               this.setState(memento); 
+               //this.setState(memento); 
+               ((CompositeMemento)memento).loadStateTo(this);
             }else{
                 Shape element = this.getShape(memento.getUUID());
                 element.setState(memento);

@@ -5,8 +5,9 @@ import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.d2.shapes.Point;
 
-import java.awt.Point;
+import java.awt.event.KeyEvent;
 
 import javax.swing.SwingUtilities;
 
@@ -15,9 +16,15 @@ public class LineEventHandle <U extends UnitComponent,S extends Shape> extends E
     public LineEventHandle(U component) {
         super(component);
     }
-    
     @Override
-    protected void Clear() {   
+    public void attach() {        
+        super.attach();
+        LineBendingProcessor lineBendingProcessor=getComponent().getBendingProcessorFactory().resolve(null);
+        lineBendingProcessor.initialize((Trackable)getTarget());
+        getComponent().setLineBendingProcessor(lineBendingProcessor);        
+    }    
+    @Override
+    protected void clear() {   
     }
 
     @Override
@@ -26,11 +33,7 @@ public class LineEventHandle <U extends UnitComponent,S extends Shape> extends E
             getComponent().getPopupMenu().registerLinePopup(e,getTarget());  
             return;
         }
-        //set default bending
-        LineBendingProcessor lineBendingProcessor=getComponent().getBendingProcessorFactory().resolve(null);
-        getComponent().setLineBendingProcessor(lineBendingProcessor);
-        
-        getComponent().getLineBendingProcessor().Initialize((Trackable)getTarget());
+
         getComponent().getModel().getUnit().setSelected(false);
         getTarget().setSelected(true); 
         
@@ -79,7 +82,7 @@ public class LineEventHandle <U extends UnitComponent,S extends Shape> extends E
 
     @Override
     public void doubleScaledClick(MouseScaledEvent e) {       
-        getComponent().getLineBendingProcessor().Release();  
+        getComponent().getLineBendingProcessor().release();  
         getTarget().setSelected(false);
         getComponent().getEventMgr().resetEventHandle();
         getComponent().Repaint();
@@ -90,11 +93,21 @@ public class LineEventHandle <U extends UnitComponent,S extends Shape> extends E
         getComponent().Repaint();        
     } 
     
+    @Override
+    public boolean forwardKeyPress(KeyEvent keyEvent) {
+        if(keyEvent.getKeyCode()==KeyEvent.VK_ESCAPE){  
+            getComponent().getLineBendingProcessor().release();
+            getComponent().getEventMgr().resetEventHandle();
+            getComponent().Repaint();
+            return true;
+        }
+        return false;
+    }
     public void Detach(){
         if(getTarget()!=null){
           if(getComponent().getLineBendingProcessor().getLine()!=null)
-              getComponent().getLineBendingProcessor().Release(); 
+              getComponent().getLineBendingProcessor().release(); 
         }
-        super.Detach();     
+        super.detach();     
      }
 }

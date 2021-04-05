@@ -2,19 +2,13 @@ package com.mynetpcb.board.event;
 
 
 import com.mynetpcb.board.component.BoardComponent;
-import com.mynetpcb.board.shape.PCBFootprint;
-import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.undo.CompositeMemento;
-import com.mynetpcb.core.capi.undo.Memento;
 import com.mynetpcb.core.capi.undo.MementoType;
 
 import java.awt.event.ActionEvent;
-
-import java.util.Collection;
 
 import javax.swing.SwingUtilities;
 
@@ -29,8 +23,8 @@ public class FootprintEventHandle extends EventHandle<BoardComponent,Shape>{
     }
     
     @Override
-    public void Attach() {
-        super.Attach();      
+    public void attach() {
+        super.attach();      
     }
     
     public void mouseScaledPressed(MouseScaledEvent e) {
@@ -79,7 +73,7 @@ public class FootprintEventHandle extends EventHandle<BoardComponent,Shape>{
         int new_my = e.getY();
 
 
-        getTarget().Move(new_mx - mx, new_my - my);
+        getTarget().move(new_mx - mx, new_my - my);
 
         //***update PropertiesPanel           
         getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
@@ -96,11 +90,11 @@ public class FootprintEventHandle extends EventHandle<BoardComponent,Shape>{
     }
 
     public void doubleScaledClick(MouseScaledEvent e) {
-        BoardMgr.getInstance().openFootprintInlineEditorDialog(getComponent(),(PCBFootprint)getTarget());
+        //BoardMgr.getInstance().openFootprintInlineEditorDialog(getComponent(),(PCBFootprint)getTarget());
         getComponent().Repaint(); 
     }
     
     @Override
-    protected void Clear(){
+    protected void clear(){
     }
 }

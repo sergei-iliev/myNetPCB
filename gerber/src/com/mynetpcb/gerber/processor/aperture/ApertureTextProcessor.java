@@ -1,9 +1,7 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
@@ -23,43 +21,45 @@ public class ApertureTextProcessor implements Processor{
     public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
         //board text
         for(GlyphLabel label:board.<GlyphLabel>getShapes(GlyphLabel.class,layermask)){
-               processTexture(label.getTexture());                               
+               processTexture(label.getThickness());                               
         }
         //text in footprints(reference,value)
         for(FootprintShape footprint:board.<FootprintShape>getShapes(FootprintShape.class)){
             //grab text
-            for(Texture text:footprint.getChipText().getChildren()){
+
                 boolean isRefPrintable=serviceContext.getParameter(GerberServiceContext.FOOTPRINT_REFERENCE_ON_SILKSCREEN, Boolean.class);
-                if(text.getTag().equals("reference")&&isRefPrintable){
+                if(isRefPrintable){
+                    GlyphTexture text=(GlyphTexture)footprint.getTextureByTag("reference");
                     if(!text.isEmpty()&&((text.getLayermaskId()&layermask)!=0)){
-                        processTexture((GlyphTexture)text);
+                        processTexture(text.getThickness());
                     }   
                 }
                 boolean isValPrintable=serviceContext.getParameter(GerberServiceContext.FOOTPRINT_VALUE_ON_SILKSCREEN, Boolean.class);
-                if(text.getTag().equals("value")&&isValPrintable){
+                if(isValPrintable){
+                    GlyphTexture text=(GlyphTexture)footprint.getTextureByTag("value");
                     if(!text.isEmpty()&&((text.getLayermaskId()&layermask)!=0)){
-                        processTexture((GlyphTexture)text);
+                        processTexture(text.getThickness());
                     }   
                 }
                 
                 
-            }
+            
             //footprint labels
             for(Shape shape:footprint.getShapes()){
               if(!shape.isVisibleOnLayers(layermask)){
                     continue;
               }
               if(shape.getClass()== GlyphLabel.class){
-                    processTexture(((GlyphLabel)shape).getTexture());
+                    processTexture(shape.getThickness());
               }
             }
         }
         
     }
     
-    private void processTexture(GlyphTexture texture){
+    private void processTexture(int diameter){
         CircleAperture circle=new CircleAperture();
-        circle.setDiameter(texture.getThickness());
+        circle.setDiameter(diameter);
         dictionary.add(circle); 
     }    
 }

@@ -1,6 +1,5 @@
 package com.mynetpcb.symbol.dialog.save;
 
-
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.io.Command;
@@ -13,7 +12,7 @@ import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.dialog.save.AbstractSaveDialog;
 import com.mynetpcb.core.utils.Utilities;
 
-import java.awt.Window;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import java.io.IOException;
@@ -33,9 +32,8 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-
 public class SymbolSaveDialog extends AbstractSaveDialog{
-    public SymbolSaveDialog(Window owner,UnitComponent component,boolean isonline) {
+    public SymbolSaveDialog(Frame owner,UnitComponent component,boolean isonline) {
         super(owner,component,"Save",isonline);
     }
 
@@ -97,7 +95,7 @@ public class SymbolSaveDialog extends AbstractSaveDialog{
             }
             if (!isonline) {
                 Command writer =
-                    new WriteUnitLocal(this, getComponent().getModel().Format(), Configuration.get().getSymbolsRoot(),
+                    new WriteUnitLocal(this, getComponent().getModel().format(), Configuration.get().getSymbolsRoot(),
                                        (String)libraryCombo.getSelectedItem(),
                                        (String)categoryCombo.getSelectedItem(),
                                        fileNameText.getText(),
@@ -106,7 +104,7 @@ public class SymbolSaveDialog extends AbstractSaveDialog{
                 CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
             } else {
                 Command writer =
-                    new WriteConnector(this, getComponent().getModel().Format(), new RestParameterMap.ParameterBuilder("/symbols").addURI((String)libraryCombo.getSelectedItem()).addURI(categoryCombo.getSelectedItem()==null||"".equals(categoryCombo.getSelectedItem())?"null":(String)categoryCombo.getSelectedItem()).addURI(fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
+                    new WriteConnector(this, getComponent().getModel().format(), new RestParameterMap.ParameterBuilder("/symbols").addURI((String)libraryCombo.getSelectedItem()).addURI(categoryCombo.getSelectedItem()==null||"".equals(categoryCombo.getSelectedItem())?"null":(String)categoryCombo.getSelectedItem()).addURI(fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
                                        WriteConnector.class);
                 CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
             }
@@ -116,8 +114,8 @@ public class SymbolSaveDialog extends AbstractSaveDialog{
 
 
     @Override
-    public void OnRecive(String result, Class reciever) {
-        super.OnRecive(result, reciever);
+    public void onRecive(String result, Class reciever) {
+        super.onRecive(result, reciever);
         if (reciever==SymbolSaveDialog.class) {
             categoryCombo.setEditable(false);
             categoryCombo.removeAllItems(); 
@@ -158,4 +156,3 @@ public class SymbolSaveDialog extends AbstractSaveDialog{
 
 
 }
-

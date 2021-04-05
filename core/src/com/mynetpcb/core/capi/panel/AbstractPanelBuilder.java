@@ -1,15 +1,10 @@
 package com.mynetpcb.core.capi.panel;
 
 
-import com.mynetpcb.core.capi.CoordinateSystem;
-import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.SortedList;
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Text;
-import com.mynetpcb.core.capi.text.Texture;
-import com.mynetpcb.core.capi.tree.AttachedItem;
-import com.mynetpcb.core.pad.Layer;
 
 import java.awt.Component;
 import java.awt.LayoutManager;
@@ -20,9 +15,8 @@ import java.awt.event.KeyEvent;
 
 import java.lang.ref.WeakReference;
 
-import java.util.Collection;
+import java.util.Objects;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,7 +28,7 @@ import javax.swing.JTextField;
  * Use the builder pattern to construct,show dynamically target properties in XXXInspector
  */
 public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter implements ActionListener{
-  protected JTextField netField,topField,leftField,widthField,heightField,clearanceField,thicknessField;
+  protected JTextField netField,topField,leftField,widthField,heightField,clearanceField,thicknessField,nameField,rotateField;
 
   protected JLabel label;
   
@@ -60,7 +54,9 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
   
   protected JComboBox fillCombo,parentCombo,layerCombo;
   
-  protected JComboBox textOrientationCombo,textAlignmentCombo,styleCombo;  
+  protected JComboBox styleCombo;
+  
+  protected  JTextField originX,originY;
     
     public AbstractPanelBuilder(UnitComponent component,LayoutManager layoutManager) {
        layoutPanel=new JPanel(layoutManager);
@@ -107,34 +103,12 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
       return layoutPanel;  
     }
     
-    protected void fillParentCombo(Class<?> clazz){
-        //***disconnect from listener
-        this.parentCombo.removeActionListener(this);
-        parentCombo.removeAllItems();
-        parentCombo.addItem(new AttachedItem.Builder("none").setUUID(null).build());
-        
-        Shape parent=((Ownerable)getTarget()).getOwner();
-        Collection<S> shapes=getComponent().getModel().getUnit().getShapes(clazz);
-        //***get could be Owners list      
-        for(S shape:shapes){
-            //if(symbol instanceof Chip){
-             AttachedItem item=new AttachedItem.Builder(shape.getDisplayName()).setUUID(shape.getUUID()).build();  
-             parentCombo.addItem(item);  
-             if(parent!=null){
-               if(parent.getUUID().equals(item.getUUID()))
-                 parentCombo.setSelectedItem(item);  
-             }    
-            }
-        //***reconnect
-        this.parentCombo.addActionListener(this);       
-    }
-    
     /**
      *Convert internal units value to user unit
      * @param value
      * @return
      */
-    protected String toUnit(int value){
+    protected String toUnit(double value){
        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value));  
     }
     
@@ -143,7 +117,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @param value
      * @return
      */
-    protected int fromUnit(String value){
+    protected double fromUnit(String value){
        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value)) ;     
     }    
     /**
@@ -151,53 +125,53 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @param X value to convert
      * @return display value in user units
      */
-    protected String toUnitX(int value){        
+    protected String toUnitX(double value){        
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getX()));      
+        if(Objects.isNull(coordinateSystem))
+           return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value));      
+        else    
+           return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().x));      
+
     }
     /**
      *Convert internal unit values in pixel to user unit,taking care of coordinate shift
      * @param Y value to convert
      * @return display value in user units
      */
-    protected String toUnitY(int value){
+    protected String toUnitY(double value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getY()));
+        if(Objects.isNull(coordinateSystem))
+            return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value));
+        else    
+            return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().y));
     }
     /**
      *Convert from unit coordinate to internal one,taking care of coordinate shift
      * @param x value
      * @return internal value
      */
-    protected int fromUnitX(String value){
+    protected double fromUnitX(String value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getX();  
+        if(Objects.isNull(coordinateSystem))
+           return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value));  
+        else    
+           return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().x;  
     }
     /**
      *Convert from unit coordinate to internal one,taking care of coordinate shift
      * @param y value
      * @return internal value
      */    
-    protected int fromUnitY(String value){
+    protected double fromUnitY(String value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
-        return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getY();         
+        if(Objects.isNull(coordinateSystem))
+            return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value));
+        else
+            return getComponent().getModel().getUnit().getGrid().UNIT_TO_COORD(Double.parseDouble(value))+coordinateSystem.getOrigin().y;         
+        
+        
     }
     public abstract void updateUI();
-    
-    //***common text alignment code
-    protected void validateAlignmentComboText(JComboBox combo,Texture text){
-        if(text==null)
-            return;
-        combo.removeActionListener(this);
-        if(text.getAlignment().getOrientation() == Text.Orientation.HORIZONTAL){
-            combo.setModel(new DefaultComboBoxModel(textAlignmentHorizontal));            
-            combo.setSelectedIndex(text.getAlignment() == Text.Alignment.LEFT?0:1);
-        }else{
-            combo.setModel(new DefaultComboBoxModel(textAlignmentVertical));
-            combo.setSelectedIndex(text.getAlignment() == Text.Alignment.BOTTOM?0:1);        
-        }        
-        combo.addActionListener(this);          
-    }
     
     protected void setSelectedIndex(JComboBox combo,int index){
         //***disconnect from listener
@@ -218,7 +192,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==layerCombo){
             getTarget().setCopper((Layer.Copper)layerCombo.getSelectedItem());
-            ((SortedList)getComponent().getModel().getUnit().getShapes()).reorder();
+            getComponent().getModel().getUnit().getShapes().reorder();
         }
     }
 }

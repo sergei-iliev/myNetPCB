@@ -2,17 +2,20 @@ package com.mynetpcb.pad.dialog.panel.inspector;
 
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
+
 import com.mynetpcb.core.capi.shape.Shape;
+
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.shape.Circle;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+
 import java.awt.event.ActionEvent;
+
 import java.awt.event.KeyEvent;
 
 import javax.swing.JComboBox;
@@ -65,11 +68,11 @@ public class CirclePanelBuilder extends AbstractPanelBuilder<Shape> {
     public void updateUI() {
         Circle circle=(Circle)getTarget();  
         
-        leftField.setText(toUnitX(circle.getX() ));
-        topField.setText(toUnitY(circle.getY())); 
+        leftField.setText(toUnitX(circle.getCenter().x ));
+        topField.setText(toUnitY(circle.getCenter().y )); 
         
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(circle.getThickness())));    
-        widthField.setText(String.valueOf(Grid.COORD_TO_MM(circle.getWidth())));
+        widthField.setText(String.valueOf(Grid.COORD_TO_MM(circle.getRadius())));
         
         setSelectedIndex(fillCombo,(circle.getFill()==Shape.Fill.EMPTY?0:1)); 
         
@@ -93,19 +96,19 @@ public class CirclePanelBuilder extends AbstractPanelBuilder<Shape> {
         if(e.getKeyCode() !=KeyEvent.VK_ENTER) return;
 
         if(e.getSource()==this.thicknessField){
-           getTarget().setThickness(Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
+            getTarget().setThickness((int)Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));  
         }
         
         if(e.getSource()==this.leftField){
-           getTarget().setX(Grid.MM_TO_COORD(Double.parseDouble(leftField.getText())));           
+           getTarget().getCenter().x=(Grid.MM_TO_COORD(Double.parseDouble(leftField.getText())));           
         }
         
         if(e.getSource()==this.topField){            
-           getTarget().setY(Grid.MM_TO_COORD(Double.parseDouble(topField.getText())));             
+          getTarget().getCenter().y=(Grid.MM_TO_COORD(Double.parseDouble(topField.getText())));             
         }
         
         if(e.getSource()==this.widthField){
-           getTarget().setWidth(Grid.MM_TO_COORD(Double.parseDouble(widthField.getText()))); 
+           ((Circle)getTarget()).setRadius(Grid.MM_TO_COORD(Double.parseDouble(widthField.getText()))); 
         }
         
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));

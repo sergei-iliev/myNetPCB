@@ -4,6 +4,10 @@ import com.mynetpcb.core.capi.Grid;
 
 import java.util.Objects;
 
+@Deprecated
+/*
+ * Use contour instead
+ */
 public  class PolygonAperture extends ApertureDefinition{
         
         private int diameter;  //outer diameter

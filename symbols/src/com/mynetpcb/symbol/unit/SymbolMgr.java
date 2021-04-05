@@ -1,11 +1,9 @@
 package com.mynetpcb.symbol.unit;
 
-
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.UnitMgr;
 
-
-public final class SymbolMgr extends UnitMgr<Symbol,Shape> {
+public class SymbolMgr extends UnitMgr<Symbol,Shape> {
     private static SymbolMgr symbolMgr;
     
     private SymbolMgr() {
@@ -16,7 +14,5 @@ public final class SymbolMgr extends UnitMgr<Symbol,Shape> {
       if(symbolMgr==null)
         symbolMgr=new SymbolMgr();
       return symbolMgr;
-    }   
-        
+    }  
 }
-

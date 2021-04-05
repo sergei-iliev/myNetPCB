@@ -1,20 +1,16 @@
 package com.mynetpcb.circuit.popup;
 
-
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.shape.SCHBus;
-import com.mynetpcb.circuit.shape.SCHBusPin;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.CircuitMgr;
-import com.mynetpcb.core.capi.Packageable;
-import com.mynetpcb.core.capi.Pinaware;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.pad.unit.FootprintMgr;
 
 import java.awt.event.ActionEvent;
 
@@ -24,7 +20,6 @@ import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
-
 
 public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitComponent> {
 
@@ -39,11 +34,11 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
 
     @Override
     public void registerLineSelectPopup(MouseScaledEvent e, Shape target) {
-        if(target instanceof SCHBusPin){
-            registerShapePopup(e, target);
-        }else{   
+//        if(target instanceof SCHBusPin){
+//            registerShapePopup(e, target);
+//        }else{   
             super.registerLineSelectPopup(e, target); 
-        }
+        //}
     }
     public void registerTextureMethod(MouseScaledEvent e, Shape target){
         registerShapePopup(e, target);
@@ -52,21 +47,21 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
         initializePopupMenu(e, target, chipMenu);
         //this.setEnabled(chipMenu, "Paste", false);
         //***is target connected to wires?
-        if (!CircuitMgr.getInstance().isWirePointToChip(getUnitComponent().getModel().getUnit(), (Pinaware) target)) {
-            this.setEnabled(chipMenu, "DisconnectWires", false);
-            this.setEnabled(chipMenu, "ConnectWires", false);
-        } else {
-            this.setEnabled(chipMenu, "DisconnectWires", true);
-            this.setEnabled(chipMenu, "ConnectWires", true);
-        }
+//        if (!CircuitMgr.getInstance().isWirePointToChip(getUnitComponent().getModel().getUnit(), (Pinaware) target)) {
+//            this.setEnabled(chipMenu, "DisconnectWires", false);
+//            this.setEnabled(chipMenu, "ConnectWires", false);
+//        } else {
+//            this.setEnabled(chipMenu, "DisconnectWires", true);
+//            this.setEnabled(chipMenu, "ConnectWires", true);
+//        }
 
-        if (CircuitMgr.getInstance().isConnectorToChip(getUnitComponent().getModel().getUnit(), (Pinaware) target)) {
-            this.setEnabled(chipMenu, "Bind", true);
-            this.setEnabled(chipMenu, "Unbind", true);
-        } else {
-            this.setEnabled(chipMenu, "Bind", false);
-            this.setEnabled(chipMenu, "Unbind", false);
-        }
+//        if (CircuitMgr.getInstance().isConnectorToChip(getUnitComponent().getModel().getUnit(), (Pinaware) target)) {
+//            this.setEnabled(chipMenu, "Bind", true);
+//            this.setEnabled(chipMenu, "Unbind", true);
+//        } else {
+//            this.setEnabled(chipMenu, "Bind", false);
+//            this.setEnabled(chipMenu, "Unbind", false);
+//        }
 
         this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
 
@@ -78,11 +73,11 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
          
         //***Wire Bending
         ButtonGroup group = new ButtonGroup();
-        JMenuItem radioItem = new JRadioButtonMenuItem("Right Bending");radioItem.setActionCommand("rightbend");
+        JMenuItem radioItem = new JRadioButtonMenuItem("Vertical To Horizontal Bending");radioItem.setActionCommand("vhbend");
         group.add(radioItem);
         submenu.put("rightbend",radioItem);
 
-        radioItem = new JRadioButtonMenuItem("Top Bending");radioItem.setActionCommand("topbend");
+        radioItem = new JRadioButtonMenuItem("Horizontal To Vertical Bending");radioItem.setActionCommand("hvbend");
         group.add(radioItem);                                                        
         submenu.put("topbend",radioItem);
         
@@ -110,16 +105,16 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
     @Override
     protected void createBlockMenuItems() {
         super.createBlockMenuItems();
-        blockMenu.put("Separator1", null);
-        //wires
-        Map<String, JMenuItem> submenu = new LinkedHashMap<String, JMenuItem>();
-        JMenuItem item = new JMenuItem("Disconnect");
-        item.setActionCommand("DisconnectWires");
-        submenu.put("DisconnectWires", item);
-        item = new JMenuItem("Connect");
-        item.setActionCommand("ConnectWires");
-        submenu.put("ConnectWires", item);
-        blockMenu.put("Wire ends", submenu);
+//        blockMenu.put("Separator1", null);
+//        //wires
+//        Map<String, JMenuItem> submenu = new LinkedHashMap<String, JMenuItem>();
+//        JMenuItem item = new JMenuItem("Disconnect");
+//        item.setActionCommand("DisconnectWires");
+//        submenu.put("DisconnectWires", item);
+//        item = new JMenuItem("Connect");
+//        item.setActionCommand("ConnectWires");
+//        submenu.put("ConnectWires", item);
+//        blockMenu.put("Wire ends", submenu);
 
     }
 
@@ -134,7 +129,7 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
         else
             this.setEnabled(unitMenu, "Paste", false);
 
-        if (getUnitComponent().getModel().getUnit().getSelectedShapes(true).size() > 0)
+        if (getUnitComponent().getModel().getUnit().getSelectedShapes().size() > 0)
             this.setEnabled(unitMenu, "Copy", true);
         else
             this.setEnabled(unitMenu, "Copy", false);
@@ -148,46 +143,47 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
             getUnitComponent().Repaint();
             return;
         }                
-        if (e.getActionCommand().equalsIgnoreCase("assignpackage")) {
-            FootprintMgr.getInstance().assignPackage(getUnitComponent().getDialogFrame().getParentFrame(),
-                                                     ((Packageable) getTarget()).getPackaging());
-        }
-        if (e.getActionCommand().equalsIgnoreCase("disconnectwires")) {
-            Shape shape = getUnitComponent().getModel().getUnit().getClickedShape(x, y, false);
-            if (shape instanceof Pinaware) {
-                CircuitMgr.getInstance().bindChipWirePoints(getUnitComponent().getModel().getUnit(), (Pinaware) shape,
-                                                            false);
-            }
-            getUnitComponent().Repaint();
-        }
-        if (e.getActionCommand().equalsIgnoreCase("connectwires")) {
-            //***sure ->it is a Pinable!!!!!
-            Shape shape = getUnitComponent().getModel().getUnit().getClickedShape(x, y, false);
-            if (shape instanceof Pinaware) {
-                CircuitMgr.getInstance().bindChipWirePoints(getUnitComponent().getModel().getUnit(), (Pinaware) shape,
-                                                            true);
-            }
-            getUnitComponent().Repaint();
-        }
+//        if (e.getActionCommand().equalsIgnoreCase("assignpackage")) {
+//            FootprintMgr.getInstance().assignPackage(getUnitComponent().getDialogFrame().getParentFrame(),
+//                                                     ((Packageable) getTarget()).getPackaging());
+//        }
+//        if (e.getActionCommand().equalsIgnoreCase("disconnectwires")) {
+//            Shape shape = getUnitComponent().getModel().getUnit().getClickedShape(x, y, false);
+//            if (shape instanceof Pinaware) {
+//                CircuitMgr.getInstance().bindChipWirePoints(getUnitComponent().getModel().getUnit(), (Pinaware) shape,
+//                                                            false);
+//            }
+//            getUnitComponent().Repaint();
+//        }
+//        if (e.getActionCommand().equalsIgnoreCase("connectwires")) {
+//            //***sure ->it is a Pinable!!!!!
+//            Shape shape = getUnitComponent().getModel().getUnit().getClickedShape(x, y, false);
+//            if (shape instanceof Pinaware) {
+//                CircuitMgr.getInstance().bindChipWirePoints(getUnitComponent().getModel().getUnit(), (Pinaware) shape,
+//                                                            true);
+//            }
+//            getUnitComponent().Repaint();
+//        }
         if (e.getActionCommand().equalsIgnoreCase("Resume")) {
             //***we keep the popup origine which is the control point itself
             //getUnitComponent().Repaint();
         }
         if (e.getActionCommand().equalsIgnoreCase("Resume")) {
             if (getTarget() instanceof SCHBus) {
-                getUnitComponent().getDialogFrame().setButtonGroup(CircuitComponent.BUS_MODE);
-                getUnitComponent().setMode(CircuitComponent.BUS_MODE);
+                getUnitComponent().getDialogFrame().setButtonGroup(Mode.BUS_MODE);
+                getUnitComponent().setMode(Mode.BUS_MODE); 
             } else {
-                getUnitComponent().getDialogFrame().setButtonGroup(CircuitComponent.WIRE_MODE);
-                getUnitComponent().setMode(CircuitComponent.WIRE_MODE);
-            }
-            getUnitComponent().resumeLine((Trackable)getTarget(),"line", x, y);
+                getUnitComponent().getDialogFrame().setButtonGroup(Mode.WIRE_MODE);
+                getUnitComponent().setMode(Mode.WIRE_MODE); 
+                
+            }           
+            getUnitComponent().resumeLine((Trackable)getTarget(),"wire", x, y);
         }
 
 
         if (e.getActionCommand().equalsIgnoreCase("FixSymbolNames")) {
-            CircuitMgr.getInstance().generateShapeNaming(getUnitComponent().getModel().getUnit());
-            getUnitComponent().Repaint();
+            //CircuitMgr.getInstance().generateShapeNaming(getUnitComponent().getModel().getUnit());
+            //getUnitComponent().Repaint();
         }
 
         super.actionPerformed(e);

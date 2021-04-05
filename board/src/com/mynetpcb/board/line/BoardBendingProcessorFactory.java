@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.LineSlopeBendingProcessor;
 import com.mynetpcb.core.capi.line.SlopeLineBendingProcessor;
 
+
 public class BoardBendingProcessorFactory extends AbstractBendingProcessorFactory{
 
     @Override
@@ -22,7 +23,7 @@ public class BoardBendingProcessorFactory extends AbstractBendingProcessorFactor
         }else
                 throw new IllegalStateException("Unknown Symbol line processor name-> "+name);               
         if(current!=null){
-          next.Initialize(current.getLine());
+          next.initialize(current.getLine());
         }
         
         return next;
@@ -46,7 +47,7 @@ public class BoardBendingProcessorFactory extends AbstractBendingProcessorFactor
         }else
             throw new IllegalStateException("Unknown Symbol line processor class-> "+current.getClass());    
         
-        next.Initialize(current.getLine());
+        next.initialize(current.getLine());
         return next;
     
     }

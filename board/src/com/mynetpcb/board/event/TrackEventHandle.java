@@ -8,8 +8,8 @@ import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.d2.shapes.Point;
 
-import java.awt.Point;
 import java.awt.event.KeyEvent;
 
 import javax.swing.SwingUtilities;
@@ -21,13 +21,13 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
     }
     
     @Override
-    protected void Clear() {   
+    protected void clear() {   
     }
 
     @Override
-    public void Attach() {        
-        super.Attach();
-        getComponent().getLineBendingProcessor().Initialize((Trackable)getTarget());
+    public void attach() {        
+        super.attach();
+        getComponent().getLineBendingProcessor().initialize((Trackable)getTarget());
     }
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
@@ -85,7 +85,7 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
     @Override
     public void doubleScaledClick(MouseScaledEvent e) {
             
-        getComponent().getLineBendingProcessor().Release();  
+        getComponent().getLineBendingProcessor().release();  
         getTarget().setSelected(false);
         getComponent().getEventMgr().resetEventHandle();
         getComponent().Repaint();
@@ -108,19 +108,20 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
     @Override
     public boolean forwardKeyPress(KeyEvent keyEvent) {
         if(keyEvent.getKeyCode()==KeyEvent.VK_ESCAPE){  
-            getComponent().getLineBendingProcessor().Release();
+            getComponent().getLineBendingProcessor().release();
             getComponent().getEventMgr().resetEventHandle();
             getComponent().Repaint();
             return true;
         }
         return false;
     }
-    public void Detach(){
+    @Override
+    public void detach(){
         if(getTarget()!=null){
           if(getComponent().getLineBendingProcessor().getLine()!=null)
-              getComponent().getLineBendingProcessor().Release(); 
+              getComponent().getLineBendingProcessor().release(); 
         }
-        super.Detach();     
+        super.detach();     
      }
     
 }

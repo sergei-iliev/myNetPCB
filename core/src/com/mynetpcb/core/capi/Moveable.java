@@ -1,6 +1,9 @@
 package com.mynetpcb.core.capi;
 
-import java.awt.Point;
+
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.geom.AffineTransform;
 
 
@@ -9,34 +12,25 @@ import java.awt.geom.AffineTransform;
  * @author Sergey Iliev
  */
 public interface Moveable extends Drawable,Cloneable {
-//    public enum Rotate{
-//        LEFT,RIGHT
-//    };
-    
-//    public enum Mirror{
-//        HORIZONTAL,VERTICAL
-//    };
-    public void Move(int xoffset, int yoffset);
-        
-    public void Mirror(Point A,Point B);
-    
-    public void Translate(AffineTransform translate);
 
-    public void Rotate(AffineTransform rotation) ;
+    public void move(double xoffset, double yoffset);
+    
+    public void mirror(Line line);
+    
+    public void translate(AffineTransform translate);
+
+    public void rotate(double angle,Point origin);
       
-    public void setLocation(int x,int y);
+    public void setLocation(double x,double y);
 
     public Point getCenter();
     
-//    public int getCenterX();
-//    
-//    public int getCenterY();
 /**
      *
      * @return the order of the shape in Z coordinate when a 
      * click over overlapping shapes occure.
      */
-    public long getOrderWeight();
+    public long getClickableOrder();
     
 }
 

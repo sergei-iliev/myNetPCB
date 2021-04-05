@@ -1,7 +1,6 @@
 package com.mynetpcb.gerber.attribute.drill;
 
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
-import com.mynetpcb.gerber.attribute.AbstractAttribute.Type;
 
 public class ComponentDrillAttribute extends AbstractAttribute {
     public ComponentDrillAttribute() {

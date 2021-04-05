@@ -1,277 +1,258 @@
 package com.mynetpcb.symbol.shape;
 
-
 import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Reshapeable;
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
-import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.ResizableShape;
+import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Arcellipse;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Utils;
+import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
-public class Arc extends ResizableShape implements Reshapeable,Externalizable{
+public class Arc  extends Shape implements Resizeable, Externalizable{
+    private  Arcellipse arc;
+    private Point resizingPoint;
     
-    private Arc2D arc;
-                      
-    public Arc(int x,int y,int width,int height) {
-        super(x,y,width,height, 1,0);
-        this.arc=new Arc2D.Double(x,y,width,height,-90,230,Arc2D.OPEN);
-    }
-    public Arc(){
-        this(0,0,0,0);
+    public Arc(int thickness) {
+        super(thickness,Layer.LAYER_ALL);
+        this.setDisplayName("Arc");         
+        this.arc=new Arcellipse(0,0,20,10);
+        this.selectionRectWidth=2;
+        this.fillColor=Color.BLACK;
     }
     @Override
-    public Arc clone() throws CloneNotSupportedException{
-        Arc copy= (Arc)super.clone();
-        copy.arc=new Arc2D.Double(arc.getX(),arc.getY(),arc.getWidth(),arc.getHeight(),arc.getAngleStart(),arc.getAngleExtent(),arc.getArcType());
+    public Arc clone() throws CloneNotSupportedException {
+        Arc copy=(Arc)super.clone();
+        copy.resizingPoint=null;
+        copy.arc=this.arc.clone();
         return copy;
     }
-    public int getStartAngle(){
-        return (int)arc.getAngleStart() ;
-    }
-
-    public int getExtendAngle(){
-       return (int)arc.getAngleExtent(); 
-    }
-
-    public void setArcType(int arcType){
-        arc.setArcType(arcType);
-    }
-    
-    public void setStartAngle(double angSt){
-        arc.setAngleStart(angSt);
-    }
-    
-    public void setExtendAngle(double angExt){
-       arc.setAngleExtent(angExt);
-    }
-    
-    public int getArcType(){
-        switch(arc.getArcType()){
-          case Arc2D.OPEN:return 0;
-          case Arc2D.CHORD:   return 1;        
-          case Arc2D.PIE:   return 2;  
-        }
-       return 0;
-    }
-    
     @Override
-    public void Clear() {
+    public long getClickableOrder() {        
+       return (long)getBoundingShape().area();
     }
-    
+    public Arcellipse getShape(){
+        return arc;
+    }    
     @Override
-    public void Mirror(Point A,Point B) {
-        super.Mirror(A,B);
+    public Box getBoundingShape() {
+        return this.arc.box();             
+    }
+    @Override
+    public Point isControlRectClicked(int x, int y) {
+        Point pt=new Point(x,y);
         
-        int angSt=(int)arc.getAngleStart();
-        int angExt=(int)arc.getAngleExtent();
-        if(A.x==B.x){
-          //***which place in regard to x origine   
-          //***tweak angles 
-          angSt=(2*90-angSt)-angExt;            
-        }else{    //***top-botom mirroring
-          //***which place in regard to y origine    
-          //***tweak angles
-          angSt+=angExt;
-          angSt*=-1;                 
-        }
-        arc.setAngleStart(angSt);
-    }
-
-    @Override
-    public void Rotate(AffineTransform rotation) {
-        super.Rotate(rotation);        
-        int angSt=(int)arc.getAngleStart();
-        if(rotation.getShearY()>0) {        //right                               
-                  angSt+=-90; 
-                   if(angSt==-270) angSt=90;                                            
-        }else{                          //left                                
-                  angSt+=90; 
-                   if(angSt==180) angSt=-180;  
-        } 
-        arc.setAngleStart(angSt);
-    }
-
-    @Override
-    public void setLocation(int x, int y) {
-    }
-
-    @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
-        Rectangle2D scaledRect = Utilities.getScaleRect(getBoundingShape().getBounds() ,scale); 
-        if(!scaledRect.intersects(viewportWindow)){
-          return;   
-        }
-        arc.setFrame(scaledRect.getX()-viewportWindow.x ,scaledRect.getY()-viewportWindow.y,scaledRect.getWidth(),scaledRect.getHeight());
- 
-        
-        g2.setStroke(new BasicStroke((float)(thickness*scale.getScaleX()),1,1)); 
-        g2.setColor(isSelected()?Color.GRAY:fillColor); 
-        
-        if(fill == Fill.EMPTY)   //***empty
-          g2.draw(arc);
-        if(this.getFill() == Fill.FILLED)  //***filled
-          g2.fill(arc);
-        if(this.getFill() == Fill.GRADIENT){   //***gradual
-            GradientPaint gp = 
-                new GradientPaint(arc.getBounds().x, arc.getBounds().y, 
-                                  Color.white, arc.getBounds().x, 
-                                  (arc.getBounds().y+arc.getBounds().height), Color.gray, true);
-            g2.setPaint(gp);
-            g2.fill(arc);
-            g2.setColor(Color.black);
-            g2.draw(arc);
-        }         
-        
-        if(isSelected()){         
-            this.drawControlShape(g2,viewportWindow,scale);  
-            //draw reshapeable circles
-            FlyweightProvider ellipseProvider=ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-            Ellipse2D circle=(Ellipse2D)ellipseProvider.getShape();
-             circle.setFrame(arc.getStartPoint().getX() -  selectionRectWidth *
-                                     scale.getScaleX(),
-                                     arc.getStartPoint().getY() - selectionRectWidth *
-                                     scale.getScaleX(),
-                                     selectionRectWidth * 2 *
-                                     scale.getScaleX(),
-                                     selectionRectWidth * 2 *
-                                     scale.getScaleX());
-            g2.draw(circle);
-            
-            circle.setFrame(arc.getEndPoint().getX() - selectionRectWidth *
-                                  scale.getScaleX(),
-                                  arc.getEndPoint().getY() - selectionRectWidth *
-                                  scale.getScaleX(),
-                                  selectionRectWidth * 2 *
-                                  scale.getScaleX(),
-                                  selectionRectWidth * 2 *
-                                  scale.getScaleX());
-            g2.draw(circle);
-            ellipseProvider.reset();
-        }
-    }
-    @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-        Rectangle2D rect = getBoundingShape().getBounds(); 
-        arc.setFrame(rect.getX() ,rect.getY(),rect.getWidth(),rect.getHeight());
-        
-        if(thickness!=-1){    //framed   
-          double wireWidth=thickness;       
-          g2.setStroke(new BasicStroke((float)wireWidth,1,1));    
-          g2.setPaint(Color.BLACK);        
-          g2.draw(arc);
-        }else{               //filled  
-          g2.setColor(Color.BLACK);  
-          g2.fill(arc);  
-        }     
-    }
-    @Override
-    public boolean isClicked(int x, int y) {
-        arc.setFrame(getX(),getY(),getWidth(),getHeight());
-        if(arc.contains(x,y))
-         return true;
-        else
-         return false;   
-    }
-    
-//    @Override
-//    public Rectangle calculateShapeCacheBounds() {
-//      return new Rectangle(getX(),getY(),getWidth(),getHeight());
-//    }
-    
-    @Override
-    public void Reshape(int x,int y,int targetid) {
-        if(targetid==ARC_START_POINT){
-           arc.setAngleStart(arc.getAngleStart()+x*3);  
-        }
-        if(targetid==ARC_END_POINT){
-           arc.setAngleExtent(arc.getAngleExtent()+y*3); 
-        }
-    }
-    
-    @Override
-    public Point isControlRectClicked(int x,int y) {
-       Point point= super.isControlRectClicked(x, y);
-       if(point!=null){
-           return point;
-       }else{
-           Point2D point2d= isReshapeRectClicked(x, y);
-           return point2d==null?null:new Point((int)point2d.getX(),(int)point2d.getY());
-       }
-    }
-    
-    @Override
-    public Point2D isReshapeRectClicked(int x, int y) {
-        Rectangle r =
-            new Rectangle(x - selectionRectWidth, y - selectionRectWidth,
-                          selectionRectWidth * 2, selectionRectWidth * 2);
-        Rectangle2D rect = getBoundingShape().getBounds(); 
-        arc.setFrame(rect.getX() ,rect.getY(),rect.getWidth(),rect.getHeight());
-
-        if(r.contains(arc.getStartPoint())){
-            
-            return arc.getStartPoint();
-        }
-        if(r.contains(arc.getEndPoint())){
-            return arc.getEndPoint();
-        }
-
+        for(Point v:this.arc.vertices()){
+            if(Utils.LE(pt.distanceTo(v),this.selectionRectWidth)){
+              return v;
+            }                        
+        };
         return null;
     }
-    @Override
-    public int getReshapeRectID(int x,int y){
-        Rectangle r =
-            new Rectangle(x - selectionRectWidth, y - selectionRectWidth,
-                          selectionRectWidth * 2, selectionRectWidth * 2);
-
-        if(r.contains(arc.getStartPoint())){
-            return ARC_START_POINT;
-        }
-        if(r.contains(arc.getEndPoint())){
-            return ARC_END_POINT;
-        }
-        return -1;        
+    public void setExtendAngle(double extendAngle){
+        this.arc.endAngle=extendAngle;
     }
-    
+    public void setStartAngle(double startAngle){        
+        this.arc.startAngle=startAngle;
+    }
+    public double getStartAngle(){
+        return arc.startAngle;
+    }
+    public Point getCenter(){
+        return arc.pc;
+    }
+    public double getExtendAngle(){
+        return arc.endAngle;
+    }    
     @Override
-    public String getDisplayName(){
-        return "Arc";
+    public Point getResizingPoint() {
+        return resizingPoint;
     }
 
+    @Override
+    public void setResizingPoint(Point point) {
+       this.resizingPoint=point;
+    }
+    @Override
+    public void rotate(double angle, Point origin) {
+        this.arc.pc.rotate(angle,origin);
+        double w=this.arc.width;
+        this.arc.width=this.arc.height;
+        this.arc.height=w;
+        this.arc.startAngle+=angle;
+        if(this.arc.startAngle>=360){
+            this.arc.startAngle-=360;
+        }
+        if(this.arc.startAngle<0){
+            this.arc.startAngle+=360;
+        }
+    }
+    @Override
+    public void resize(int xoffset, int yoffset, Point clickedPoint) {        
+        this.arc.resize(xoffset, yoffset,clickedPoint);
+    }
+
+    @Override
+    public void alignResizingPointToGrid(Point point) {        
+               
+        
+    }
+    public boolean isStartAnglePointClicked(double x,double y){  
+        Point p=this.arc.getStart();
+        Box box=Box.fromRect(p.x - this.selectionRectWidth / 2, p.y - this.selectionRectWidth / 2,
+                     this.selectionRectWidth, this.selectionRectWidth);
+        if (box.contains((int)x,(int)y)) {
+            return true;
+        }else{                   
+            return false;
+            }
+    }       
+    public boolean isExtendAnglePointClicked(double x,double y){
+        Point p=this.arc.getEnd();
+        Box box=Box.fromRect(p.x - this.selectionRectWidth / 2, p.y - this.selectionRectWidth / 2,
+                     this.selectionRectWidth, this.selectionRectWidth);
+        if (box.contains((int)x,(int)y)) {
+            return true;
+        }else{                   
+            return false;
+            }
+    }       
+    @Override
     public String toXML() {
-        return "<arc type=\""+arc.getArcType()+"\">"+upperLeft.x+","+upperLeft.y+","+getWidth()+","+getHeight()+","+this.getExtendAngle()+","+this.getStartAngle()+","+this.getThickness()+","+this.getFill().index+"</arc>\r\n";
+        return "<arc  x=\""+Utilities.roundDouble(this.arc.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.arc.width,1)+"\" height=\""+Utilities.roundDouble(this.arc.height,1)+ "\"  thickness=\""+this.thickness+"\" start=\""+Utilities.roundDouble(this.arc.startAngle,1)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle,1)+"\" fill=\""+this.getFill().index+"\"/>\r\n";
     }
-    public void fromXML(Node node) {  
-        StringTokenizer st=new StringTokenizer(node.getTextContent(),",");                           
-        Initialize(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
-        setExtendAngle(Integer.parseInt(st.nextToken()));
-        setStartAngle(Integer.parseInt(st.nextToken()));
-        setThickness(Byte.parseByte(st.nextToken()));
-        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));   
-        if(node.getAttributes().getNamedItem("type")!=null){
-           setArcType(Integer.parseInt(node.getAttributes().getNamedItem("type").getNodeValue()));
+
+    @Override
+    public void fromXML(Node node) {
+        StringTokenizer st=new StringTokenizer(node.getTextContent(),","); 
+        if(st.hasMoreTokens()){    //old schema
+            double x=Double.parseDouble(st.nextToken());
+            double y=Double.parseDouble(st.nextToken());
+            double w=Double.parseDouble(st.nextToken());
+            double h=Double.parseDouble(st.nextToken());
+        
+            this.arc.pc.set(x+w/2,y+h/2);
+            this.arc.width=w/2;
+            this.arc.height=h/2;
+        
+            this.arc.endAngle = Double.parseDouble(st.nextToken());       
+            this.arc.startAngle = Double.parseDouble(st.nextToken());
+        
+            this.thickness = Integer.parseInt(st.nextToken());
+            setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));  
+        }else{
+            Element element = (Element) node;
+            double x=Double.parseDouble(element.getAttribute("x"));
+            double y=Double.parseDouble(element.getAttribute("y"));
+            double w=Double.parseDouble(element.getAttribute("width"));
+            double h=Double.parseDouble(element.getAttribute("height"));
+            
+            this.arc.pc.set(x,y);
+            this.arc.width=w;
+            this.arc.height=h;
+            
+            this.arc.startAngle = Double.parseDouble(element.getAttribute("start"));       
+            this.arc.endAngle = Double.parseDouble(element.getAttribute("extend"));
+            
+            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+            this.setFill(Fill.byIndex(Integer.parseInt(element.getAttribute("fill"))));
         }
+        
+        
+    }
+
+    @Override
+    public void move(double xoffset, double yoffset) {
+        this.arc.move(xoffset, yoffset);        
+    }
+    @Override
+    public void mirror(Line line) {        
+        this.arc.mirror(line);
+    }
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
+        Box rect = this.arc.box();
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+                return;
+        }
+        g2.setColor(isSelected() ? Color.GRAY : this.fillColor);
+        
+        Arcellipse e=this.arc.clone();   
+        e.scale(scale.getScaleX());
+        e.move(-viewportWindow.getX(),- viewportWindow.getY());
+        
+        if (fill == Fill.EMPTY) { //framed
+            double wireWidth = thickness * scale.getScaleX();
+            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+            //transparent rect
+            e.paint(g2, false);
+        }else if(fill==Fill.GRADIENT){            
+            GradientPaint gp = 
+                new GradientPaint((float)e.box().getX(), (float)e.box().getY(), 
+                                  Color.white, (float)e.box().getX(), 
+                                  (float)(e.box().getY()+e.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            e.paint(g2,true);
+            g2.setColor(Color.black);
+            e.paint(g2,false);
+        }else { //filled
+            e.paint(g2,true);
+        }
+        
+        if (this.isSelected()) {            
+                Point pt=null;
+                if(resizingPoint!=null){
+                    pt=resizingPoint.clone();
+                    pt.scale(scale.getScaleX());
+                    pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+                }
+                for(Point p:e.vertices()){
+                  Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
+                }                      
+        }
+
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) { 
+        if(fill == Fill.EMPTY){    //framed         
+          g2.setStroke(new BasicStroke(thickness,1,1));    
+          g2.setPaint(Color.BLACK);        
+          this.arc.paint(g2,false);
+        }else if(fill==Fill.GRADIENT){            
+            GradientPaint gp = 
+                new GradientPaint((float)arc.box().getX(), (float)arc.box().getY(), 
+                                  Color.white, (float)arc.box().getX(), 
+                                  (float)(arc.box().getY()+arc.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            arc.paint(g2,true);
+            g2.setColor(Color.black);
+            arc.paint(g2,false);
+        }        
+        else{               //filled  
+          g2.setColor(Color.BLACK);  
+          this.arc.paint(g2,true);
+        }        
+        
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {
@@ -279,62 +260,71 @@ public class Arc extends ResizableShape implements Reshapeable,Externalizable{
         memento.saveStateFrom(this);        
         return memento;
     }
-
-    @Override
-    public void setState(AbstractMemento memento) {
-        ((Memento)memento).loadStateTo(this);  
-    }
-    
-    public static class Memento extends ResizableShape.Memento{
-        private double angSt;
+    public static class Memento extends AbstractMemento<Symbol,Arc> {
         
-        private double angExt;
-        
-        private int arcType;
+        private double rotate;
+        private double x,y;
+        private double width,height;
+        private double startAngle,endAngle;
         
         public Memento(MementoType mementoType) {
-           super(mementoType);            
+            super(mementoType);
         }
+
         @Override
-        public void saveStateFrom(ResizableShape shape) {
-           super.saveStateFrom(shape);         
-            this.angSt=((Arc)shape).getStartAngle();
-            this.angExt=((Arc)shape).getExtendAngle();
-            this.arcType=((Arc)shape).getArcType();        
+        public void loadStateTo(Arc shape) {
+            super.loadStateTo(shape);
+            shape.arc.pc.set(x,y);
+            shape.arc.width=width;
+            shape.arc.height=height;
+            shape.arc.rotate=rotate;
+            shape.arc.startAngle=startAngle;
+            shape.arc.endAngle=endAngle;
         }
+
         @Override
-        public void loadStateTo(ResizableShape shape) {
-           super.loadStateTo(shape);
-           ((Arc)shape).setStartAngle(this.angSt);
-           ((Arc)shape).setExtendAngle(this.angExt);
-           ((Arc)shape).setArcType(this.arcType);
+        public void saveStateFrom(Arc shape) {
+            super.saveStateFrom(shape);
+            this.x=shape.arc.pc.x;
+            this.y=shape.arc.pc.y;
+            this.width=shape.arc.width;
+            this.height=shape.arc.height;
+            this.rotate=shape.arc.rotate;    
+            this.startAngle=shape.arc.startAngle;
+            this.endAngle=shape.arc.endAngle;
         }
-        
+
         @Override
-        public boolean equals(Object obj){
-            if(this==obj){
-              return true;  
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
             }
-            if(!(obj instanceof Memento)){
-              return false;  
-            }         
-            Memento other=(Memento)obj;
-            return super.equals(obj)&&Double.compare(this.angExt,other.angExt)==0&&Double.compare(this.angSt,other.angSt)==0&&this.arcType==other.arcType;
+            if (!(obj instanceof Memento)) {
+                return false;
+            }
+            Memento other = (Memento) obj;
+            return super.equals(obj) && Utils.EQ(this.rotate, other.rotate)&&Utils.EQ(this.startAngle, other.startAngle)&&Utils.EQ(this.endAngle, other.endAngle)&&
+            Utils.EQ(this.x, other.x)&&Utils.EQ(this.y,other.y)&&    
+            Utils.EQ(this.width, other.width)&&Utils.EQ(this.height,other.height);                
         }
-        
+
         @Override
-        public int hashCode(){
-          return super.hashCode()+new Double(angSt).hashCode()+new Double(angExt).hashCode()+(int)arcType;          
+        public int hashCode() {
+            int hash = 1;
+            hash = super.hashCode();
+            hash += Double.hashCode(this.rotate)+Double.hashCode(this.startAngle)+Double.hashCode(this.endAngle)+
+                    Double.hashCode(this.x)+Double.hashCode(this.y)+                   
+                    Double.hashCode(this.width)+Double.hashCode(this.height);                    
+            return hash;
         }
-        
         @Override
         public boolean isSameState(Unit unit) {
-            Arc other=(Arc)unit.getShape(getUUID()); 
-            return super.isSameState(unit)&&Double.compare(this.angExt,other.getExtendAngle())==0&&Double.compare(this.angSt,other.getStartAngle())==0&&this.arcType==other.getArcType();
+            boolean flag = super.isSameState(unit);
+            Arc other = (Arc) unit.getShape(this.getUUID());
+            return flag&&
+            Utils.EQ(this.rotate, other.arc.rotate)&&Utils.EQ(this.startAngle, other.arc.startAngle)&& Utils.EQ(this.endAngle, other.arc.endAngle)&&    
+            Utils.EQ(this.x, other.arc.pc.x)&& Utils.EQ(this.y, other.arc.pc.y)&&Utils.EQ(this.width, other.arc.width)&&Utils.EQ(this.height, other.arc.height);             
         }
-    }
 
-
-
+    }    
 }
-

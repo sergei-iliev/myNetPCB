@@ -24,7 +24,6 @@ public class BoardPanelBuilder extends AbstractPanelBuilder< Shape> {
 
     private JComboBox unitsCombo, gridCombo;
 
-    private JTextField originX, originY;
 
     public BoardPanelBuilder(BoardComponent component) {
         super(component, new GridLayout(8, 1));        
@@ -130,10 +129,11 @@ public class BoardPanelBuilder extends AbstractPanelBuilder< Shape> {
 
         setSelectedItem(gridCombo,getComponent().getModel().getUnit().getGrid().getGridValue());
         
-        originX.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getX())));
-        originY.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getY())));
+        if(getComponent().getModel().getUnit().getCoordinateSystem()!=null){
+          originX.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().x)));
+          originY.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().y)));
+        }
 
-        //setSelectedItem(layerCombo,getComponent().getModel().getUnit().getCopper());
     }
 
     @Override
@@ -141,10 +141,6 @@ public class BoardPanelBuilder extends AbstractPanelBuilder< Shape> {
         if(e.getSource()==gridCombo){
             getComponent().getModel().getUnit().getGrid().setGridValue((Double)gridCombo.getSelectedItem());
         }
-        
-//        if(e.getSource()==layerCombo){
-//            getComponent().getModel().getUnit().setCopper((Layer.Copper)layerCombo.getSelectedItem());
-//        }
         
         getComponent().Repaint();
 
@@ -158,13 +154,13 @@ public class BoardPanelBuilder extends AbstractPanelBuilder< Shape> {
            getComponent().getModel().fireUnitEvent(new UnitEvent(getComponent().getModel().getUnit(), UnitEvent.RENAME_UNIT));
         }
         if(e.getSource()==this.heightField||e.getSource()==this.widthField){            
-            getComponent().getModel().getUnit().setSize(Grid.MM_TO_COORD(Double.parseDouble(widthField.getText())),Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));
+            getComponent().getModel().getUnit().setSize((int)Grid.MM_TO_COORD(Double.parseDouble(widthField.getText())),(int)Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));
             //***refresh scrollbars
             getComponent().componentResized(null);                
             getComponent().Repaint();
         }
         if(e.getSource()==originX||e.getSource()==originY){
-            getComponent().getModel().getUnit().getCoordinateSystem().Reset(Grid.MM_TO_COORD(Double.parseDouble(originX.getText())),Grid.MM_TO_COORD(Double.parseDouble(originY.getText())));   
+            getComponent().getModel().getUnit().getCoordinateSystem().reset(Grid.MM_TO_COORD(Double.parseDouble(originX.getText())),Grid.MM_TO_COORD(Double.parseDouble(originY.getText())));   
             getComponent().Repaint();
         }
         

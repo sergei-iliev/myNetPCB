@@ -1,7 +1,8 @@
 package com.mynetpcb.core.capi;
 
+import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
 
 /**
@@ -33,19 +34,21 @@ public interface Resizeable {
      * @param y offset
      * @param clickedPoint dragged point
      */
-   public void Resize(int xOffset, int yOffset,Point clickedPoint);
-  
-  /**
-     * Draw control resizing points
-     * @param g2
-     * @param viewportWindow
-     * @param scale
-     */
-   public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale);
+   public void resize(int xOffset, int yOffset,Point clickedPoint);
   
    /**
     * Align resizing point to grid raster
     */
    public void alignResizingPointToGrid(Point targetPoint);
+   
+    /**
+       * Draw control resizing points
+       * @param g2
+       * @param viewportWindow
+       * @param scale
+       */
+    public default void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
+        
+    }
 }
 

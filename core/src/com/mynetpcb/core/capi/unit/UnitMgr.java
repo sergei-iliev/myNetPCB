@@ -1,23 +1,24 @@
 package com.mynetpcb.core.capi.unit;
 
 
-import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.Moveable;
 import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.PinLineable;
-import com.mynetpcb.core.capi.Pinable;
-import com.mynetpcb.core.capi.Pinaware;
+import com.mynetpcb.core.capi.pin.PinLineable;
+import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable;
+import com.mynetpcb.core.capi.pin.CompositePinable;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Text;
-import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
 
-import java.awt.Point;
+
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
@@ -43,7 +44,7 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 
     public void Load(U to, U from) throws CloneNotSupportedException {
         //1.Clear old symbols with notification
-        to.Clear();
+        to.clear();
 
         //2 equalize grid
         to.getGrid().setGridUnits(from.getGrid().getGridValue(), from.getGrid().getGridUnits());
@@ -55,18 +56,18 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         Collection<T> shapes = from.getShapes();
         for (T shape : shapes) {
             //***isolate owned children
-            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
-                continue;
-            }
+//            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
+//                continue;
+//            }
 
             T copyShape = (T) shape.clone();
-            Collection<T> children = getChildrenByParent(from.getShapes(), shape);
-            for (T child : children) {
-                T childCopy = (T) child.clone();
-                ((Ownerable) childCopy).setOwner(copyShape);
-                to.Add(childCopy);
-            }
-            to.Add(copyShape);
+//            Collection<T> children = getChildrenByParent(from.getShapes(), shape);
+//            for (T child : children) {
+//                T childCopy = (T) child.clone();
+//                ((Ownerable) childCopy).setOwner(copyShape);
+//                to.add(childCopy);
+//            }
+            to.add(copyShape);
         }
         to.setUnitName(from.getUnitName());
     }
@@ -76,27 +77,27 @@ public class UnitMgr<U extends Unit, T extends Shape> {
      * @param source
      * @param target
      */
-    public void cloneBlock(U source, U target) {
-        Collection<T> shapes = source.getShapes();
-        for (T shape : shapes) {
-            //***isolate owned children
-            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
-                continue;
-            }
-            try {
-                Shape clonning = shape.clone();
-                Collection<T> children = this.getChildrenByParent(source.getShapes(), shape);
-                for (Shape child : children) {
-                    Shape childCopy = child.clone();
-                    ((Ownerable) childCopy).setOwner(clonning);
-                    target.Add(childCopy);
-                }
-                target.Add(clonning);
-            } catch (CloneNotSupportedException cne) {
-                cne.printStackTrace(System.out);
-            }
-        }
-    }
+//    public void cloneBlock(U source, U target) {
+//        Collection<T> shapes = source.getShapes();
+//        for (T shape : shapes) {
+//            //***isolate owned children
+//            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
+//                continue;
+//            }
+//            try {
+//                Shape clonning = shape.clone();
+//                Collection<T> children = this.getChildrenByParent(source.getShapes(), shape);
+//                for (Shape child : children) {
+//                    Shape childCopy = child.clone();
+//                    ((Ownerable) childCopy).setOwner(clonning);
+//                    target.add(childCopy);
+//                }
+//                target.add(clonning);
+//            } catch (CloneNotSupportedException cne) {
+//                cne.printStackTrace(System.out);
+//            }
+//        }
+//    }
 
     /*
      * Block clone(mind parent child attachments,circuitlabels only)
@@ -109,54 +110,42 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         //***clone each element in the block
         for (Shape shape : selectedShapes) {
             try {
-                Shape clonning = shape.clone();
-                Collection<T> children = this.getChildrenByParent(unit.getShapes(), shape);
-                for (Shape child : children) {
-                    Shape childCopy = child.clone();
-                    ((Ownerable) childCopy).setOwner(clonning);
-                    childCopy.setSelected(true);
-                    unit.Add(childCopy);
-                }
+                Shape clonning = shape.clone();                
                 clonning.setSelected(true);
                 //***tweak naming
                 //CircuitMgr.getInstance().symbolNaming(circuit,clonning);
-                unit.Add(clonning);
+                unit.add(clonning);
             } catch (CloneNotSupportedException cne) {
                 cne.printStackTrace(System.out);
             }
         }
     }
 
-    public void rotateBlock(Collection<T> shapes, AffineTransform rotation) {
+    public void rotateBlock(Collection<T> shapes, double angle,Point origin) {
         for (T shape : shapes) {
-            shape.Rotate(rotation);
+            shape.rotate(angle,origin);
         }
     }
 
-    public void mirrorBlock(Collection<T> shapes, Point A,Point B) {
+    public void mirrorBlock(Collection<T> shapes, Line line) {
         for (T shape : shapes) {
-            shape.Mirror(A,B);
+            shape.mirror(line);
         }
     }
     /*
      * Block mirror(mind parent child attachments,circuitlabels only)
      */
-    public void mirrorBlock(U unit, Point A,Point B) {
-        Collection<T> selectedShapes = unit.getSelectedShapes(true);
-        for (T shape : selectedShapes) {
-            shape.Mirror(A,B);
-            //***align attached labels
-            Collection<T> children = this.getChildrenByParent(unit.getShapes(), shape);
-            for (T child : children) {
-                child.Mirror(A,B);
-            }
-        }
+//    public void mirrorBlock(U unit, Line line) {
+//        Collection<T> selectedShapes = unit.getSelectedShapes(true);
+//        for (T shape : selectedShapes) {
+//            shape.mirror(line);
+//        }
+//
+//    }
 
-    }
-
-    public void moveBlock(Collection<T> shapes, int xoffset, int yoffset) {
+    public void moveBlock(Collection<T> shapes, double xoffset, double yoffset) {
         for (Shape shape : shapes) {
-            shape.Move(xoffset, yoffset);
+            shape.move(xoffset, yoffset);
         }
     }
 
@@ -164,18 +153,18 @@ public class UnitMgr<U extends Unit, T extends Shape> {
     * The rectangle based on selected Pinnables in the Unit
     */
 
-    public Rectangle getPinsRect(Collection<T> shapes) {
-        int x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+    public Box getPinsRect(Collection<T> shapes) {
+        double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
         boolean isPinnable = false;
 
         for (Moveable symbol : shapes) {
-            if (symbol instanceof Pinaware) { //group of pins
-                Pinaware element = (Pinaware) symbol;
-                Rectangle r = element.getPinsRect();
-                x1 = Math.min(x1, r.x);
-                y1 = Math.min(y1, r.y);
-                x2 = Math.max(x2, r.x + r.width);
-                y2 = Math.max(y2, r.y + r.height);
+            if (symbol instanceof CompositePinable) { //group of pins
+                CompositePinable element = (CompositePinable) symbol;
+                Box r = element.getPinsRect();
+                x1 = Math.min(x1, r.min.x);
+                y1 = Math.min(y1, r.min.y);
+                x2 = Math.max(x2, r.max.y);
+                y2 = Math.max(y2, r.max.y);
                 isPinnable = true;
             }
             if (symbol instanceof Pinable) { //single pin
@@ -191,39 +180,39 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         
         }
         if (isPinnable)
-            return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+            return new Box(x1, y1, x2 - x1, y2 - y1);
         else
             return null;
     
 }
     public void alignBlock(Grid grid, Collection<T> shapes) {
         //***order chips first
-        Rectangle r = getPinsRect(shapes);
+        Box r = getPinsRect(shapes);
         //***no need to align if no pins present
         if (r == null) {
             return;
         }
-        Point point = grid.positionOnGrid(r.x, r.y);
+        Point point = grid.positionOnGrid(r.min);
 
         for (T shape : shapes) {
-            shape.Move((point.x - r.x), (point.y - r.y));
+            shape.move((point.x - r.min.x), (point.y - r.min.y));
         }
     }
 
     public void deleteBlock(U unit, Collection<T> shapes) {
         for (Shape shape : shapes) {
-            Collection<T> children = getChildrenByParent(unit.getShapes(), shape);
-            for (Shape child : children) {
-                unit.delete(child.getUUID());
-            }
+//            Collection<T> children = getChildrenByParent(unit.getShapes(), shape);
+//            for (Shape child : children) {
+//                unit.delete(child.getUUID());
+//            }
 
             unit.delete(shape.getUUID());
         }
     }
 
     public void locateBlock(U unit, Collection<T> shapes, int x, int y) {
-        int xx = (int) unit.getShapesRect(shapes).getMinX();
-        int yy = (int) unit.getShapesRect(shapes).getMinY();
+        int xx = (int) unit.getShapesRect(shapes).getX();
+        int yy = (int) unit.getShapesRect(shapes).getY();
         moveBlock(shapes, x - xx, y - yy);
     }
 
@@ -249,14 +238,14 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         return count > 1;
     }
 
-    public Collection<T> getChildrenByParent(Collection<T> childrenSet, Shape parent) {
-        Collection<T> children = new HashSet<T>(50);
-        for (T shape : childrenSet) {
-            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() == parent)
-                children.add(shape);
-        }
-        return children;
-    }
+//    public Collection<T> getChildrenByParent(Collection<T> childrenSet, Shape parent) {
+//        Collection<T> children = new HashSet<T>(50);
+//        for (T shape : childrenSet) {
+//            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() == parent)
+//                children.add(shape);
+//        }
+//        return children;
+//    }
 
     /*
      * Normalize the pin text when chip is rotated or mirrored
@@ -292,49 +281,49 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 
 
     private void normalizePinText(PinLineable pin) {
-        for (Texture text : pin.getPinText()) {
-            switch (pin.getOrientation()) {
-            case WEST:
-            case EAST:
-                if (Text.Orientation.HORIZONTAL == text.getAlignment().getOrientation()) {
-                    if (text.getAnchorPoint().y > pin.getPinPoints().getA().y)
-                        text.Mirror(pin.getPinPoints().getA(),pin.getPinPoints().getB());
-                }
-                break;
-            case NORTH:
-            case SOUTH:
-                if (Text.Orientation.VERTICAL == text.getAlignment().getOrientation()) {
-                    if (text.getAnchorPoint().x > pin.getPinPoints().getA().x)
-                        text.Mirror(pin.getPinPoints().getA(),pin.getPinPoints().getB());
-                }
-                break;
-            }
-        }
+//        for (Texture text : pin.getPinText()) {
+//            switch (pin.getOrientation()) {
+//            case WEST:
+//            case EAST:
+//                if (Text.Orientation.HORIZONTAL == text.getAlignment().getOrientation()) {
+//                    //if (text.getAnchorPoint().y > pin.getPinPoints().getA().y)
+//                        //text.Mirror(pin.getPinPoints().getA(),pin.getPinPoints().getB());
+//                }
+//                break;
+//            case NORTH:
+//            case SOUTH:
+//                if (Text.Orientation.VERTICAL == text.getAlignment().getOrientation()) {
+//                    //if (text.getAnchorPoint().x > pin.getPinPoints().getA().x)
+//                        //text.Mirror(pin.getPinPoints().getA(),pin.getPinPoints().getB());
+//                }
+//                break;
+//            }
+//        }
     }
 
-    public void normalizePinText(Shape shape) {
-        if (shape instanceof PinLineable) {
-            normalizePinText((PinLineable) shape);
-        }
-        if (shape instanceof Pinaware) {
-            normalizePinText(((Pinaware) shape).getPins());
-        }
-    }
+//    public void normalizePinText(Shape shape) {
+//        if (shape instanceof PinLineable) {
+//            normalizePinText((PinLineable) shape);
+//        }
+//        if (shape instanceof Pinaware) {
+//            normalizePinText(((Pinaware) shape).getPins());
+//        }
+//    }
 
     public void normalizePinText(Collection<? extends Shape> shapes) {
-        for (Shape shape : shapes) {
-            if (shape instanceof PCBShape) {
-                continue;
-            }
-            if (shape instanceof PinLineable) { //single pin
-                normalizePinText((PinLineable) shape);
-            } else if (shape instanceof Pinaware) { //single chip
-                Collection<PinLineable> pins = ((Pinaware) shape).getPins();
-                for (PinLineable pin : pins) {
-                    normalizePinText(pin);
-                }
-            }
-        }
+//        for (Shape shape : shapes) {
+//            if (shape instanceof PCBShape) {
+//                continue;
+//            }
+//            if (shape instanceof PinLineable) { //single pin
+//                normalizePinText((PinLineable) shape);
+//            } else if (shape instanceof Pinaware) { //single chip
+//                Collection<PinLineable> pins = ((Pinaware) shape).getPins();
+//                for (PinLineable pin : pins) {
+//                    normalizePinText(pin);
+//                }
+//            }
+//        }
     }
 
 

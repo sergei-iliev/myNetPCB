@@ -1,9 +1,7 @@
 package com.mynetpcb.circuit.dialog.panel;
 
-
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.shape.SCHJunction;
-import com.mynetpcb.circuit.shape.SCHNoConnector;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.ShapeEvent;
@@ -17,10 +15,10 @@ import com.mynetpcb.core.capi.tree.UnitTreeCellRenderer;
 import com.mynetpcb.core.capi.tree.UnitTreeDragDropListener;
 import com.mynetpcb.core.capi.unit.Unitable;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
 import java.util.UUID;
@@ -36,7 +34,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 
 public class CircuitsPanel extends JPanel implements TreeSelectionListener, UnitListener, ShapeListener,
                                                      ContainerListener,UnitTreeDragDropListener {
@@ -104,9 +101,8 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
                circuitInspector.selectShapeEvent(new ShapeEvent(circuitComponent.getModel().getUnit().getShape(data.getUUID()),
                                                                                     ShapeEvent.SELECT_SHAPE));
                 //***position on a symbol
-                Rectangle symbolRect =
-                    circuitComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape().getBounds();
-                final Point2D position = new Point2D.Double(symbolRect.x, symbolRect.y);
+                Box symbolRect=circuitComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
+                final Point2D position = new Point2D.Double(symbolRect.min.x, symbolRect.min.y);
                 circuitComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().transform(position,
                                                                                                                        position);
                 SwingUtilities.invokeLater(new Runnable() {
@@ -240,7 +236,7 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
 
     @Override
     public void addShapeEvent(ShapeEvent e) {
-        if((e.getObject()instanceof Trackable)|| (e.getObject() instanceof SCHJunction)|| (e.getObject() instanceof SCHNoConnector)){
+        if((e.getObject()instanceof Trackable)|| (e.getObject() instanceof SCHJunction)/*|| (e.getObject() instanceof SCHNoConnector)*/){
           return; 
         }
         this.circuitsTree.removeTreeSelectionListener(this);

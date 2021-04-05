@@ -23,7 +23,7 @@ public class SearchUnitLocal extends Command{
 
     @Override
     public Void execute() {               
-        monitor.OnStart(receiver);
+        monitor.onStart(receiver);
         
         final StringBuffer result = new StringBuffer();
         File allFiles[] = Utilities.getFileDirOrder(new File(rootPath));
@@ -47,7 +47,7 @@ public class SearchUnitLocal extends Command{
             SwingUtilities.invokeAndWait(new Runnable() {
                 public void run() {
                    if(monitor!=null) 
-                     monitor.OnRecive(result.toString(), receiver);
+                     monitor.onRecive(result.toString(), receiver);
                 }
             });
         } catch (InterruptedException ie) {
@@ -57,7 +57,7 @@ public class SearchUnitLocal extends Command{
             return null;
         }
         
-        monitor.OnFinish(receiver);      
+        monitor.onFinish(receiver);      
         return null;
     }
 

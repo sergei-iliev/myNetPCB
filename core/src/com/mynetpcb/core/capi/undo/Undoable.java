@@ -3,9 +3,9 @@ package com.mynetpcb.core.capi.undo;
 
 public interface Undoable {
     
-  public boolean Redo();
+  public boolean redo();
     
-  public boolean Undo(UndoCallback undocallback);
+  public boolean undo(UndoCallback undocallback);
   
   public  void registerMemento(AbstractMemento memento);
   

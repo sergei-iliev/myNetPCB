@@ -1,6 +1,5 @@
 package com.mynetpcb.circuit.unit;
 
-
 import com.mynetpcb.circuit.shape.CircuitShapeFactory;
 import com.mynetpcb.circuit.shape.SCHBus;
 import com.mynetpcb.circuit.shape.SCHBusPin;
@@ -13,11 +12,10 @@ import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.shape.SCHWire;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Ownerable;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.pad.Layer;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -50,25 +48,32 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-
-public class Circuit extends Unit<Shape> {
-    public Circuit(int width, int height) {
+public class Circuit extends Unit<Shape>{
+    public Circuit(int width,int height) {
         super(width, height);
         this.grid.setGridUnits(8, Grid.Units.PIXEL);
         this.grid.setPointsColor(Color.BLACK);
         this.frame.setOffset(8);
         this.shapeFactory = new CircuitShapeFactory();
     }
-
     @Override
     public Circuit clone() throws CloneNotSupportedException {
         Circuit copy = (Circuit) super.clone();
         this.shapeFactory = new CircuitShapeFactory();   
         return copy; 
     }
-    
     @Override
-    protected StringBuffer Format(Collection<Shape> shapes) {
+    public StringBuffer format() {        
+        StringBuffer xml = new StringBuffer();
+        xml.append("<circuit width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\">\r\n");
+        xml.append("<name>" + this.getUnitName() + "</name>\r\n");
+        xml.append(format(getShapes()));        
+        xml.append("</circuit>\r\n");
+        return xml;
+    }
+
+    @Override
+    protected StringBuffer format(Collection<Shape> shapes) {
         StringBuffer xml = new StringBuffer();
 
         xml.append("<symbols>\r\n");
@@ -116,10 +121,6 @@ public class Circuit extends Unit<Shape> {
         xml.append("<labels>\r\n");
         for (Shape shape : shapes) {
             if (shape instanceof SCHLabel) {
-                //***not interested in children
-                if (((Ownerable) shape).getOwner() != null)
-                    continue;
-
                 xml.append(((Externalizable) shape).toXML());
             }
         }
@@ -129,10 +130,6 @@ public class Circuit extends Unit<Shape> {
         xml.append("<connectors>\r\n");
         for (Shape shape : shapes) {
             if (shape instanceof SCHConnector) {
-                //***not interested in children
-                if (((Ownerable) shape).getOwner() != null)
-                    continue;
-
                 xml.append(((Externalizable) shape).toXML());
             }
         }
@@ -158,22 +155,16 @@ public class Circuit extends Unit<Shape> {
         xml.append("</symbols>\r\n");
         return xml;
     }
-    public StringBuffer Format() {
-        StringBuffer xml = new StringBuffer();
-        xml.append("<circuit width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\">\r\n");
-        xml.append("<name>" + this.getUnitName() + "</name>\r\n");
-        xml.append(Format(getShapes()));        
-        xml.append("</circuit>\r\n");
-        return xml;
-    }
-    public void Parse(Node node) throws XPathExpressionException, ParserConfigurationException {
+
+    @Override
+    public void parse(Node node) throws XPathExpressionException, ParserConfigurationException {
         Element e = (Element) node;
         this.setSize(Integer.parseInt(e.getAttribute("width")), Integer.parseInt(e.getAttribute("height")));
         NodeList nlist = ((org.w3c.dom.Element) node).getElementsByTagName("name");
         this.unitName = nlist.item(0).getTextContent();
         parseSelection(node, false);
-    }
 
+    }
     private void parseSelection(Node node, boolean selection) throws XPathExpressionException,
                                                                      ParserConfigurationException {
         XPathFactory factory = XPathFactory.newInstance();
@@ -188,7 +179,7 @@ public class Circuit extends Unit<Shape> {
             SCHSymbol chip = new SCHSymbol();
             chip.setSelected(selection);
             chip.fromXML(item);
-            this.Add(chip);
+            this.add(chip);
 
             //***read children labels if any
             subnodelist = (NodeList) xpath.evaluate("./children/*", item, XPathConstants.NODESET);
@@ -198,17 +189,15 @@ public class Circuit extends Unit<Shape> {
                 if (((Element) subitem).getTagName().equals("label")) {
                     SCHLabel label = new SCHLabel();
                     label.setSelected(selection);
-                    label.fromXML(subitem);
-                    label.setOwner(chip);
-                    this.Add(label);
+                    label.fromXML(subitem);                    
+                    this.add(label);
                 }
 
                 if (((Element) subitem).getTagName().equals("connector")) {
                     SCHConnector connector = new SCHConnector();
                     connector.setSelected(selection);
-                    connector.fromXML(subitem);
-                    connector.setOwner(chip);
-                    this.Add(connector);
+                   // connector.fromXML(subitem);
+                    this.add(connector);
                 }
             }
         }
@@ -220,7 +209,7 @@ public class Circuit extends Unit<Shape> {
             SCHBus buss = new SCHBus();
             buss.setSelected(selection);
             buss.fromXML(item);
-            this.Add(buss);
+            this.add(buss);
         }
         //***read buspins
         nodelist = (NodeList) xpath.evaluate("./symbols/buspins/*", node, XPathConstants.NODESET);
@@ -229,7 +218,7 @@ public class Circuit extends Unit<Shape> {
             SCHBusPin busPin = new SCHBusPin();
             busPin.setSelected(selection);
             busPin.fromXML(item);
-            this.Add(busPin);
+            this.add(busPin);
         }
         //***read wires
         nodelist = (NodeList) xpath.evaluate("./symbols/wires/*", node, XPathConstants.NODESET);
@@ -238,7 +227,7 @@ public class Circuit extends Unit<Shape> {
             SCHWire wire = new SCHWire();
             wire.setSelected(selection);
             wire.fromXML(item);
-            this.Add(wire);
+            this.add(wire);
         }
 
         //***read junctions
@@ -248,7 +237,7 @@ public class Circuit extends Unit<Shape> {
             SCHJunction junction = new SCHJunction();
             junction.setSelected(selection);
             junction.fromXML(item);
-            this.Add(junction);
+            this.add(junction);
         }
 
         //***read free labels
@@ -258,7 +247,7 @@ public class Circuit extends Unit<Shape> {
             SCHLabel label = new SCHLabel();
             label.setSelected(selection);
             label.fromXML(item);
-            this.Add(label);
+            this.add(label);
         }
         //***read connectors
         nodelist = (NodeList) xpath.evaluate("./symbols/connectors/*", node, XPathConstants.NODESET);
@@ -267,7 +256,7 @@ public class Circuit extends Unit<Shape> {
             SCHConnector connector = new SCHConnector();
             connector.setSelected(selection);
             connector.fromXML(item);
-            this.Add(connector);
+            this.add(connector);
         }
 
         //***read noconnectors
@@ -277,7 +266,7 @@ public class Circuit extends Unit<Shape> {
             SCHNoConnector connector = new SCHNoConnector();
             connector.setSelected(selection);
             connector.fromXML(item);
-            this.Add(connector);
+            this.add(connector);
         }
 
         //***read noconnectors
@@ -287,10 +276,20 @@ public class Circuit extends Unit<Shape> {
             SCHNetLabel netlabel = new SCHNetLabel();
             netlabel.setSelected(selection);
             netlabel.fromXML(item);
-            this.Add(netlabel);
+            this.add(netlabel);
         }
     }
+
+    @Override
+    protected void parseClipboardSelection(String xml) throws XPathExpressionException, ParserConfigurationException,
+                                                                 SAXException, IOException {
     
+        Node node =
+            DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8"))).getDocumentElement();
+        parseSelection(node, true);
+        
+    }
+
     private WeakReference<PrintContext> context;
     private Circuit printcircuit;
     
@@ -302,7 +301,7 @@ public class Circuit extends Unit<Shape> {
             try {
                 Shape copy = shape.clone();
                 copy.setSelected(false);
-                printcircuit.Add(copy);
+                printcircuit.add(copy);
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace(System.out);
             }
@@ -333,7 +332,7 @@ public class Circuit extends Unit<Shape> {
                   
                   g2.scale(scale, scale);
                   for (Shape shape : printcircuit.getShapes()) {
-                        shape.Print(g2,context,context.getLayermaskId());
+                        shape.print(g2,context,context.getLayermaskId());
                   }
                   String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
                   ImageIO.write(bi,ext,new File(fileName));                        
@@ -393,7 +392,7 @@ public class Circuit extends Unit<Shape> {
         }
         
         for (Shape shape : printcircuit.getShapes()) {
-            shape.Print(g2,context.get(),Layer.LAYER_ALL);
+            shape.print(g2,context.get(),Layer.LAYER_ALL);
         }
         g2.setTransform(oldTransform);
         /* tell the caller that this page is part of the printed document */
@@ -404,19 +403,11 @@ public class Circuit extends Unit<Shape> {
     public void finish() {
         context.clear();
         context = null; 
-        printcircuit.Clear();
+        printcircuit.clear();
         printcircuit = null;
     }
-    
-    protected void parseClipboardSelection(String xml) throws XPathExpressionException,ParserConfigurationException,
-                                                   SAXException, IOException {        
-        Node node =  DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8"))).getDocumentElement();
-        parseSelection(node,true);        
-    }
-
     @Override
     public String toString() {
         return "circuit";
     }
-
 }

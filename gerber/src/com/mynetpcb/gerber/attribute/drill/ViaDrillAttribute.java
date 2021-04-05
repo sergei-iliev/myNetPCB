@@ -1,7 +1,6 @@
 package com.mynetpcb.gerber.attribute.drill;
 
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
-import com.mynetpcb.gerber.attribute.AbstractAttribute.Type;
 
 public class ViaDrillAttribute extends AbstractAttribute {
     public ViaDrillAttribute() {
@@ -13,3 +12,4 @@ public class ViaDrillAttribute extends AbstractAttribute {
         return  ("%"+String.format("%s,%s",command,name)+"*%");
     }
 }
+

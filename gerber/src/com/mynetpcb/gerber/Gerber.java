@@ -1,6 +1,5 @@
 package com.mynetpcb.gerber;
 
-
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -14,7 +13,7 @@ import com.mynetpcb.gerber.attribute.file.PartFunctionAttribute;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Gerberable;
 import com.mynetpcb.gerber.capi.GraphicsStateContext;
-import com.mynetpcb.gerber.capi.StringBufferEx;
+import com.mynetpcb.gerber.capi.StringBufferExt;
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.gerber.command.CommandDictionary;
 import com.mynetpcb.gerber.command.extended.CoordinateResolutionCommand;
@@ -34,7 +33,6 @@ import java.nio.file.Paths;
 
 
 public class Gerber implements Gerberable{
-
     private  ApertureDictionary apertureDictionary;
     private final CommandDictionary commandDictionary;
     private final Unit<? extends Shape> board;
@@ -54,7 +52,7 @@ public class Gerber implements Gerberable{
         try (BufferedWriter writer = Files.newBufferedWriter(gerberFile,
                         StandardCharsets.UTF_8)) {
 
-           GraphicsStateContext context=new GraphicsStateContext(apertureDictionary, commandDictionary, new StringBufferEx());
+           GraphicsStateContext context=new GraphicsStateContext(apertureDictionary, commandDictionary, new StringBufferExt());
            
            writer.write(createHeader(context,layermask));
            writer.write(createCommands(serviceContext,context,layermask));
@@ -65,12 +63,13 @@ public class Gerber implements Gerberable{
     }
     
     private String createCommands(GerberServiceContext serviceContext,GraphicsStateContext context,int layermask){
-        StringBufferEx sb=new StringBufferEx();
+        StringBufferExt sb=new StringBufferExt();
         
         /*Start dark polarity*/
         context.resetPolarity(LevelPolarityCommand.Polarity.DARK);
         
-        AbstractCommand stepAndRepeat=new StepAndRepeatCommand();
+        AbstractCommand stepAndRepeat=new StepAndRepeatCommand
+            ();
         sb.append(stepAndRepeat.print());
         
         CommandProcessor processor=new CommandProcessor(context);
@@ -80,7 +79,7 @@ public class Gerber implements Gerberable{
         return sb.toString();
     }
     private String createHeader(GraphicsStateContext context,int layremask){
-        StringBufferEx sb=new StringBufferEx();
+        StringBufferExt sb=new StringBufferExt();
         
         AbstractAttribute attribute=new GenerationSoftwareAttribute(VersionUtils.MYNETPCB_NAME, String.valueOf(VersionUtils.MYNETPCB_VERSION));
         sb.append(attribute.print());        
@@ -118,9 +117,8 @@ public class Gerber implements Gerberable{
 
     
     private String createFooter(GraphicsStateContext context){
-        StringBufferEx sb=new StringBufferEx();
+        StringBufferExt sb=new StringBufferExt();
         sb.append("M02*");
         return sb.toString();  
     }
-
 }

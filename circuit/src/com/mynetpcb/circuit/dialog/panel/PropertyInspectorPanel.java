@@ -1,6 +1,5 @@
 package com.mynetpcb.circuit.dialog.panel;
 
-
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.dialog.panel.inspector.CircuitBuilderFactory;
 import com.mynetpcb.circuit.unit.Circuit;
@@ -17,7 +16,6 @@ import com.mynetpcb.core.capi.shape.Shape;
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
-
 
 public class PropertyInspectorPanel extends JPanel implements ShapeListener,UnitListener,ContainerListener{
 

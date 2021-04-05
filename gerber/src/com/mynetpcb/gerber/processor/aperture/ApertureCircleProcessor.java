@@ -1,6 +1,5 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -40,14 +39,11 @@ public class ApertureCircleProcessor implements Processor{
     }
     
     private void processCircle(Circle circle){
-        if(circle.getFill()==Shape.Fill.EMPTY){
-            CircleAperture aperture=new CircleAperture();
-            aperture.setDiameter(circle.getThickness());
-            dictionary.add(aperture);
-        }else{
-            CircleAperture aperture=new CircleAperture();
-            aperture.setDiameter(2*circle.getWidth());
-            dictionary.add(aperture);                
-        } 
+        if(circle.getFill()==Shape.Fill.FILLED){
+            return;
+        }
+        CircleAperture aperture=new CircleAperture();
+        aperture.setDiameter(circle.getThickness());
+        dictionary.add(aperture);         
     }
 }

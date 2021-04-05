@@ -4,6 +4,10 @@ import com.mynetpcb.core.capi.Grid;
 
 import java.util.Objects;
 
+@Deprecated
+/*
+ * Use contour instead
+ */
 public class RectangleAperture extends ApertureDefinition {
         
         private int X;
@@ -68,7 +72,7 @@ public class RectangleAperture extends ApertureDefinition {
             StringBuffer sb=new StringBuffer();
             sb.append("%ADD");
             sb.append(getCode());
-            sb.append("R,"+Grid.COORD_TO_MM(X));            
+            sb.append("R???????????????????????????????????,"+Grid.COORD_TO_MM(X));            
             sb.append("X");
             sb.append(Grid.COORD_TO_MM(Y));
             //if(hole!=0){
@@ -80,3 +84,4 @@ public class RectangleAperture extends ApertureDefinition {
     
 
 }
+

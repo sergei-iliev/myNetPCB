@@ -1,12 +1,10 @@
 package com.mynetpcb.core.capi.line;
 
-
 import com.mynetpcb.core.capi.shape.Shape;
-
-import java.awt.Point;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Utils;
 
 import java.lang.ref.WeakReference;
-
 
 /**
  *State strategy with method factory
@@ -19,12 +17,11 @@ public abstract class LineBendingProcessor {
     
     protected boolean isGridAlignable;
     
-    protected boolean isNew;
     public void setGridAlignable(boolean isGridAlignable){
        this.isGridAlignable=isGridAlignable; 
     }
     
-    public void Initialize(Trackable line){
+    public void initialize(Trackable line){
         
       if(this.weakLineRef!=null){
           if(line==this.weakLineRef.get()){
@@ -33,7 +30,6 @@ public abstract class LineBendingProcessor {
           this.weakLineRef.clear();  
       }
       this.weakLineRef=new WeakReference<Trackable>(line);  
-      this.isNew=true; 
     }
     
     /*
@@ -43,7 +39,7 @@ public abstract class LineBendingProcessor {
      */    
     public abstract boolean addLinePoint(Point point);   
     
-    public abstract void moveLinePoint(int x,int y);
+    public abstract void moveLinePoint(double x,double y);
     
     /**
      *Used for popup UI check box selected/uselected
@@ -51,9 +47,9 @@ public abstract class LineBendingProcessor {
      */
     //public abstract String getActionCommand();
     
-    public void Release(){
+    public void release(){
         //***end the line by puting floating into one point   
-        getLine().Reset(); 
+        getLine().reset(); 
         if(getLine().getLinePoints().size()<2&&getLine().getOwningUnit()!=null){
             getLine().getOwningUnit().delete(((Shape)getLine()).getUUID());
         }
@@ -69,9 +65,14 @@ public abstract class LineBendingProcessor {
      */
     public boolean isOverlappedPoint(Point pointToAdd){
         if(getLine().getLinePoints().size()>0){
-          Point lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1); 
+            Point lastPoint;
+            if(getLine().getResumeState()==Trackable.ResumeState.ADD_AT_END){  
+                lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1); 
+            }else{
+                lastPoint=(Point)getLine().getLinePoints().get(0); 
+            }
             //***is this the same point as last one?   
-          if(pointToAdd.equals(lastPoint))
+          if(Utils.EQ(pointToAdd.x,lastPoint.x)&&Utils.EQ(pointToAdd.y,lastPoint.y))
             return true;    
         }
         return false;
@@ -82,24 +83,32 @@ public abstract class LineBendingProcessor {
      */
     public boolean isPointOnLine(Point pointToAdd){
          if(getLine().getLinePoints().size()>=2){
-              Point lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1);  
-              Point lastlastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-2); 
+             Point lastPoint,lastlastPoint;
+             if(getLine().getResumeState()==Trackable.ResumeState.ADD_AT_END){  
+                lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1);  
+                lastlastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-2); 
+             }else{
+                lastPoint=(Point)getLine().getLinePoints().get(0);  
+                lastlastPoint=(Point)getLine().getLinePoints().get(1);                  
+             }
             //***check if point to add overlaps last last point
             if(lastlastPoint.equals(pointToAdd)){
-              getLine().deleteLastPoint();
-              lastPoint.setLocation(pointToAdd);  
+              //getLine().deleteLastPoint();
+              lastPoint.set(pointToAdd);  
               return true;
             }
-            if((lastPoint.getX()==pointToAdd.getX()&&lastlastPoint.getX()==pointToAdd.getX())||(lastPoint.getY()==pointToAdd.getY()&&lastlastPoint.getY()==pointToAdd.getY())){                  
-              lastPoint.setLocation(pointToAdd);                           
+            if((Utils.EQ(lastPoint.x,pointToAdd.x)&&Utils.EQ(lastlastPoint.x,pointToAdd.x))||(Utils.EQ(lastPoint.y,pointToAdd.y)&&Utils.EQ(lastlastPoint.y,pointToAdd.y))){                  
+              lastPoint.set(pointToAdd);                           
               return true;
             }                    
          }
          return false;
+         
     }
     
     public boolean isSlopeInterval(Point p1,Point p2){
-        return (p1.x!=p2.x&&p1.y!=p2.y);
+        return (!Utils.EQ(p1.x,p2.x)&&!Utils.EQ(p1.y,p2.y));
     }
+    
 }
 

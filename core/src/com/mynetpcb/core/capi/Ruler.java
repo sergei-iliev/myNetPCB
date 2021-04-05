@@ -1,52 +1,52 @@
 package com.mynetpcb.core.capi;
 
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.font.FontTexture;
+import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
 
 public class Ruler extends Shape implements Resizeable{
     
     private Point resizingPoint;
-    //private ChipText text;
+
     private FontTexture text;
     
+    private Line line;
+    
+    private double x,y;
+    
     public Ruler() {
-        super(0,0,0,0,0,0);
-        text=new FontTexture("label","Label",0,0,Text.Alignment.LEFT,Grid.MM_TO_COORD(1.2));        
+        super(0,0);
+        text=new FontTexture("label","0",0,0,(int)Grid.MM_TO_COORD(1.2),0);        
         text.setFillColor(Color.WHITE);
-        text.setStyle(Text.Style.BOLD);
-        text.setSelectionRectWidth(3000);
+        line=new Line(0,0,0,0);
+        //text.setStyle(Font.BOLD);
+        //text.setSelectionRectWidth(3000);
     }
 
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         if(resizingPoint==null){
             return;
         }
-        text.setText(String.valueOf(Grid.COORD_TO_MM((int)resizingPoint.distance(getX(),getY())))+" "+Grid.Units.MM);
-        text.Paint(g2, viewportWindow, scale, layermask);
         
-        GeneralPath line= new GeneralPath(GeneralPath.WIND_EVEN_ODD,2);
-      
-        Point2D tmp=new Point2D.Double(); 
-        scale.transform(new Point(getX(),getY()),tmp);        
-        line.moveTo((float)tmp.getX()-viewportWindow.x,(float)tmp.getY()-viewportWindow.y);
+        text.setText(String.valueOf(Utilities.roundDouble(Grid.COORD_TO_MM(resizingPoint.distanceTo(x,y))))+" "+Grid.Units.MM);
+        text.paint(g2, viewportWindow, scale, layermask);
         
-        scale.transform(resizingPoint,tmp);
-        line.lineTo((float)tmp.getX()-viewportWindow.x,(float)tmp.getY()-viewportWindow.y);
-        
+        line.setLine(x, y, resizingPoint.x, resizingPoint.y);
+        line.scale(scale.getScaleX());
+        line.move(-viewportWindow.getX(),- viewportWindow.getY());
+       
         g2.setStroke(new BasicStroke(1));    
         g2.setColor(Color.WHITE);
         
-        g2.draw(line); 
+        line.paint(g2,true); 
     }
 
     @Override
@@ -65,19 +65,19 @@ public class Ruler extends Shape implements Resizeable{
     }
 
     @Override
-    public void Resize(int xOffset, int yOffset, Point clickedPoint) {
-       resizingPoint.setLocation(resizingPoint.x+xOffset,resizingPoint.y+yOffset);
-       text.setLocation(resizingPoint.x, resizingPoint.y);
-    }
-
-    @Override
-    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-        
-
+    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+       resizingPoint.set(resizingPoint.x+xoffset,resizingPoint.y+yoffset);
+       text.set(resizingPoint.x,resizingPoint.y);
     }
 
     @Override
     public void alignResizingPointToGrid(Point targetPoint) {
         
+    }
+    
+    @Override
+    public void setLocation(double x, double y) {        
+        this.x=x;
+        this.y=y;
     }
 }

@@ -1,6 +1,5 @@
 package com.mynetpcb.symbol.dialog.panel;
 
-
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.ShapeEvent;
@@ -17,7 +16,6 @@ import com.mynetpcb.symbol.unit.Symbol;
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
-
 
 public class PropertyInspectorPanel extends JPanel implements ShapeListener,UnitListener,ContainerListener{
     

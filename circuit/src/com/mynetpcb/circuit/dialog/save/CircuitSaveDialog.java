@@ -1,6 +1,5 @@
 package com.mynetpcb.circuit.dialog.save;
 
-
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.io.Command;
@@ -12,14 +11,13 @@ import com.mynetpcb.core.capi.io.remote.WriteConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.dialog.save.AbstractSaveDialog;
 
-import java.awt.Window;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JComboBox;
 
-
 public class CircuitSaveDialog extends AbstractSaveDialog{
-    public CircuitSaveDialog(Window owner,UnitComponent component,boolean isonline) {
+    public CircuitSaveDialog(Frame owner,UnitComponent component,boolean isonline) {
         super(owner,component,"Save",isonline);
     }
     
@@ -61,7 +59,7 @@ public class CircuitSaveDialog extends AbstractSaveDialog{
         if (!isonline) {
 
             Command writer =
-                new WriteUnitLocal(this, getComponent().getModel().Format(), Configuration.get().getCircuitsRoot(),
+                new WriteUnitLocal(this, getComponent().getModel().format(), Configuration.get().getCircuitsRoot(),
                                    (String)libraryCombo.getSelectedItem(), null,
                                    fileNameText.getText(),
                                    overrideCheck.isSelected(),
@@ -70,7 +68,7 @@ public class CircuitSaveDialog extends AbstractSaveDialog{
         } else {
 
             Command writer =
-                new WriteConnector(this, getComponent().getModel().Format(), new RestParameterMap.ParameterBuilder("/circuits").addURI((String)libraryCombo.getSelectedItem()).addURI(fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
+                new WriteConnector(this, getComponent().getModel().format(), new RestParameterMap.ParameterBuilder("/circuits").addURI((String)libraryCombo.getSelectedItem()).addURI(fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
                                    WriteConnector.class);
             CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
         }

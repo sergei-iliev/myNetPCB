@@ -1,237 +1,243 @@
 package com.mynetpcb.board.shape;
 
 import com.mynetpcb.board.unit.Board;
-import com.mynetpcb.core.board.ClearanceSource;
 import com.mynetpcb.core.board.PCBShape;
-import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polyline;
+import com.mynetpcb.d2.shapes.Utils;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/**
- * Reuse properties
- * thickness -> internal diameter(drill size)
- * width     -> external diameter(via size)
- */
-public class PCBVia  extends ViaShape implements PCBShape{
+public class PCBVia extends ViaShape implements PCBShape{
 
-    private int clearance;
-    
     private String net;
-    
-    public enum Type{
-        BURIED, 
-        BLIND,
-        THROUGH_HOLE
-    }
+    private int clearance;    
+    private Circle inner,outer;    
     
     
     public PCBVia() {        
-        this.fillColor=Color.WHITE;
-        this.setWidth(Grid.MM_TO_COORD(0.5));    
-    }
+        this.fillColor=Color.WHITE; 
+        this.displayName="Via";        
+        this.selectionRectWidth=3000;
     
-    @Override
-    public Point alignToGrid(boolean isRequired) {
-        if(isRequired){
-           return super.alignToGrid(isRequired);
-        }else{
-            return null;
-        }
+        this.outer=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.8)); 
+        this.inner=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.4)); 
     }
-    
-    @Override
-    public void setWidth(int width){
-       super.setWidth(width);
-       super.setHeight(width);
-    }
+
     @Override
     public PCBVia clone() throws CloneNotSupportedException {
         PCBVia copy = (PCBVia)super.clone();
+        copy.inner=this.inner.clone();
+        copy.outer=this.outer.clone();
         return copy;
     }
-
     @Override
-    public String getDisplayName() {
-        return "Via";
+    public int getDrawingLayerPriority() {        
+        return 120;
     }
-
     @Override
-    public Rectangle calculateShape() {
-        return new Rectangle(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
-    }
-    
-    @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
-        Rectangle2D scaledRect = Utilities.getScaleRect(getBoundingShape().getBounds(), scale);
-
-        if (!scaledRect.intersects(viewportWindow)) {
-            return;
+    public Point alignToGrid(boolean isRequired) {
+        if(isRequired){
+            Point point=getOwningUnit().getGrid().positionOnGrid(inner.pc.x, inner.pc.y);
+            inner.pc.set(point);            
+            outer.pc.set(point);            
+            return null;                      
+        }else{
+          return null;
         }
-        g2.setColor(isSelected() ? Color.GRAY : fillColor);
-
-        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
-        ellipse.setFrame(scaledRect.getX() - viewportWindow.x, scaledRect.getY() - viewportWindow.y,
-                         scaledRect.getWidth(), scaledRect.getHeight());
-                        
-        g2.fill(ellipse);
-        ellipse.setFrame(getX() - thickness/2, getY() - thickness/2, thickness,thickness);
-        scaledRect = Utilities.getScaleRect(ellipse.getBounds(), scale);
-        ellipse.setFrame(scaledRect.getX() - viewportWindow.x, scaledRect.getY() - viewportWindow.y,
-                         scaledRect.getWidth(), scaledRect.getHeight());
-        
-        g2.setColor(Color.BLACK);
-        g2.fill(ellipse);
-        ellipseProvider.reset();
-
-    }
-
+    } 
     @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
+    public Collection<Shape> getNetShapes(Collection<UUID> selected) {
+        Collection<Shape> net=new ArrayList<>(); 
+        Collection<PCBTrack> tracks=getOwningUnit().getShapes(PCBTrack.class); 
 
-        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
-        
-        ellipse.setFrame(getX() - getWidth()/2, getY() - getWidth()/2, getWidth(),getWidth());
-        g2.setColor(printContext.getBackgroundColor()==Color.BLACK?Color.WHITE:Color.BLACK);                
-        g2.fill(ellipse);
+        for(PCBTrack track:tracks){
+            if(selected.contains(track.getUUID())){
+                continue;
+            }            
 
-        ellipse.setFrame(getX() - thickness/2, getY() - thickness/2, thickness,thickness);                
-        g2.setColor(printContext.getBackgroundColor());                
-        g2.fill(ellipse);        
-        
-        ellipseProvider.reset();
-    
+            if(track.polyline.intersect(outer)){
+               net.add(track); 
+            }
+        }
+        return net;
+    }
+    @Override
+    public Box getBoundingShape() {
+        return this.outer.box();                         
     }
     
     @Override
-    public long getOrderWeight() {
-        return 3;
+    public void move(double xoffset,double yoffset) {
+        this.inner.move(xoffset,yoffset);
+        this.outer.move(xoffset,yoffset);
     }
-
     @Override
-    public <T extends PCBShape & ClearanceSource> void drawClearence(Graphics2D g2,
-                                                                     ViewportWindow viewportWindow,
-                                                                     AffineTransform scale, T source) {        
+    public void rotate(double angle, Point center) {
+        this.inner.rotate(angle,center);
+        this.outer.rotate(angle,center);
+    }
+    
+    @Override
+    public void mirror(Line line) {
+        this.inner.mirror(line);
+        this.outer.mirror(line);        
+    }
+    @Override
+    public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
+                                                          AffineTransform scale, T source) {
         
         
-        if(Utilities.isSameNet(source, this)){
-            return;
-        } 
+//        if(Utilities.isSameNet(source, this)){
+//            return;
+//        } 
         
-        Rectangle rect=getBoundingShape().getBounds();             
-        rect.grow(this.clearance!=0?this.clearance:source.getClearance(),this.clearance!=0?this.clearance:source.getClearance());        
+        Box rect = this.outer.box();
+        rect.grow(this.clearance!=0?this.clearance:source.getClearance());        
         
         //is via within copper area
-        if(!((CopperAreaShape)source).getBoundingShape().intersects(rect)){
+        if(!(source.getBoundingShape().intersects(rect))){
            return; 
         }
         
-        Rectangle2D scaledRect = Utilities.getScaleRect(rect ,scale); 
-        if(!scaledRect.intersects(viewportWindow)){
-          return;   
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)){
+                return;
         }
         
         FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
         Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
         
-        ellipse.setFrame(scaledRect.getX() - viewportWindow.x, scaledRect.getY() - viewportWindow.y,
-                         scaledRect.getWidth(), scaledRect.getHeight());
+        ellipse.setFrame(rect.getX() - viewportWindow.getX(), rect.getY() - viewportWindow.getY(),
+                         rect.getWidth(), rect.getHeight());
         
         g2.setColor(Color.BLACK);                
         g2.fill(ellipse);
 
         ellipseProvider.reset();
-        
     }
 
     @Override
-    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
-        
-        if(Utilities.isSameNet(source, this)){
-            return;
-        } 
-        
-        Rectangle rect=getBoundingShape().getBounds();             
-        rect.grow(this.clearance!=0?this.clearance:source.getClearance(),this.clearance!=0?this.clearance:source.getClearance());        
-        
-        //is via within copper area
-        if(!((CopperAreaShape)source).getBoundingShape().intersects(rect)){
-           return; 
-        }
-        
-        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
-        
-        ellipse.setFrame(rect.x ,rect.y,rect.getWidth(),rect.getWidth());
-                                        
-        g2.setColor(printContext.getBackgroundColor());                
-        g2.fill(ellipse);
-        
-        ellipseProvider.reset();    
+    public <T extends ClearanceSource> void printClearance(Graphics2D graphics2D, PrintContext printContext,
+                                                           T clearanceSource) {
+        // TODO Implement this method
+
+    }
+    public Circle getInner(){
+        return inner;
     }
     
+    public Circle getOuter(){
+        return outer;
+    }
+    
+    
+    @Override
+    public Point getCenter() {
+        return this.inner.pc;
+    }
     @Override
     public void setClearance(int clearance) {
         this.clearance=clearance;
     }
 
     @Override
-    public int getClearance() {
+    public int getClearance() {    
         return clearance;
     }
-    
+
     @Override
     public String toXML() {
-        StringBuffer xml = new StringBuffer();
-        xml.append("<via type=\"\" x=\""+getX()+"\" y=\""+getY()+"\" width=\""+getWidth()+"\" drill=\""+thickness+"\"   clearance=\""+clearance+"\" net=\""+(this.net==null?"":this.net)+"\" />");
-        return xml.toString();
+        StringBuffer sb=new StringBuffer(); 
+        sb.append("<via x=\""+Utilities.roundDouble(this.inner.pc.x)+"\" y=\""+Utilities.roundDouble(this.inner.pc.y)+"\" width=\""+this.outer.r*2+"\" drill=\""+this.inner.r*2+"\"   clearance=\""+this.clearance+"\" net=\""+(this.net==null?"":this.net)+"\" />");            
+        return sb.toString();
     }
 
     @Override
-    public void fromXML(Node node) {
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
         Element element=(Element)node;
-        setX(Integer.parseInt(element.getAttribute("x")));
-        setY(Integer.parseInt(element.getAttribute("y")));
-        setWidth(Integer.parseInt(element.getAttribute("width")));
-        setThickness(Integer.parseInt(element.getAttribute("drill")));
-        this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));        
-        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");   
-    }
-    @Override
-    public String getNetName() {
+        double x=(Double.parseDouble(element.getAttribute("x")));
+        double y=(Double.parseDouble(element.getAttribute("y")));
+
         
-        return this.net;
+        this.inner.pc.set(x,y);
+        this.outer.pc.set(x,y);
+        
+        this.outer.r=(Double.parseDouble(element.getAttribute("width")))/2;
+        this.inner.r=(Double.parseDouble(element.getAttribute("drill")))/2;
+        
+        this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));        
+        this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");  
+        
     }
 
     @Override
-    public void setNetName(String net) {
-        if((net!=null)&&(!net.trim().isEmpty())){
-          this.net=net;
-        }else{
-          this.net=null;  
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
+        //is this my layer mask
+        if((this.getCopper().getLayerMaskID()&layermask)==0){
+            return;
         }
+
+        Box rect = this.outer.box();
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+                return;
+        }
+        g2.setColor(isSelected() ? Color.GRAY : fillColor);
+        
+        Circle  c=this.outer.clone();
+            
+        c.scale(scale.getScaleX());
+        c.move(-viewportWindow.getX(),- viewportWindow.getY());
+        c.paint(g2, true);
+        
+        
+        g2.setColor(Color.BLACK);
+        c.r=inner.r;
+        c.pc.set(inner.pc.x, inner.pc.y);
+        c.scale(scale.getScaleX());
+        c.move(-viewportWindow.getX(),- viewportWindow.getY());
+        c.paint(g2, true);
+        //if(this.isSelected()){                          
+        //   Utilities.drawCrosshair(g2,  null,(int)(selectionRectWidth*scale.getScaleX()),c.getCenter());
+        //}
+
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+          g2.setColor(printContext.getBackgroundColor()==Color.BLACK?Color.WHITE:Color.BLACK);                
+          this.outer.paint(g2, true); 
+          
+          g2.setColor(printContext.getBackgroundColor()); 
+          this.inner.paint(g2, true);
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {
@@ -240,40 +246,37 @@ public class PCBVia  extends ViaShape implements PCBShape{
         return memento;
     }
 
-    @Override
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
-    }
+
 
 
     static class Memento extends AbstractMemento<Board,PCBVia>{
-        private int Ax;
+        private double x,y;
+        private double rin,rout;
         
-        private int Ay;
         
-        private int width;
         
-        private String net;
+        
         
         public Memento(MementoType mementoType){
            super(mementoType); 
         }
         
-        public void loadStateTo(PCBVia shape) {
-            super.loadStateTo(shape);
-            shape.setX(Ax);
-            shape.setY(Ay);
-            shape.setWidth(width);
-            shape.setNetName(net);
+        public void saveStateFrom(PCBVia shape) {
+            super.saveStateFrom(shape);            
+            this.x=shape.inner.pc.x;
+            this.y=shape.inner.pc.y;
+            this.rin=shape.inner.r;
+            this.rout=shape.outer.r;
         }
         
 
-        public void saveStateFrom(PCBVia shape){
-            super.saveStateFrom(shape);
-            Ax=shape.getX();
-            Ay=shape.getY();
-            width=shape.getWidth();
-            net=shape.net;
+        public void loadStateTo(PCBVia shape){
+            super.loadStateTo(shape);
+            shape.outer.pc.set(x,y);
+            shape.outer.r=rout;
+            
+            shape.inner.pc.set(x,y);
+            shape.inner.r=rin;
         }
         @Override
         public boolean equals(Object obj){
@@ -286,29 +289,25 @@ public class PCBVia  extends ViaShape implements PCBShape{
             
             Memento other=(Memento)obj;            
         
-            return(getUUID().equals(other.getUUID())&&
-                   getMementoType().equals(other.getMementoType())&&
-                   Ax==other.Ax&&thickness==other.thickness&&width==other.width&&
-                   Ay==other.Ay&&Objects.equals(this.net, other.net)                
-                );
+            return super.equals(obj) && Utils.EQ(this.x, other.x)&&Utils.EQ(this.rout,other.rout)&&
+            Utils.EQ(this.y, other.y)&&Utils.EQ(this.rin,other.rin); 
                       
         }
         
         @Override
         public int hashCode(){
-            int hash=getUUID().hashCode();
-                hash+=this.getMementoType().hashCode();
-                hash+=Ax+Ay+thickness+width+Objects.hashCode(net);
+            int hash = 1;
+            hash = super.hashCode();
+            hash += Double.hashCode(this.x)+Double.hashCode(rout)+
+                    Double.hashCode(this.y)+Double.hashCode(this.rin);
             return hash;
         }        
-        public boolean isSameState(Board unit) {
-            PCBVia via=(PCBVia)unit.getShape(getUUID());
-            return( 
-                  Ax==via.getX()&&
-                  Ay==via.getY()&&
-                  thickness==via.getThickness()&&
-                  width==via.getWidth()&&Objects.equals(this.net, via.net)
-                );
+        @Override
+        public boolean isSameState(Unit unit) {
+            boolean flag = super.isSameState(unit);
+            PCBVia other=(PCBVia)unit.getShape(getUUID());
+            return flag&&Utils.EQ(this.x,other.inner.pc.x)&&Utils.EQ(this.y,other.inner.pc.y)&&Utils.EQ(this.rin,other.inner.r)&&Utils.EQ(this.rout,other.outer.r);
         }
-    }
+        
+    }    
 }

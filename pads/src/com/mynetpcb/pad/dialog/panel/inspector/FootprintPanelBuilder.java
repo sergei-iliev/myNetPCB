@@ -33,7 +33,7 @@ public class FootprintPanelBuilder extends AbstractPanelBuilder<Shape>{
     
     private JComboBox unitsCombo,gridCombo,referenceCombo,valueCombo;
     
-    JTextField originX,originY;
+    
         
     public FootprintPanelBuilder(FootprintComponent component) {
         super(component,new GridLayout(9,1));  
@@ -131,9 +131,10 @@ public class FootprintPanelBuilder extends AbstractPanelBuilder<Shape>{
         valueCombo.addActionListener(this);
 
         setSelectedItem(gridCombo,getComponent().getModel().getUnit().getGrid().getGridValue());
-        
-        originX.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getX())));
-        originY.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getY())));
+        if(getComponent().getModel().getUnit().getCoordinateSystem()!=null){
+          originX.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().x)));
+          originY.setText(String.valueOf(Grid.COORD_TO_MM(getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().y)));
+        }
     }
 
     @Override
@@ -179,13 +180,13 @@ public class FootprintPanelBuilder extends AbstractPanelBuilder<Shape>{
            getComponent().getModel().fireUnitEvent(new UnitEvent(getComponent().getModel().getUnit(), UnitEvent.RENAME_UNIT));
         }
         if(e.getSource()==this.heightField||e.getSource()==this.widthField){            
-            getComponent().getModel().getUnit().setSize(Grid.MM_TO_COORD(Double.parseDouble(widthField.getText())),Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));
+            getComponent().getModel().getUnit().setSize((int)Grid.MM_TO_COORD(Double.parseDouble(widthField.getText())),(int)Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));
             //***refresh scrollbars
             getComponent().componentResized(null);                
             getComponent().Repaint();
         }
         if(e.getSource()==originX||e.getSource()==originY){
-            getComponent().getModel().getUnit().getCoordinateSystem().Reset(Grid.MM_TO_COORD(Double.parseDouble(originX.getText())),Grid.MM_TO_COORD(Double.parseDouble(originY.getText())));   
+            getComponent().getModel().getUnit().getCoordinateSystem().reset(Grid.MM_TO_COORD(Double.parseDouble(originX.getText())),Grid.MM_TO_COORD(Double.parseDouble(originY.getText())));   
             getComponent().Repaint();
         }
         

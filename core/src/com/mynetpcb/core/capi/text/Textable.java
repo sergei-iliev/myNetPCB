@@ -7,16 +7,17 @@ package com.mynetpcb.core.capi.text;
  */
 public interface Textable {
     
-    @Deprecated
-    public ChipText  getChipText();
-
     /*
      * Get texture by tag
      */
-    //public Texture getTextureByTag(String tag);
+    public default Texture getTextureByTag(String tag){
+        return null;
+    }
     
     /*
      * Get texture under coordinate (x,y)
      */
-    //public Texture getClickedTexture(int x,int y);
+    public Texture getClickedTexture(int x,int y);
+    
+    public boolean isClickedTexture(int x,int y);
 }

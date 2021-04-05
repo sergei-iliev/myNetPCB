@@ -1,142 +1,282 @@
 package com.mynetpcb.symbol.shape;
 
-
 import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.ResizableShape;
+import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Utils;
+import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 
 import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
-public class Ellipse  extends ResizableShape implements Externalizable{
+public class Ellipse extends Shape implements Resizeable, Externalizable{
+    private  com.mynetpcb.d2.shapes.Ellipse ellipse;
+    private Point resizingPoint;
     
-    private  Ellipse2D ellipse;
-                      
-    public Ellipse(int x,int y,int width,int height) {
-        super(x,y,width,height, 1,0);
-        this.ellipse=new Ellipse2D.Double(x,y,width,height);
-    }
-    public Ellipse(){
-      this(0,0,0,0);  
+    public Ellipse(int thickness) {
+                    super(thickness,Layer.LAYER_ALL);
+                    this.setDisplayName("Ellipse");         
+                    this.ellipse=new com.mynetpcb.d2.shapes.Ellipse(0,0,20,10);
+                    this.selectionRectWidth=2;
+                    this.fillColor=Color.BLACK;
+                    
     }
     @Override
-    public Ellipse clone() throws CloneNotSupportedException{
-        Ellipse copy= (Ellipse)super.clone();
-        copy.ellipse=new Ellipse2D.Double(ellipse.getX(),ellipse.getY(),ellipse.getWidth(),ellipse.getHeight());
+    public Ellipse clone() throws CloneNotSupportedException {
+        Ellipse copy=(Ellipse)super.clone();
+        copy.resizingPoint=null;
+        copy.ellipse=this.ellipse.clone();
         return copy;
     }
-
     @Override
-    public void Clear() {
+    public long getClickableOrder() {        
+        return (long)getBoundingShape().area();
     }
-
-
     @Override
-    public void setLocation(int x, int y) {
+    public Box getBoundingShape() {        
+        return this.ellipse.box();                
     }
-    
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
-        Rectangle2D scaledRect = Utilities.getScaleRect(getBoundingShape().getBounds(),scale);         
-        if(!scaledRect.intersects(viewportWindow)){  
-            return;   
-        }
-        ellipse.setFrame(scaledRect.getX()-viewportWindow.x ,scaledRect.getY()-viewportWindow.y,scaledRect.getWidth(),scaledRect.getHeight());
-
-        g2.setStroke(new BasicStroke((float)(thickness*scale.getScaleX()),1,1));  
-        g2.setColor(isSelected()?Color.GRAY:fillColor); 
-        if(fill == Fill.EMPTY)   //***empty
-          g2.draw(ellipse);
-        if(this.getFill() == Fill.FILLED)  //***filled
-          g2.fill(ellipse);
-        if(this.getFill() == Fill.GRADIENT){   //***gradual
-            GradientPaint gp = 
-                new GradientPaint(ellipse.getBounds().x, ellipse.getBounds().y, 
-                                  Color.white, ellipse.getBounds().x, 
-                                  (ellipse.getBounds().y+ellipse.getBounds().height), Color.gray, true);
-            g2.setPaint(gp);
-            g2.fill(ellipse);
-            g2.setColor(Color.black);
-            g2.draw(ellipse);
-        } 
- 
-        if(this.isSelected()){
-              this.drawControlShape(g2,viewportWindow,scale);
-        } 
+    public boolean isClicked(int x,int y) {
+            if (this.ellipse.contains(x, y))
+                    return true;
+            else
+                    return false;
+    }
+    public com.mynetpcb.d2.shapes.Ellipse getShape(){
+        return ellipse;
+    }
+    @Override
+    public Point isControlRectClicked(int x, int y) {
+        Point pt=new Point(x,y);        
+        for(Point v:this.ellipse.vertices()){
+            if(Utils.LE(pt.distanceTo(v),this.selectionRectWidth)){
+              return v;
+            }                        
+        };
+        return null;
     }
 
     @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-        Rectangle2D rect = getBoundingShape().getBounds(); 
-        ellipse.setFrame(rect.getX() ,rect.getY(),rect.getWidth(),rect.getHeight());
-        
-        if(thickness!=-1){    //framed   
-          double wireWidth=thickness;       
-          g2.setStroke(new BasicStroke((float)wireWidth,1,1));    
-          g2.setPaint(Color.BLACK);        
-          g2.draw(ellipse);
-        }else{               //filled  
-          g2.setColor(Color.BLACK);  
-          g2.fill(ellipse);  
-        }     
+    public Point getResizingPoint() {
+        return resizingPoint;
+    }
+
+    @Override
+    public void setResizingPoint(Point point) {
+       this.resizingPoint=point;
     }
     
     @Override
-    public boolean isClicked(int x, int y) {
-        ellipse.setFrame(getX(), getY(), getWidth(), getHeight());
-        if(ellipse.contains(x,y))
-         return true;
-        else
-         return false; 
+    public void rotate(double angle,Point origin) {                      
+        this.ellipse.pc.rotate(angle,origin);
+        double w=this.ellipse.width;
+        this.ellipse.width=this.ellipse.height;
+        this.ellipse.height=w;               
     }
+    @Override
+    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+        this.ellipse.resize(xoffset, yoffset,clickedPoint);
 
+    }
 
     @Override
-    public String getDisplayName(){
-        return "Ellipse";
+    public void alignResizingPointToGrid(Point point) {
+        // TODO Implement this method
     }
 
+    @Override
     public String toXML() {
-        return "<ellipse>"+upperLeft.x+","+upperLeft.y+","+getWidth()+","+getHeight()+","+this.getThickness()+","+this.getFill().index+"</ellipse>\r\n";               
+        return "<ellipse x=\""+Utilities.roundDouble(this.ellipse.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.ellipse.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.ellipse.width,1)+"\" height=\""+Utilities.roundDouble(this.ellipse.height,1)+"\" thickness=\""+this.thickness+"\" fill=\""+this.fill.index+"\"/>\r\n";
     }
-
-    public void fromXML(Node node) {
-        StringTokenizer st=new StringTokenizer(node.getTextContent(),",");             
-        Initialize(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
-        setThickness(Byte.parseByte(st.nextToken()));
-        setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));      
+    
+    @Override
+    public void move(double xoffset, double yoffset) {
+        this.ellipse.move(xoffset, yoffset);        
     }
+    @Override
+    public void mirror(Line line) {        
+        this.ellipse.mirror(line);
+    }
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
+        Box rect = this.ellipse.box();
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+                return;
+        }
 
+        g2.setColor(isSelected() ? Color.GRAY : this.fillColor);
+        
+        com.mynetpcb.d2.shapes.Ellipse e=this.ellipse.clone();   
+        e.scale(scale.getScaleX());
+        e.move(-viewportWindow.getX(),- viewportWindow.getY());
+        
+        if (fill == Fill.EMPTY) { //framed
+            double wireWidth = thickness * scale.getScaleX();
+            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+            //transparent rect
+            e.paint(g2, false);
+        }else if(fill==Fill.GRADIENT){ 
+            GradientPaint gp = 
+                new GradientPaint((float)e.box().getX(), (float)e.box().getY(), 
+                                  Color.white, (float)e.box().getX(), 
+                                  (float)(e.box().getY()+e.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            e.paint(g2,true);
+            g2.setColor(Color.black);
+            e.paint(g2,false);
+        }else { //filled
+            e.paint(g2,true);
+        }
+        
+        if (this.isSelected()) {
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            for(Point p:e.vertices()){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
+            }
+        }        
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setStroke(new BasicStroke(thickness, 1, 1));
+        g2.setColor(Color.BLACK);  
+        if (fill == Fill.EMPTY) { //framed            
+            ellipse.paint(g2, false);
+        }else if(fill==Fill.GRADIENT){ 
+            GradientPaint gp = 
+                new GradientPaint((float)ellipse.box().getX(), (float)ellipse.box().getY(), 
+                                  Color.white, (float)ellipse.box().getX(), 
+                                  (float)(ellipse.box().getY()+ellipse.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            ellipse.paint(g2,true);
+            g2.setColor(Color.black);
+            ellipse.paint(g2,false);
+        }         
+        else { //filled
+            ellipse.paint(g2,true);
+        }
+    }
+    
+    @Override
+    public void fromXML(Node node) {        
+        Element  element= (Element)node;                           
+        if(element.hasAttribute("width")){  
+            double x=(Double.parseDouble(element.getAttribute("x")));
+            double y=(Double.parseDouble(element.getAttribute("y")));
+            this.ellipse.pc.set(x,y);
+            this.ellipse.width=Double.parseDouble(element.getAttribute("width"));
+            this.ellipse.height=Double.parseDouble(element.getAttribute("height"));  
+            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
+            this.setFill(Fill.byIndex(element.getAttribute("fill")==""?1:Integer.parseInt(element.getAttribute("fill"))));  
+        }else{
+            StringTokenizer st=new StringTokenizer(node.getTextContent(),","); 
+            double x=Double.parseDouble(st.nextToken());
+            double y=Double.parseDouble(st.nextToken());
+            double w=Double.parseDouble(st.nextToken());
+            double h=Double.parseDouble(st.nextToken());
+            
+            this.ellipse.pc.set(x+w/2,y+h/2);
+            this.ellipse.width=w/2;
+            this.ellipse.height=h/2;
+            
+            
+            this.thickness = Integer.parseInt(st.nextToken());
+            setFill(Fill.byIndex(Byte.parseByte(st.nextToken()))); 
+        }        
+    }
+    
     @Override
     public AbstractMemento getState(MementoType operationType) {
         Memento memento=new Memento(operationType);
         memento.saveStateFrom(this);        
         return memento;
     }
+    
+    public static class Memento extends AbstractMemento<Symbol,Ellipse> {
+        
+        private double rotate;
+        private double x,y;
+        private double width,height;
+        
+        public Memento(MementoType mementoType) {
+            super(mementoType);
+        }
 
-    @Override
-    public void setState(AbstractMemento memento) {
-        ((Memento)memento).loadStateTo(this); 
+        @Override
+        public void loadStateTo(Ellipse shape) {
+            super.loadStateTo(shape);
+            shape.ellipse.pc.set(x,y);
+            shape.ellipse.width=width;
+            shape.ellipse.height=height;
+            shape.ellipse.rotate=rotate;            
+        }
+
+        @Override
+        public void saveStateFrom(Ellipse shape) {
+            super.saveStateFrom(shape);
+            this.x=shape.ellipse.pc.x;
+            this.y=shape.ellipse.pc.y;
+            this.width=shape.ellipse.width;
+            this.height=shape.ellipse.height;
+            this.rotate=shape.ellipse.rotate;                        
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Memento)) {
+                return false;
+            }
+            Memento other = (Memento) obj;
+            return super.equals(obj) && Utils.EQ(this.rotate, other.rotate)&&
+            Utils.EQ(this.x, other.x)&&Utils.EQ(this.y,other.y)&&    
+            Utils.EQ(this.width, other.width)&&Utils.EQ(this.height,other.height);                
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 1;
+            hash = super.hashCode();
+            hash += Double.hashCode(this.rotate)+
+                    Double.hashCode(this.x)+Double.hashCode(this.y)+                   
+                    Double.hashCode(this.width)+Double.hashCode(this.height);                    
+            return hash;
+        }
+        @Override
+        public boolean isSameState(Unit unit) {
+            boolean flag = super.isSameState(unit);
+            Ellipse other = (Ellipse) unit.getShape(this.getUUID());
+            return flag&&
+            Utils.EQ(this.rotate, other.ellipse.rotate)&&Utils.EQ(this.x, other.ellipse.pc.x)&&    
+            Utils.EQ(this.y, other.ellipse.pc.y)&&Utils.EQ(this.width, other.ellipse.width)&&Utils.EQ(this.height, other.ellipse.height);             
+        }
+
     }
-    public static class Memento extends ResizableShape.Memento {
-         public Memento(MementoType mementoType) {
-             super(mementoType);
-         }
-                 
-     }
-}
 
+}

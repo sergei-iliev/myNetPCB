@@ -1,6 +1,5 @@
 package com.mynetpcb.circuit.dialog;
 
-
 import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.dialog.SymbolEditorDialog;
 
@@ -13,16 +12,13 @@ public class SymbolInlineEditorDialog extends SymbolEditorDialog{
     
     public SymbolInlineEditorDialog(Window window, String caption, SymbolContainer symbolContainer) {
         super(window, caption, symbolContainer);
-        LoadButton.setEnabled(false);
-        AddSymbolButton.setEnabled(false);
-        //symbolComponent.getEventMgr().nullifyEventHandle("symbol");
     }
     public SymbolContainer getResult(){
        return result;    
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("Save")) {
+        if (e.getSource()==SaveButton) {
           result=super.symbolComponent.getModel();
           this.setVisible(false);
           return;

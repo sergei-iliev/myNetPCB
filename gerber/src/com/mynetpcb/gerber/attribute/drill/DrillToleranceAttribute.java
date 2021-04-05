@@ -2,7 +2,6 @@ package com.mynetpcb.gerber.attribute.drill;
 
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
 
-
 public class DrillToleranceAttribute extends AbstractAttribute{
     
     public DrillToleranceAttribute(String x,String y) {

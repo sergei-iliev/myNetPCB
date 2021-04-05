@@ -11,7 +11,7 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Window;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -49,6 +49,7 @@ import org.xml.sax.SAXException;
  *Base class for all Save dialogs. Use template method pattern to further improve UI in subclasses
  * @author Sergey Iliev
  */
+@Deprecated
 public abstract class AbstractSaveDialog extends JDialog implements ActionListener,CommandListener{
 
 protected JLabel fileName,libraryName,categoryName,overrideName;
@@ -66,7 +67,7 @@ protected final boolean isonline;
 protected    JButton SaveButton;
 protected    JButton CancelButton;
     
-    public AbstractSaveDialog(Window owner,UnitComponent component,String caption,boolean isonline) { 
+    public AbstractSaveDialog(Frame owner,UnitComponent component,String caption,boolean isonline) { 
        super(owner,caption,Dialog.ModalityType.APPLICATION_MODAL);
        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
        this.setResizable(false);
@@ -244,12 +245,12 @@ protected    JButton CancelButton;
     }
     
     @Override
-    public void OnStart(Class<?> reciever) {
+    public void onStart(Class<?> reciever) {
         disableControls();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     }
     @Override
-    public void OnError(String error) {
+    public void onError(String error) {
         enableControls();
         this.setCursor(Cursor.getDefaultCursor());
         JOptionPane.showMessageDialog(this, error, "Error",
@@ -257,7 +258,7 @@ protected    JButton CancelButton;
     }
     
     @Override
-    public void OnRecive(String result, Class reciever) {
+    public void onRecive(String result, Class reciever) {
         if (reciever==JComboBox.class) {
             libraryCombo.removeActionListener(this);
             try {
@@ -288,7 +289,7 @@ protected    JButton CancelButton;
         
     }
     @Override
-    public void OnFinish(Class<?> receiver) {
+    public void onFinish(Class<?> receiver) {
            enableControls();
            this.setCursor(Cursor.getDefaultCursor());
 

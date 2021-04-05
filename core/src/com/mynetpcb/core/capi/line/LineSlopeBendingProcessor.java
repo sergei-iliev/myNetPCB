@@ -1,23 +1,28 @@
 package com.mynetpcb.core.capi.line;
 
-
 import com.mynetpcb.core.utils.Utilities;
-
-import java.awt.Point;
+import com.mynetpcb.core.utils.Utilities.QUADRANT;
+import com.mynetpcb.d2.shapes.Point;
 
 public class LineSlopeBendingProcessor extends LineBendingProcessor{
-    
-    
 
-    
+//    @Override
+//    public void initialize(Trackable line) {        
+//        super.initialize(line);
+//        if(this.getLine().getLinePoints().size()>1){
+//            this.getLine().deleteLastPoint();
+//            this.getLine().getOwningUnit().registerMemento(((Stateable)getLine()).getState(MementoType.MOVE_MEMENTO)); 
+//        }
+//    }
+
     @Override
     public boolean addLinePoint(Point point) {
         if(getLine().getLinePoints().size()==0){
-             getLine().Reset(point);
+             getLine().reset(point);
         }               
         boolean result=false;
-        if(!isOverlappedPoint(point)){
-            if(!isPointOnLine(point)) {
+        if(!this.isOverlappedPoint(point)){
+            if(!this.isPointOnLine(point)) {
                 Point midP,endP;
                
                 if(this.isGridAlignable){
@@ -28,31 +33,32 @@ public class LineSlopeBendingProcessor extends LineBendingProcessor{
                   endP=new Point(getLine().getFloatingEndPoint().x,getLine().getFloatingEndPoint().y);
                   
                 }
-                if(isOverlappedPoint( midP)){
-                  getLine().addPoint(endP);
-                  result=true;  
-                }else if(!isPointOnLine(midP)){
-                  getLine().addPoint(midP);
-                  result=true;
+                if(this.isOverlappedPoint(midP)){
+                   getLine().add(endP);
+                   result=true;  
+                }else if(!this.isPointOnLine(midP)){
+                   getLine().add(midP);
+                   result=true;
                 } 
             }  
         }  
-    
+        
         getLine().shiftFloatingPoints(); 
         return result;
-        
-        
     }
+
     @Override
-    public void moveLinePoint(int x, int y) {
-        
-        
-        Trackable line=getLine();
-    
-        if(line.getLinePoints().size()>1){
-            Point lastPoint=(Point)line.getLinePoints().get(line.getLinePoints().size()-1);  
-            Point lastlastPoint=(Point)line.getLinePoints().get(line.getLinePoints().size()-2); 
-            if(isSlopeInterval(lastPoint, lastlastPoint)){
+    public void moveLinePoint(double x, double y) {
+        if(getLine().getLinePoints().size()>1){
+            Point lastPoint,lastlastPoint;
+            if(getLine().getResumeState()==Trackable.ResumeState.ADD_AT_FRONT){
+                lastPoint=(Point)getLine().getLinePoints().get(0);  
+                lastlastPoint=(Point)getLine().getLinePoints().get(1);  
+            }else{
+               lastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-1);  
+               lastlastPoint=(Point)getLine().getLinePoints().get(getLine().getLinePoints().size()-2);  
+            }
+            if(this.isSlopeInterval(lastPoint, lastlastPoint)){
                this.handleLine(x, y);
             }else{
                this.handleSlope(x, y); 
@@ -62,92 +68,85 @@ public class LineSlopeBendingProcessor extends LineBendingProcessor{
             this.handleLine(x, y);
         }
 
-        
-    } 
-
-    protected void handleSlope(int x, int y){
-        Trackable line=getLine();
-        line.getFloatingEndPoint().setLocation(x,y);
-        Utilities.QUADRANT quadrant = Utilities.getQuadrantLocation(line.getFloatingStartPoint(),line.getFloatingEndPoint());
-        
-        int dx=Math.abs(line.getFloatingStartPoint().x-line.getFloatingEndPoint().x);
-        int dy=Math.abs(line.getFloatingStartPoint().y-line.getFloatingEndPoint().y); 
-        
-        if(dx>=dy){ 
-            switch(quadrant){
-            case  FIRST:
-                  line.getFloatingMidPoint().setLocation(line.getFloatingStartPoint().x+dy,line.getFloatingEndPoint().y); 
-                  break;            
-            case  SECOND:
-                  line.getFloatingMidPoint().setLocation(line.getFloatingStartPoint().x-dy,line.getFloatingEndPoint().y); 
-                  break;             
-            case  THIRD:
-                  line.getFloatingMidPoint().setLocation(line.getFloatingStartPoint().x-dy,line.getFloatingEndPoint().y); 
-                  break; 
-            case  FORTH:
-                  line.getFloatingMidPoint().setLocation(line.getFloatingStartPoint().x+dy,line.getFloatingEndPoint().y);                          
-                  break;
-              
-            }            
-        }else{
-            switch(quadrant){
-            case  FIRST:
-                  line.getFloatingMidPoint().setLocation(line.getFloatingEndPoint().x,line.getFloatingStartPoint().y-dx); 
-                  break;            
-            case  SECOND:
-                  line.getFloatingMidPoint().setLocation(line.getFloatingEndPoint().x,line.getFloatingStartPoint().y-dx); 
-                  break;             
-            case  THIRD:
-                  line.getFloatingMidPoint().setLocation(line.getFloatingEndPoint().x,line.getFloatingStartPoint().y+dx); 
-                  break; 
-            case  FORTH:
-                   line.getFloatingMidPoint().setLocation(line.getFloatingEndPoint().x,line.getFloatingStartPoint().y+dx);                          
-                   break;
-              
-            }
-           
-        }        
     }
     
-    protected void handleLine(int x, int y){
-        Trackable line=getLine();
-        line.getFloatingEndPoint().setLocation(x,y);
-        Utilities.QUADRANT quadrant = Utilities.getQuadrantLocation(line.getFloatingStartPoint(),line.getFloatingEndPoint());
-        int dx=Math.abs(line.getFloatingStartPoint().x-line.getFloatingEndPoint().x);
-        int dy=Math.abs(line.getFloatingStartPoint().y-line.getFloatingEndPoint().y); 
+    protected void handleSlope(double x,double y){    
+        getLine().getFloatingEndPoint().set(x,y);
+        QUADRANT quadrant = Utilities.getQuadrantLocation(getLine().getFloatingStartPoint(),getLine().getFloatingEndPoint());
+        double dx=Math.abs(getLine().getFloatingStartPoint().x-getLine().getFloatingEndPoint().x);
+        double dy=Math.abs(getLine().getFloatingStartPoint().y-getLine().getFloatingEndPoint().y); 
+        
         
         if(dx>=dy){ 
             switch(quadrant){
                 case  FIRST:
-                      line.getFloatingMidPoint().setLocation(line.getFloatingEndPoint().x-dy,line.getFloatingStartPoint().y); 
+                      getLine().getFloatingMidPoint().set(getLine().getFloatingStartPoint().x+dy,getLine().getFloatingEndPoint().y); 
                       break;            
                 case  SECOND:
-                      line.getFloatingMidPoint().setLocation(line.getFloatingEndPoint().x+dy,line.getFloatingStartPoint().y);  
+                      getLine().getFloatingMidPoint().set(getLine().getFloatingStartPoint().x-dy,getLine().getFloatingEndPoint().y);  
                       break;             
                 case  THIRD:
-                      line.getFloatingMidPoint().setLocation(line.getFloatingEndPoint().x+dy,line.getFloatingStartPoint().y);   
+                      getLine().getFloatingMidPoint().set(getLine().getFloatingStartPoint().x-dy,getLine().getFloatingEndPoint().y);   
                       break; 
                 case  FORTH:
-                      line.getFloatingMidPoint().setLocation(line.getFloatingEndPoint().x-dy,line.getFloatingStartPoint().y);                        
+                      getLine().getFloatingMidPoint().set(getLine().getFloatingStartPoint().x+dy,getLine().getFloatingEndPoint().y);                        
                       break;                
             }
         }else{
             switch(quadrant){
                 case  FIRST:
-                      line.getFloatingMidPoint().setLocation(line.getFloatingStartPoint().x,line.getFloatingEndPoint().y+dx);                        
+                      getLine().getFloatingMidPoint().set(getLine().getFloatingEndPoint().x,getLine().getFloatingStartPoint().y-dx);                        
                       break;            
                 case  SECOND:
-                      line.getFloatingMidPoint().setLocation(line.getFloatingStartPoint().x,line.getFloatingEndPoint().y+dx); 
+                      getLine().getFloatingMidPoint().set(getLine().getFloatingEndPoint().x,getLine().getFloatingStartPoint().y-dx); 
                       break;             
                 case  THIRD:
-                      line.getFloatingMidPoint().setLocation(line.getFloatingStartPoint().x,line.getFloatingEndPoint().y-dx); 
+                      getLine().getFloatingMidPoint().set(getLine().getFloatingEndPoint().x,getLine().getFloatingStartPoint().y+dx); 
                       break; 
                 case  FORTH:
-                      line.getFloatingMidPoint().setLocation(line.getFloatingStartPoint().x,line.getFloatingEndPoint().y-dx);                        
+                      getLine().getFloatingMidPoint().set(getLine().getFloatingEndPoint().x,getLine().getFloatingStartPoint().y+dx);                        
                       break;                
             }            
         }
-        
-    }
-    
+           
+    } 
+protected void  handleLine(double x,double  y){        
+            getLine().getFloatingEndPoint().set(x,y);
+            QUADRANT quadrant = Utilities.getQuadrantLocation(getLine().getFloatingStartPoint(),getLine().getFloatingEndPoint());
+            double dx=Math.abs(getLine().getFloatingStartPoint().x-getLine().getFloatingEndPoint().x);
+            double dy=Math.abs(getLine().getFloatingStartPoint().y-getLine().getFloatingEndPoint().y); 
+            
+            if(dx>=dy){ 
+                switch(quadrant){
+                    case  FIRST:
+                          getLine().getFloatingMidPoint().set(getLine().getFloatingEndPoint().x-dy,getLine().getFloatingStartPoint().y); 
+                          break;            
+                    case  SECOND:
+                          getLine().getFloatingMidPoint().set(getLine().getFloatingEndPoint().x+dy,getLine().getFloatingStartPoint().y);  
+                          break;             
+                    case  THIRD:
+                          getLine().getFloatingMidPoint().set(getLine().getFloatingEndPoint().x+dy,getLine().getFloatingStartPoint().y);   
+                          break; 
+                    case  FORTH:
+                          getLine().getFloatingMidPoint().set(getLine().getFloatingEndPoint().x-dy,getLine().getFloatingStartPoint().y);                        
+                          break;                
+                }
+            }else{
+                    switch(quadrant){
+                    case  FIRST:
+                          getLine().getFloatingMidPoint().set(getLine().getFloatingStartPoint().x,getLine().getFloatingEndPoint().y+dx);                        
+                          break;            
+                    case  SECOND:
+                          getLine().getFloatingMidPoint().set(getLine().getFloatingStartPoint().x,getLine().getFloatingEndPoint().y+dx); 
+                          break;             
+                    case  THIRD:
+                          getLine().getFloatingMidPoint().set(getLine().getFloatingStartPoint().x,getLine().getFloatingEndPoint().y-dx); 
+                          break; 
+                    case  FORTH:
+                          getLine().getFloatingMidPoint().set(getLine().getFloatingStartPoint().x,getLine().getFloatingEndPoint().y-dx);                        
+                          break;                
+                }            
+            }
+            
+        }       
 }

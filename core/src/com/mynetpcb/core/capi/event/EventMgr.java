@@ -21,10 +21,10 @@ public abstract class EventMgr<C extends UnitComponent,S extends Shape>{
 
     public EventMgr(C component) {
       hash=new HashMap<String,EventHandle<C,S>>();
-      Initialize(component);
+      initialize(component);
     }
     
-    protected  abstract void Initialize(C component);
+    protected  abstract void initialize(C component);
     
     public void setEventHandle(String eventKey,S target){
         resetEventHandle();
@@ -33,7 +33,7 @@ public abstract class EventMgr<C extends UnitComponent,S extends Shape>{
  
     public void resetEventHandle(){
         if (this.targetEventHandle != null) {
-            this.targetEventHandle.Detach();
+            this.targetEventHandle.detach();
         }
         this.targetEventHandle = null;                
     }

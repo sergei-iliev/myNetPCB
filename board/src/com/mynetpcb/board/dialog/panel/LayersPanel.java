@@ -1,8 +1,8 @@
 package com.mynetpcb.board.dialog.panel;
 
 import com.mynetpcb.board.component.BoardComponent;
-import com.mynetpcb.core.board.CompositeLayerable;
-import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
+import com.mynetpcb.core.capi.layer.Layer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,10 +37,10 @@ public class LayersPanel extends JPanel implements ActionListener,ChangeListener
         FSILKS=new JCheckBox();FSILKS.addActionListener(this); FSILKS.setName(String.valueOf(Layer.SILKSCREEN_LAYER_FRONT)); FSILKS.setBackground(Color.cyan); panel.add(FSILKS,BorderLayout.EAST);
         basePanel.add(panel); 
         
-        panel=new JPanel(); panel.setLayout(new BorderLayout()); panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
-        label=new JLabel("Top Soldermask"); panel.add(label,BorderLayout.WEST);
-        FMASK=new JCheckBox();FMASK.addActionListener(this); FMASK.setName(String.valueOf(Layer.SOLDERMASK_LAYER_FRONT));FMASK.setBackground(Color.magenta); panel.add(FMASK,BorderLayout.EAST);
-        basePanel.add(panel); 
+//        panel=new JPanel(); panel.setLayout(new BorderLayout()); panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
+//        label=new JLabel("Top Soldermask"); panel.add(label,BorderLayout.WEST);
+//        FMASK=new JCheckBox();FMASK.addActionListener(this); FMASK.setName(String.valueOf(Layer.SOLDERMASK_LAYER_FRONT));FMASK.setBackground(Color.magenta); panel.add(FMASK,BorderLayout.EAST);
+//        basePanel.add(panel); 
         
         panel=new JPanel(); panel.setLayout(new BorderLayout()); panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
         label=new JLabel("Top Copper"); panel.add(label,BorderLayout.WEST);
@@ -52,10 +52,10 @@ public class LayersPanel extends JPanel implements ActionListener,ChangeListener
         BCU=new JCheckBox();BCU.addActionListener(this); BCU.setName(String.valueOf(Layer.LAYER_BACK));BCU.setBackground(Color.green); panel.add(BCU,BorderLayout.EAST);
         basePanel.add(panel); 
         
-        panel=new JPanel(); panel.setLayout(new BorderLayout());panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8)); 
-        label=new JLabel("Bottom Soldermask"); panel.add(label,BorderLayout.WEST);
-        BMASK=new JCheckBox();BMASK.addActionListener(this); BMASK.setName(String.valueOf(Layer.SOLDERMASK_LAYER_BACK));BMASK.setBackground(new Color(128,128,0)); panel.add(BMASK,BorderLayout.EAST);
-        basePanel.add(panel); 
+//        panel=new JPanel(); panel.setLayout(new BorderLayout());panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8)); 
+//        label=new JLabel("Bottom Soldermask"); panel.add(label,BorderLayout.WEST);
+//        BMASK=new JCheckBox();BMASK.addActionListener(this); BMASK.setName(String.valueOf(Layer.SOLDERMASK_LAYER_BACK));BMASK.setBackground(new Color(128,128,0)); panel.add(BMASK,BorderLayout.EAST);
+//        basePanel.add(panel); 
         
         panel=new JPanel(); panel.setLayout(new BorderLayout());panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8)); 
         label=new JLabel("Bottom Silkscreen"); panel.add(label,BorderLayout.WEST);
@@ -77,10 +77,10 @@ public class LayersPanel extends JPanel implements ActionListener,ChangeListener
        CompositeLayerable layerable=boardComponent.getModel().getUnit();
        
        FSILKS.setSelected(layerable.isLayerVisible(Layer.SILKSCREEN_LAYER_FRONT));    
-       FMASK.setSelected(layerable.isLayerVisible(Layer.SOLDERMASK_LAYER_FRONT));    
+       //FMASK.setSelected(layerable.isLayerVisible(Layer.SOLDERMASK_LAYER_FRONT));    
        FCU.setSelected(layerable.isLayerVisible(Layer.LAYER_FRONT));    
        BCU.setSelected(layerable.isLayerVisible(Layer.LAYER_BACK));    
-       BMASK.setSelected(layerable.isLayerVisible(Layer.SOLDERMASK_LAYER_BACK));    
+       //BMASK.setSelected(layerable.isLayerVisible(Layer.SOLDERMASK_LAYER_BACK));    
        BSILKS.setSelected(layerable.isLayerVisible(Layer.SILKSCREEN_LAYER_BACK));    
 
        layerCombo.removeActionListener(this); 

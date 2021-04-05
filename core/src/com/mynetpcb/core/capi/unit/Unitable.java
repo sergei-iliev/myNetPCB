@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.unit;
 
-import java.awt.Point;
+import com.mynetpcb.d2.shapes.Point;
+
 
 /**
  * Shape belongs to a unit.
@@ -19,10 +20,5 @@ public interface Unitable<U extends Unit> {
      */
     public void setOwningUnit(U unit);    
     
-    /**
-    * align symbol to grid
-    * @return difference between fixed and aligned point
-    */
-     public Point alignToGrid(boolean isRequired) ;
 }
 

@@ -1,8 +1,9 @@
 package com.mynetpcb.board.dialog.panel.inspector;
 
 import com.mynetpcb.board.component.BoardComponent;
-import com.mynetpcb.core.board.ClearanceTarget;
+import com.mynetpcb.board.shape.PCBHole;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.layer.ClearanceTarget;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -47,10 +48,11 @@ public class HolePanelBuilder extends AbstractPanelBuilder<Shape>{
     
     @Override
     public void updateUI() { 
-        leftField.setText(toUnitX(getTarget().getX()));
-        topField.setText(toUnitY(getTarget().getY()));
-        widthField.setText(toUnit(getTarget().getWidth()));
-        clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(((ClearanceTarget)getTarget()).getClearance())));
+        PCBHole hole=(PCBHole)getTarget();
+        leftField.setText(toUnitX(getTarget().getCenter().x));
+        topField.setText(toUnitY(getTarget().getCenter().y));
+        widthField.setText(toUnit(hole.getInner().r*2));
+        //clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(((ClearanceTarget)getTarget()).getClearance())));
     }
 
     @Override
@@ -61,19 +63,20 @@ public class HolePanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void keyReleased(KeyEvent e){
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
+        PCBHole hole=(PCBHole)getTarget();
         if(e.getSource()==this.leftField){
-           getTarget().setX(fromUnit(this.leftField.getText())); 
+           getTarget().getCenter().x=(fromUnit(this.leftField.getText())); 
         }
         
         if(e.getSource()==this.topField){
-            getTarget().setY(fromUnit(this.topField.getText())); 
+          getTarget().getCenter().y=(fromUnit(this.topField.getText())); 
         }
 
         if(e.getSource()==this.widthField){
-           getTarget().setWidth(fromUnit(this.widthField.getText()));
+          hole.getInner().r=(fromUnit(this.widthField.getText())/2);
         }
         if(e.getSource()==this.clearanceField){
-           ((ClearanceTarget)getTarget()).setClearance(Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
+           ((ClearanceTarget)getTarget()).setClearance((int)Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
         }
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint(); 

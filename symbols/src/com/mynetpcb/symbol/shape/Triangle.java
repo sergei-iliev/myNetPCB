@@ -1,275 +1,310 @@
 package com.mynetpcb.symbol.shape;
 
-
 import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.ResizableShape;
+import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
-public class Triangle extends ResizableShape implements Externalizable{
-    public static final int DIRECTION_WEST = 0x01;
-
-    public static final int DIRECTION_NORTH = 0x02;
-        
-    public static final int DIRECTION_EAST = 0x04;
-
-    public static final int DIRECTION_SOUTH = 0x08;
-
-    private int orientation;
+public class Triangle extends Shape implements Resizeable, Externalizable{
+    private Polygon shape;
+    private Point resizingPoint;
     
-    public Triangle(int orientation,int x,int y,int width,int height) {
-        super(x,y,width,height, 1,0);
-        this.orientation=orientation;    
-    }
-    
-    public Triangle() {
-       this(1,0,0,0,0);
-    }
-    
-    public Triangle clone() throws CloneNotSupportedException {
-       return (Triangle)super.clone(); 
-    }
-    @Override
-    public GeneralPath calculateShape(){
-        GeneralPath triangle=new GeneralPath(GeneralPath.WIND_EVEN_ODD,3);  
-        switch(orientation){
-         case DIRECTION_WEST:
-            triangle.moveTo(getX(), getY()+getHeight()/2);
-            triangle.lineTo(getX()+getWidth(), getY());
-            triangle.lineTo(getX()+getWidth(), getY()+getHeight());
-            break;
-         case DIRECTION_NORTH:
-            triangle.moveTo(getX()+getWidth()/2, getY());
-            triangle.lineTo(getX()+getWidth(), getY()+getHeight());
-            triangle.lineTo(getX(), getY()+getHeight());            
-            break;              
-         case DIRECTION_EAST:
-            triangle.moveTo(getX()+getWidth(),getY()+getHeight()/2);
-            triangle.lineTo(getX(),getY()+getHeight());
-            triangle.lineTo(getX(),getY());            
-            break;
-         case DIRECTION_SOUTH:
-            triangle.moveTo(getX()+getWidth()/2,getY()+getHeight());
-            triangle.lineTo(getX(),getY());
-            triangle.lineTo(getX()+getWidth(),getY());
-            break; 
-        }
-        triangle.closePath();
-        return triangle;
+    public Triangle(int thickness) {
+        super(thickness,Layer.LAYER_ALL);
+        this.setDisplayName("Triangle");                
+        this.selectionRectWidth=2;       
+        this.shape=new Polygon();        
+        this.shape.points.add(new Point(0,0));
+        this.shape.points.add(new Point(20,20));
+        this.shape.points.add(new Point(0,40));
     }
     
     @Override
-    public boolean isClicked(int x, int y) {
-        GeneralPath shape = calculateShape();
-        return shape.contains(x, y);
-    }  
-    public void Mirror(Point A,Point B) {
-        super.Mirror(A,B);
-          
-        boolean isRightLeft;
-        //***is this right-left mirroring
-           if(A.x==B.x){
-             //***which place in regard to x origine
-             isRightLeft=true;  
-           }else{    //***top-botom mirroring
-             //***which place in regard to y origine    
-             isRightLeft=false;  
-           }           
-        //***Tweak orientation
-        switch(orientation){
-        case DIRECTION_WEST:
-        case DIRECTION_EAST:
-          if(isRightLeft){
-              orientation<<=1; if(orientation==0x10) orientation=0x01;     
-              orientation<<=1; if(orientation==0x10) orientation=0x01;                   
-          }                     
-          break;
-        case DIRECTION_NORTH:
-        case DIRECTION_SOUTH:
-          if(!isRightLeft){ 
-           orientation<<=1; if(orientation==0x10) orientation=0x01;     
-           orientation<<=1; if(orientation==0x10) orientation=0x01;     
-          }
-          break;               
-        }        
+    public Triangle clone() throws CloneNotSupportedException {        
+        Triangle copy=(Triangle)super.clone(); 
+        copy.shape=this.shape.clone();  
+        copy.fill = this.fill;
+        return copy;
     }
-
-
-    public void Rotate(AffineTransform rotation) {
-          super.Rotate(rotation);
-          if(rotation.getShearY()>0){        
-              orientation<<=1; if(orientation==0x10) orientation=0x01;    
-          }else{
-              orientation>>=1; if(orientation==0x00) orientation=0x08;    
-          }                  
-    }
-
     @Override
-    public void Paint(Graphics2D g2,ViewportWindow viewportWindow, AffineTransform scale,int layermask) {        
-        Rectangle2D scaledRect = Utilities.getScaleRect(this.getBoundingShape().getBounds(),scale);         
-        if(!scaledRect.intersects(viewportWindow)){  
-            return;   
-        }
-        
-        GeneralPath triangle=calculateShape();
-        triangle.transform(scale);
-        
-        GeneralPath scaledTriangle=new GeneralPath(GeneralPath.WIND_EVEN_ODD,3); 
-        PathIterator pi = triangle.getPathIterator(new AffineTransform()); 
-         while (pi.isDone() == false) {
-          float[] coords = new float[6];
-          switch (pi.currentSegment(coords)) {
-              case PathIterator.SEG_MOVETO:
-                  scaledTriangle.moveTo(coords[0]-viewportWindow.x,coords[1]-viewportWindow.y);     
-                  break;
-              case PathIterator.SEG_LINETO:
-                  scaledTriangle.lineTo(coords[0]-viewportWindow.x,coords[1]-viewportWindow.y); 
-                  break;
-          }
-         pi.next();
-        } 
-        scaledTriangle.closePath();
-        
-        //***set thickness      
-        g2.setStroke(new BasicStroke((float)(thickness*scale.getScaleX())));  
-        g2.setColor(isSelected()?Color.GRAY:fillColor); 
-        if(fill == Fill.EMPTY)   //***empty
-          g2.draw(scaledTriangle);
-        if(this.getFill() == Fill.FILLED)  //***filled
-          g2.fill(scaledTriangle);
-        if(this.getFill() == Fill.GRADIENT){   //***gradual
-            GradientPaint gp = 
-                new GradientPaint(scaledTriangle.getBounds().x, scaledTriangle.getBounds().y, 
-                                  Color.white, scaledTriangle.getBounds().x, 
-                                  (scaledTriangle.getBounds().y+scaledTriangle.getBounds().height), Color.gray, true);
-            g2.setPaint(gp);
-            g2.fill(scaledTriangle);
-            g2.setColor(Color.black);
-            g2.draw(scaledTriangle);
-        }        
-        
-        if(this.isSelected()){
-              this.drawControlShape(g2,viewportWindow,scale);
-        } 
+    public long getClickableOrder() {        
+        return (long)getBoundingShape().area();
     }
-
     @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-        GeneralPath triangle=calculateShape();
-        //***set thickness      
-        g2.setStroke(new BasicStroke(thickness));  
-        g2.setColor(Color.BLACK); 
-        if(fill == Fill.EMPTY)   //***empty
-          g2.draw(triangle);
-        if(this.getFill() == Fill.FILLED)  //***filled
-          g2.fill(triangle);
-        if(this.getFill() == Fill.GRADIENT){   //***gradual
-            GradientPaint gp = 
-                new GradientPaint(triangle.getBounds().x, triangle.getBounds().y, 
-                                  Color.white, triangle.getBounds().x, 
-                                  (triangle.getBounds().y+triangle.getBounds().height), Color.gray, true);
-            g2.setPaint(gp);
-            g2.fill(triangle);
-            g2.setColor(Color.black);
-            g2.draw(triangle);
-        }     
+    public Box getBoundingShape(){
+      return this.shape.box();                
+    }
+    @Override
+    public Point getCenter(){
+       return this.shape.box().getCenter();
     }
     
-    public String getDisplayName() {
-        return "Triangle";
+    @Override
+    public void move(double xoffset,double yoffset) {
+       this.shape.move(xoffset,yoffset);       
+    }
+    @Override
+    public void mirror(Line line) {
+        this.shape.mirror(line);                
+    }
+    @Override
+    public boolean isClicked(int x,int y) {
+      return this.shape.contains(new Point(x, y));       
+    }
+    @Override
+    public Point isControlRectClicked(int x, int y) {
+        Box rect = Box.fromRect(x
+                        - this.selectionRectWidth / 2, y - this.selectionRectWidth
+                        / 2, this.selectionRectWidth, this.selectionRectWidth);
+
+        
+        Optional<Point> opt= this.shape.points.stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                  
+                  
+        
+        return opt.orElse(null);
     }
 
-    public String toXML() {    
-        return "<triangle>"+this.orientation+","+upperLeft.x+","+upperLeft.y+","+getWidth()+","+getHeight()+","+this.getThickness()+","+this.getFill().index+"</triangle>\r\n";
+    @Override
+    public Point getResizingPoint() {     
+        return this.resizingPoint;
     }
 
+    @Override
+    public void setResizingPoint(Point pt) {
+        this.resizingPoint=pt;
+    }
+    @Override
+    public void rotate(double angle, Point origin) {                
+        this.shape.rotate(angle,origin);    
+    }    
+    @Override
+    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+        clickedPoint.set(clickedPoint.x+xoffset, clickedPoint.y+yoffset);
+    }
+
+    @Override
+    public void alignResizingPointToGrid(Point point) {
+        getOwningUnit().getGrid().snapToGrid(point); 
+    }
+
+    @Override
+    public String toXML() {
+        StringBuffer points=new StringBuffer();
+        this.shape.points.forEach(point->{
+           points.append(Utilities.roundDouble(point.x,1));
+           points.append(",");
+           points.append(Utilities.roundDouble(point.y,1));
+           points.append(",");
+        });     
+        return "<triangle thickness=\"" + this.thickness + "\" fill=\"" + this.fill.index + "\">"+points.toString()+"</triangle>\r\n";
+    }
+
+    @Override
     public void fromXML(Node node) {
-           StringTokenizer st=new StringTokenizer(node.getTextContent(),",");
-           orientation=Integer.parseInt(st.nextToken());
-           Initialize(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));           
-           setThickness(Byte.parseByte(st.nextToken()));
-           setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));   
+        Element element =(Element)node;
+        if(element.hasAttribute("thickness")){        
+            
+            this.setThickness(Integer.parseInt(element.getAttribute("thickness")));            
+            this.setFill(Fill.byIndex(Integer.parseInt(element.getAttribute("fill"))));
+            StringTokenizer st=new StringTokenizer(node.getTextContent(),",");
+            
+            this.shape.points.get(0).set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+            this.shape.points.get(1).set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+            this.shape.points.get(2).set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));
+            
+        }else{
+            StringTokenizer st=new StringTokenizer(node.getTextContent(),",");
+            int orientation=Integer.parseInt(st.nextToken());
+            this.initPoints(orientation,Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));           
+            setThickness(Byte.parseByte(st.nextToken()));
+            setFill(Fill.byIndex(Byte.parseByte(st.nextToken())));                 
+        }
     }
-    
 
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
+        Box rect = this.shape.box();
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+                return;
+        }
+        
+        g2.setColor(isSelected() ? Color.GRAY : this.fillColor);
+        double wireWidth = thickness * scale.getScaleX();
+        g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+        
+         
+        Polygon a=this.shape.clone();       
+        a.scale(scale.getScaleX());
+        a.move(-viewportWindow.getX(),- viewportWindow.getY());
+        if (fill == Fill.EMPTY) { //framed
+            //transparent rect
+            a.paint(g2,false);
+        }else if(fill==Fill.GRADIENT){ 
+            GradientPaint gp = 
+                new GradientPaint((float)a.box().getX(), (float)a.box().getY(), 
+                                  Color.white, (float)a.box().getX(), 
+                                  (float)(a.box().getY()+a.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            a.paint(g2,true);
+            g2.setColor(Color.black);
+            a.paint(g2,false);        
+        }else { //filled
+            a.paint(g2,true);
+        } 
+        if (this.isSelected()) {
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            for(Point p:a.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
+            }            
+        }
 
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setStroke(new BasicStroke(thickness));
+        g2.setColor(Color.BLACK);  
+        if (fill == Fill.EMPTY) { //framed            
+            shape.paint(g2, false);
+        }else if(fill==Fill.GRADIENT){ 
+            GradientPaint gp = 
+                new GradientPaint((float)shape.box().getX(), (float)shape.box().getY(), 
+                                  Color.white, (float)shape.box().getX(), 
+                                  (float)(shape.box().getY()+shape.box().getHeight()), Color.gray, true);
+            g2.setPaint(gp);
+            shape.paint(g2,true);
+            g2.setColor(Color.black);
+            shape.paint(g2,false);        
+        }
+        else { //filled
+            shape.paint(g2,true);
+        }        
+    }
+    //***old schema
+    //DIRECTION_WEST = 0x01;
+    //DIRECTION_NORTH = 0x02;
+    //DIRECTION_EAST = 0x04;
+    //DIRECTION_SOUTH = 0x08;
+    private void initPoints(int orientation,double x,double y,double width,double height){     
+        if(orientation==0x01){   
+            this.shape.points.get(0).set(x,y+height/2);        
+            this.shape.points.get(1).set(x+width,y);            
+            this.shape.points.get(2).set(x+width,y+height);            
+        }else if(orientation==0x02){        
+            this.shape.points.get(0).set(x+width/2, y);
+            this.shape.points.get(1).set(x+width, y+height);
+            this.shape.points.get(2).set(x, y+height);            
+        }else if(orientation==0x04){                  
+            this.shape.points.get(0).set(x+width,y+height/2);
+            this.shape.points.get(1).set(x,y+height);
+            this.shape.points.get(2).set(x,y);            
+        }else{      
+            this.shape.points.get(0).set(x+width/2,y+height);
+            this.shape.points.get(1).set(x,y);
+            this.shape.points.get(2).set(x+width,y);
+          
+        }
+        
+    }
     @Override
     public AbstractMemento getState(MementoType operationType) {
         Memento memento=new Memento(operationType);
         memento.saveStateFrom(this);        
         return memento;
     }
+        
+    public static class Memento extends AbstractMemento<Symbol, Triangle> {
 
-    @Override
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this); 
-    }
-    
-    public static class Memento extends ResizableShape.Memento {
-        private int orientation;
+        private double Ax[];
+
+        private double Ay[];
         
         public Memento(MementoType mementoType) {
             super(mementoType);
+
         }
 
         @Override
-        public void loadStateTo(ResizableShape shape) {
-            super.loadStateTo(shape);
-            ((Triangle)shape).orientation=this.orientation;
+        public void loadStateTo(Triangle shape) {
+            super.loadStateTo(shape);            
+            for (int i = 0; i < Ax.length; i++) {
+                shape.shape.points.get(i).x=Ax[i];
+                shape.shape.points.get(i).y=Ay[i];                
+            }
         }
-        
+
         @Override
-        public void saveStateFrom(ResizableShape shape) {
+        public void saveStateFrom(Triangle shape) {
             super.saveStateFrom(shape);
-            this.orientation=((Triangle)shape).orientation;
-        }
-        
-        @Override
-        public boolean equals(Object obj){
-            if(this==obj){
-              return true;  
+            Ax = new double[shape.shape.points.size()];
+            Ay = new double[shape.shape.points.size()];
+            for (int i = 0; i < shape.shape.points.size(); i++) {
+                Ax[i] = (shape.shape.points.get(i)).x;
+                Ay[i] = (shape.shape.points.get(i)).y;
             }
-            if(!(obj instanceof Memento)){
-              return false;  
-            }
-            Memento other=(Memento)obj;
-            return super.equals(obj)&&
-                   (this.orientation==other.orientation);
         }
-        
-        @Override
-        public int hashCode(){
-           int hash=1; 
-           hash=super.hashCode();
-           hash+=this.orientation;
-           return hash;  
-        }
-        
-        public boolean isSameState(Symbol unit) {
-            boolean flag= super.isSameState(unit);
-            Triangle other=(Triangle)unit.getShape(this.getUUID());
-            return other.orientation==this.orientation&&flag;
-        }
-    }
 
+        @Override
+        public void clear() {
+            super.clear();
+            Ax = null;
+            Ay = null;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Memento)) {
+                return false;
+            }
+            Memento other = (Memento) obj;
+            return (super.equals(obj)&&
+                    Arrays.equals(Ax, other.Ax) && Arrays.equals(Ay, other.Ay));
+
+        }
+
+        @Override
+        public int hashCode() {
+            int  hash = super.hashCode();
+            hash += Arrays.hashCode(Ax);
+            hash += Arrays.hashCode(Ay);
+            return hash;
+        }
+        @Override
+        public boolean isSameState(Unit unit) {
+            Triangle line = (Triangle) unit.getShape(getUUID());
+            return (line.getState(getMementoType()).equals(this));
+        }
+    }     
 }
-

@@ -27,7 +27,7 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener{
    
     private JPanel basePanel = new JPanel();
     private JPanel bottomPanel=new JPanel(new FlowLayout());
-    private JList preferenceList = new JList(new Object[]{"Connection","Repository","computer"});
+    private JList preferenceList = new JList(new Object[]{"Repository","Connection","computer"});
     private PreferenceInspector preferenceInspector=new PreferenceInspector();
     
     public PreferencesDialog(Frame f, String Caption) {

@@ -24,9 +24,10 @@ public class FootprintEventMgr extends EventMgr<FootprintComponent,Shape> {
     }
 
     @Override
-    protected void Initialize(FootprintComponent component) {
+    protected void initialize(FootprintComponent component) {
         hash.put("arc.start.angle",new ArcStartAngleEventHandle<FootprintComponent,Shape>(component));
         hash.put("arc.extend.angle",new ArcExtendAngleEventHandler<FootprintComponent,Shape>(component));
+        hash.put("arc.mid.point",new ArcMidPointEventHandle<FootprintComponent,Shape>(component));
         hash.put("move",new MoveEventHandle<FootprintComponent,Shape>(component));
         hash.put("component", new UnitEventHandle<FootprintComponent,Shape>(component));
         hash.put("line",new LineEventHandle<FootprintComponent,Shape>(component));
@@ -37,6 +38,7 @@ public class FootprintEventMgr extends EventMgr<FootprintComponent,Shape> {
         hash.put("dragheand",new DragingEventHandle<FootprintComponent,Shape>(component)); 
         hash.put("origin",new OriginEventHandle<FootprintComponent,Shape>(component));
         hash.put("measure",new MeasureEventHandle<FootprintComponent,Shape>(component));
+        hash.put("solidregion",new SolidRegionEventHandle<FootprintComponent,Shape>(component));
     }
 
     @Override
@@ -45,13 +47,13 @@ public class FootprintEventMgr extends EventMgr<FootprintComponent,Shape> {
         if(handle!=null){
            handle.setTarget(target);
             //****generate event
-            if(eventKey.equals("line")||eventKey.equals("texture")||eventKey.equals("move")||(eventKey.equals("resize"))||eventKey.equals("reshape")){             
+            if(eventKey.equals("line")||eventKey.equals("texture")||eventKey.equals("move")||(eventKey.equals("resize"))||eventKey.equals("solidregion")){             
                handle.getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(target, ShapeEvent.SELECT_SHAPE));
             }              
             if(eventKey.equals("component")||eventKey.equals("origin")){
                 handle.getComponent().getModel().fireUnitEvent(new UnitEvent(handle.getComponent().getModel().getUnit(), UnitEvent.SELECT_UNIT));           
             } 
-           handle.Attach();
+           handle.attach();
         }
         return handle;
     }

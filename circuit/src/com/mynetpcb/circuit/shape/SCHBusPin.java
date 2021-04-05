@@ -1,300 +1,298 @@
 package com.mynetpcb.circuit.shape;
 
-
-import com.mynetpcb.circuit.popup.CircuitPopupMenu;
 import com.mynetpcb.circuit.unit.Circuit;
-import com.mynetpcb.core.capi.Moveable;
+import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.event.MouseScaledEvent;
-import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
-import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.ChipText;
-import com.mynetpcb.core.capi.text.Text;
+import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.text.Textable;
-import com.mynetpcb.core.capi.text.font.FontTexture;
+import com.mynetpcb.core.capi.text.Texture;
+import com.mynetpcb.core.capi.text.Texture.Alignment;
+import com.mynetpcb.core.capi.text.Texture.Orientation;
+import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polyline;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
 
-import java.lang.reflect.Method;
-
+import java.util.Arrays;
 import java.util.StringTokenizer;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
-public class SCHBusPin extends SCHWire implements Textable{
-    
-    private ChipText text;
+public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
+    private SymbolFontTexture texture;
     
     public SCHBusPin() {
-        super(1);
-        fillColor=Color.BLACK;        
-        getLinePoints().add(new LinePoint(0,0));
-        getLinePoints().add(new LinePoint(-8,-8));
-        text=new ChipText();
-        text.Add(new FontTexture("name","???",0,0,Text.Alignment.LEFT,Utilities.POINT_TO_POINT));
-        text.setFillColor(Color.BLACK);
+        super(1,Layer.LAYER_ALL);  
+        this.fillColor=Color.BLACK;
+        this.selectionRectWidth=2;
+        this.polyline.points.add(new LinePoint(0, 0));
+        this.polyline.points.add(new LinePoint(-8, -8));
+        this.texture=new SymbolFontTexture("???","name",4,0,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
     }
     public SCHBusPin clone() throws CloneNotSupportedException{
         SCHBusPin copy=(SCHBusPin)super.clone();
-        copy.text=this.text.clone();
+        copy.texture =this.texture.clone();  
+        copy.polyline=this.polyline.clone();
         return copy;
     }
     @Override
-    public Method showContextPopup()throws NoSuchMethodException, SecurityException{
-        return CircuitPopupMenu.class.getDeclaredMethod("registerTextureMethod",new Class[] {MouseScaledEvent.class,Shape.class});        
-    }
+    public void alignResizingPointToGrid(Point targetPoint) {
+        this.getOwningUnit().getGrid().snapToGrid(targetPoint);         
+    }       
     @Override
     public Point alignToGrid(boolean isRequired) {
-       Point point=getLinePoints().get(1); 
+       Point point=polyline.points.get(1); 
        Point p=getOwningUnit().getGrid().positionOnGrid(point.x,point.y);        
-       text.Move(p.x-point.x,p.y-point.y);  
-       super.alignToGrid(isRequired);
-       return null;
-       //return new Point2D.Double(point.getX()-floatingPoint.getX(),point.getY()-floatingPoint.getY());
+        
+       texture.move(p.x-point.x,p.y-point.y);  
+        point.set(p);
+        
+       point=polyline.points.get(0); 
+       p=getOwningUnit().getGrid().positionOnGrid(point.x,point.y);        
+       point.set(p);
+       
+       return null;       
     }
     @Override
-    public int getDrawingOrder() {        
-        return 101;
+    public Box getBoundingShape() {        
+        return this.polyline.box();
     }
-    public void Clear() {
-      super.Clear();
-      text.clear();
+
+
+    @Override
+    public Texture getClickedTexture(int x, int y) {
+        if(this.texture.isClicked(x, y))
+            return this.texture;        
+        else
+            return null;
     }
 
     @Override
-    public void setSelected(boolean selected) {
-        super.setSelected(selected);
-        this.text.setSelected(selected);
-    }
-    
-    @Override
-    public ChipText getChipText() {
-        return text;
+    public boolean isClickedTexture(int x, int y) {
+        return this.getClickedTexture(x, y)!=null;
     }
     @Override
-    public void Move(int xoffset, int yoffset) {
-        super.Move(xoffset,yoffset);
-        text.Move(xoffset,yoffset);
+    public Texture getTextureByTag(String tag) {
+        return this.texture;
     }
     @Override
-    public void Translate(AffineTransform translate) {         
-        super.Translate(translate);
-        text.Translate(translate);
+    public void setSelected(boolean selection) {        
+        super.setSelected(selection);           
+        this.texture.setSelected(selection);
     }
-    
-    @Override
-    public void Rotate(AffineTransform rotation) {        
-        super.Rotate(rotation);
-        text.Rotate(rotation);
-    }
-    @Override
-    public Point getCenter() {
-        
-        return new Point(getLinePoints().get(0).x,getLinePoints().get(0).y);
-    }
-    
-//    @Override
-//    public void Rotate(Moveable.Rotate type) {
-//        switch(type){
-//        case LEFT:
-//            Rotate(AffineTransform.getRotateInstance(Math.PI/2,getLinePoints().get(0).x,getLinePoints().get(0).y)); 
-//            break;
-//        case RIGHT:
-//            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,getLinePoints().get(0).x,getLinePoints().get(0).y));
-//        }
-//    }
-    @Override
-    public void Mirror(Point A,Point B){
-       super.Mirror(A,B);
-       text.Mirror(A,B);
-    }
-//    @Override
-//    public void Mirror(Moveable.Mirror type) {
-//        switch(type){
-//        case HORIZONTAL:
-//            Mirror(new Point(getLinePoints().get(0).x-10,getLinePoints().get(0).y),new Point(getLinePoints().get(0).x+10,getLinePoints().get(0).y)); 
-//            break;
-//        case VERTICAL:
-//            Mirror(new Point(getLinePoints().get(0).x,getLinePoints().get(0).y-10),new Point(getLinePoints().get(0).x,getLinePoints().get(0).y+10));             
-//        }
-//    }
     @Override
     public Point isControlRectClicked(int x, int y) {
-        Point point=super.isControlRectClicked(x, y);
-        if(getLinePoints().get(0).equals(point)){
-           return null; 
+        Box rect = Box.fromRect(x-this.selectionRectWidth / 2, y - this.selectionRectWidth/ 2, this.selectionRectWidth, this.selectionRectWidth);
+
+        if(rect.contains(this.polyline.points.get(1))){
+           return this.polyline.points.get(1); 
         }else{
-           return point;
-        }
+           return null;
+        }                
     }
-//    @Override
-//    public void drawControlShape(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){ 
-//        Utilities.drawCrosshair(g2, viewportWindow, scale, getResizingPoint(), selectionRectWidth,getLinePoints().get(1));
-//    }
-    
     @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask){
-      super.Print(g2,printContext,layermask);
-      text.Paint(g2, new ViewportWindow(0, 0, 0, 0), AffineTransform.getScaleInstance(1, 1),layermask);
+    public void move(double xoffset, double yoffset) {        
+        super.move(xoffset,yoffset);
+        this.texture.move(xoffset,yoffset);
     }
     
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
-        Rectangle2D scaledBoundingRect = Utilities.getScaleRect(getBoundingShape().getBounds(),scale);         
+    public void mirror(Line line) {        
+        super.mirror(line);
+        this.texture.setMirror(line);
+    }
+    
+    @Override
+    public void rotate(double angle, Point origin) {
         
-        if(!scaledBoundingRect.intersects(viewportWindow)){
-          return;   
+        super.rotate(angle,origin);
+        this.texture.setRotation(angle, origin);
+        
+    }
+    
+    @Override
+    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+        clickedPoint.set(clickedPoint.x + xoffset,
+                                                                clickedPoint.y + yoffset);
+    }
+    
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {
+        
+                Box rect = this.polyline.box();
+                rect.scale(scale.getScaleX());           
+                if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
+                        return;
+                }
+
+                                              
+                g2.setStroke(new BasicStroke((float)(this.thickness * scale.getScaleX()),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));  
+                g2.setColor(isSelected()?Color.GRAY:fillColor);
+
+
+                Polyline a=this.polyline.clone();
+                a.scale(scale.getScaleX());
+                a.move( - viewportWindow.getX(), - viewportWindow.getY());                
+                a.paint(g2,false);
+
+                
+        this.texture.paint(g2, viewportWindow, scale,layersmask);
+                  
+        if (this.isSelected()) {
+            Circle c=new Circle(this.polyline.points.get(0).clone(), 2);
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(),- viewportWindow.getY());
+            c.paint(g2,false);        
+        
+            
+            Utilities.drawCrosshair(g2,null,2,(Point)a.points.get(1));
         }
         
-
-        double lineThickness=thickness*scale.getScaleX();
         
-        FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);
-        GeneralPath temporal=(GeneralPath)provider.getShape(); 
-        temporal.moveTo(points.get(0).getX(),points.get(0).getY());
-        for(int i=1;i<points.size();i++){            
-              temporal.lineTo(points.get(i).getX(),points.get(i).getY());       
-        } 
-        
-        AffineTransform translate= AffineTransform.getTranslateInstance(-viewportWindow.x,-viewportWindow.y);
-        
-        temporal.transform(scale);
-        temporal.transform(translate);
-
-        g2.setStroke(new BasicStroke((float)lineThickness));    
+                    
+     }   
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setStroke(new BasicStroke((float)(this.thickness ),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));  
         g2.setColor(isSelected()?Color.GRAY:fillColor);
-        
-        g2.draw(temporal); 
 
-        if(this.isFloating()) {
-            temporal.reset();
-            temporal.moveTo(floatingStartPoint.getX(), floatingStartPoint.getY());
-            temporal.lineTo(floatingMidPoint.getX(),floatingMidPoint.getY());
-            temporal.lineTo(floatingEndPoint.getX(),floatingEndPoint.getY());
-                        
-            temporal.transform(scale);
-            temporal.transform(translate);
-            g2.draw(temporal);
-        }
-        
-        provider.reset();
-        
-        //***draw buspin text
-        this.text.Paint(g2,viewportWindow,scale,layermask); 
-        
-        if(this.isSelected()){
-              this.drawControlShape(g2,viewportWindow,scale);
-        } 
+        this.polyline.paint(g2,false);        
+        this.texture.print(g2, printContext,layermask);        
     }
     @Override
-    public String getDisplayName(){
-        return "BusPin";
-    }
-    public void fromXML(Node node) {
-           Element element=(Element)node;
-           Node n=element.getElementsByTagName("name").item(0);
-           this.text.getTextureByTag("name").fromXML(n); 
-
-           NodeList nodelist = element.getElementsByTagName("wirepoints");
-           n = nodelist.item(0);
-           StringTokenizer st=new StringTokenizer(Utilities.trimCRLF(n.getTextContent()),"|");         
-           Point point = new Point();
-           StringTokenizer stock=new StringTokenizer(st.nextToken(),",");
-           point.setLocation(Integer.parseInt(stock.nextToken()),Integer.parseInt(stock.nextToken()));  
-
-           getLinePoints().get(0).setLocation(point);
-           stock=new StringTokenizer(st.nextToken(),",");
-           point.setLocation(Integer.parseInt(stock.nextToken()),Integer.parseInt(stock.nextToken())); 
-           getLinePoints().get(1).setLocation(point);  
-    }
-    
-    @Override
-    public String toXML() {
-        StringBuffer xml=new StringBuffer();
-        xml.append("<buspin>\r\n");
-        xml.append("<name>"+text.getTextureByTag("name").toXML()+"</name>\r\n");
-        xml.append("<wirepoints>");
-        xml.append(getLinePoints().get(0).x+","+getLinePoints().get(0).y+"|");
-        xml.append(getLinePoints().get(1).x+","+getLinePoints().get(1).y+"|");
-        xml.append("</wirepoints>\r\n");       
-        xml.append("</buspin>\r\n");
-        return xml.toString();
-    }
-    
     public AbstractMemento getState(MementoType operationType) {
-        Memento memento = new Memento(operationType);
+        AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
     }
 
-    public void setState(AbstractMemento memento) {
-        ((Memento)memento).loadStateTo(this);
-    }    
-    
-    static class Memento extends SCHWire.Memento{
+    @Override
+    public String toXML() {
+        StringBuffer xml=new StringBuffer();
+        xml.append("<buspin>\r\n");
+        xml.append("<name>"+texture.toXML()+"</name>\r\n");
+        xml.append("<wirepoints>");
+        xml.append(Utilities.roundDouble(getLinePoints().get(0).x,1)+","+Utilities.roundDouble(getLinePoints().get(0).y,1)+"|");
+        xml.append(Utilities.roundDouble(getLinePoints().get(1).x,1)+","+Utilities.roundDouble(getLinePoints().get(1).y,1)+"|");
+        xml.append("</wirepoints>\r\n");       
+        xml.append("</buspin>\r\n");
+        return xml.toString();
+    }
+
+    @Override
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+        Element element=(Element)node;
+        Node n=element.getElementsByTagName("name").item(0);
+        texture.fromXML(n); 
+
+        NodeList nodelist = element.getElementsByTagName("wirepoints");
+        n = nodelist.item(0);
+        StringTokenizer st=new StringTokenizer(Utilities.trimCRLF(n.getTextContent()),"|");         
+        Point point = new Point();
+        StringTokenizer stock=new StringTokenizer(st.nextToken(),",");
+        point.set(Double.parseDouble(stock.nextToken()),Double.parseDouble(stock.nextToken())); 
+
+        getLinePoints().get(0).set(point);
+        stock=new StringTokenizer(st.nextToken(),",");
+        point.set(Double.parseDouble(stock.nextToken()),Double.parseDouble(stock.nextToken())); 
+        getLinePoints().get(1).set(point);  
+
+    }
+
+    public static class Memento extends AbstractMemento<Circuit, SCHBusPin> {
+
+        private double Ax[];
+
+        private double Ay[];
         
-        private ChipText.Memento buspinTextMemento;
+        Texture.Memento textureMemento;
         
-        public Memento(MementoType mementoType){
-          super(mementoType);  
-          buspinTextMemento = new ChipText.Memento();
+        public Memento(MementoType mementoType) {
+            super(mementoType);
+            textureMemento=new SymbolFontTexture.Memento();
+
         }
-    
+
+        @Override
+        public void loadStateTo(SCHBusPin shape) {
+            super.loadStateTo(shape);
+            shape.polyline.points.clear();
+            for (int i = 0; i < Ax.length; i++) {
+                shape.add(new Point(Ax[i], Ay[i]));
+            }
+            //***reset floating start point
+            if (shape.polyline.points.size() > 0) {
+                shape.floatingStartPoint.set((Point)shape.polyline.points.get(shape.polyline.points.size() - 1));
+                shape.reset();
+            }
+            textureMemento.loadStateTo(shape.texture);  
+        }
+
+        @Override
         public void saveStateFrom(SCHBusPin shape) {
             super.saveStateFrom(shape);
-            buspinTextMemento.saveStateFrom(shape.getChipText());     
-        }
-        
-        public void loadStateTo(SCHBusPin shape) {
-            super.loadStateTo(shape);   
-            buspinTextMemento.loadStateTo(shape.getChipText());
-        }
-        
-        @Override
-        public boolean equals(Object obj){
-            if(this==obj){
-              return true;  
-            }
-            if(!(obj instanceof Memento)){
-              return false;  
+            Ax = new double[shape.polyline.points.size()];
+            Ay = new double[shape.polyline.points.size()];
+            for (int i = 0; i < shape.polyline.points.size(); i++) {
+                Ax[i] = ((Point)shape.polyline.points.get(i)).x;
+                Ay[i] = ((Point)shape.polyline.points.get(i)).y;
             }
             
-            Memento other=(Memento)obj;
+            textureMemento.saveStateFrom(shape.texture);
+        }
 
-            return (super.equals(obj)&&other.buspinTextMemento.equals(this.buspinTextMemento));             
-          
-        }
-        
         @Override
-        public int hashCode(){
-            return super.hashCode()+this.buspinTextMemento.hashCode();
+        public void clear() {
+            super.clear();
+            Ax = null;
+            Ay = null;
         }
-        
+
         @Override
-        public void Clear() {
-            super.Clear();
-            buspinTextMemento.Clear();
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Memento)) {
+                return false;
+            }
+            Memento other = (Memento) obj;
+            return (super.equals(obj)&&textureMemento.equals(other.textureMemento)&&
+                    Arrays.equals(Ax, other.Ax) && Arrays.equals(Ay, other.Ay));
+
         }
-        
-        
-        public boolean isSameState(Circuit unit) {
-            SCHBusPin busPin=(SCHBusPin)unit.getShape(getUUID());
-            return (busPin.getState(getMementoType()).equals(this));  
-        }        
+
+        @Override
+        public int hashCode() {
+            int  hash = super.hashCode()+textureMemento.hashCode();
+            hash += Arrays.hashCode(Ax);
+            hash += Arrays.hashCode(Ay);
+            return hash;
+        }
+        @Override
+        public boolean isSameState(Unit unit) {
+            SCHBusPin line = (SCHBusPin) unit.getShape(getUUID());
+            return (line.getState(getMementoType()).equals(this));
+        }
     }    
 }

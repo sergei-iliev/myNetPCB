@@ -3,15 +3,15 @@ package com.mynetpcb.board.dialog.panel.inspector;
 import com.mynetpcb.board.component.BoardComponent;
 import com.mynetpcb.board.shape.PCBTrack;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -24,7 +24,12 @@ import javax.swing.SwingConstants;
 public class TrackPanelBuilder extends AbstractPanelBuilder<Shape>{
         
     public TrackPanelBuilder(BoardComponent component) {
-       super(component,new GridLayout(8,1));
+       super(component,new GridLayout(6,1));
+        //layer
+                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+                label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                layerCombo=new JComboBox(new Layer.Copper[]{Layer.Copper.FCu,Layer.Copper.BCu});layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
+                layoutPanel.add(panel);
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
@@ -35,11 +40,6 @@ public class TrackPanelBuilder extends AbstractPanelBuilder<Shape>{
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,24)); panel.add(label,BorderLayout.WEST);
                 topField=new JTextField("0"); topField.addKeyListener(this); panel.add(topField,BorderLayout.CENTER);
-                layoutPanel.add(panel);
-        //layer
-                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                layerCombo=new JComboBox(new Layer.Copper[]{Layer.Copper.FCu,Layer.Copper.BCu});layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);
         //***Thickness       
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
@@ -94,10 +94,10 @@ public class TrackPanelBuilder extends AbstractPanelBuilder<Shape>{
            p.y= fromUnitY(topField.getText());  
         }
         if(e.getSource()==this.thicknessField){
-           line.setThickness(Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));
+           line.setThickness((int)Grid.MM_TO_COORD(Double.parseDouble(thicknessField.getText())));
         }
         if(e.getSource()==this.clearanceField){
-           line.setClearance(Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
+           line.setClearance((int)Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
         }
         if(e.getSource()==this.netField){
            line.setNetName(this.netField.getText());

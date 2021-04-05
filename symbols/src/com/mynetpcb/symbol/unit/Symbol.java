@@ -1,17 +1,15 @@
 package com.mynetpcb.symbol.unit;
 
-
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Packageable;
+import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.Typeable;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Textable;
+import com.mynetpcb.core.capi.text.CompositeTextable;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.pad.Packaging;
 import com.mynetpcb.symbol.shape.FontLabel;
+import com.mynetpcb.symbol.shape.Pin;
 import com.mynetpcb.symbol.shape.SymbolShapeFactory;
 
 import java.awt.Color;
@@ -41,38 +39,36 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-
-public class Symbol extends Unit<Shape> implements Typeable, Packageable {
-
+public class Symbol extends Unit<Shape> implements Typeable{
     private boolean isTextLayoutVisible;
 
     private Typeable.Type type;
 
-    private final Packaging packaging;
 
     public Symbol(int width, int height) {
         super(width, height);
+        this.shapeFactory = new SymbolShapeFactory();
         grid.setGridUnits(8, Grid.Units.PIXEL);
         this.grid.setPointsColor(Color.BLACK);
-        this.shapeFactory = new SymbolShapeFactory();
-        isTextLayoutVisible = false;
+        this.frame.setFillColor(Color.BLACK);
         this.type = Typeable.Type.SYMBOL;
-        this.packaging = new Packaging();
+        scalableTransformation.reset(1.2, 2, 0, ScalableTransformation.DEFAULT_MAX_SCALE_FACTOR);  
+        
     }
+
 
     public Symbol clone() throws CloneNotSupportedException {
         Symbol copy = (Symbol) super.clone();
         copy.shapeFactory = new SymbolShapeFactory();
-        copy.packaging.copy(this.packaging);
         return copy;
     }
 
     @Override
-    public void Add(Shape shape) {
-        super.Add(shape);
-        if (shape instanceof Textable) {
-            ((Textable) shape).getChipText().setTextLayoutVisible(isTextLayoutVisible);
-        }
+    public void add(Shape shape) {
+        super.add(shape);
+//        if (shape instanceof Textable) {
+//            ((Textable) shape).getChipText().setTextLayoutVisible(isTextLayoutVisible);
+//        }
     }
 
     private WeakReference<PrintContext> context;
@@ -112,19 +108,19 @@ public class Symbol extends Unit<Shape> implements Typeable, Packageable {
 
 
 
-This might be explained as follows:
-1 - The Java printing system normally works with an internal resolution which
-is 72 dpi (probably inspired by Postscript).
-2 - To have a sufficient resolution, this is increased by 16 times, by using
-the scale method of the graphic object associated to the printer. This gives a
-72 dpi *16=1152 dpi resolution.
-3 - The 0.127 mm pitch used in FidoCadJ corresponds to a 200 dpi resolution.
-Calculating 1152 dpi / 200 dpi gives the 5.76 constant
-*/
+    This might be explained as follows:
+    1 - The Java printing system normally works with an internal resolution which
+    is 72 dpi (probably inspired by Postscript).
+    2 - To have a sufficient resolution, this is increased by 16 times, by using
+    the scale method of the graphic object associated to the printer. This gives a
+    72 dpi *16=1152 dpi resolution.
+    3 - The 0.127 mm pitch used in FidoCadJ corresponds to a 200 dpi resolution.
+    Calculating 1152 dpi / 200 dpi gives the 5.76 constant
+    */
 
             //***draw figures
             for (Shape shape : getShapes()) {
-                shape.Print(g2, context.get(), 0);
+                shape.print(g2, context.get(), 0);
             }
             return (PAGE_EXISTS);
         } else
@@ -137,20 +133,21 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
 
     public void setTextLayoutVisibility(boolean isTextLayoutVisible) {
         this.isTextLayoutVisible = isTextLayoutVisible;
-        for (Shape textable : this.<Shape>getShapes(Textable.class)) {
-            ((Textable) textable).getChipText().setTextLayoutVisible(isTextLayoutVisible);
+        for (Shape textable : this.<Shape>getShapes(Pin.class)) {
+            ((CompositeTextable) textable).getTextureByTag("number").setTextLayoutVisible(isTextLayoutVisible);
+            ((CompositeTextable) textable).getTextureByTag("name").setTextLayoutVisible(isTextLayoutVisible);
         }
     }
 
-    public StringBuffer Format() {
+    public StringBuffer format() {
         StringBuffer xml = new StringBuffer();
         xml.append("<module width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\">\r\n");
-        xml.append("<footprint library=\"" +
-                   (packaging.getFootprintLibrary() == null ? "" : packaging.getFootprintLibrary()) + "\" category=\"" +
-                   (packaging.getFootprintCategory() == null ? "" : packaging.getFootprintCategory()) +
-                   "\"  filename=\"" +
-                   (packaging.getFootprintFileName() == null ? "" : packaging.getFootprintFileName()) + "\" name=\"" +
-                   (packaging.getFootprintName() == null ? "" : packaging.getFootprintName()) + "\"/>\r\n");
+//        xml.append("<footprint library=\"" +
+//                   (packaging.getFootprintLibrary() == null ? "" : packaging.getFootprintLibrary()) + "\" category=\"" +
+//                   (packaging.getFootprintCategory() == null ? "" : packaging.getFootprintCategory()) +
+//                   "\"  filename=\"" +
+//                   (packaging.getFootprintFileName() == null ? "" : packaging.getFootprintFileName()) + "\" name=\"" +
+//                   (packaging.getFootprintName() == null ? "" : packaging.getFootprintName()) + "\"/>\r\n");
         xml.append("<name>" + this.unitName + "</name>\r\n");
         //***reference
         FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"reference");
@@ -169,8 +166,8 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
 
         //exclude ref and value tags
         List shapes=getShapes().stream().filter(s->{
-            if(s instanceof Label){
-                if(((Label)s).getTexture().getTag().equals("reference")||((Label)s).getTexture().getTag().equals("unit")){
+            if(s instanceof FontLabel){
+                if(((FontLabel)s).getTexture().getTag().equals("reference")||((FontLabel)s).getTexture().getTag().equals("unit")){
                    return false; 
                 }else{
                    return true; 
@@ -179,25 +176,25 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
                 return true;
             }
         }).collect(Collectors.toList());
-        xml.append(Format(shapes));
+        xml.append(format(shapes));
 
         xml.append("</module>");
         return xml;
     }
 
     @Override
-    protected StringBuffer Format(Collection<Shape> shapes) {
+    protected StringBuffer format(Collection<Shape> shapes) {
         StringBuffer xml = new StringBuffer();
         xml.append("<elements>\r\n");
         for (Shape e : shapes) {
-            xml.append(((Externalizable) e).toXML());
+            xml.append(((Externalizable) e).toXML());            
         }
         xml.append("</elements>\r\n");
         return xml;
     }
 
 
-    public void Parse(Node node) throws XPathExpressionException, ParserConfigurationException {
+    public void parse(Node node) throws XPathExpressionException, ParserConfigurationException {
         Element e = (Element) node;
         this.setSize(e.hasAttribute("width") ?
                      (Integer.parseInt(e.getAttribute("width")) != 1 ? Integer.parseInt(e.getAttribute("width")) :
@@ -208,14 +205,14 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
         NodeList nlist = ((Element) node).getElementsByTagName("name");
         this.unitName = nlist.item(0).getTextContent();
 
-        nlist = ((Element) node).getElementsByTagName("footprint");
-        if (nlist.item(0) != null) {
-            e = (Element) nlist.item(0);
-            packaging.setFootprintLibrary(e.getAttribute("library"));
-            packaging.setFootprintCategory(e.getAttribute("category"));
-            packaging.setFootprintFileName(e.getAttribute("filename"));
-            packaging.setFootprintName(e.getAttribute("name"));
-        }
+//        nlist = ((Element) node).getElementsByTagName("footprint");
+//        if (nlist.item(0) != null) {
+//            e = (Element) nlist.item(0);
+//            packaging.setFootprintLibrary(e.getAttribute("library"));
+//            packaging.setFootprintCategory(e.getAttribute("category"));
+//            packaging.setFootprintFileName(e.getAttribute("filename"));
+//            packaging.setFootprintName(e.getAttribute("name"));
+//        }
         NodeList nodelist = ((Element) node).getElementsByTagName("reference");
         Node n = nodelist.item(0);
         if (n != null && !n.getTextContent().equals("")) {
@@ -229,7 +226,7 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
             }else{
                label.fromXML(refList.item(0));    //new schema 
             }
-            Add(label);
+            add(label);
         }
         nodelist = ((Element) node).getElementsByTagName("unit");
         n = nodelist.item(0);
@@ -244,7 +241,7 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
             }else{
                label.fromXML(unitList.item(0));    //new schema 
             }
-            Add(label);
+            add(label);
         }
         parseSelection(node, false);
     }
@@ -260,8 +257,11 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
         for (int i = 0; i < nodelist.getLength(); i++) {
             Node n = nodelist.item(i);
             Shape shape = shapeFactory.createShape(n);
+            if(shape==null){
+                continue;
+            }
             shape.setSelected(selection);
-            this.Add(shape);
+            this.add(shape);
         }
 
     }
@@ -285,16 +285,17 @@ Calculating 1152 dpi / 200 dpi gives the 5.76 constant
         return type;
     }
 
-    @Override
-    public Packaging getPackaging() {
-        return packaging;
-    }
-
+//    @Override
+//    public Packaging getPackaging() {
+//        return packaging;
+//    }
+//
     @Override
     public String toString() {
         return "symbol";
     }
 
 
-}
+    }
+
 

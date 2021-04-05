@@ -21,7 +21,7 @@ public class ReadCategoriesLocal extends Command{
     @Override
     public Void execute() {
         StringBuffer content=new StringBuffer(); 
-        monitor.OnStart(receiver);           
+        monitor.onStart(receiver);           
         content.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><category>");
         if(repositoryRoot!=null&&Files.exists(repositoryRoot, LinkOption.NOFOLLOW_LINKS) ){ 
             
@@ -38,13 +38,13 @@ public class ReadCategoriesLocal extends Command{
                     }
                 }
             } catch (IOException e) {
-                    monitor.OnError(e.getMessage());
+                    monitor.onError(e.getMessage());
                     return null;
            }  
           content.append("</category>");   
-          monitor.OnRecive(content.toString(),receiver);    
+          monitor.onRecive(content.toString(),receiver);    
         }
-        monitor.OnFinish(receiver);
+        monitor.onFinish(receiver);
         return null;
     }
 

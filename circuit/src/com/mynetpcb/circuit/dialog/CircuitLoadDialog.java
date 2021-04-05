@@ -1,6 +1,5 @@
 package com.mynetpcb.circuit.dialog;
 
-
 import com.mynetpcb.circuit.container.CircuitContainer;
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.core.capi.config.Configuration;
@@ -58,7 +57,6 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-
 public class CircuitLoadDialog extends AbstractLoadDialog  implements CommandListener,ActionListener,ListSelectionListener{
     
     private JPanel basePanel = new JPanel();
@@ -88,10 +86,10 @@ public class CircuitLoadDialog extends AbstractLoadDialog  implements CommandLis
     } 
     private void Init(boolean enabled){
         this.setResizable(false);  
-        this.setPreferredSize(new Dimension(489, 343));
+        this.setPreferredSize(new Dimension(689, 543));
         basePanel.setLayout(borderLayout1);
         basePanel.setPreferredSize(new Dimension(400, 300));
-        leftPanel.setPreferredSize(new Dimension(150, 10));
+        leftPanel.setPreferredSize(new Dimension(200, 10));
         leftPanel.setLayout(borderLayout2);
         bottomPanel.setPreferredSize(new Dimension(10, 40));
         leftPanel.add(libraryCombo, BorderLayout.NORTH);
@@ -162,7 +160,7 @@ public class CircuitLoadDialog extends AbstractLoadDialog  implements CommandLis
     }
     
     @Override
-    public void OnStart(Class<?> reciever) {
+    public void onStart(Class<?> reciever) {
         this.disableControls();   
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         
@@ -172,7 +170,7 @@ public class CircuitLoadDialog extends AbstractLoadDialog  implements CommandLis
     }
 
     @Override
-    public void OnRecive(String result, Class reciever) {
+    public void onRecive(String result, Class reciever) {
         if(reciever.getSimpleName().equals("JComboBox")||reciever.getSimpleName().equals("DefaultListModel")){
             try {
                 Document document = Utilities.buildDocument(result);
@@ -193,7 +191,8 @@ public class CircuitLoadDialog extends AbstractLoadDialog  implements CommandLis
                     selectionPanel.Clear();
                     for (int i = 0; i < nodes.getLength(); i++) {
                         Element element=(Element)nodes.item(i);
-                          model.addElement(new AttachedItem.Builder(element.getTextContent()).setFileName(element.getAttribute("fullname")).build()) ;                                                  
+                          model.addElement(new AttachedItem
+                                           .Builder(element.getTextContent()).setFileName(element.getAttribute("fullname")).build()) ;                                                  
                     }    
                 }
 
@@ -213,7 +212,7 @@ public class CircuitLoadDialog extends AbstractLoadDialog  implements CommandLis
             selectionPanel.Clear();
             try{
             UnitContainer model= new CircuitContainer();
-            model.Parse(result);
+            model.parse(result);
             selectionPanel.getSelectionGrid().setModel(model);
             } catch (Exception ioe) {
             ioe.printStackTrace(System.out);
@@ -226,14 +225,14 @@ public class CircuitLoadDialog extends AbstractLoadDialog  implements CommandLis
     }
 
     @Override
-    public void OnFinish(Class<?> reciever) {
+    public void onFinish(Class<?> reciever) {
         this.setCursor(Cursor.getDefaultCursor());     
         this.enableControls();         
     }
 
     @Override
-    public void OnError(String error) {
-        OnFinish(null);
+    public void onError(String error) {
+        onFinish(null);
         JOptionPane.showMessageDialog(this, error, "Error",
                                       JOptionPane.ERROR_MESSAGE);
     }

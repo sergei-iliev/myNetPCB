@@ -13,26 +13,27 @@ import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ContainerEventDispatcher;
 import com.mynetpcb.core.capi.event.ContainerListener;
 import com.mynetpcb.core.capi.event.EventMgr;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.AbstractBendingProcessorFactory;
 import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
 import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.UnitMgr;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
 
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -88,15 +89,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                                                                                                                    KeyListener,
                                                                                                                    ContainerEventDispatcher {
 
-    public static final int COMPONENT_MODE = 0x00;
-    
-    public static final int ORIGIN_SHIFT_MODE=0x08;
-    
-    public static final int MEASUMENT_MODE=0x0C;
-    
     private static final int MIN_UNIT_INCREAMEN=0x10; 
-    
-    public static final int DRAGHEAND_MODE=0x11; 
     
     private M model;
 
@@ -180,7 +173,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     public void setMode(int mode) {
         this.mode = mode;
         if (cursor != null) {
-            cursor.Clear();
+            cursor.clear();
             cursor = null;
         }
         eventMgr.resetEventHandle();
@@ -211,11 +204,11 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return bendingProcessorFactory;
     }
     
-    public void resumeLine(Trackable line,String handleKey, int x, int y) {
-        line.Reset(x,y);
+    public void resumeLine(Trackable line,String handleKey, double x, double y) {
+        //line.reset(x,y);
         //***do we need to reorder
-        line.Reverse(x,y);
-        line.setSelected(true);
+        //line.reverse(x,y);
+        line.resumeLine(x, y);
         getEventMgr().setEventHandle(handleKey,(S)line);
     }
     
@@ -223,21 +216,21 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return viewportWindow;
     }
 
-    public void Clear() {
+    public void clear() {
         setSize(1, 1);
         revalidate();
         eventMgr.resetEventHandle();
-        model.Clear();
+        model.clear();
         System.gc();
     }
 
 
     //***Remove resources
 
-    public void Release() {
-        this.Clear();
+    public void release() {
+        this.clear();
         parameters.clear();
-        model.Release();
+        model.release();
 
         //***clear listeners list
         for (int i = 0; i < containerListeners.getListenerList().length; i++) {
@@ -257,19 +250,19 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             Graphics2D g2 = (Graphics2D)canvas.getGraphics();
             g2.setColor(getBackground());
             g2.fillRect(0, 0, getWidth(), getHeight());
-            model.getUnit().Paint(g2, viewportWindow);
+            model.getUnit().paint(g2, viewportWindow);
             if (cursor != null) {
-                cursor.Paint(g2, viewportWindow,
+                cursor.paint(g2, viewportWindow,
                              getModel().getUnit().getScalableTransformation().getCurrentTransformation(),Layer.Copper.All.getLayerMaskID());
 
             }
             g2.dispose();
         }
         
-        repaint();
+        super.repaint();
     }
 
-    public void Export(String fileName,PrintContext context){
+    public void export(String fileName,PrintContext context){
         this.model.getUnit().prepare(context);
         try {
             this.model.getUnit().export(fileName,context);
@@ -279,7 +272,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         //finish callback
         this.model.getUnit().finish();
     }
-    public void Print(PrintContext context) {
+    public void print(PrintContext context) {
         PrinterJob printJob = PrinterJob.getPrinterJob();
 
         PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
@@ -328,13 +321,13 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
 
     @Override
-    public void ScrollX(int x) {
-        viewportWindow.x = x;
+    public void scrollX(int x) {
+        viewportWindow.setX(x);
     }
 
     @Override
-    public void ScrollY(int y) {
-        viewportWindow.y = y;
+    public void scrollY(int y) {
+        viewportWindow.setY(y);
     }
 
     public void setScrollPosition(int x, int y) {
@@ -349,7 +342,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
 
     @Override
-    public void Rotate(int rotationType, Point p) {
+    public void rotate(int rotationType, Point p) {
         Point tmp = new Point();
         if (Utilities.ROTATION_RIGHT == rotationType) {
 
@@ -382,9 +375,9 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
 
     @Override
-    public boolean ZoomOut(Point windowPoint) {
-        if (model.getUnit().getScalableTransformation().ScaleOut()) {
-            this.getViewportWindow().scaleout(windowPoint.x, windowPoint.y,
+    public boolean zoomOut(Point windowPoint) {
+        if (model.getUnit().getScalableTransformation().scaleOut()) {
+            this.getViewportWindow().scaleOut(windowPoint.x, windowPoint.y,
                                               this.model.getUnit().getScalableTransformation());
             this.Repaint();
         } else {
@@ -409,19 +402,19 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         //set visible amount
         hbar.setVisibleAmount(this.getWidth());
         vbar.setVisibleAmount(this.getHeight());
-        //set new initial value
-        hbar.setValue(this.getViewportWindow().x);
-        vbar.setValue(this.getViewportWindow().y);
-
+        //set new initial value        
+        hbar.setValue((int)this.getViewportWindow().getX());
+        vbar.setValue((int)this.getViewportWindow().getY());
+        
         hbar.getModel().addChangeListener(this);
         vbar.getModel().addChangeListener(this);
         return true;
     }
 
     @Override
-    public boolean ZoomIn(Point windowPoint) {
-        if (model.getUnit().getScalableTransformation().ScaleIn()) {
-            this.getViewportWindow().scalein(windowPoint.x, windowPoint.y,
+    public boolean zoomIn(Point windowPoint) {
+        if (model.getUnit().getScalableTransformation().scaleIn()) {
+            this.getViewportWindow().scaleIn(windowPoint.x, windowPoint.y,
                                              this.model.getUnit().getScalableTransformation());
             this.Repaint();
         } else {
@@ -447,8 +440,8 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         hbar.setVisibleAmount(this.getWidth());
         vbar.setVisibleAmount(this.getHeight());
         //set new initial value
-        hbar.setValue(this.getViewportWindow().x);
-        vbar.setValue(this.getViewportWindow().y);
+        hbar.setValue((int)this.getViewportWindow().getX());
+        vbar.setValue((int)this.getViewportWindow().getY());
 
         hbar.getModel().addChangeListener(this);
         vbar.getModel().addChangeListener(this);
@@ -458,11 +451,11 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     @Override
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() == dialogFrame.get().getHorizontalScrollBar().getModel()) {
-            this.ScrollX(dialogFrame.get().getHorizontalScrollBar().getValue());
+            this.scrollX(dialogFrame.get().getHorizontalScrollBar().getValue());
         }
 
         if (e.getSource() == dialogFrame.get().getVerticalScrollBar().getModel()) {
-            this.ScrollY(dialogFrame.get().getVerticalScrollBar().getValue());
+            this.scrollY(dialogFrame.get().getVerticalScrollBar().getValue());
         }
         
         this.Repaint();
@@ -513,11 +506,11 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return dialogFrame.get();
     }
     
-    public abstract void Reload();
+    public abstract void reload();
     /*
      * Import external asset to current project
      */
-    public abstract void Import(String targetFile);
+    public abstract void _import(String targetFile);
     
     public void componentMoved(ComponentEvent e) {
     }
@@ -585,9 +578,9 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             return;
         }
         if (e.getWheelRotation() > 0) {
-            ZoomIn(e.getPoint());
+            zoomIn(e.getPoint());
         } else {
-            ZoomOut(e.getPoint());
+            zoomOut(e.getPoint());
         }
     }
 
@@ -712,7 +705,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                 if (getModel().getUnit() != null) {
                     if (e.getModifiersEx() != 0 && (e.getModifiers() == ActionEvent.CTRL_MASK)) {
                         if (e.getKeyCode() == KeyEvent.VK_Z) {
-                            if (getModel().getUnit().Undo(getEventMgr().getTargetEventHandle())) {
+                            if (getModel().getUnit().undo(getEventMgr().getTargetEventHandle())) {
                                 Repaint();
                                 revalidate();
                             } else {
@@ -721,7 +714,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                             return true;
                         }
                         if (e.getKeyCode() == KeyEvent.VK_Y) {
-                            if (getModel().getUnit().Redo()) {
+                            if (getModel().getUnit().redo()) {
                                 Repaint();
                                 revalidate();
                             } else {
@@ -736,12 +729,12 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                     }
                     //***copy
                     if (e.getKeyCode() == KeyEvent.VK_C) {
-                        Copy();
+                        copy();
                         return true;
                     }
                     //***paste
                     if (e.getKeyCode() == KeyEvent.VK_V) {
-                        Paste();
+                        paste();
                         return true;
                     }
                 }
@@ -752,20 +745,20 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                         this.getPopupMenu().setVisible(false);                
                     }else{
                     //2.kill current mode
-                        this.getDialogFrame().setButtonGroup(COMPONENT_MODE);
-                        this.setMode(COMPONENT_MODE);                        
+                        this.getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+                        this.setMode(Mode.COMPONENT_MODE);                        
                     }
                     Repaint();
                     return true;
                 }    
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                     UnitMgr unitMgr = new UnitMgr();
-                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).Add(getModel().getUnit().getSelectedShapes(false)));
-                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).Add(getModel().getUnit().getSelectedShapes(false)));
+                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(getModel().getUnit().getSelectedShapes()));
+                    getModel().getUnit().registerMemento(new CompositeMemento(MementoType.DELETE_MEMENTO).add(getModel().getUnit().getSelectedShapes()));
                     //reset event handle
                     getEventMgr().resetEventHandle();
                     this.getPopupMenu().setVisible(false);
-                    unitMgr.deleteBlock(getModel().getUnit(), getModel().getUnit().getSelectedShapes(true));
+                    unitMgr.deleteBlock(getModel().getUnit(), getModel().getUnit().getSelectedShapes());
                     Repaint();
                     return true;
                 }
@@ -773,7 +766,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         return false;
     }
 
-    public void Copy(){
+    public void copy(){
         try {
             ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.LOCAL,
                                                            getModel().getUnit().createClipboardContent());
@@ -784,24 +777,24 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         }
     }
     
-    public void Paste(){
+    public void paste(){
         try {
             getModel().getUnit().setSelected(false);
             getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.LOCAL ));
             
             //position onto screen center                            
-            Point point=getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getViewportWindow().x +
-                                                                                                                   getWidth()/2,
-                                                                                                                   getViewportWindow().y +
-                                                                                                                   getHeight()/2));
+            Point point=getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getViewportWindow().getX() +
+                                                                                                                   getWidth()/2),
+                                                                                                                   (int)(getViewportWindow().getY() +
+                                                                                                                   getHeight()/2)));
             UnitMgr unitMgr = new UnitMgr();
-            Collection<Shape> shapes=this.getModel().getUnit().getSelectedShapes(false);
-            Rectangle r=this.getModel().getUnit().getShapesRect(shapes);                                                      
+            Collection<Shape> shapes=this.getModel().getUnit().getSelectedShapes();
+            Box r=this.getModel().getUnit().getShapesRect(shapes);                                                      
             //move to screen center
-            unitMgr.moveBlock(shapes,point.x-r.x,point.y-r.y);
+            unitMgr.moveBlock(shapes,point.x-(int)r.min.x,point.y-(int)r.min.y);
 
             //register with Do/Undo Mgr
-            getModel().getUnit().registerMemento(new CompositeMemento(MementoType.CREATE_MEMENTO).Add(getModel().getUnit().getSelectedShapes(false)));
+            getModel().getUnit().registerMemento(new CompositeMemento(MementoType.CREATE_MEMENTO).add(getModel().getUnit().getSelectedShapes()));
             
             Repaint();
             //***emit property event change

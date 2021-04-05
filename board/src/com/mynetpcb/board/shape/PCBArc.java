@@ -6,8 +6,8 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.pad.shape.Arc;
 
 public class PCBArc extends Arc implements PCBShape{
-    public PCBArc(int x,int y,int width,int thickness,int layermaskid) {
-        super(x,y,width, thickness,layermaskid);
+    public PCBArc(double x,double y,double r,double startAngle,double endAngle,int thickness,int layermaskid){ 
+        super(x,y,r,startAngle,endAngle,thickness,layermaskid);
     }
 
     @Override
@@ -15,11 +15,6 @@ public class PCBArc extends Arc implements PCBShape{
         Memento memento=new Memento(operationType);
         memento.saveStateFrom(this);        
         return memento;
-    }
-
-    @Override
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);  
     }
     
     public static class Memento extends Arc.Memento{

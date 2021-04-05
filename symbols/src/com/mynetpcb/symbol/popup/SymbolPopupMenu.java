@@ -1,11 +1,11 @@
 package com.mynetpcb.symbol.popup;
 
-
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.popup.AbstractPopupItemsContainer;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.symbol.component.SymbolComponent;
 
@@ -18,7 +18,6 @@ import java.util.Map;
 
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-
 
 public class SymbolPopupMenu extends AbstractPopupItemsContainer<SymbolComponent>{  
 
@@ -84,7 +83,7 @@ public class SymbolPopupMenu extends AbstractPopupItemsContainer<SymbolComponent
         else
           this.setEnabled(unitMenu,"Paste",false);  
         
-        if(getUnitComponent().getModel().getUnit().getSelectedShapes(false).size()>0)
+        if(getUnitComponent().getModel().getUnit().getSelectedShapes().size()>0)
           this.setEnabled(unitMenu,"Copy",true);
         else
           this.setEnabled(unitMenu,"Copy",false);
@@ -100,8 +99,8 @@ public class SymbolPopupMenu extends AbstractPopupItemsContainer<SymbolComponent
             getUnitComponent().Repaint();
         }
         if (e.getActionCommand().equalsIgnoreCase("Resume")) {
-            getUnitComponent().getDialogFrame().setButtonGroup(SymbolComponent.LINE_MODE);
-            getUnitComponent().setMode(SymbolComponent.LINE_MODE);         
+            getUnitComponent().getDialogFrame().setButtonGroup(Mode.LINE_MODE);
+            getUnitComponent().setMode(Mode.LINE_MODE);         
             getUnitComponent().resumeLine((Trackable)getTarget(),"line", x, y);
         }        
         if(e.getActionCommand().equals("SendToFront")){

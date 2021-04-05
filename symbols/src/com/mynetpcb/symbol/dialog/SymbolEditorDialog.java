@@ -1,29 +1,21 @@
 package com.mynetpcb.symbol.dialog;
 
-
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.ScalableTransformation;
-import com.mynetpcb.core.capi.config.Configuration;
-import com.mynetpcb.core.capi.credentials.User;
-import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
-import com.mynetpcb.core.capi.popup.JPopupButton;
-import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.unit.FootprintMgr;
 import com.mynetpcb.symbol.component.SymbolComponent;
 import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.dialog.panel.SymbolsPanel;
-import com.mynetpcb.symbol.dialog.save.SymbolSaveDialog;
 import com.mynetpcb.symbol.unit.Symbol;
-import com.mynetpcb.symbol.unit.SymbolMgr;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -33,13 +25,12 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.AffineTransform;
 
 import java.util.Collection;
 
@@ -54,7 +45,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
-
 
 public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionListener{
     
@@ -88,10 +78,7 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
     
     private ButtonGroup group = new ButtonGroup();
     
-    protected JPopupButton AddSymbolButton=new JPopupButton(this);
-    private JButton PrintButton = new JButton();
-    private JButton SaveButton = new JButton();
-    protected JButton LoadButton = new JButton();
+    protected JButton SaveButton = new JButton();
     private JButton ScaleIn = new JButton();
     private JButton ScaleOut = new JButton();
     private JButton RotateLeft=new JButton();
@@ -110,6 +97,9 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.setResizable(true);
         Init();
+        //set size
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setPreferredSize(new Dimension((int)(2*screenSize.getWidth()/3),(int)(2*screenSize.getHeight()/3)));
         LoadSymbols(symbolContainer);
     }
     
@@ -158,7 +148,6 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
 
         //***add action listeners
         SelectionButton.addActionListener(this);
-        SelectionButton.setActionCommand("Selection");
         SelectionButton.setIcon(Utilities.loadImageIcon(this, 
                                                       "/com/mynetpcb/core/images/selection.png"));
         SelectionButton.setSelected(true);
@@ -168,115 +157,83 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
 
 
         RectButton.addActionListener(this);
-        RectButton.setActionCommand("Rectangle");
         RectButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rect.png"));
         RectButton.setToolTipText("Draw Rectangle");
         RectButton.setPreferredSize(new Dimension(35, 35));        
         
         EllipseButton.addActionListener(this);
-        EllipseButton.setActionCommand("Ellipse");
         EllipseButton.setToolTipText("Draw Ellipse");
         EllipseButton.setIcon(Utilities.loadImageIcon(this, 
                                                     "/com/mynetpcb/core/images/ellipse.png"));
         EllipseButton.setPreferredSize(new Dimension(35, 35));
          
         ArcButton.addActionListener(this);
-        ArcButton.setActionCommand("Arc");
         ArcButton.setToolTipText("Draw Arc");
         ArcButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/arc.png"));
         ArcButton.setPreferredSize(new Dimension(35, 35));
 
         LineButton.addActionListener(this);
-        LineButton.setActionCommand("Line");
         LineButton.setToolTipText("Draw Line");
         LineButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/line.png"));
         LineButton.setPreferredSize(new Dimension(35, 35));
        
         
         ArrowButton.addActionListener(this);
-        ArrowButton.setActionCommand("Arrow");
         ArrowButton.setToolTipText("Draw ArrowLine");
         ArrowButton.setIcon(Utilities.loadImageIcon(this, 
                                                     "/com/mynetpcb/core/images/arrowline.png"));
         ArrowButton.setPreferredSize(new Dimension(35, 35));
         
         TriangleButton.addActionListener(this);
-        TriangleButton.setActionCommand("Triangle");
         TriangleButton.setToolTipText("Draw Triangle");
         TriangleButton.setIcon(Utilities.loadImageIcon(this, 
                                                        "/com/mynetpcb/core/images/triangle.png"));
         TriangleButton.setPreferredSize(new Dimension(35, 35));
         
         PinButton.addActionListener(this);
-        PinButton.setActionCommand("Pin");
         PinButton.setToolTipText("Add Pin");
         PinButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/pin.png"));
         PinButton.setPreferredSize(new Dimension(35, 35));
 
         LabelButton.addActionListener(this);
-        LabelButton.setActionCommand("Label");
         LabelButton.setIcon(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/label.png"));
         LabelButton.setToolTipText("Add Label");
         LabelButton.setPreferredSize(new Dimension(35, 35));
     
         SnapToGridButton.addActionListener(this);
-        SnapToGridButton.setActionCommand("SnapToGrid");
         SnapToGridButton.setIcon(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/anchor.png"));
         SnapToGridButton.setToolTipText("Snap dragging point to grid");
         SnapToGridButton.setPreferredSize(new Dimension(35, 35));
 
         CoordButton.addActionListener(this);
-        CoordButton.setActionCommand("CoordOrigin");
         CoordButton.setToolTipText("Change coordinate origin");
         CoordButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/origin.png"));
         CoordButton.setPreferredSize(new Dimension(35, 35));
-
-        //***construct Top Buttons Panel
-        AddSymbolButton.setToolTipText("Add symbol to bundle");
-        AddSymbolButton.setPreferredSize(new Dimension(35, 35));
-        AddSymbolButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
-        AddSymbolButton.addMenu("Create symbols bundle","Create").addMenu("Add symbol to bundle","Add").addSeparator().addMenu("Exit","exit"); 
-        
-        PrintButton.addActionListener(this);
-        PrintButton.setToolTipText("Print footprint");
-        PrintButton.setPreferredSize(new Dimension(35, 35));
-        PrintButton.setActionCommand("Print");
-        PrintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/print.png"));
         
         SaveButton.addActionListener(this);
         SaveButton.setToolTipText("Save Module");
         SaveButton.setPreferredSize(new Dimension(35, 35));
-        SaveButton.setActionCommand("Save");
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
         
-        LoadButton.addActionListener(this);
-        LoadButton.setToolTipText("Load Module");
-        LoadButton.setPreferredSize(new Dimension(35, 35));
-        LoadButton.setActionCommand("Load");
-        LoadButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/folder.png"));
 
         ScaleIn.addActionListener(this);
         ScaleIn.setToolTipText("Scale In");
         ScaleIn.setPreferredSize(new Dimension(35, 35));
-        ScaleIn.setActionCommand("ScaleIn");
         ScaleIn.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/zoom_out.png"));
 
         ScaleOut.addActionListener(this);
         ScaleOut.setToolTipText("Scale Out");
         ScaleOut.setPreferredSize(new Dimension(35, 35));
-        ScaleOut.setActionCommand("ScaleOut");
         ScaleOut.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/zoom_in.png"));
 
         RotateLeft.addActionListener(this);
         RotateLeft.setToolTipText("Rotate Left");
         RotateLeft.setPreferredSize(new Dimension(35, 35));
-        RotateLeft.setActionCommand("RotateLeft");
         RotateLeft.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_left.png"));
         
         RotateRight.addActionListener(this);
         RotateRight.setToolTipText("Rotate Right");
         RotateRight.setPreferredSize(new Dimension(35, 35));
-        RotateRight.setActionCommand("RotateRight");
         RotateRight.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_right.png"));        
         
         DragHeand.setPreferredSize(new Dimension(35, 35));
@@ -288,7 +245,6 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         PositionToCenter.setPreferredSize(new Dimension(35, 35));
         PositionToCenter.setToolTipText("Position viewport to center");
         PositionToCenter.addActionListener(this);
-        PositionToCenter.setActionCommand("tocenter");
         PositionToCenter.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/tocenter.png"));
         
         AssignPackage.setPreferredSize(new Dimension(35, 35));
@@ -296,18 +252,15 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         AssignPackage.addActionListener(this);
         AssignPackage.setActionCommand("assignfootprint");
         AssignPackage.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/footprint.png"));
-        
-        NorthPanel.add(AddSymbolButton);
-        NorthPanel.add(PrintButton);
+   
         NorthPanel.add(SaveButton);
-        NorthPanel.add(LoadButton);
         NorthPanel.add(ScaleIn);
         NorthPanel.add(ScaleOut);
         NorthPanel.add(RotateLeft);
         NorthPanel.add(RotateRight); 
         NorthPanel.add(DragHeand);
         NorthPanel.add(PositionToCenter);
-        NorthPanel.add(AssignPackage);
+        //NorthPanel.add(AssignPackage);
         
         EastPanel.setLayout(new BorderLayout());
         EastPanel.setPreferredSize(new Dimension(220, 200));
@@ -321,8 +274,7 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         group.add(ArrowButton);
         group.add(TriangleButton);
         group.add(PinButton);
-        group.add(LabelButton);
-        group.add(CoordButton);
+        group.add(LabelButton);        
         group.add(DragHeand);
         
         WestPanel.setLayout(new BorderLayout());
@@ -365,7 +317,7 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         addWindowListener(new WindowAdapter(){
 
                 public void windowClosing(WindowEvent e) { 
-exit();                                       
+                    exit();                                       
                 }
             });
     }
@@ -376,138 +328,87 @@ exit();
             exit();
             return;
         }
-        if (e.getActionCommand().equals("Create")) {
-            if(symbolComponent.getModel().isChanged()){                        
-                if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(symbolComponent.getDialogFrame().getParentFrame(), "There are unsaved changes. Do you want to continue?", "Create", JOptionPane.YES_NO_OPTION)) {                                       
-                    return;
-                }                      
-            }
-            symbolComponent.Clear();                              
-        }
-        
-        if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {                
-            //rememeber current unit position
-            if(symbolComponent.getModel().getUnit()!=null){
-                symbolComponent.getModel().getUnit().setScrollPositionValue(symbolComponent.getViewportWindow().x,symbolComponent.getViewportWindow().y);                      
-            }
-            Symbol symbol  = new Symbol(500, 500);
-            symbolComponent.getModel().Add(symbol);
-            symbolComponent.getModel().setActiveUnit(symbol.getUUID());
-            symbolComponent.componentResized(null);
-            symbolComponent.getModel().fireUnitEvent(new UnitEvent(symbol, UnitEvent.SELECT_UNIT));
-            symbolComponent.Repaint();
-        }
-        if (e.getActionCommand().equals("Load")) {
-                        AbstractLoadDialog.Builder builder=new SymbolLoadDialog.Builder();
-                        AbstractLoadDialog symbolLoadDialog =builder.setWindow(this).setCaption("Load Symbol").setEnabled(false).build();
-                
-                        symbolLoadDialog.pack();
-                        symbolLoadDialog.setLocationRelativeTo(null); //centers on screen
-                        symbolLoadDialog.setVisible(true);
-            
-                        if(symbolLoadDialog.getSelectedModel()==null){
-                          return;
-                        }
-            
-                        LoadSymbols((SymbolContainer)symbolLoadDialog.getSelectedModel());
-            
-                        symbolLoadDialog.dispose();
-                        symbolLoadDialog=null;
-                        setButtonGroup(SymbolComponent.COMPONENT_MODE);
-            
-                        //position on center
-                        //Rectangle r=symbolComponent.getModel().getUnit().getBoundingRect();
-                        //symbolComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
 
-        }
         if (symbolComponent.getModel().getUnit() == null) {
             return;
         }
-        if (e.getActionCommand().equals("Save")) {  
-            if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
-               User.showMessageDialog(symbolComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
-               return;
-            }
-            (new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline())).build();
-        } 
-        if (e.getActionCommand().equals("ScaleIn")) {
-            symbolComponent.ZoomIn(new Point((int)symbolComponent.getVisibleRect().getCenterX(),
+        if (e.getSource() ==ScaleIn) {
+            symbolComponent.zoomIn(new Point((int)symbolComponent.getVisibleRect().getCenterX(),
                                                 (int)symbolComponent.getVisibleRect().getCenterY()));
         }
-        if (e.getActionCommand().equals("ScaleOut")) {
-            symbolComponent.ZoomOut(new Point((int)symbolComponent.getVisibleRect().getCenterX(),
+        if (e.getSource()==ScaleOut) {
+            symbolComponent.zoomOut(new Point((int)symbolComponent.getVisibleRect().getCenterX(),
                                                  (int)symbolComponent.getVisibleRect().getCenterY()));
         }
-        if (e.getActionCommand().equals("RotateLeft") || e.getActionCommand().equals("RotateRight")) {        
+        if (e.getSource()==RotateLeft|| e.getSource()==RotateRight) {        
+            
             Collection<Shape> shapes= symbolComponent.getModel().getUnit().getShapes();
             if(shapes.size()==0){
                return; 
             }   
             //***notify undo manager                    
-            symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-            Rectangle r=symbolComponent.getModel().getUnit().getShapesRect(shapes);  
+            symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            com.mynetpcb.d2.shapes.Box r=symbolComponent.getModel().getUnit().getShapesRect(shapes);  
+            
+            FootprintMgr.getInstance().rotateBlock(shapes,
+                                   ((e.getSource()==RotateLeft?
+                                                                      1 :
+                                                                      -1) *90),
+                                                                     r.getCenter()); 
+            FootprintMgr.getInstance().alignBlock(symbolComponent.getModel().getUnit().getGrid(),shapes);                     
 
-            SymbolMgr.getInstance().rotateBlock(shapes,
-                                   AffineTransform.getRotateInstance((e.getActionCommand().equals("RotateLeft")?
-                                                                      -1 :
-                                                                      1) *(Math.PI /2),
-                                                                     r.getCenterX(),
-                                                                     r.getCenterY())); 
-            SymbolMgr.getInstance().alignBlock(symbolComponent.getModel().getUnit().getGrid(),shapes);                     
-            SymbolMgr.getInstance().normalizePinText(shapes);
             //***notify undo manager
-            symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
-            symbolComponent.Repaint();
+            symbolComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
+            symbolComponent.Repaint();            
         }
-        if (e.getActionCommand().equals("Rectangle")) {
-            symbolComponent.setMode(SymbolComponent.RECT_MODE);
+        if (e.getSource()==RectButton) {
+            symbolComponent.setMode(Mode.RECT_MODE);
         }
-        if (e.getActionCommand().equals("Ellipse")) {
-            symbolComponent.setMode(SymbolComponent.ELLIPSE_MODE);
+        if (e.getSource()==EllipseButton) {
+            symbolComponent.setMode(Mode.ELLIPSE_MODE);
         }
-        if (e.getActionCommand().equals("Arc")) {
-            symbolComponent.setMode(SymbolComponent.ARC_MODE);
+        if (e.getSource()==ArcButton) {
+            symbolComponent.setMode(Mode.ARC_MODE);
         }
-        if (e.getActionCommand().equals("Line")) {
-            symbolComponent.setMode(SymbolComponent.LINE_MODE);
+        if (e.getSource()==LineButton) {
+            symbolComponent.setMode(Mode.LINE_MODE);
         }
-        if (e.getActionCommand().equals("Arrow")) {
-            symbolComponent.setMode(SymbolComponent.ARROW_MODE);
+        if (e.getSource()==ArrowButton) {
+            symbolComponent.setMode(Mode.ARROW_MODE);
         }
-        if (e.getActionCommand().equals("Triangle")) {
-            symbolComponent.setMode(SymbolComponent.TRIANGLE_MODE);
+        if (e.getSource()==TriangleButton) {
+            symbolComponent.setMode(Mode.TRIANGLE_MODE);
         }
-        if (e.getActionCommand().equals("Label")) {
-            symbolComponent.setMode(SymbolComponent.LABEL_MODE);
+        if (e.getSource()==LabelButton) {
+            symbolComponent.setMode(Mode.LABEL_MODE);
         }
-        if (e.getActionCommand().equals("Print")) {
-            PrintContext printContext=new PrintContext();
-            printContext.setIsMirrored(false);
-            printContext.setLayermaskId(Layer.LAYER_ALL);
-            printContext.setTag("symbols");
-            symbolComponent.Print(printContext);
+        if (e.getSource()==DragHeand) {
+            symbolComponent.setMode(Mode.DRAGHEAND_MODE);
         }
-        if (e.getActionCommand().equals("dragheand")) {
-            symbolComponent.setMode(SymbolComponent.DRAGHEAND_MODE);
+        if (e.getSource()==PinButton) {
+            symbolComponent.setMode(Mode.PIN_MODE);
         }
-        if (e.getActionCommand().equals("Pin")) {
-            symbolComponent.setMode(SymbolComponent.PIN_MODE);
+        if(e.getSource()==SelectionButton){
+            symbolComponent.setMode(Mode.COMPONENT_MODE);          
         }
-        if(e.getActionCommand().equals("Selection")){
-            symbolComponent.setMode(SymbolComponent.COMPONENT_MODE);          
-        }
-        if (e.getActionCommand().equals("tocenter")) {      
+        if (e.getSource()==PositionToCenter) {      
             symbolComponent.setScrollPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
         }
-        if (e.getActionCommand().equals("SnapToGrid")) {
+        if (e.getSource()==SnapToGridButton) {
             symbolComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
         }
-        if (e.getActionCommand().equals("CoordOrigin")) {
-            symbolComponent.setMode(SymbolComponent.ORIGIN_SHIFT_MODE);
+        if (e.getSource()==CoordButton) {
+            if(CoordButton.getModel().isSelected()){
+                symbolComponent.getModel().getUnit().setCoordinateSystem(new CoordinateSystem(symbolComponent.getModel().getUnit(),2));
+                symbolComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+            }else{
+                symbolComponent.getModel().getUnit().deleteCoordinateSystem(); 
+                symbolComponent.setMode(Mode.COMPONENT_MODE); 
+            }
         }
-        if(e.getActionCommand().equals("assignfootprint")){            
-             FootprintMgr.getInstance().assignPackage(this, symbolComponent.getModel().getUnit().getPackaging());
-        }
+        //if(e.getActionCommand().equals("assignfootprint")){            
+             //FootprintMgr.getInstance().assignPackage(this, symbolComponent.getModel().getUnit().getPackaging());
+        //}
     }
 
     @Override
@@ -526,10 +427,10 @@ exit();
     }
     @Override
     public void setButtonGroup(int requestedMode) {
-        if (requestedMode == SymbolComponent.COMPONENT_MODE) {
+        if (requestedMode == Mode.COMPONENT_MODE) {
             group.setSelected(SelectionButton.getModel(), true);
         }
-        if(requestedMode==SymbolComponent.LINE_MODE){
+        if(requestedMode==Mode.LINE_MODE){
             group.setSelected(LineButton.getModel(), true);            
         }
 
@@ -539,17 +440,17 @@ exit();
      * @param source to load or create new if null
      */
     private void LoadSymbols(SymbolContainer source) {
-        symbolComponent.Clear();
-        symbolComponent.setMode(SymbolComponent.COMPONENT_MODE);
+        symbolComponent.clear();
+        symbolComponent.setMode(Mode.COMPONENT_MODE);
         if(source==null){
             Symbol symbol =new Symbol(500,500);
-            symbolComponent.getModel().Add(symbol);
+            symbolComponent.getModel().add(symbol);
         }else{
         for (Symbol symbol : source.getUnits()) {
             try {
                 Symbol copy = symbol.clone();
-                copy.getScalableTransformation().Reset(1.2, 2, 0, ScalableTransformation.DEFAULT_MAX_SCALE_FACTOR);
-                symbolComponent.getModel().Add(copy);
+                copy.getScalableTransformation().reset(1.2, 2, 0, ScalableTransformation.DEFAULT_MAX_SCALE_FACTOR);
+                symbolComponent.getModel().add(copy);
                 copy.notifyListeners(ShapeEvent.ADD_SHAPE);
             } catch (CloneNotSupportedException f) {
                 f.printStackTrace(System.out);
@@ -564,16 +465,19 @@ exit();
         symbolComponent.getModel().setActiveUnit(0);
         symbolComponent.componentResized(null);
         symbolComponent.getModel().getUnit().setSelected(false);
-        symbolComponent.fireContainerEvent(new ContainerEvent(null, ContainerEvent.RENAME_CONTAINER));
+        //symbolComponent.fireContainerEvent(new ContainerEvent(null, Mode.RENAME_CONTAINER));
         symbolComponent.getModel().fireUnitEvent(new UnitEvent(symbolComponent.getModel().getUnit(),
                                                                   UnitEvent.SELECT_UNIT));
         //position all to symbol center
         for(Unit unit:symbolComponent.getModel().getUnits()){
-            Rectangle r=unit.getBoundingRect();
-            unit.setScrollPositionValue((int)r.getCenterX(),(int)r.getCenterY());            
+            com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
+            com.mynetpcb.d2.shapes.Point pt=r.min.clone();
+            pt.scale(unit.getScalableTransformation().getCurrentTransformation().getScaleX());            
+            unit.setScrollPositionValue((int)pt.x,(int)pt.y);            
         }
-        Rectangle r=symbolComponent.getModel().getUnit().getBoundingRect();
-        symbolComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
+        
+        com.mynetpcb.d2.shapes.Box r=symbolComponent.getModel().getUnit().getBoundingRect();
+        symbolComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
         
         symbolComponent.getModel().registerInitialState();
         symbolComponent.Repaint();
@@ -584,25 +488,8 @@ exit();
                 return;
             }                      
         }
-        symbolComponent.Release();  
+        symbolComponent.release();  
         SymbolEditorDialog.this.dispose(); 
     }
-//    public static void main(String[] args)
-//    {        
-//        //*****************Footprint editor
-//              final SymbolEditorDialog f = new SymbolEditorDialog(null,"Symbol Editor");
-//              f.setPreferredSize(new Dimension(730,600)); 
-//              f.addWindowListener(new WindowAdapter() {
-//                public void windowClosing(WindowEvent e) { System.exit(0); }
-//              });
-//              f.addWindowListener(new WindowAdapter(){
-//                  public void windowActivated(WindowEvent e){
-//                     
-//                  }
-//                  });
-//              f.pack();
-//              f.setVisible(true);        
-//        
-//        
-//    }
+
 }

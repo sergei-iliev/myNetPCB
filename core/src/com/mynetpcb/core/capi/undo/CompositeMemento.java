@@ -17,7 +17,7 @@ public  class CompositeMemento<U extends Unit,S extends Shape> extends AbstractM
             mementoList=new LinkedList<AbstractMemento>();  
       } 
       @Override  
-      public CompositeMemento Add(Collection<S> shapes){
+      public CompositeMemento add(Collection<S> shapes){
         for(S shape:shapes){
             mementoList.add(shape.getState(mementoType));  
         } 
@@ -27,16 +27,22 @@ public  class CompositeMemento<U extends Unit,S extends Shape> extends AbstractM
       public void loadStateTo(S shape) {
            
       }      
-      
+      @Override
+    public void loadStateTo(Unit unit) {        
+        for(AbstractMemento amemento:mementoList){
+            Shape shape = unit.getShape(amemento.getUUID());
+            shape.setState(amemento);           
+        }
+    }
       public List<AbstractMemento> getMementoList(){
          return  mementoList;
       }
       
       @Override
-      public void Clear() {
-            super.Clear();
+      public void clear() {
+            super.clear();
             for(AbstractMemento memento:mementoList){
-              memento.Clear();  
+              memento.clear();  
             }
             mementoList.clear();            
       }
@@ -76,7 +82,9 @@ public  class CompositeMemento<U extends Unit,S extends Shape> extends AbstractM
             hash+=mementoList.hashCode();     
             return hash;  
       }        
-      public boolean isSameState(U unit) {
+
+      @Override
+      public boolean isSameState(Unit unit) {
             for(AbstractMemento memento:mementoList){
                 if(!memento.isSameState(unit)){
                   return false;  

@@ -2,7 +2,6 @@ package com.mynetpcb.gerber.command;
 
 import com.mynetpcb.gerber.capi.Printable;
 
-
 public abstract class AbstractCommand implements Printable{
     public enum Type{
         INTERPOLATE_OPERATION("D01"),

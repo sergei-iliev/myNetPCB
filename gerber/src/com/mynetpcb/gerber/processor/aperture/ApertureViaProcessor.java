@@ -1,6 +1,5 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-
 import com.mynetpcb.core.board.shape.ViaShape;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -23,7 +22,7 @@ public class ApertureViaProcessor implements Processor{
             
             for(ViaShape via:board.<ViaShape>getShapes(ViaShape.class,layermask)){
                 CircleAperture circle=new CircleAperture();
-                circle.setDiameter(via.getWidth());
+                circle.setDiameter(via.getOuter().r*2);
                 circle.setAttribute(new ViaPadAttribute());
                 dictionary.add(circle);                         
             }

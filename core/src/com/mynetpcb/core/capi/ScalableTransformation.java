@@ -1,7 +1,8 @@
 package com.mynetpcb.core.capi;
 
+import com.mynetpcb.d2.shapes.Box;
+
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -30,10 +31,10 @@ public class ScalableTransformation implements Cloneable{
     }
     
     public ScalableTransformation(double scaleRatio) {
-          this.Reset(scaleRatio,0,0,DEFAULT_MAX_SCALE_FACTOR);
+          this.reset(scaleRatio,0,0,DEFAULT_MAX_SCALE_FACTOR);
     }   
     
-    public void Reset(double scaleRatio,int scaleFactor,int minScaleFactor,int maxScaleFactor){
+    public void reset(double scaleRatio,int scaleFactor,int minScaleFactor,int maxScaleFactor){
          this.scaleFactor=scaleFactor;
          this.maxScaleFactor=maxScaleFactor;
          this.minScaleFactor=minScaleFactor;
@@ -41,7 +42,7 @@ public class ScalableTransformation implements Cloneable{
          currentTransformation=calculateTransformation();
     }
     
-    public boolean ScaleIn() {              
+    public boolean scaleIn() {              
              scaleFactor++ ;
              if (scaleFactor == maxScaleFactor) {
                  scaleFactor = maxScaleFactor-1;
@@ -51,7 +52,9 @@ public class ScalableTransformation implements Cloneable{
         
              return true;        
     }
-      
+    public double getInverseScaleRatio(){
+       return 1/this.scaleRatio;
+    }  
     public double getScaleRatio(){
       return scaleRatio;  
     }
@@ -61,11 +64,11 @@ public class ScalableTransformation implements Cloneable{
     }
     
     public void setScaleFactor(int newScaleFactor){
-        this.Reset(scaleRatio,newScaleFactor,minScaleFactor,maxScaleFactor); 
+        this.reset(scaleRatio,newScaleFactor,minScaleFactor,maxScaleFactor); 
     }
     
     
-    public boolean ScaleOut() {
+    public boolean scaleOut() {
          scaleFactor --;
          if (scaleFactor == minScaleFactor-1) {
                  scaleFactor = minScaleFactor;
@@ -101,21 +104,17 @@ public class ScalableTransformation implements Cloneable{
          return result;
      }
 
-     
-     public Rectangle getInverseRect(Rectangle scaledRect){
-         AffineTransform unscaledTransformation=null;
-         try {
-             unscaledTransformation = currentTransformation.createInverse();
-         } catch (NoninvertibleTransformException e) {
-            e.printStackTrace(System.out);
-         }
-         
-         Point P1=new Point(scaledRect.x,scaledRect.y);
-         Point P2=new Point(scaledRect.x+scaledRect.width,scaledRect.y+scaledRect.height);        
-         unscaledTransformation.transform(P1,P1);
-         unscaledTransformation.transform(P2,P2);        
-         return new Rectangle((int) Math.floor(P1.getX()+0.5),(int) Math.floor(P1.getY()+0.5),(int) Math.floor((P2.getX()-P1.getX())+0.5),(int) Math.floor((P2.getY()-P1.getY())+0.5));
-     }
+     public Box getInverseRect(Box box){
+          double s=1;
+          if(this.scaleFactor!=0){     
+              for(int i=0;i<this.scaleFactor;i++){
+                s*=this.getInverseScaleRatio();
+              }
+          }
+          Box copy=box.clone();
+          copy.scale(s);
+          return copy;           
+     }  
      
      private AffineTransform calculateTransformation(){
         AffineTransform currentTransformation;

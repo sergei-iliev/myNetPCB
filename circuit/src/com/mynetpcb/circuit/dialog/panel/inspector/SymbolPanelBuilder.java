@@ -1,19 +1,17 @@
 package com.mynetpcb.circuit.dialog.panel.inspector;
 
-
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Text;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.text.Texture;
+import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -26,14 +24,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-
 public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape> {
-    private JComboBox chipUnitOrientationCombo, chipUnitAlignmentCombo, chipReferenceOrientationCombo, chipReferenceAlignmentCombo;
+    private JComboBox  chipUnitAlignmentCombo,  chipReferenceAlignmentCombo;
 
     private JTextField chipNameField, chipReferenceField, chipUnitField,packageNameField;
 
     public SymbolPanelBuilder(CircuitComponent component) {
-	super(component,new GridLayout(8, 1));
+	super(component,new GridLayout(6, 1));
 	//***Chip Name
 	panel = new JPanel();
 	panel.setLayout(new BorderLayout());
@@ -57,24 +54,14 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape> {
 	panel.add(chipReferenceField, BorderLayout.CENTER);
 	layoutPanel.add(panel);
 
-	panel = new JPanel();
-	panel.setLayout(new BorderLayout());
-	label = new JLabel("Text Orientation");
-	label.setHorizontalAlignment(SwingConstants.CENTER);
-	label.setPreferredSize(new Dimension(100, label.getHeight()));
-	panel.add(label, BorderLayout.WEST);
-	chipReferenceOrientationCombo = new JComboBox(Text.Orientation.values());
-	chipReferenceOrientationCombo.addActionListener(this);
-	panel.add(chipReferenceOrientationCombo, BorderLayout.CENTER);
-	layoutPanel.add(panel);
 	//alignment
 	panel = new JPanel();
 	panel.setLayout(new BorderLayout());
-	label = new JLabel("Text Alignment");
+	label = new JLabel("Alignment");
 	label.setHorizontalAlignment(SwingConstants.CENTER);
 	label.setPreferredSize(new Dimension(100, label.getHeight()));
 	panel.add(label, BorderLayout.WEST);
-	chipReferenceAlignmentCombo = new JComboBox();
+	chipReferenceAlignmentCombo = new JComboBox(Texture.Alignment.values());
 	chipReferenceAlignmentCombo.addActionListener(this);
 	panel.add(chipReferenceAlignmentCombo, BorderLayout.CENTER);
 	layoutPanel.add(panel);
@@ -100,7 +87,7 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape> {
              String str =(new StringBuffer(chipUnitField.getText())).insert(chipUnitField.getCaretPosition(),item.getActionCommand()).toString();
              chipUnitField.setText(str);             
              chipUnitField.setCaretPosition(j+1);
-             Texture texture=((Textable)getTarget()).getChipText().getTextureByTag("unit");   
+             Texture texture=((Textable)getTarget()).getTextureByTag("unit");   
              texture.setText(chipUnitField.getText());
              getComponent().Repaint();
             }
@@ -128,25 +115,15 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape> {
 	panel.add(chipUnitField, BorderLayout.CENTER);
 	layoutPanel.add(panel);
 
-	panel = new JPanel();
-	panel.setLayout(new BorderLayout());
-	label = new JLabel("Text Orientation");
-	label.setHorizontalAlignment(SwingConstants.CENTER);
-	label.setPreferredSize(new Dimension(100, label.getHeight()));
-	panel.add(label, BorderLayout.WEST);
-	chipUnitOrientationCombo = new JComboBox(Text.Orientation.values());
-	chipUnitOrientationCombo.addActionListener(this);
-	panel.add(chipUnitOrientationCombo, BorderLayout.CENTER);
-	layoutPanel.add(panel);
         
 	//alignment
 	panel = new JPanel();
 	panel.setLayout(new BorderLayout());
-	label = new JLabel("Text Alignment");
+	label = new JLabel("Alignment");
 	label.setHorizontalAlignment(SwingConstants.CENTER);
 	label.setPreferredSize(new Dimension(100, label.getHeight()));
 	panel.add(label, BorderLayout.WEST);
-	chipUnitAlignmentCombo = new JComboBox();
+	chipUnitAlignmentCombo = new JComboBox(Texture.Alignment.values());
 	chipUnitAlignmentCombo.addActionListener(this);
 	panel.add(chipUnitAlignmentCombo, BorderLayout.CENTER);
 	layoutPanel.add(panel);
@@ -163,30 +140,42 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape> {
 	panel.add(packageNameField, BorderLayout.CENTER);
 	layoutPanel.add(panel);       
     }
-
+    public void updateUI() {
+        SCHSymbol symbol = (SCHSymbol)getTarget();
+        chipNameField.setText(symbol.getDisplayName());
+        //fix empty labels
+    //      Rectangle r= symbol.calculateShape();
+    //        if(symbol.getChipText().getTextureByTag("unit").isEmpty()){
+    //            symbol.getChipText().getTextureByTag("unit").getAnchorPoint().setLocation(r.getX()-10,r.getY()-10);
+    //        }
+    //        if(symbol.getChipText().getTextureByTag("reference").isEmpty()){
+    //            symbol.getChipText().getTextureByTag("reference").getAnchorPoint().setLocation(r.getX(),r.getY());
+    //        }
+    //
+          chipUnitField.setText((symbol.getTextureByTag("unit").getText() ==
+                                 null ? "" :
+                                 symbol.getTextureByTag("unit").getText()));
+          setSelectedItem(chipUnitAlignmentCombo,((SymbolFontTexture)symbol.getTextureByTag("unit")).getAlignment()); 
+        
+          chipReferenceField.setText((symbol.getTextureByTag("reference").getText() ==
+                                      null ? "" :
+                                      symbol.getTextureByTag("reference").getText()));
+          setSelectedItem(chipReferenceAlignmentCombo,((SymbolFontTexture)symbol.getTextureByTag("reference")).getAlignment()); 
+    //
+    //        packageNameField.setText(symbol.getPackaging()==null?"": symbol.getPackaging().getFootprintName());
+    //
+            
+        
+    }
     public void actionPerformed(ActionEvent e) {
-	if (e.getSource() == chipReferenceOrientationCombo) {
-	    Texture text =
-		((Textable)getTarget()).getChipText().getTextureByTag("reference");
-	    text.setOrientation((text.getAlignment().getOrientation() == Text.Orientation. HORIZONTAL ? Text.Orientation.VERTICAL : Text.Orientation.HORIZONTAL));
-	    validateAlignmentComboText(chipReferenceAlignmentCombo,text);
-	    getComponent().Repaint();
-	}
+        SCHSymbol symbol = (SCHSymbol)getTarget();
 	if(e.getSource()==chipReferenceAlignmentCombo){
-	    Texture text=((Textable)getTarget()).getChipText().getTextureByTag("reference");  
-	    text.setAlignment(Text.Alignment.valueOf((String)chipReferenceAlignmentCombo.getSelectedItem()));
+           ((SymbolFontTexture)symbol.getTextureByTag("reference")).setAlignment((Texture.Alignment)chipReferenceAlignmentCombo.getSelectedItem());   
 	    getComponent().Repaint();
 	}  
-	if (e.getSource() == chipUnitOrientationCombo) {
-	    Texture text =
-		((Textable)getTarget()).getChipText().getTextureByTag("unit");
-	    text.setOrientation((text.getAlignment().getOrientation() == Text.Orientation.HORIZONTAL ? Text.Orientation.VERTICAL : Text.Orientation.HORIZONTAL));
-	    validateAlignmentComboText(chipUnitAlignmentCombo,text);
-	    getComponent().Repaint();
-	}
+
 	if(e.getSource()==chipUnitAlignmentCombo){
-	    Texture text=((Textable)getTarget()).getChipText().getTextureByTag("unit");  
-	    text.setAlignment(Text.Alignment.valueOf((String)chipUnitAlignmentCombo.getSelectedItem()));
+           ((SymbolFontTexture)symbol.getTextureByTag("unit")).setAlignment((Texture.Alignment)chipUnitAlignmentCombo.getSelectedItem());  
 	    getComponent().Repaint();
 	} 
 
@@ -200,13 +189,13 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape> {
         SCHSymbol symbol=(SCHSymbol)getTarget();
 	//****chip handling
 	if (e.getSource() == chipUnitField) {
-	    Texture texture=symbol.getChipText().getTextureByTag("unit");                     
+	    Texture texture=symbol.getTextureByTag("unit");                     
 	    texture.setText(chipUnitField.getText());
             
 	    getComponent().Repaint();
 	}
 	if (e.getSource() == chipReferenceField) {
-	    Texture texture=symbol.getChipText().getTextureByTag("reference");                      
+	    Texture texture=symbol.getTextureByTag("reference");                      
 	    texture.setText(chipReferenceField.getText());          
 	    getComponent().Repaint();
 	}
@@ -221,36 +210,6 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape> {
 
     }
 
-    public void updateUI() {
-	SCHSymbol symbol = (SCHSymbol)getTarget();
 
-	//fix empty labels
-	Rectangle r= symbol.calculateShape();
-        if(symbol.getChipText().getTextureByTag("unit").isEmpty()){
-            symbol.getChipText().getTextureByTag("unit").getAnchorPoint().setLocation(r.getX()-10,r.getY()-10);
-        }
-        if(symbol.getChipText().getTextureByTag("reference").isEmpty()){
-            symbol.getChipText().getTextureByTag("reference").getAnchorPoint().setLocation(r.getX(),r.getY());
-        }
-        
-        chipUnitField.setText((symbol.getChipText().getTextureByTag("unit").getText() ==
-			       null ? "" :
-			       symbol.getChipText().getTextureByTag("unit").getText()));
-	chipNameField.setText(symbol.getDisplayName());
-	chipReferenceField.setText((symbol.getChipText().getTextureByTag("reference").getText() ==
-				    null ? "" :
-				    symbol.getChipText().getTextureByTag("reference").getText()));
-
-        packageNameField.setText(symbol.getPackaging()==null?"": symbol.getPackaging().getFootprintName());
-        
-	validateAlignmentComboText(chipUnitAlignmentCombo,symbol.getChipText().getTextureByTag("unit")); 
-
-	setSelectedIndex(chipUnitOrientationCombo,(symbol.getChipText().getTextureByTag("unit").getAlignment().getOrientation().ordinal()));
-
-	setSelectedIndex(chipReferenceOrientationCombo,(symbol.getChipText().getTextureByTag("reference").getAlignment().getOrientation().ordinal()));
-        
-	validateAlignmentComboText(chipReferenceAlignmentCombo,symbol.getChipText().getTextureByTag("reference")); 
-        
-    }
 }
 

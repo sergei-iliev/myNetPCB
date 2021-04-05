@@ -1,9 +1,7 @@
 package com.mynetpcb.symbol.dialog.panel.inspector;
 
-
 import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
-import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.tree.AttachedItem;
@@ -23,14 +21,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-
 public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
     
     private JTextField moduleNameField,widthField,heightField;
     
     private JComboBox textLayoutCombo,referenceCombo,valueCombo;
     
-    JTextField originX,originY;
         
     public SymbolPanelBuilder(SymbolComponent component) {
         super(component,new GridLayout(9,1));  
@@ -127,41 +123,44 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
         textLayoutCombo.setSelectedIndex((((SymbolComponent)getComponent()).getModel().getUnit().getTextLayoutVisibility()?1:0));        
         textLayoutCombo.addActionListener(this); 
         
-        originX.setText(String.valueOf((getComponent().getModel().getUnit().getCoordinateSystem().getX())));
-        originY.setText(String.valueOf((getComponent().getModel().getUnit().getCoordinateSystem().getY())));
+        if(getComponent().getModel().getUnit().getCoordinateSystem()!=null){
+          originX.setText(String.valueOf((getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().x)));
+          originY.setText(String.valueOf((getComponent().getModel().getUnit().getCoordinateSystem().getOrigin().y)));
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==referenceCombo){
            Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)referenceCombo.getSelectedItem()).getUUID());
-           Label text = (Label)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"reference");
+           FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"reference");
            //***demark the old one
            if(text!=null)
               text.getTexture().setTag("label");  
            //***mark the new one 
            if(element!=null){
-               text=((Label)element);
+               text=((FontLabel)element);
                text.getTexture().setTag("reference");
            }           
         }
         
         if(e.getSource()==valueCombo){
            Shape element=getComponent().getModel().getUnit().getShape(((AttachedItem)valueCombo.getSelectedItem()).getUUID());
-           Label text = (Label)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"unit");
+           FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(((SymbolComponent)getComponent()).getModel().getUnit(),"unit");
            //***demark the old one
            if(text!=null)
               text.getTexture().setTag("label");  
            //***mark the new one 
            if(element!=null){
-               text=(Label)element;
+               text=(FontLabel)element;
                text.getTexture().setTag("unit");
            }           
         }
         
+        
         if(e.getSource()==textLayoutCombo){
            ((SymbolComponent)getComponent()).getModel().getUnit().setTextLayoutVisibility((textLayoutCombo.getSelectedIndex()==0?false:true));       
-           getComponent().Repaint();
+         
         }
         getComponent().Repaint();
     }
@@ -180,7 +179,7 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape>{
             getComponent().Repaint();
         }
         if(e.getSource()==originX||e.getSource()==originY){
-            getComponent().getModel().getUnit().getCoordinateSystem().Reset((Integer.parseInt(originX.getText())),(Integer.parseInt(originY.getText())));   
+            getComponent().getModel().getUnit().getCoordinateSystem().reset((Double.parseDouble(originX.getText())),(Double.parseDouble(originY.getText())));   
             getComponent().Repaint();
         }
         

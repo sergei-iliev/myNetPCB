@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.event.UnitEvent;
 import com.mynetpcb.core.capi.event.UnitListener;
 import com.mynetpcb.core.capi.tree.UnitTreeCellRenderer;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.pad.component.FootprintComponent;
 
 import java.awt.BorderLayout;
@@ -89,10 +90,10 @@ public class FootprintsPanel extends JPanel  implements TreeSelectionListener,Un
                     //***fire node selected             
                footprintInspector.selectShapeEvent(new ShapeEvent(footprintComponent.getModel().getUnit().getShape(data.getUUID()), ShapeEvent.SELECT_SHAPE));              
                 //***position on a symbol
-                  Rectangle symbolRect=footprintComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape().getBounds();   
-                  footprintComponent.setScrollPosition(symbolRect.x, symbolRect.y);                                                                                                                                          
+                  Box symbolRect=footprintComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
+                  footprintComponent.setScrollPosition((int)symbolRect.min.x, (int)symbolRect.min.y);                                                                                                                                          
             }else{           //click on unit
-                footprintComponent.getModel().getUnit().setScrollPositionValue(footprintComponent.getViewportWindow().x,footprintComponent.getViewportWindow().y);                 
+                footprintComponent.getModel().getUnit().setScrollPositionValue((int)footprintComponent.getViewportWindow().getX(),(int)footprintComponent.getViewportWindow().getY());                 
                 footprintComponent.getModel().setActiveUnit(data.getUUID());
                 footprintComponent.getModel().getUnit().setSelected(false);    
                 footprintComponent.componentResized(null);

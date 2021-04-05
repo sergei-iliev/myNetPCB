@@ -4,14 +4,13 @@ package com.mynetpcb.core.capi.event;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.UndoCallback;
+import com.mynetpcb.d2.shapes.Box;
 
 import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -42,40 +41,40 @@ public abstract class EventHandle<C extends UnitComponent,S extends Shape> imple
     }
 
     public void mousePressed(MouseEvent e) {         
-        mouseScaledPressed(new  MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));                                                
+        mouseScaledPressed(new  MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                
     }
 
     public void mouseReleased(MouseEvent e) {
        if((!SwingUtilities.isRightMouseButton(e))&&(!this.ctrlButtonPress)){                       
-         mouseScaledReleased(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));             
+         mouseScaledReleased(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                            
        } 
     }
 
     public void mouseDragged(MouseEvent e) {
         //****disallow dragging when CTRL is clicked
         if((!SwingUtilities.isRightMouseButton(e))&&(!this.ctrlButtonPress)){ 
-          mouseScaledDragged(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));             
+          mouseScaledDragged(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                           
         }
     }
 
     public void mouseMove(MouseEvent e) {
         if(!SwingUtilities.isRightMouseButton(e)&&(!this.ctrlButtonPress)){   
-          mouseScaledMove(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));           
+          mouseScaledMove(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                         
         }
     }
 
     public void doubleClick(MouseEvent e) {
-        doubleScaledClick(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));           
+        doubleScaledClick(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                         
 
     }
 
     public void mouseEntered(MouseEvent e) {
-        mouseScaledEntered(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));           
+        mouseScaledEntered(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                         
 
     }
 
     public void mouseExited(MouseEvent e) {
-        mouseScaledExited(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point(getComponent().getViewportWindow().x+e.getX(),getComponent().getViewportWindow().y+e.getY()))));           
+        mouseScaledExited(new MouseScaledEvent(e,getComponent().getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getComponent().getViewportWindow().getX()+e.getX()),(int)(getComponent().getViewportWindow().getY()+e.getY())))));                                                          
 
     }
 
@@ -87,7 +86,7 @@ public abstract class EventHandle<C extends UnitComponent,S extends Shape> imple
 
     }
    
-    protected abstract void Clear();
+    protected abstract void clear();
     /*
      * zoomin,rotating and so on
      */
@@ -125,15 +124,15 @@ public abstract class EventHandle<C extends UnitComponent,S extends Shape> imple
 
     //***use to init resources on Handle select
 
-    public void Attach() {
+    public void attach() {
         this.ctrlButtonPress = false;
         mx=0;
         my=0;  
     }
     //***use to clean resources on Handle close
 
-    public void Detach() {
-        Clear();
+    public void detach() {
+        clear();
     }
 
     public void setTarget(S target) {
@@ -152,17 +151,15 @@ public abstract class EventHandle<C extends UnitComponent,S extends Shape> imple
     }
   
     //***helper method
-    protected void drawSelectionRect(Graphics2D g,Rectangle selectionRect) {
+    protected void drawSelectionRect(Graphics2D g,Box selectionRect) {
         if (selectionRect.getWidth() != 0 || selectionRect.getHeight() != 0) {
             AlphaComposite composite =
                 AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
             Composite originalComposite = g.getComposite();
             g.setPaint(Color.GRAY);
             g.setComposite(composite);
-            g.fill(selectionRect);
+            selectionRect.paint(g, true);
             g.setComposite(originalComposite);
-            g.setStroke(new BasicStroke(1));
-            g.draw(selectionRect);            
         }
     }
 }

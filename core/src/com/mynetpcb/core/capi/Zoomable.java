@@ -8,8 +8,8 @@ import java.awt.Point;
  */
 public interface Zoomable {
     
- public boolean ZoomIn(Point scaleOriginePoint);
+ public boolean zoomIn(Point scaleOriginePoint);
     
- public boolean ZoomOut(Point scaleOriginePoint);
+ public boolean zoomOut(Point scaleOriginePoint);
  
 }

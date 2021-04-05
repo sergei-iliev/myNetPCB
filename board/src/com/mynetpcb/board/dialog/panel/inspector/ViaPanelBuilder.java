@@ -58,11 +58,12 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void updateUI() {
         PCBVia via=(PCBVia)getTarget(); 
-        leftField.setText(toUnitX(via.getX()));
-        topField.setText(toUnitY(via.getY()));
+        leftField.setText(toUnitX(via.getInner().pc.x));
+        topField.setText(toUnitY(via.getInner().pc.y));
         netField.setText(via.getNetName());
-        thicknessField.setText(toUnit(via.getThickness()));
-        widthField.setText(toUnit(via.getWidth()));
+        
+        thicknessField.setText(toUnit(via.getInner().r*2));
+        widthField.setText(toUnit(via.getOuter().r*2));
         clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(via.getClearance())));
     }
 
@@ -75,24 +76,22 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
     public void keyReleased(KeyEvent e){
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
         PCBVia via=(PCBVia)getTarget();
-        if(e.getSource()==this.leftField){
-           via.setX(fromUnit(this.leftField.getText())); 
+        if(e.getSource()==this.leftField || e.getSource()==this.topField){
+           via.getInner().pc.set(fromUnitX(this.leftField.getText()),fromUnitY(this.topField.getText()));
+           via.getOuter().pc.set(via.getInner().pc.x,via.getInner().pc.y);
         }
-        
-        if(e.getSource()==this.topField){
-            via.setY(fromUnit(this.topField.getText())); 
-        }
+
         if(e.getSource()==this.thicknessField){
-           via.setThickness(fromUnit(this.thicknessField.getText()));
+           via.getInner().r=(fromUnit(this.thicknessField.getText())/2);
         }
         if(e.getSource()==this.widthField){
-           via.setWidth(fromUnit(this.widthField.getText()));
+           via.getOuter().r=fromUnit(this.widthField.getText())/2;
         }
         if(e.getSource()==this.netField){
            via.setNetName(this.netField.getText());
         }
         if(e.getSource()==this.clearanceField){
-           via.setClearance(Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
+           via.setClearance((int)Grid.MM_TO_COORD(Double.parseDouble(clearanceField.getText())));
         }
         
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));

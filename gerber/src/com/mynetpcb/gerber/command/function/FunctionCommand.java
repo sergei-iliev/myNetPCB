@@ -2,7 +2,6 @@ package com.mynetpcb.gerber.command.function;
 
 import com.mynetpcb.gerber.command.AbstractCommand;
 
-
 public class FunctionCommand extends AbstractCommand {
     
     public FunctionCommand(Type type) {

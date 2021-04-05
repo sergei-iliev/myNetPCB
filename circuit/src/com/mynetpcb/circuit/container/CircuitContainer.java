@@ -1,6 +1,5 @@
 package com.mynetpcb.circuit.container;
 
-
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.core.capi.container.UnitContainer;
 import com.mynetpcb.core.capi.event.ShapeEvent;
@@ -24,20 +23,19 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-
 public class CircuitContainer extends UnitContainer<Circuit, Shape>{
     public CircuitContainer() {
-      setFileName("Circuits");
+        setFileName("Circuits");
     }
 
     @Override
-    public StringBuffer Format() {
+    public StringBuffer format() {
         //***go through all circuits and invoke format on them
         StringBuffer xml = new StringBuffer();
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<circuits identity=\"circuit\" designer=\"" +
                    this.getDesignerName() + "\" version=\"" + VersionUtils.CIRCUIT_VERSION + "\">\r\n");
         for (Circuit circuit : getUnits()) {
-            xml.append(circuit.Format());
+            xml.append(circuit.format());
             xml.append("\r\n");
         }
         xml.append("</circuits>");
@@ -45,10 +43,8 @@ public class CircuitContainer extends UnitContainer<Circuit, Shape>{
     }
 
     @Override
-    public void Parse(String xml) throws XPathExpressionException,
-                                         ParserConfigurationException,
-                                         SAXException, IOException {
-
+    public void parse(String xml) throws XPathExpressionException, ParserConfigurationException, SAXException,
+                                            IOException {
         Document document = Utilities.buildDocument(xml);
 
         XPathFactory factory = XPathFactory.newInstance();
@@ -89,16 +85,16 @@ public class CircuitContainer extends UnitContainer<Circuit, Shape>{
                continue;                        
             }  
             Circuit circuit =new Circuit(1,1);
-            circuit.Parse(node);
-            Add(circuit);
+            circuit.parse(node);
+            add(circuit);
             circuit.notifyListeners(ShapeEvent.ADD_SHAPE);
-        }         
+        }  
 
     }
 
     @Override
-    public void Parse(String xml, int index) throws ParserConfigurationException, SAXException, IOException,
-                                                XPathExpressionException {
+    public void parse(String xml, int index) throws XPathExpressionException, ParserConfigurationException, SAXException,
+                                                   IOException {
         Document document = Utilities.buildDocument(xml);
 
         XPathFactory factory = XPathFactory.newInstance();
@@ -114,9 +110,11 @@ public class CircuitContainer extends UnitContainer<Circuit, Shape>{
                continue;                        
             }  
             if(_index==index){
-               getUnit().Parse(node);
+               getUnit().parse(node);
             }
             _index++;              
         } 
-    }
+      }
+
+    
 }

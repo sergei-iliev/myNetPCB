@@ -37,7 +37,7 @@ public class ReadUnitLocal extends Command {
     @Override
     public Void execute() {
         if(monitor!=null){
-          monitor.OnStart(this.getClass());  
+          monitor.onStart(this.getClass());  
         }
         
         Charset charset=Charset.forName("UTF-8");
@@ -60,7 +60,7 @@ public class ReadUnitLocal extends Command {
                   new Runnable(){
                        public void run(){
                            if(monitor!=null){
-                             monitor.OnRecive(response,receiver);                               
+                             monitor.onRecive(response,receiver);                               
                            }
                        }                        
                   }                  
@@ -69,7 +69,7 @@ public class ReadUnitLocal extends Command {
              catch(InvocationTargetException ite) {}    
  
                if(monitor!=null){
-                 monitor.OnFinish(receiver);
+                 monitor.onFinish(receiver);
                }
             
         } catch(Exception e) {

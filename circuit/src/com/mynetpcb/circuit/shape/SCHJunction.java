@@ -1,208 +1,171 @@
 package com.mynetpcb.circuit.shape;
 
-
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
-import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+public class SCHJunction extends Shape implements Externalizable{
+    private Circle circle;
 
-public class SCHJunction extends Shape implements Externalizable {
-
-
-    public SCHJunction() {
-        super(0, 0, 0, 0, 1,0);
-        this.fillColor=Color.BLUE;
-        this.setSelectionRectWidth(3);
+   public SCHJunction(){
+	  super(1,Layer.LAYER_ALL);	
+	  this.displayName = "Junction";	
+	  this.selectionRectWidth=2;	
+          this.fillColor=Color.BLACK;
+	  this.circle=new Circle(new Point(0,0),this.selectionRectWidth);	
     }
-
-    @Override
+   @Override
     public SCHJunction clone() throws CloneNotSupportedException {
-        SCHJunction copy = (SCHJunction)super.clone();
-        return copy;
+        SCHJunction copy=(SCHJunction)super.clone();        
+        copy.circle=this.circle.clone();
+       return copy;
     }
-
     @Override
-    public Rectangle calculateShape() {
-        return new Rectangle(getX() - selectionRectWidth, getY() - selectionRectWidth, 2 * selectionRectWidth,
-                             2 * selectionRectWidth);
+    public Point alignToGrid(boolean isRequired) {        
+            Point point=this.getOwningUnit().getGrid().positionOnGrid(this.circle.pc.x, this.circle.pc.y);
+            this.circle.pc.set(point.x,point.y);    
+            return null;                
     }
-
     @Override
-    public void Move(int xoffset, int yoffset) {
-        setX(getX() + xoffset);
-        setY(getY() + yoffset);
+    public Box getBoundingShape() {
+            return this.circle.box();    
     }
-
     @Override
-    public void Mirror(Point A,Point B) {
-        Point point = new Point(getX(), getY());
-        Utilities.mirrorPoint(A,B, point);
-        setX(point.x);
-        setY(point.y);
+    public void move(double xoff, double yoff) {        
+        this.circle.move(xoff,yoff);
     }
-
     @Override
-    public void Translate(AffineTransform translate) {
-        Point point = new Point(getX(), getY());
-        translate.transform(point, point);
-        setX(point.x);
-        setY(point.y);
-    }
-
-    @Override
-    public void Rotate(AffineTransform rotation) {
-        Point point = new Point(getX(), getY());
-        rotation.transform(point, point);
-        setX(point.x);
-        setY(point.y);
-    }
-
-    @Override
-    public long getOrderWeight() {
+    public long getClickableOrder() {           
         return 1;
+    }       
+    @Override
+    public void rotate(double angle, Point origin) {
+        this.circle.rotate(angle,origin);        
     }
     
     @Override
-    public int getDrawingOrder() {        
-        return 101;
+    public void mirror(Line line) {
+        this.circle.mirror(line);        
+    }
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {
+        Box rect = this.circle.box();
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+                return;
+        }             
+        g2.setColor(isSelected()?Color.BLUE:fillColor);
+
+        Circle c=this.circle.clone();
+        c.scale(scale.getScaleX());
+        c.move(-viewportWindow.getX() ,- viewportWindow.getY());        
+        c.paint(g2,true);        
     }
     
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
-        Rectangle2D scaledRect = Utilities.getScaleRect(getBoundingShape().getBounds(), scale);
-
-        if (!scaledRect.intersects(viewportWindow)) {
-            return;
-        }
-        g2.setColor(isSelected() ? Color.GRAY : fillColor);
-
-        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
-        ellipse.setFrame(scaledRect.getX() - viewportWindow.x, scaledRect.getY() - viewportWindow.y,
-                         scaledRect.getWidth(), scaledRect.getHeight());
-        g2.fill(ellipse);
-        ellipseProvider.reset();
-    }
-
-    @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-              
-        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:fillColor);
-
-        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
-        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
-        ellipse.setFrame(getX() - selectionRectWidth, getY() - selectionRectWidth, 2 * selectionRectWidth,
-                                     2 * selectionRectWidth);        
-        g2.fill(ellipse);
-        ellipseProvider.reset();
-    }
-
-    @Override
-    public String getDisplayName() {
-        return "Junction";
-    }
-
-    @Override
-    public String toXML() {
-        StringBuffer xml = new StringBuffer();
-        xml.append("<junction>");
-        xml.append(getX() + "," + getY());
-        xml.append("</junction>\r\n");
-        return xml.toString();
-    }
-
-    @Override
-    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
-        StringTokenizer st = new StringTokenizer(node.getTextContent(), ",");
-        setX(Integer.parseInt(st.nextToken()));
-        setY(Integer.parseInt(st.nextToken()));
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
+        g2.setColor(fillColor);              
+        this.circle.paint(g2,true); 
+        
     }
     
+    @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
     }
 
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
+    @Override
+    public String toXML() {
+        StringBuffer xml = new StringBuffer();
+        xml.append("<junction x=\""+Utilities.roundDouble(circle.pc.x,1)+"\" y=\""+Utilities.roundDouble(circle.pc.y,1)+"\" />\r\n");                
+        return xml.toString();
     }
 
-    static class Memento extends AbstractMemento<Circuit,SCHJunction>{
-        private int Ax;
-        
-        private int Ay;
-        
-        public Memento(MementoType mementoType){
-           super(mementoType); 
+    @Override
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
+        Element element=(Element)node;
+        if(element.hasAttributes()){
+            circle.pc.set(Double.parseDouble(element.getAttribute("x")),Double.parseDouble(element.getAttribute("y")));        
+        }else{
+            StringTokenizer st = new StringTokenizer(node.getTextContent(), ",");
+            circle.pc.set(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()));        
         }
+    }
+
+    public static class Memento extends AbstractMemento<Circuit, SCHJunction> {
+
+        private double x;
+        private double y;
         
+        public Memento(MementoType mementoType) {
+            super(mementoType);
+
+        }
+
+        @Override
         public void loadStateTo(SCHJunction shape) {
             super.loadStateTo(shape);
-            shape.setX(Ax);
-            shape.setY(Ay);
+            shape.circle.pc.set(x, y);
         }
-        
 
-        public void saveStateFrom(SCHJunction shape){
+        @Override
+        public void saveStateFrom(SCHJunction shape) {
             super.saveStateFrom(shape);
-            Ax=shape.getX();
-            Ay=shape.getY();
+            x=shape.circle.pc.x;
+            y=shape.circle.pc.y;
         }
+
+
         @Override
-        public boolean equals(Object obj){
-            if(this==obj){
-              return true;  
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
             }
-            if(!(obj instanceof Memento)){
-              return false;  
+            if (!(obj instanceof Memento)) {
+                return false;
             }
-            
-            Memento other=(Memento)obj;            
-        
-            return(getUUID().equals(other.getUUID())&&
-                   getMementoType().equals(other.getMementoType())&&
-                   Ax==other.Ax&&
-                   Ay==other.Ay                
-                );
-                      
+            Memento other = (Memento) obj;
+            return (super.equals(obj)&&
+                    Utils.EQ(x, other.x) && Utils.EQ(y, other.y));
         }
-        
+
         @Override
-        public int hashCode(){
-            int hash=getUUID().hashCode();
-                hash+=this.getMementoType().hashCode();
-                hash+=Ax+Ay;
+        public int hashCode() {
+            int  hash = super.hashCode();
+            hash += Double.hashCode(x);
+            hash += Double.hashCode(y);
             return hash;
-        }        
-        public boolean isSameState(Circuit unit) {
-            SCHJunction junction=(SCHJunction)unit.getShape(getUUID());
-            return( 
-                  Ax==junction.getX()&&
-                  Ay==junction.getY() 
-                );
         }
-    }
+        @Override
+        public boolean isSameState(Unit unit) {
+            SCHJunction line = (SCHJunction) unit.getShape(getUUID());
+            return (line.getState(getMementoType()).equals(this));
+        }
+    }   
 }

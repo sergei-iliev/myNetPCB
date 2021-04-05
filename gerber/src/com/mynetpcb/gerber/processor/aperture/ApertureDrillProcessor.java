@@ -1,13 +1,11 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.board.shape.HoleShape;
 import com.mynetpcb.core.board.shape.ViaShape;
-import com.mynetpcb.core.capi.Pinaware;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
 import com.mynetpcb.gerber.attribute.drill.ComponentDrillAttribute;
@@ -42,8 +40,8 @@ public class ApertureDrillProcessor implements Processor{
     
     private void processPads(Unit<? extends Shape> board ){
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
-        for(FootprintShape footrpint:footprints){
-            Collection<Pad> pads=((Pinaware)footrpint).getPins();
+        for(FootprintShape footprint:footprints){
+            Collection<Pad> pads=(Collection<Pad>)footprint.getPads();
             for(Pad pad:pads){
                 if(pad.getType()==Pad.Type.THROUGH_HOLE ||pad.getType()==Pad.Type.CONNECTOR){
                     CircleAperture drill=new CircleAperture(); 
@@ -59,7 +57,7 @@ public class ApertureDrillProcessor implements Processor{
         List<HoleShape> holes= board.getShapes(HoleShape.class);              
         for(HoleShape hole:holes){
             CircleAperture drill=new CircleAperture(); 
-            drill.setDiameter(hole.getWidth());
+            drill.setDiameter(hole.getInner().r*2);
             drill.setAttribute(new MechanicalDrillAttribute());
             dictionary.add(drill); 
         }  
@@ -72,9 +70,10 @@ public class ApertureDrillProcessor implements Processor{
         List<ViaShape> vias= board.getShapes(ViaShape.class);              
         for(ViaShape via:vias){
             CircleAperture drill=new CircleAperture(); 
-            drill.setDiameter(via.getThickness());
+            drill.setDiameter(via.getInner().r*2);
             drill.setAttribute(new ViaDrillAttribute());
             dictionary.add(drill); 
         } 
     }
 }
+

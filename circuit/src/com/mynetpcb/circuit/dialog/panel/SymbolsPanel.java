@@ -1,6 +1,5 @@
 package com.mynetpcb.circuit.dialog.panel;
 
-
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.CircuitMgr;
@@ -22,10 +21,12 @@ import com.mynetpcb.core.capi.io.remote.ReadConnector;
 import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.capi.io.search.FileNameLookup;
 import com.mynetpcb.core.capi.io.search.XMLTagContentLookup;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.tree.AttachedItem;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.unit.Symbol;
 
@@ -36,7 +37,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Rectangle2D;
 
 import java.io.IOException;
 
@@ -73,7 +73,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
-
 
 public class SymbolsPanel extends JPanel implements
                                                        MouseListener,
@@ -176,8 +175,8 @@ public class SymbolsPanel extends JPanel implements
     public void mousePressed(MouseEvent e) {
         if (e.getSource() == selectionPanel){
             isPressedFlag=true;
-            circuitComponent.getDialogFrame().setButtonGroup(circuitComponent.COMPONENT_MODE);
-            circuitComponent.setMode(CircuitComponent.COMPONENT_MODE);
+            circuitComponent.getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+            circuitComponent.setMode(Mode.COMPONENT_MODE);
         }
     }
 
@@ -189,11 +188,14 @@ public class SymbolsPanel extends JPanel implements
             }
         
            //***drop must be in viewable area
-           Rectangle2D rect=Utilities.getScaleRect(circuitComponent.getContainerCursor().getBoundingShape().getBounds(), circuitComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation());
-           if(circuitComponent.getViewportWindow().contains(rect.getCenterX(),rect.getCenterY())){
+           
+            Box rect = circuitComponent.getContainerCursor().getBoundingShape();
+            rect.scale( circuitComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+           
+            if(rect.intersects(circuitComponent.getViewportWindow())){
                  try {
                     Shape shape = circuitComponent.getContainerCursor().clone();
-                    circuitComponent.getModel().getUnit().Add(shape);
+                    circuitComponent.getModel().getUnit().add(shape);
                     circuitComponent.getModel().getUnit().setSelected(false);
                     shape.setSelected(true);
                     shape.alignToGrid(circuitComponent.getParameter("snaptogrid",Boolean.class,Boolean.FALSE)); 
@@ -211,7 +213,7 @@ public class SymbolsPanel extends JPanel implements
                
            }
           //***delete cursor and reset event handler
-           circuitComponent.setMode(CircuitComponent.COMPONENT_MODE); 
+           circuitComponent.setMode(Mode.COMPONENT_MODE); 
            circuitComponent.Repaint();
         
         }
@@ -231,8 +233,8 @@ public class SymbolsPanel extends JPanel implements
                 circuitComponent.getModel().getUnit().setSelected(false);
 
             //***set chip cursor
-                shape.Move(-1 * (int)shape.getBoundingShape().getBounds().getCenterX(),
-                      -1 * (int)shape.getBoundingShape().getBounds().getCenterY());
+                shape.move(-1 * (int)shape.getBoundingShape().getCenter().x,
+                      -1 * (int)shape.getBoundingShape().getCenter().y);
                 circuitComponent.setContainerCursor(shape);
                 circuitComponent.getEventMgr().setEventHandle("cursor", shape);
           }
@@ -251,16 +253,16 @@ public class SymbolsPanel extends JPanel implements
 
     public void mouseExited(MouseEvent e) {
     }
-
-    public void OnStart(Class reciever) {
+    @Override
+    public void onStart(Class reciever) {
         if (reciever==JTree.class||reciever==SearchUnitLocal.class) {
             root.removeAllChildren();
             ((DefaultTreeModel)symbolTree.getModel()).reload();
         }
         DisabledGlassPane.block(circuitComponent.getDialogFrame().getRootPane(),"Loading...");      
     }
-
-    public void OnRecive(String result,  Class reciever) {
+    @Override
+    public void onRecive(String result,  Class reciever) {
         if (reciever==SearchableComboBox.class||reciever==JTree.class||reciever==ReadUnitsLocal.class||reciever==SearchUnitLocal.class) {
             //clear selection
             selectionPanel.Clear();
@@ -319,7 +321,7 @@ public class SymbolsPanel extends JPanel implements
             selectionPanel.Clear();
             try {
                 UnitContainer model= new SymbolContainer();
-                model.Parse(result);
+                model.parse(result);
                 selectionPanel.getSelectionGrid().setModel(model);
             } catch (Exception e) {
                 e.printStackTrace(System.out);            
@@ -330,12 +332,12 @@ public class SymbolsPanel extends JPanel implements
             selectionPanel.revalidate();     
         }
     }
-
-    public void OnFinish(Class receiver) {
+    @Override
+    public void onFinish(Class receiver) {
         DisabledGlassPane.unblock(circuitComponent.getDialogFrame().getRootPane());  
     }
-
-    public void OnError(String error) {
+    @Override
+    public void onError(String error) {
         DisabledGlassPane.unblock(circuitComponent.getDialogFrame().getRootPane()); 
         JOptionPane.showMessageDialog(circuitComponent.getDialogFrame().getParentFrame(), error, "Error",
                                       JOptionPane.ERROR_MESSAGE);       

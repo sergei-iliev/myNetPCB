@@ -41,9 +41,9 @@ public final class UndoProvider {
         return queue.get(currentIndex--);
     }
 
-    public void Clear() {
+    public void clear() {
         for (AbstractMemento memento : queue) {
-            memento.Clear();
+            memento.clear();
         }
         queue.clear();
         currentIndex = 0;
@@ -54,7 +54,7 @@ public final class UndoProvider {
         for(int i=queue.size()-1;i>0;i--){
             AbstractMemento prevMemento=queue.get(i);
                 if(prevMemento.equals(memento)){ 
-                  memento.Clear();
+                  memento.clear();
                   return;  
                 }              
             break;
@@ -63,7 +63,7 @@ public final class UndoProvider {
         
         if (currentIndex >= QUEUE_DEPTH) {
             AbstractMemento _memento = queue.remove(0);
-            _memento.Clear();
+            _memento.clear();
             currentIndex = queue.size()-1; 
         }        
         
@@ -71,7 +71,7 @@ public final class UndoProvider {
         } else {
              for (int j = currentIndex + 1; currentIndex < queue.size() - 1; ) {            
                 AbstractMemento _memento = queue.remove(j);
-                _memento.Clear();
+                _memento.clear();
              }
         }
 

@@ -5,22 +5,16 @@ import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.pad.shape.Circle;
 
-public class PCBCircle extends Circle implements PCBShape {
-
-    public PCBCircle( int x, int y, int r, int thickness, int layermaskid) {
-        super( x, y, r, thickness, layermaskid);
+public class PCBCircle extends Circle implements PCBShape{
+    public PCBCircle(double x,double y,double r,int thickness,int layermaskId) {
+        super(x,y,r,thickness,layermaskId);
     }
-
+    
     @Override
     public AbstractMemento getState(MementoType operationType) {
         Memento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
-    }
-
-    @Override
-    public void setState(AbstractMemento memento) {
-        ((Memento) memento).loadStateTo(this);
     }
 
     public static class Memento extends Circle.Memento {
@@ -29,5 +23,5 @@ public class PCBCircle extends Circle implements PCBShape {
             super(mementoType);
         }
 
-    }
+    }    
 }

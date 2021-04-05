@@ -1,9 +1,9 @@
 package com.mynetpcb.core.capi;
 
+import com.mynetpcb.d2.shapes.Box;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
 /**
@@ -19,7 +19,7 @@ public interface Drawable {
      * @param scale current zoom.
      * @param everything is drawn over a layer
      */
-    public void Paint(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale,int layermask);
+    public void paint(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale,int layermask);
     
     /**
      *
@@ -34,13 +34,13 @@ public interface Drawable {
      * @param r to check against
      * @return 
      */
-    public boolean isInRect(Rectangle r);
+    public boolean isInRect(Box r);
     
     /**
      * Represents outline shape of the figure as drawn by the rendering engine.
      * @return shape's bounding rectangle. Must be the same as cacheable rectangle 
      */
-    public Shape getBoundingShape();
+    public Box getBoundingShape();
     
     /**
      *

@@ -6,7 +6,8 @@ import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
 
-import java.awt.Point;
+
+import com.mynetpcb.d2.shapes.Point;
 
 import javax.swing.SwingUtilities;
 
@@ -19,7 +20,7 @@ public class ResizeEventHandle <U extends UnitComponent,S extends Shape> extends
     }
     
     @Override
-    protected void Clear() {
+    protected void clear() {
         targetPoint=null;        
     }
 
@@ -59,7 +60,7 @@ public class ResizeEventHandle <U extends UnitComponent,S extends Shape> extends
         int new_mx = e.getX();
         int new_my = e.getY();
         
-        ((Resizeable)getTarget()).Resize(new_mx - mx, new_my - my,targetPoint);
+        ((Resizeable)getTarget()).resize(new_mx - mx, new_my - my,targetPoint);
         // update our data
         mx = new_mx;
         my = new_my;

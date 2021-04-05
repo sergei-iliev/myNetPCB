@@ -1,6 +1,6 @@
 package com.mynetpcb.core.capi.line;
 
-import java.awt.Rectangle;
+import com.mynetpcb.d2.shapes.Rectangle;
 
 import java.util.Set;
 

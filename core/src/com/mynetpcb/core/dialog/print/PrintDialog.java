@@ -12,6 +12,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.io.File;
+
 import java.lang.ref.WeakReference;
 
 import javax.swing.BorderFactory;
@@ -37,10 +39,12 @@ public abstract class PrintDialog extends JDialog implements ActionListener {
     protected JButton printButton,selectFileFolderButton;
     protected JComboBox sizeCB;
     protected JTextField  targetFile;
+    private String currentPath;
     
-    public PrintDialog(Window owner, UnitComponent unitComponent,String caption) {
+    public PrintDialog(Window owner, UnitComponent unitComponent,String caption,String currentPath) {
         super(owner,caption);
         this.setModal(true);
+        this.currentPath=currentPath;
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.unitComponent = new WeakReference<>(unitComponent);
         this.setSize(460, 200);        
@@ -116,7 +120,7 @@ public abstract class PrintDialog extends JDialog implements ActionListener {
         JLabel label = new JLabel(name);
         second.add(label);
 
-        targetFile = new JTextField("",20);
+        targetFile = new JTextField(currentPath==null?"":currentPath,20);
         second.add(targetFile);
 
         selectFileFolderButton = new JButton();
@@ -133,6 +137,9 @@ public abstract class PrintDialog extends JDialog implements ActionListener {
             
                         JFileChooser fc = new JFileChooser(targetFile.getText());
                         fc.setFileSelectionMode(Integer.parseInt(e.getActionCommand()) );
+                        if(currentPath!=null){
+                          fc.setCurrentDirectory(new File(currentPath));
+                        }
                         if(JFileChooser.FILES_ONLY==Integer.parseInt(e.getActionCommand())){
                          fc.setDialogTitle("Select File");
                          fc.setAcceptAllFileFilterUsed(false);
@@ -160,7 +167,7 @@ public abstract class PrintDialog extends JDialog implements ActionListener {
         }
         if (e.getActionCommand().equals("PRINT")) {
             
-            unitComponent.get().Print(createContext());
+            unitComponent.get().print(createContext());
         }
 
         if (e.getActionCommand().equals("CANCEL")) {

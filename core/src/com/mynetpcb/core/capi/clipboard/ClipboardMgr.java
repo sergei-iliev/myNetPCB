@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.clipboard;
 
 
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -33,8 +34,8 @@ public class ClipboardMgr{
         case LOCAL:
             clipboard.setContents(transferable, null); 
             break;
-        //case SYSTEM:
-        //    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferable,null);
+        case SYSTEM:
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferable,null);
         }
     }    
 
@@ -42,22 +43,20 @@ public class ClipboardMgr{
         switch(type){
         case LOCAL:
             return clipboard.getContents(this);
-        //case SYSTEM:
-        //    return Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        case SYSTEM:
+            return Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         }        
         throw new IllegalStateException("Unknown clipboard type");
     }
     
-    public boolean isTransferDataAvailable(Clipboardable.Clipboard type){
-        try{
-            Transferable transferable=getClipboardContent(type);        
-            if(transferable==null) 
-                return false;        
-            else
-                return transferable.isDataFlavorSupported(DataFlavor.stringFlavor);       
-        }catch(AccessControlException e){
-           return false; 
-        }
+    public boolean isTransferDataAvailable(Clipboardable.Clipboard type){        
+        switch(type){
+        case LOCAL:
+            return clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor);
+        case SYSTEM:
+            return Toolkit.getDefaultToolkit().getSystemClipboard().isDataFlavorAvailable(DataFlavor.stringFlavor);
+        }        
+        throw new IllegalStateException("Unknown clipboard type");
     }
     
     

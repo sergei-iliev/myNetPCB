@@ -35,7 +35,7 @@ public class ReadUnitsLocal extends Command {
     }
     @Override 
     public Void execute() {
-        monitor.OnStart(receiver);
+        monitor.onStart(receiver);
 
         final StringBuffer result = new StringBuffer();
         result.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><units>\r\n");
@@ -55,21 +55,21 @@ public class ReadUnitsLocal extends Command {
                 }
             }
         } catch (IOException e) {
-             monitor.OnError(e.getMessage());
+             monitor.onError(e.getMessage());
              return null;
         }catch(VerificationException e){
-              monitor.OnError(e.getMessage());
+              monitor.onError(e.getMessage());
               return null;    
         }
         result.append("</units>");
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
                 public void run() {
-                    monitor.OnRecive(result.toString(), receiver);
+                    monitor.onRecive(result.toString(), receiver);
                 }
             });
             
-            monitor.OnFinish(receiver);    
+            monitor.onFinish(receiver);    
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         } catch (InvocationTargetException ite) {

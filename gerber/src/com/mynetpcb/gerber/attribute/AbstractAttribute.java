@@ -5,7 +5,6 @@ import com.mynetpcb.pad.shape.Pad;
 
 import java.util.Objects;
 
-
 /*
  * Meta gerber data
  */
@@ -88,3 +87,4 @@ public abstract class AbstractAttribute implements Printable{
     
     
 }
+

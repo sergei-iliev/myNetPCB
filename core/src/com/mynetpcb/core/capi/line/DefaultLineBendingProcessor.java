@@ -1,7 +1,6 @@
 package com.mynetpcb.core.capi.line;
 
-
-import java.awt.Point;
+import com.mynetpcb.d2.shapes.Point;
 
 public class DefaultLineBendingProcessor extends LineBendingProcessor {
     @Override    
@@ -9,18 +8,16 @@ public class DefaultLineBendingProcessor extends LineBendingProcessor {
        boolean result=false;
        if(!isOverlappedPoint(point)){
            if(!isPointOnLine(point)){
-               getLine().addPoint(point);   
+               getLine().add(point);   
                result=true;
            }               
        }         
-       getLine().Reset(point); 
+       getLine().reset(point); 
        return result;
     }
 
-    public void moveLinePoint(int x, int y) {
-      getLine().getFloatingEndPoint().setLocation(x,y); 
-      getLine().getFloatingMidPoint().setLocation(x,y);
+    public void moveLinePoint(double x, double y) {
+      getLine().getFloatingEndPoint().set(x,y); 
+      getLine().getFloatingMidPoint().set(x,y);
     }
-
 }
-

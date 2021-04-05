@@ -1,6 +1,5 @@
 package com.mynetpcb.core.capi.line;
 
-
 public abstract class AbstractBendingProcessorFactory {
      
     /*

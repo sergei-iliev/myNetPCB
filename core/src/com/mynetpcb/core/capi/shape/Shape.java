@@ -1,22 +1,22 @@
 package com.mynetpcb.core.capi.shape;
 
 
-import com.mynetpcb.core.board.Layerable;
 import com.mynetpcb.core.capi.Moveable;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.layer.Layerable;
 import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.print.Printaware;
+import com.mynetpcb.core.capi.print.Printable;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.undo.Stateable;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.Unitable;
-import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 import java.lang.reflect.Method;
@@ -29,7 +29,7 @@ import java.util.UUID;
  * Shape belongs to a layer wich is not accounted for in the context of circuit
  * @author Sergey Iliev
  */
-public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Unit>,Layerable{
+public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Unit>,Layerable{
     public enum Fill{
         EMPTY(1),
         FILLED(2),
@@ -42,7 +42,10 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
         }
     
         public static Fill byIndex(int index){
-          return Fill.values()[index-1];    
+            if(index==0){
+                return Fill.values()[0];    
+            }
+            return Fill.values()[index-1];    
         }
         
     }
@@ -53,33 +56,44 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     
     private boolean selected;
     
-    protected int x,y;
-    
-    protected int width,height;
-    
     protected int thickness;
     
     protected Fill fill;
+    
+    protected double rotate;
     
     protected  Color fillColor;
     
     protected int selectionRectWidth;
     
+    protected String displayName;
+    
     protected Layer.Copper copper;
     
-    public Shape(int x,int y,int width,int height,int thickness,int layermask) {
+    
+    protected boolean isControlPointVisible;
+    
+    public Shape(int thickness,int layermask) {
       this.uuid = UUID.randomUUID(); 
-      this.x=x;
-      this.y=y;
-      this.width=width;
-      this.height=height;
+      this.isControlPointVisible=true;
       this.thickness=thickness;
       this.fill=Fill.EMPTY;
       this.copper=Layer.Copper.resolve(layermask);
       this.selectionRectWidth=4;
+      this.fillColor=Color.BLACK;
     }
-
- 
+    /**
+     * Board does not need to see control points of shapes
+     */
+    public void setControlPointVisibility(boolean isControlPointVisible){
+        this.isControlPointVisible=isControlPointVisible;
+    }
+    public String getDisplayName() {
+        return displayName;
+    }
+    public void setDisplayName(String displayName){
+        this.displayName=displayName;
+    }
     public UUID getUUID() {
         return uuid;
     }
@@ -95,14 +109,11 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     public int getThickness() {
         return thickness;
     }
-    @Override
+
     public Point alignToGrid(boolean isRequired) {
-        Point point=getOwningUnit().getGrid().positionOnGrid(getX(), getY());
-        setX(point.x);
-        setY(point.y);      
         return null;
     }
-    public void Clear() {
+    public void clear() {
         owningUnit=null;
     }
     
@@ -117,14 +128,18 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
         copy.owningUnit=null;
         return copy;
     }
-        @Override
-        public AbstractMemento getState(MementoType operationType) {
-            return null;
-        }
     
-        @Override
-        public void setState(AbstractMemento memento) {
-        }
+    public double getRotate(){
+        return rotate;
+    }
+    
+    public void setRotate(double rotate){
+        this.rotate=rotate;
+    }
+    
+    public void setRotation(double alpha,Point center){
+        
+    }
     public Fill getFill(){
         return fill;
     }
@@ -133,127 +148,63 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
        this.fill=fill; 
     }
     
-    public String getDisplayName() {
-        return "noname";
-    }
-
-
-    public int getX() {
-        return x;
-    }
-    public void setX(int x){
-      this.x=x;  
-    }
-
-    public int getY() {
-        return y;
-    }
-    public void setY(int y){
-      this.y=y;  
-    }
-    
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-    public void setWidth(int width) {
-       this.width=width;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-//    public int getCenterX(){
-//        return x;
-//    }
-//    
-//    public int getCenterY(){
-//        return y;
-//    }
-    
+    @Override
     public Point getCenter(){
-        return new Point(x,y);
+        return getBoundingShape().getCenter();
     }
     
     @Override
-    public void Move(int xoffset, int yoffset) {
-        setX(getX() + xoffset);
-        setY(getY() + yoffset);    
+    public void move(double xoffset, double yoffset) {
+        
     }
 
     @Override
-    public void Mirror(Point A,Point B) {
-        Point point = new Point(getX(), getY());
-        Utilities.mirrorPoint(A,B, point);
-        setX(point.x);
-        setY(point.y);
+    public void mirror(Line line) {
+        
+    }
+    @Override
+    public void rotate(double angle,Point origin) {
+
     }
     
+
     @Override
-    public void Rotate(AffineTransform rotation) {
-        Point point = new Point(getX(), getY());
-        rotation.transform(point, point);
-        setX(point.x);
-        setY(point.y);
-    }
-    
-//    public void Mirror(Moveable.Mirror type) {
-//        Rectangle r=getBoundingShape().getBounds();
-//        Point p=new Point((int)r.getCenterX(),(int)r.getCenterY()); 
-//        switch(type){
-//         case HORIZONTAL:
-//            Mirror(new Point(p.x-10,p.y),new Point(p.x+10,p.y));
-//        break;
-//         case VERTICAL:
-//            Mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
-//        }
-//    }
-    @Override
-    public void Translate(AffineTransform translate) {
+    public void translate(AffineTransform translate) {
     
     }
 
-    
-//    public void Rotate(Moveable.Rotate type) {
-//        switch(type){
-//        case LEFT:
-//            Rotate(AffineTransform.getRotateInstance(Math.PI/2,getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()));          
-//            break;
-//        case RIGHT:
-//            Rotate(AffineTransform.getRotateInstance(-Math.PI/2,getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()));         
-//        }
-//    }
 
     @Override
-    public void setLocation(int x, int y) {
-       this.x=x;
-       this.y=y;
+    public void setLocation(double x, double y) {
+
     }
 
     @Override
-    public long getOrderWeight(){
-       return ((long)getWidth()*(long)getHeight()); 
+    public long getClickableOrder(){
+       return 100;
     }
 
     @Override
     public boolean isClicked(int x, int y) {
-        return this.getBoundingShape().contains(x, y);         
+        return this.getBoundingShape().contains(x,y);         
     }
-
+    
     @Override
-    public boolean isInRect(Rectangle r) {
-        if(r.contains(getBoundingShape().getBounds().getCenterX(),getBoundingShape().getBounds().getCenterY()))
+    public boolean isClicked(int x, int y, int layermaskId) {        
+        return this.isClicked(x, y);
+    }
+    
+    @Override
+    public boolean isInRect(Box r) {
+        if(r.contains(getBoundingShape().getCenter()))
          return true;
         else
          return false; 
     }
 
     @Override
-    public java.awt.Shape getBoundingShape() {
-          return calculateShape();
+    public Box getBoundingShape() {
+          return null;
     }
 
     @Override
@@ -264,10 +215,6 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     @Override
     public boolean isSelected() {
         return selected;
-    }
-
-    public java.awt.Shape calculateShape(){
-     throw new RuntimeException("Shape does not implement cacheing");
     }
 
     @Override
@@ -298,7 +245,7 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     }    
     
     @Override
-    public int getDrawingOrder() {
+    public int getDrawingLayerPriority() {
         return 100;
     }  
     /*
@@ -309,7 +256,7 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
     }
     
     @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
+    public void print(Graphics2D g2,PrintContext printContext,int layermask) {
     }
     public boolean isVisibleOnLayers(int layermasks){
         if((copper.getLayerMaskID()&layermasks)!=0){
@@ -318,4 +265,12 @@ public abstract class Shape implements Moveable,Printaware,Stateable,Unitable<Un
             return false;
         }
     }
+    
+    public AbstractMemento getState(MementoType operationType) {
+        throw new IllegalAccessError("Unknown memento state");
+    }
+    
+    public void setState(AbstractMemento memento) {
+        memento.loadStateTo(this);
+    }    
 }

@@ -34,7 +34,7 @@ public abstract class Command implements Runnable,Commandable<Void>{
         SwingUtilities.invokeLater(new Runnable(){
                 public void run() {
                     if(monitor!=null)
-                       monitor.OnError(error);
+                       monitor.onError(error);
                 }
             });         
     }

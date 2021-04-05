@@ -1,14 +1,14 @@
 package com.mynetpcb.core.capi;
 
 
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 
 
 public class Grid implements Cloneable{     
@@ -59,7 +59,7 @@ public class Grid implements Cloneable{
         this.units=units;
         switch(units){
         case MM:
-            this.gridPointToPoint=Grid.MM_TO_COORD(value);
+            this.gridPointToPoint=(int)Grid.MM_TO_COORD(value);
             break;
         case INCH:
             throw new IllegalStateException("BG is in EU -> stick to mm for now.");
@@ -68,20 +68,20 @@ public class Grid implements Cloneable{
         }  
     }
     
-    public int UNIT_TO_COORD(double mm){
+    public double UNIT_TO_COORD(double mm){
       switch(this.units){ 
         case MM:
             return MM_TO_COORD(mm);
         case INCH:
             throw new IllegalStateException("BG is in EU -> stick to mm for now.");
         case PIXEL:
-            return (int)mm;
+            return mm;
       default:
           throw new IllegalStateException("Unknown unit.");
       }            
     }
     
-    public double COORD_TO_UNIT(int coord){
+    public double COORD_TO_UNIT(double coord){
       switch(this.units){ 
         case MM:
             return COORD_TO_MM(coord);
@@ -109,41 +109,40 @@ public class Grid implements Cloneable{
     //***viewport window is the visible scaled window rectangle. Must scale back to 1 to find the initial grid point.
     //Take advantage of the scale factor of 2.
     private void drawPoints(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){
-        int w = 0, h = 0;
-        g2.setPaint(pointsColor);
-        g2.setStroke(new BasicStroke());  
-        Point point=new Point();  
-        Point2D scaledPoint=new Point2D.Double();
-        //scale out the visible static rectangle to the real schema size to see which point fall in to be rendered.
-        //scale back to origine
-        Rectangle r=new Rectangle((int)(viewportWindow.x/scale.getScaleX()),(int)(viewportWindow.y/scale.getScaleY()),(int)(viewportWindow.getWidth()/scale.getScaleX()),(int)(viewportWindow.getHeight()/scale.getScaleY()));
+         int w = 0, h = 0;
         
-        Point position=positionOnGrid(r.x,r.y);
+             //scale out the visible static rectangle to the real schema size to see which point fall in to be rendered.
+             //scale back to origine
+         Box r=Box.fromRect((viewportWindow.getX()/scale.getScaleX()),(viewportWindow.getY()/scale.getScaleX()),(viewportWindow.getWidth()/scale.getScaleX()),(viewportWindow.getHeight()/scale.getScaleX()));
+         
+         Point position=this.positionOnGrid(r.min.x,r.min.y);
+             
+             
+         if(!this.isGridDrawable(position,scale)){
+             return;
+         }                     
+         Point point=new Point(0,0);  
+         g2.setPaint(pointsColor);
+         g2.setStroke(new BasicStroke());  
         
-        if(!isGridDrawable(position,scale)){
-            return;
-        }
-        
-        Line2D line=new Line2D.Double();
-
-        for (h =position.y; 
-             h <= position.y+r.getHeight(); 
-             h += gridPointToPoint) {
-            for (w =position.x; 
-                 w <=position.x+r.getWidth(); 
-                 w += gridPointToPoint) {
-                
-                 point.setLocation(w, h); 
-                 scale.transform(point,scaledPoint);                 
-                 scaledPoint.setLocation(scaledPoint.getX()-viewportWindow.x,scaledPoint.getY()-viewportWindow.y);
-                 //***no need to draw outside of visible rectangle
-                 if(scaledPoint.getX()>viewportWindow.getWidth()||scaledPoint.getY()>viewportWindow.getHeight()){                   
-                   continue;  
-                 }   
-                 line.setLine(scaledPoint,scaledPoint);
-                 g2.draw(line);                                        
-            }
-        }     
+         Line line=new Line(null,null);
+         for (h =(int)position.y; h <= position.y+(int)r.getHeight(); h += this.gridPointToPoint) {
+                 for (w =(int)position.x; w <=position.x+(int)r.getWidth(); w += this.gridPointToPoint) {
+                      point.set(w, h); 
+                      
+                      point.scale(scale.getScaleX());
+                              
+                      point.set(point.x-viewportWindow.getX(),point.y-viewportWindow.getY());
+                         
+                      if(point.x>viewportWindow.getWidth()||point.y>viewportWindow.getHeight()){                   
+                              continue;  
+                      }   
+                     
+                      line.setLine(point,point);
+                      line.paint(g2, false);                                      
+                                      
+                 }
+             }   
 
     }
     
@@ -155,48 +154,45 @@ public class Grid implements Cloneable{
      * @return is grid drawable
      */
     private boolean isGridDrawable(Point point,AffineTransform scale){
-        Point2D scaledPoint=new Point2D.Double();
-        scale.transform(point,scaledPoint); 
-        double x=scaledPoint.getX();
-        point.x=point.x+gridPointToPoint;
-        scale.transform(point,scaledPoint);
-        return  ((int) Math.round(scaledPoint.getX()-x))>pixelToPixelLimit;    
+            double x=point.x*scale.getScaleX();
+            double xx=(point.x+this.gridPointToPoint)*scale.getScaleX();
+            return  ((int)(Math.round(xx-x)))>this.pixelToPixelLimit;  
     }
-    private void drawLines(Graphics2D g2,Rectangle clipRect,AffineTransform scale){
-        int w = 0, h = 0;
-        
-        g2.setPaint(Color.GRAY);
-
-        Point position=positionOnGrid(clipRect.x,clipRect.y);
-        Point scaledPoint=new Point();
-        Line2D line=new Line2D.Double();
- 
-        for (w =position.x; 
-                 w <=position.x+clipRect.getWidth(); 
-                 w += gridPointToPoint) {
-                
-                 scaledPoint.setLocation(w-clipRect.x, position.y-clipRect.y); 
-                 scale.transform(scaledPoint,scaledPoint);
-                 
-                 line.setLine(scaledPoint.getX(),scaledPoint.getY(),scaledPoint.getX(),scaledPoint.getY()+clipRect.getHeight())  ;
-                 g2.draw(line);                        
-               
-        }
-            
-        for (h =position.y; 
-             h <= position.y+clipRect.getHeight(); 
-             h += gridPointToPoint) {
-         
-          scaledPoint.setLocation(position.x-clipRect.x, h-clipRect.y); 
-          scale.transform(scaledPoint,scaledPoint);
-          
-          line.setLine(scaledPoint.getX(),scaledPoint.getY(),scaledPoint.getX()+clipRect.getWidth(),scaledPoint.getY())  ;
-          g2.draw(line);                        
-        
-     }
-    }
-    public Point positionOnGrid(int x, int y)throws ArrayIndexOutOfBoundsException {        
-        double  ftmp     = (double) x / gridPointToPoint;
+//    private void drawLines(Graphics2D g2,Rectangle clipRect,AffineTransform scale){
+//        int w = 0, h = 0;
+//        
+//        g2.setPaint(Color.GRAY);
+//
+//        Point position=positionOnGrid(clipRect.x,clipRect.y);
+//        Point scaledPoint=new Point();
+//        Line2D line=new Line2D.Double();
+// 
+//        for (w =position.x; 
+//                 w <=position.x+clipRect.getWidth(); 
+//                 w += gridPointToPoint) {
+//                
+//                 scaledPoint.setLocation(w-clipRect.x, position.y-clipRect.y); 
+//                 scale.transform(scaledPoint,scaledPoint);
+//                 
+//                 line.setLine(scaledPoint.getX(),scaledPoint.getY(),scaledPoint.getX(),scaledPoint.getY()+clipRect.getHeight())  ;
+//                 g2.draw(line);                        
+//               
+//        }
+//            
+//        for (h =position.y; 
+//             h <= position.y+clipRect.getHeight(); 
+//             h += gridPointToPoint) {
+//         
+//          scaledPoint.setLocation(position.x-clipRect.x, h-clipRect.y); 
+//          scale.transform(scaledPoint,scaledPoint);
+//          
+//          line.setLine(scaledPoint.getX(),scaledPoint.getY(),scaledPoint.getX()+clipRect.getWidth(),scaledPoint.getY())  ;
+//          g2.draw(line);                        
+//        
+//     }
+//    }
+    public Point positionOnGrid(double x, double y) {        
+        double  ftmp     = x / gridPointToPoint;
         int xx = ( (int) Math.round( ftmp ) ) * gridPointToPoint;
 
         ftmp     = (double) y / gridPointToPoint;
@@ -204,31 +200,33 @@ public class Grid implements Cloneable{
         return new Point(xx,yy);        
     }   
     
-    public int positionOnGrid(int length)throws ArrayIndexOutOfBoundsException {        
-        double  ftmp     = (double) length / gridPointToPoint;
+    public int lengthOnGrid(double length) {        
+        double  ftmp     = length / gridPointToPoint;
         int xx = ( (int) Math.round( ftmp ) ) * gridPointToPoint;        
         return xx;        
     }
     
-    public Point positionOnGrid(Point p)throws ArrayIndexOutOfBoundsException {        
+    public Point positionOnGrid(Point p) {        
          return positionOnGrid(p.x,p.y);      
     } 
     
-    public void snapToGrid(Point p)throws ArrayIndexOutOfBoundsException {        
-        p.setLocation(positionOnGrid(p.x), positionOnGrid(p.y));
+    public void snapToGrid(Point p) {                
+        p.set(lengthOnGrid(p.x), lengthOnGrid(p.y));
     } 
     
     //must be 10000 for printing
-    public static int MM_TO_COORD(double mm){
-      return (int)Math.floor(mm*10000);
+    public static double MM_TO_COORD(double mm){
+      //return Math.floor(mm*10000);
+      return (mm*10000);
     }
  
-    public static double COORD_TO_MM(int coord){
-      return ((double)coord/10000);    
+    public static double COORD_TO_MM(double coord){
+      return (coord/10000);    
     }
-    
-    public Object clone() throws CloneNotSupportedException { 
-      return super.clone();
+    @Override
+    public Grid clone() throws CloneNotSupportedException {
+        
+        return (Grid)super.clone();
     }
 }
 

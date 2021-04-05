@@ -1,83 +1,326 @@
 package com.mynetpcb.board.shape;
 
 import com.mynetpcb.board.unit.Board;
-import com.mynetpcb.core.board.ClearanceSource;
-import com.mynetpcb.core.board.CompositeLayerable;
 import com.mynetpcb.core.board.PCBShape;
-import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.board.shape.TrackShape;
 import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
-import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
-import com.mynetpcb.core.capi.line.Sublineable;
-import com.mynetpcb.core.capi.line.Trackable.EndType;
-import com.mynetpcb.core.capi.line.Trackable.JoinType;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polyline;
+import com.mynetpcb.d2.shapes.Rectangle;
+import com.mynetpcb.d2.shapes.Segment;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.UUID;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class PCBTrack extends TrackShape implements PCBShape,Sublineable{
-    
+public class PCBTrack extends TrackShape implements PCBShape{
     
     private int clearance;
-    
     private String net;
     
     public PCBTrack(int thickness,int layermaskId){
         super(thickness,layermaskId);
-        this.clearance=0;
+        this.displayName="Track"; 
     }
     
     public PCBTrack clone()throws CloneNotSupportedException{
-        PCBTrack copy=(PCBTrack)super.clone();
-        copy.floatingStartPoint = new Point();
-        copy.floatingMidPoint = new Point();
-        copy.floatingEndPoint = new Point();
-        copy.points=new LinkedList<LinePoint>(); 
-        for(Point point:points){
-            copy.points.add(new LinePoint(point.x,point.y));
-        }
-        return copy;
+            PCBTrack copy = (PCBTrack) super.clone();
+            copy.floatingStartPoint = new Point();
+            copy.floatingMidPoint = new Point();
+            copy.floatingEndPoint = new Point();
+            copy.resizingPoint=null;
+            copy.polyline=this.polyline.clone();
+            return copy;        
     }
-    
 
     @Override
-    public int getDrawingOrder() {
-        int order=super.getDrawingOrder();
-        if(getOwningUnit()==null){            
-            return order;
+    public Collection<Shape> getNetShapes(Collection<UUID> selectedShapes) {
+        Collection<Shape> net=new ArrayList<>(); 
+        //1. via
+        Collection<PCBVia> vias=getOwningUnit().getShapes(PCBVia.class);         
+        for(PCBVia via:vias ){
+            if(selectedShapes.contains(via.getUUID())){
+                continue;
+            }
+            if(this.polyline.intersect(via.getOuter())){
+               net.add(via); 
+            }
+        }
+        //2.track on same layer
+        List<PCBTrack> sameSideTracks=getOwningUnit().getShapes(PCBTrack.class,this.copper.getLayerMaskID());         
+        Circle circle=new Circle(new Point(),0);
+        for(PCBTrack track:sameSideTracks ){
+            if(track==this){
+                continue;
+            }
+            if(selectedShapes.contains(track.getUUID())){
+                continue;
+            }
+            //my points on another
+            for(Point pt:this.polyline.points){
+                circle.pc=pt;
+                circle.r=this.getThickness()/2;
+                if(track.polyline.intersect(circle)){
+                   net.add(track);
+                   break;
+                }   
+            }
+            //another points on me
+            for(Point pt:track.polyline.points){
+                circle.pc=pt;
+                circle.r=track.getThickness()/2;
+                if(this.polyline.intersect(circle)){
+                   net.add(track);
+                   break;
+                }   
+            }            
+            
+        }   
+         
+        //my track crossing other track on same layer
+        for(PCBTrack track:sameSideTracks ){
+            if(track==this){
+                continue;
+            }
+            if(selectedShapes.contains(track.getUUID())){
+                continue;
+            }            
+            for(Segment segment:this.getSegments()){
+              //is my segment crossing anyone elses's?
+                for(Segment other:track.getSegments()){
+                    if(segment.intersect(other)){
+                        net.add(track);
+                        break;
+                    }
+                }
+            }
+            
+        }
+        //3.Footprint pads on me
+        Collection<PCBFootprint> footprints=getOwningUnit().getShapes(PCBFootprint.class);         
+        //the other side
+        List<PCBTrack> oppositeSideTracks=getOwningUnit().getShapes(PCBTrack.class,Layer.Side.change(this.copper.getLayerMaskID()).getLayerMaskID());
+        Collection<PCBTrack> bothSideTracks=new ArrayList<PCBTrack>();
+        bothSideTracks.addAll(sameSideTracks);
+        bothSideTracks.addAll(oppositeSideTracks);
+        
+        for(PCBFootprint footprint:footprints){
+            Collection<PadShape> pads=footprint.getPads();
+            for(PadShape pad:pads){              
+                for(Point pt:this.polyline.points){
+                    if(pad.getPadDrawing().contains(pt)){  //found pad on track -> investigate both SMD and THROUGH_HOLE
+                                for(PCBTrack track:bothSideTracks ){  //each track on SAME layer
+                                    //2 traback points bound by pad
+                                    for(Point p:track.polyline.points){
+                                        if(pad.getPadDrawing().contains(p)){
+                                              if(selectedShapes.contains(track.getUUID())){
+                                                  continue;
+                                              }
+                                              //track and pad should be on the same layer
+                                              if((this.copper.getLayerMaskID()&pad.getCopper().getLayerMaskID())!=0){
+                                                  if((track.copper.getLayerMaskID()&pad.getCopper().getLayerMaskID())!=0){ 
+                                                        net.add(track);
+                                                        break;
+                                                  }
+                                              }
+                                        }
+                                    } 
+                                    
+                                }                        
+                    }
+/*                    
+//                    if(pad.getPadDrawing().contains(pt)){  //found pad on track -> investigate both SMD and THROUGH_HOLE
+//                       if(pad.getType()==PadShape.Type.SMD){
+//                           for(PCBTrack track:sameSideTracks ){  //each track on SAME layer
+//                            if(selectedShapes.contains(track.getUUID())){
+//                               continue;
+//                            }
+//                            //another points on me
+//                            for(Point p:track.polyline.points){
+//                                if(pad.getPadDrawing().contains(p)){
+//                                  net.add(track);
+//                                  break;
+//                                }
+//                             }   
+//                           }                              
+//                       }else{ 
+//                        for(PCBTrack track:oppositeSideTracks ){  //each track on OPPOSITE layer
+//                         if(selectedShapes.contains(track.getUUID())){
+//                            continue;
+//                         }
+//                         //another points on me
+//                         for(Point p:track.polyline.points){
+//                             if(pad.getPadDrawing().contains(p)){
+//                               net.add(track);
+//                               break;
+//                             }
+//                         }
+//                        }     
+//                      }
+//                    }  
+*/                    
+                }
+            }
+       
+        }
+        return net;
+    }
+    @Override
+    public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
+                                                          AffineTransform scale, T source) {
+        if(isSameNet(source)){
+            return;
+        }       
+        
+        Shape shape=(Shape)source;
+        //no need to draw clearance if not on active side
+        //if(((CompositeLayerable)getOwningUnit()).getActiveSide()!=Layer.Side.resolve(this.copper.getLayerMaskID())){
+        //   return;
+        //}        
+        if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
+             return;  //not on the same layer
+        }
+        if(!shape.getBoundingShape().intersects(this.getBoundingShape())){
+           return; 
+        }
+                
+        double lineThickness=(thickness+2*(this.clearance!=0?this.getClearance():source.getClearance())) *scale.getScaleX();            
+        
+        Polyline polyline=this.polyline.clone();   
+        
+        
+        polyline.scale(scale.getScaleX());
+        polyline.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+        g2.setStroke(new BasicStroke((float) lineThickness, 1, 1));
+
+        g2.setColor(Color.BLACK);        
+         
+        g2.setClip(source.getClippingRegion());
+        polyline.paint(g2, false);
+        g2.setClip(null);
+
+
+    }
+
+    @Override
+    public <T extends ClearanceSource> void printClearance(Graphics2D g2, PrintContext printContext,
+                                                           T source) {
+        if(isSameNet(source)){
+            return;
+        } 
+        Shape shape=(Shape)source;
+        if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
+             return;  //not on the same layer
+        } 
+        if(!shape.getBoundingShape().intersects(this.getBoundingShape())){
+           return; 
         }
         
+        double lineThickness=(thickness+2*(this.clearance!=0?this.getClearance():source.getClearance()));                    
+        g2.setStroke(new BasicStroke((float) lineThickness, 1, 1));
+        g2.setColor(printContext.getBackgroundColor());       
+         
+        polyline.paint(g2, false);
         
+    }
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
+        if((this.getCopper().getLayerMaskID()&layermask)==0){
+            return;
+        }
+        
+        Box rect = this.polyline.box();
+        rect.scale(scale.getScaleX());           
+        if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
+                return;
+        }
+        g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
+        
+        Polyline r=this.polyline.clone();   
+        
+        // draw floating point
+        if (this.isFloating()) {            
+            //front
+            if(this.getResumeState()==ResumeState.ADD_AT_FRONT){
+                Point p = this.floatingMidPoint.clone();                              
+                r.points.add(0,p); 
+                
+                p = this.floatingEndPoint.clone();
+                r.points.add(0,p);                
+            }else{
+                Point p = this.floatingMidPoint.clone();                              
+                r.add(p); 
+                            
+                p = this.floatingEndPoint.clone();
+                r.add(p);                                
+            }            
+        }
+        
+        r.scale(scale.getScaleX());
+        r.move(-viewportWindow.getX(),- viewportWindow.getY());
+        
+        double wireWidth = thickness * scale.getScaleX();
+        g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+
+        //transparent rect
+        r.paint(g2, false);
+        
+    }
+    
+    @Override
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+        if (this.isSelected()&&isControlPointVisible) {
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            Polyline r=this.polyline.clone();                                       
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(),- viewportWindow.getY());
+            
+            for(Object p:r.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+            }
+        }        
+    }
+    
+    @Override
+    public int getDrawingLayerPriority() {
+          int order;  
+
          if(((CompositeLayerable)getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())){
            order= 4;
          }else{
@@ -85,511 +328,58 @@ public class PCBTrack extends TrackShape implements PCBShape,Sublineable{
          }  
         return order;     
     }
-    
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {
-
-        if((layersmask&this.copper.getLayerMaskID())==0){
-             return;
-        }     
-        
-        //FIX caching for the lines isCasheEnabled=false;
-        Rectangle2D scaledBoundingRect = Utilities.getScaleRect(getBoundingShape().getBounds(),scale);         
-        if(!this.isFloating()&&!scaledBoundingRect.intersects(viewportWindow)){
-          return;   
-        }
-        
-        double lineThickness=thickness*scale.getScaleX(); 
-
-        FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);
-        GeneralPath temporal=(GeneralPath)provider.getShape();            
-        
-        temporal.moveTo(points.get(0).getX(),points.get(0).getY());
-        for(int i=1;i<points.size();i++){            
-              temporal.lineTo(points.get(i).getX(),points.get(i).getY());       
-        } 
-        
-        AffineTransform translate= AffineTransform.getTranslateInstance(-viewportWindow.x,-viewportWindow.y);
-        
-        temporal.transform(scale);
-        temporal.transform(translate);
-  
-        g2.setStroke(new BasicStroke((float)lineThickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal())); 
-        
-        g2.setColor(isSelected()?Color.GRAY:(this.copper.getColor()));
-        
-        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
-        Composite originalComposite = g2.getComposite();                     
-        g2.setComposite(composite );
-        g2.draw(temporal);                 
-        g2.setComposite(originalComposite);
-           
-        if(this.isFloating()) {
-            temporal.reset();
-            temporal.moveTo(floatingStartPoint.getX(), floatingStartPoint.getY());
-            temporal.lineTo(floatingMidPoint.getX(),floatingMidPoint.getY());
-            temporal.lineTo(floatingEndPoint.getX(),floatingEndPoint.getY());
-                        
-            temporal.transform(scale);
-            temporal.transform(translate);
-            g2.draw(temporal);
-        }
-        
-        provider.reset();
-    }
-    
-    @Override
-    public <T extends PCBShape & ClearanceSource> void drawClearence(Graphics2D g2,
-                                                                     ViewportWindow viewportWindow,
-                                                                     AffineTransform scale, T source) {      
-        if(Utilities.isSameNet(source, this)){
-            return;
-        }       
-        
-        Shape shape=(Shape)source;
-        if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
-             return;  //not on the same layer
-        }
-        if(!shape.getBoundingShape().intersects(this.getBoundingShape().getBounds())){
-           return; 
-        }
-                
-        double lineThickness=(thickness+2*(this.clearance!=0?this.getClearance():source.getClearance())) *scale.getScaleX();            
-        
-        
-        FlyweightProvider provider =ShapeFlyweightFactory.getProvider(GeneralPath.class);
-        GeneralPath temporal=(GeneralPath)provider.getShape();            
-        
-        temporal.moveTo(points.get(0).getX(),points.get(0).getY());
-        for(int i=1;i<points.size();i++){            
-              temporal.lineTo(points.get(i).getX(),points.get(i).getY());       
-        } 
-        
-        AffineTransform translate= AffineTransform.getTranslateInstance(-viewportWindow.x,-viewportWindow.y);
-        
-        temporal.transform(scale);
-        temporal.transform(translate); 
-
-        g2.setStroke(new BasicStroke((float)lineThickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal())); 
-        g2.setColor(Color.BLACK);        
-         
-        g2.setClip(source.getClippingRegion());
-        g2.draw(temporal);         
-        g2.setClip(null);
-        
-        provider.reset();
-        
-    }
-    @Override
-    public void drawControlShape(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){   
-        if((!this.isSelected())&&(!this.isSublineSelected())){
-          return;
-        }
-        super.drawControlShape(g2, viewportWindow, scale);
-    }
-    
-    @Override
-    public String getDisplayName() {
-        return "Track";
+    public void setClearance(int clearance) {
+        this.clearance=clearance;
     }
 
-
-//    @Override
-//    public void addPoint(Point point) {
-//      points.add(new LinePoint(point));
-//    }
-//    
-//    @Override
-//    public void add(int x, int y) {
-//        points.add(new LinePoint(x,y));
-//    }
-    
-//    @Override
-//    public void insertPoint(int x, int y) {
-//        int count=-1,index=-1;
-//        //build testing rect
-//        FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-//        Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
-//        rect.setFrame(x-(selectionRectWidth/2), y-(selectionRectWidth/2),selectionRectWidth, selectionRectWidth);
-//        //inspect line by line
-//        FlyweightProvider lineProvider=ShapeFlyweightFactory.getProvider(Line2D.class);
-//        Line2D line=(Line2D)lineProvider.getShape();
-//        
-//        //***make lines and iterate one by one
-//        Point prevPoint = this.points.get(0);
-//        Iterator<LinePoint> i = points.iterator();
-//        while (i.hasNext()) {
-//            count++;
-//            Point nextPoint = i.next();
-//            line.setLine(prevPoint, nextPoint);
-//            if (line.intersects(rect)){
-//                index=count;
-//                break;
-//            }    
-//            prevPoint = nextPoint;
-//        }
-//        
-//        lineProvider.reset();
-//        rectProvider.reset();
-//        if(count!=-1){
-//           points.add(index, new LinePoint(x,y)); 
-//        }
-//         
-//    }
-    
-//    @Override
-//    public Point isBendingPointClicked(int x,int y){
-//        return isControlRectClicked(x, y);
-//    }
-//
-//    public Point isControlRectClicked(int x, int y) {                
-//        FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-//        Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
-//        rect.setFrame(x-(thickness/2), y-(thickness/2),thickness, thickness);
-//        
-//        Point point=null;
-//        Point click=new Point(x,y);
-//        int distance=Integer.MAX_VALUE;
-//        
-//        for (Point wirePoint : points) {
-//            if(rect.contains(wirePoint)){ 
-//                int min=(int)click.distance(wirePoint);
-//                if(distance>min){
-//                    distance=min;  
-//                    point= wirePoint;                
-//                }
-//            }
-//        }
-//        
-//        rectProvider.reset();
-//        return point;
-//    }    
-//    @Override
-//    public void Clear() {
-//      points.clear();
-//    }
-    
-//    @Override
-//    public void Move(int xoffset, int yoffset) {
-//        for(Point wirePoint:points){
-//            wirePoint.setLocation(wirePoint.x + xoffset,
-//                                  wirePoint.y + yoffset);            
-//        } 
-//    }
-
-//    @Override
-//    public void Mirror(Point A,Point B) {
-//        for (Point wirePoint : points) {
-//            wirePoint.setLocation(Utilities.mirrorPoint(A,B, wirePoint));
-//        }
-//    }
-//    @Override
-//    public void Rotate(AffineTransform rotation) {
-//        for(Point wirePoint:points){
-//            rotation.transform(wirePoint, wirePoint);
-//        }
-//    }
     @Override
-    public long getOrderWeight() {
-        return 4;
+    public int getClearance() {    
+        return clearance;
+    }
+    public String getNetName(){
+        return net;
     }
     
-//    @Override
-//    public boolean isInRect(Rectangle r) {
-//        for(Point wirePoint:points){
-//            if (!r.contains(wirePoint))
-//                return false;            
-//        }
-//        return true;
-//    }
-    
-//    @Override
-//    public boolean isClicked(int x, int y) {
-//        boolean result=false;
-//        //build testing rect
-//        FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-//        Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
-//        rect.setFrame(x-(thickness/2), y-(thickness/2),thickness, thickness);
-//        //inspect line by line
-//        FlyweightProvider lineProvider=ShapeFlyweightFactory.getProvider(Line2D.class);
-//        Line2D line=(Line2D)lineProvider.getShape();
-//        
-//        //***make lines and iterate one by one
-//        Point prevPoint = points.iterator().next();
-//        Iterator<LinePoint> i = points.iterator();
-//        while (i.hasNext()) {
-//            Point nextPoint = i.next();
-//            line.setLine(prevPoint, nextPoint);
-//            if (line.intersects(rect)){
-//                result= true;
-//                break;
-//            }    
-//            prevPoint = nextPoint;
-//        }
-//        
-//        lineProvider.reset();
-//        rectProvider.reset();        
-//        return result;
-//    }
-
-//    @Override
-//    public Rectangle calculateShape(){
-//        int x1=Integer.MAX_VALUE,y1=Integer.MAX_VALUE,x2=Integer.MIN_VALUE,y2=Integer.MIN_VALUE;        
-//        
-//        for (Point point : points) {
-//            x1 = Math.min(x1, point.x);
-//            y1 = Math.min(y1, point.y);
-//            x2 = Math.max(x2, point.x);
-//            y2 = Math.max(y2, point.y);
-//        } 
-//        //add bending points
-//        return new Rectangle(x1, y1, (x2 - x1)==0?1:x2 - x1, y2 - y1==0?1:y2 - y1); 
-//    }
-    
-//    @Override
-//    public Point getResizingPoint(){
-//        return resizingPoint;
-//    }
-    
-//    @Override
-//    public void Reset(Point point) {
-//        this.Reset(point.x,point.y);  
-//    }
-//
-//    @Override
-//    public void Reset(int x,int y) {
-//        Point p=isBendingPointClicked(x, y);
-//        floatingStartPoint.setLocation(p==null?x:p.x,p==null?y:p.y);
-//        floatingMidPoint.setLocation(p==null?x:p.x,p==null?y:p.y);
-//        floatingEndPoint.setLocation(p==null?x:p.x,p==null?y:p.y);  
-//    }
-//
-//    @Override
-//    public void Reset() {
-//        this.Reset(floatingStartPoint);
-//    }
-
-//    @Override
-//    public void Resize(int xoffset, int yoffset, Point clickedPoint) {
-//        clickedPoint.setLocation(clickedPoint.x+xoffset, clickedPoint.y+yoffset);
-//    }
-    
-//    @Override
-//    public Point getFloatingStartPoint() {
-//        return floatingStartPoint;
-//    }
-//
-//    @Override
-//    public Point getFloatingMidPoint() {
-//        return floatingMidPoint;
-//    }
-//
-//    @Override
-//    public Point getFloatingEndPoint() {
-//        return floatingEndPoint;
-//    }
-
-//    @Override
-//    public void shiftFloatingPoints() {
-//        floatingStartPoint.setLocation(points.get(points.size()-1).x, points.get(points.size()-1).y);
-//        floatingMidPoint.setLocation(floatingEndPoint.x, floatingEndPoint.y);       
-//    }
-    
-//    @Override
-//    public void deleteLastPoint(){
-//        if (points.size() == 0)
-//            return;
-//
-//        points.remove(points.get(points.size() - 1));
-//
-//        //***reset floating start point
-//        if (points.size() > 0)
-//            floatingStartPoint.setLocation(points.get(points.size() - 1));        
-//    }
-
-//    @Override
-//    public void Reverse(int x,int y) {
-//        Point p=isBendingPointClicked(x, y);
-//        if (points.get(0).x == p.x &&
-//            points.get(0).y == p.y) {
-//            Collections.reverse(points);
-//        }       
-//    }
-//
-//    @Override
-//    public void removePoint(int x, int y) {
-//        Point point=isBendingPointClicked(x, y);
-//        if(point!=null){
-//          points.remove(point);
-//          point = null;
-//        }    
-//    }
-
-//    @Override
-//    public boolean isEndPoint(int x, int y) {
-//        if (points.size() < 2) {
-//            return false;
-//        }
-//        
-//        Point point=isBendingPointClicked(x, y);
-//        if(point==null){
-//            return false;
-//        }
-//        //***head point
-//        if (points.get(0).x==point.x&&points.get(0).y==point.y) {
-//            return true;
-//        }
-//        //***tail point
-//        if ((points.get(points.size() - 1)).x==point.x&& (points.get(points.size() - 1)).y==point.y) {
-//            return true;
-//        }
-//        return false;
-//    }  
-
-
-//    @Override
-//    public boolean isFloating(){
-//      return (!(floatingStartPoint.equals(floatingEndPoint) &&
-//              floatingStartPoint.equals(floatingMidPoint)));  
-//    }
-
-//    @Override
-//    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-//        if((this.copper.getLayerMaskID()&layermask)==0){
-//            return;
-//        }
-//        GeneralPath line=null;
-//        line = new GeneralPath(GeneralPath.WIND_EVEN_ODD,points.size());      
-//        line.moveTo((float)points.get(0).getX(),(float)points.get(0).getY());
-//         for(int i=1;i<points.size();i++){            
-//             line.lineTo((float)points.get(i).getX(),(float)points.get(i).getY());       
-//         } 
-//        g2.setStroke(new BasicStroke(thickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal()));
-//        g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());
-//        
-//        g2.draw(line);
-//    }
-
-    @Override
-    public <T extends PCBShape & ClearanceSource> void printClearence(Graphics2D g2,PrintContext printContext, T source) {
-        Shape shape=(Shape)source;
-        if((shape.getCopper().getLayerMaskID()&this.copper.getLayerMaskID())==0){        
-             return;  //not on the same layer
-        } 
-        if(Objects.equals(source.getNetName(), this.net)&&(!("".equals(source.getNetName())))&&(!(null==this.net))){
-            return;
-        }
-        GeneralPath line=null;
-        int lineThickness;
-        
-        if(this.clearance!=0){
-          lineThickness=(thickness+2*this.getClearance()) ;            
-        }else{
-          lineThickness=(thickness+2*source.getClearance());              
-        }
-        
-        
-        line = new GeneralPath(GeneralPath.WIND_EVEN_ODD,points.size());      
-        line.moveTo((float)points.get(0).getX(),(float)points.get(0).getY());
-         for(int i=1;i<points.size();i++){            
-             line.lineTo((float)points.get(i).getX(),(float)points.get(i).getY());       
-         } 
-
-        g2.setStroke(new BasicStroke(lineThickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal()));
-        g2.setColor(printContext.getBackgroundColor());
-        
-        g2.draw(line);
-
+    public void setNetName(String net){
+        this.net=net;
     }
-    
-//    @Override
-//    public void setResizingPoint(Point point) {
-//      this.resizingPoint=point;
-//    }
-    
-//    @Override
-//    public void setSelected(boolean selection) {
-//        super.setSelected(selection);
-//        if(!selection){
-//            resizingPoint=null;
-//            for (LinePoint point : points) {
-//                point.setSelected(selection);
-//            }
-//        }
-//    }
-    
-    @Override
-    public boolean isSublineInRect(Rectangle r){
-        for (LinePoint point : points) {
-            if (r.contains(point)) {
-                return true;
-            }
-        }
-        return false;        
-    }
-    
     @Override
     public boolean isSublineSelected() {
-        if (points.size() == 0) {
-            return false; //wire is being constructed
-        }
-        boolean p = points.get(0).isSelected();
-        for (LinePoint point : points) {
-            if (p != point.isSelected()) {
-                return true;
-            }
-        }
+        // TODO Implement this method
         return false;
     }
 
     @Override
-    public void setSublineSelected(Rectangle r, boolean selected) {
-        for (LinePoint point : points) {
-            if (r.contains(point)) {
-                point.setSelected(selected);
-            }
-        }
+    public boolean isSublineInRect(Rectangle rectangle) {
+        // TODO Implement this method
+        return false;
+    }
+
+    @Override
+    public void setSublineSelected(Rectangle rectangle, boolean b) {
+        // TODO Implement this method
+
     }
 
     @Override
     public Set<LinePoint> getSublinePoints() {
-        Set<LinePoint> subWirePoints = new HashSet<LinePoint>();
-        if (this.isSelected()) {
-            return null;
-        }
-        for (LinePoint point : points) {
-            if (point.isSelected()) {
-                subWirePoints.add(point);
-            }
-        }
-        return subWirePoints;
+        return Collections.emptySet();
     }
-    
-
-
-    @Override
-    public void setClearance(int clearance) {
-       this.clearance=clearance;
-    }
-
-    @Override
-    public int getClearance() {
-        return this.clearance;
-    }    
 
     @Override
     public String toXML() {
         StringBuffer sb=new StringBuffer();
         sb.append("<track layer=\""+this.copper.getName()+"\" thickness=\""+this.getThickness()+"\" clearance=\""+clearance+"\" net=\""+(this.net==null?"":this.net)+"\" >");
-        for(Point point:points){
-            sb.append(point.x+","+point.y+","); 
+        for(Point point:this.polyline.points){
+            sb.append(Utilities.roundDouble(point.x) + "," + Utilities.roundDouble(point.y) + ",");
         }        
         sb.append("</track>\r\n");
         return sb.toString();
     }
 
     @Override
-    public void fromXML(Node node) {
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
         Element  element= (Element)node;
         
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
@@ -598,25 +388,11 @@ public class PCBTrack extends TrackShape implements PCBShape,Sublineable{
         this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");   
         StringTokenizer st = new StringTokenizer(element.getTextContent(), ",");
         while(st.hasMoreTokens()){
-          this.addPoint(new Point(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())));  
-        }    
-    }
+          this.add(new Point(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())));  
+        }   
 
-    @Override
-    public String getNetName() {
-        
-        return this.net;
     }
-
-    @Override
-    public void setNetName(String net) {
-        if((net!=null)&&(!net.trim().isEmpty())){
-          this.net=net;
-        }else{
-          this.net=null;  
-        }
-    }
-
+    
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
@@ -624,17 +400,15 @@ public class PCBTrack extends TrackShape implements PCBShape,Sublineable{
         return memento;
     }
 
-    @Override
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
-    }
     static class Memento extends AbstractMemento<Board, PCBTrack> {
 
-        private int Ax[];
+        private double Ax[];
 
-        private int Ay[];
+        private double Ay[];
 
-        private String net;
+        private int clearance;
+        
+        private ResumeState resumeState;
         
         public Memento(MementoType mementoType) {
             super(mementoType);
@@ -644,37 +418,41 @@ public class PCBTrack extends TrackShape implements PCBShape,Sublineable{
         @Override
         public void loadStateTo(PCBTrack shape) {
             super.loadStateTo(shape);
-            shape.points.clear();
-            shape.net=net;
+            shape.polyline.points.clear();
             for (int i = 0; i < Ax.length; i++) {
-                shape.addPoint(new Point(Ax[i], Ay[i])); 
+                shape.getLinePoints().add(new LinePoint(Ax[i], Ay[i]));
             }
+            shape.clearance=clearance;
+            shape.resumeState=resumeState;
             //***reset floating start point
-            if (shape.points.size() > 0) {
-                shape.floatingStartPoint.setLocation(shape.points.get(shape.points.size() -
-                                                                 1));
-                shape.Reset();
+            if (shape.polyline.points.size() > 0) {
+                if(shape.getResumeState()==ResumeState.ADD_AT_END){
+                  shape.floatingStartPoint.set(shape.polyline.points.get(shape.polyline.points.size() - 1));
+                }else{
+                  shape.floatingStartPoint.set(shape.polyline.points.get(0));  
+                }
+                shape.reset();
             }
         }
         
         @Override
         public void saveStateFrom(PCBTrack shape) {
             super.saveStateFrom(shape);
-            net=shape.net;
-            Ax = new int[shape.points.size()];
-            Ay = new int[shape.points.size()];
-            for (int i = 0; i < shape.points.size(); i++) {
-                Ax[i] = shape.points.get(i).x;
-                Ay[i] = shape.points.get(i).y;
-            }
+            Ax = new double[shape.polyline.points.size()];
+            Ay = new double[shape.polyline.points.size()];
+            for (int i = 0; i < shape.polyline.points.size(); i++) {
+                Ax[i] = (shape.polyline.points.get(i)).x;
+                Ay[i] = (shape.polyline.points.get(i)).y;
+            }            
+            this.clearance=shape.clearance;
+            this.resumeState=shape.resumeState;
         }
 
         @Override
-        public void Clear() {
-            super.Clear();
+        public void clear() {
+            super.clear();
             Ax = null;
             Ay = null;
-            net=null;
         }
 
         @Override
@@ -687,28 +465,22 @@ public class PCBTrack extends TrackShape implements PCBShape,Sublineable{
             }
             Memento other = (Memento)obj;
             
-            return (getUUID().equals(other.getUUID()) &&layerindex==other.layerindex&&
-                    getMementoType().equals(other.getMementoType()) &&
-                    thickness==other.thickness&&Objects.equals(net, other.net)&&
-                    Arrays.equals(Ax, other.Ax) &&
-                    Arrays.equals(Ay, other.Ay));
+            return (super.equals(obj)&&this.clearance==other.clearance&&Objects.equals(this.resumeState, other.resumeState)&&
+                    Arrays.equals(Ax, other.Ax) && Arrays.equals(Ay, other.Ay));
 
         }
 
         @Override
         public int hashCode() {
-            int hash = getUUID().hashCode();
-            hash += this.getMementoType().hashCode();
-            hash += thickness+layerindex;
+            int  hash = super.hashCode()+this.clearance+Objects.hashCode(resumeState);
             hash += Arrays.hashCode(Ax);
-            hash += Arrays.hashCode(Ay);
-            hash += Objects.hashCode(net);
+            hash += Arrays.hashCode(Ay);            
             return hash;
         }
-
-        public boolean isSameState(Board unit) {
-            PCBTrack wire = (PCBTrack)unit.getShape(getUUID());
-            return (wire.getState(getMementoType()).equals(this));
+        @Override
+        public boolean isSameState(Unit unit) {
+            PCBTrack line = (PCBTrack) unit.getShape(getUUID());
+            return (line.getState(getMementoType()).equals(this));
         }
-    }
+    }    
 }

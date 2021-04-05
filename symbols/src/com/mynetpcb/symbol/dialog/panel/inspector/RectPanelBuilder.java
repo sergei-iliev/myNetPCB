@@ -1,16 +1,16 @@
 package com.mynetpcb.symbol.dialog.panel.inspector;
 
-
+import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.symbol.component.SymbolComponent;
+import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.symbol.shape.RoundRect;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -20,13 +20,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-
 public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
 
     private JTextField roundCornerField;
     
-    public RectPanelBuilder(SymbolComponent component) {
-         super(component,new GridLayout(7,1));
+    public RectPanelBuilder(UnitComponent component) {
+         super(component,new GridLayout(5,1));       
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("X"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -37,8 +36,7 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
                 label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 topField=new JTextField("0"); topField.addKeyListener(this); panel.add(topField,BorderLayout.CENTER);
-                layoutPanel.add(panel);
-               
+                layoutPanel.add(panel);              
         //***Thickness        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Thickness"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -49,19 +47,9 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
                 label=new JLabel("Fill"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 fillCombo=new JComboBox(Shape.Fill.values());fillCombo.addActionListener(this);  panel.add(fillCombo,BorderLayout.CENTER);
                 layoutPanel.add(panel);
-        //****Width
-                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Width"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                widthField=new JTextField("");  widthField.addKeyListener(this);panel.add(widthField,BorderLayout.CENTER);
-                layoutPanel.add(panel);  
-        //****Height
-                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Height"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                heightField=new JTextField("");  heightField.addKeyListener(this); panel.add(heightField,BorderLayout.CENTER);
-                layoutPanel.add(panel);
         //****Round Corner
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Round Corner"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                label=new JLabel("Rounding"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 roundCornerField=new JTextField("");  roundCornerField.addKeyListener(this); panel.add(roundCornerField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
 
@@ -73,18 +61,16 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
         leftField.setEnabled(rect.getResizingPoint()==null?false:true);  
         topField.setEnabled(rect.getResizingPoint()==null?false:true);
         thicknessField.setText(String.valueOf((rect.getThickness())));    
-        leftField.setText(toUnitX(rect.getResizingPoint()==null?0:rect.getResizingPoint().x));
-        topField.setText(toUnitY(rect.getResizingPoint()==null?0:rect.getResizingPoint().y)); 
-        widthField.setText(String.valueOf((rect.getWidth())));
-        heightField.setText(String.valueOf(( rect.getHeight()))); 
-        roundCornerField.setText(String.valueOf((rect.getArc()))); 
-        setSelectedItem(fillCombo,(rect.getFill()));    
+        leftField.setText(toUnitX(rect.getResizingPoint()==null?0:Utilities.roundDouble(rect.getResizingPoint().x)));
+        topField.setText(toUnitY(rect.getResizingPoint()==null?0:Utilities.roundDouble(rect.getResizingPoint().y))); 
+        roundCornerField.setText(String.valueOf((rect.getRounding()))); 
+        setSelectedIndex(fillCombo,(rect.getFill()==Shape.Fill.EMPTY?0:1));    
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==fillCombo){
-            getTarget().setFill((Shape.Fill)fillCombo.getSelectedItem());
+            getTarget().setFill(Shape.Fill.values()[fillCombo.getSelectedIndex()]);
            this.getComponent().Repaint();
         }
     }
@@ -94,33 +80,26 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
         if(e.getKeyCode()!=KeyEvent.VK_ENTER) return;
         RoundRect rect=(RoundRect)getTarget(); 
         if(e.getSource()==this.thicknessField){
-           getTarget().setThickness((Integer.parseInt(thicknessField.getText())));  
+        getTarget().setThickness((int)(Double.parseDouble(thicknessField.getText())));  
         }
-        
         if(e.getSource()==this.roundCornerField){
-          rect.setArc((Integer.parseInt(roundCornerField.getText())));  
+          rect.setRounding((int)(Double.parseDouble(roundCornerField.getText())));  
         }
         if(e.getSource()==this.leftField){
            Point p=rect.getResizingPoint();
-           int x=fromUnitX(leftField.getText()); 
-           rect.Resize(x-p.x, 0, p);
+           double x=fromUnitX(leftField.getText()); 
+           rect.resize((int)(x-p.x), 0, p);
         }
         
         if(e.getSource()==this.topField){
             Point p=rect.getResizingPoint();
-            int y=fromUnitY(topField.getText());  
-            rect.Resize(0, y-p.y, p);
+            double y=fromUnitY(topField.getText());  
+            rect.resize(0, (int)(y-p.y), p);
         }
-        
-        if(e.getSource()==this.widthField){
-           getTarget().setWidth((Integer.parseInt(widthField.getText()))); 
-        }
-        
-        if(e.getSource()==this.heightField){
-           getTarget().setHeight((Integer.parseInt(heightField.getText())));  
-        }
+    
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint();  
     }
+    
 }
 

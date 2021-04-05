@@ -2,6 +2,7 @@ package com.mynetpcb.core.capi.container;
 
 
 import com.mynetpcb.core.capi.Changeable;
+import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeEventDispatcher;
 import com.mynetpcb.core.capi.event.ShapeListener;
@@ -10,8 +11,12 @@ import com.mynetpcb.core.capi.event.UnitEventDispatcher;
 import com.mynetpcb.core.capi.event.UnitListener;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
+import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 
 import java.io.IOException;
 
@@ -33,7 +38,7 @@ import org.xml.sax.SAXException;
 
 
 public abstract class UnitContainer<T extends Unit, S extends Shape> implements UnitEventDispatcher,
-                                                                                ShapeEventDispatcher,Changeable {
+                                                                                ShapeEventDispatcher,Changeable,Clipboardable {
     private T unit;
 
     private Map<UUID, T> unitsMap;
@@ -108,9 +113,9 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         return unitsMap.values();
     }
 
-    public void Add(T unit) {
+    public void add(T unit) {
         unitsMap.put(unit.getUUID(), unit);
-        statesMap.put(unit.getUUID(),unit.getState(MementoType.MEMENTO));
+        statesMap.put(unit.getUUID(),new CompositeMemento(MementoType.MEMENTO).add(unit.getShapes()));
         attachShapeListeners(unit);
         this.fireUnitEvent(new UnitEvent(unit, UnitEvent.ADD_UNIT));
         //set to default if first one
@@ -119,12 +124,12 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         }
     }
 
-    public void Delete(UUID uuid) {
+    public void delete(UUID uuid) {
         T _unit = unitsMap.get(uuid);
         if (_unit == null) {
             return;
         }
-        _unit.Release();
+        _unit.release();
         this.fireUnitEvent(new UnitEvent(unitsMap.get(uuid), UnitEvent.DELETE_UNIT));
         if (_unit == unit) {
             unit = null;
@@ -134,10 +139,10 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         statesMap.remove(uuid);
     }
 
-    public void Clear() {
+    public void clear() {
         List<UUID> keys = new ArrayList<UUID>(unitsMap.keySet());
         for (int i = 0; i < keys.size(); i++) {
-            Delete(keys.get(i));
+            delete(keys.get(i));
         }
         this.fileName=null;
         this.categoryName=null;
@@ -146,8 +151,8 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         statesMap.clear();
     }
 
-    public void Release() {
-        this.Clear();
+    public void release() {
+        this.clear();
         //***clear listeners list
         if (unitListeners != null){
         for (int i = 0; i < unitListeners.getListenerList().length; i++) {
@@ -194,7 +199,7 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
        for(T unit:getUnits()){
            if(unit.getUUID().equals(uuid)){
                AbstractMemento initMemento=statesMap.get(unit.getUUID());
-               AbstractMemento currentMemento=unit.getState(MementoType.MEMENTO);
+               AbstractMemento currentMemento=new CompositeMemento(MementoType.MEMENTO).add(unit.getShapes());
                //2.is unit changed
                if(!initMemento.equals(currentMemento)){
                    return true;
@@ -213,7 +218,7 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
     
             for(T unit:getUnits()){
               AbstractMemento initMemento=statesMap.get(unit.getUUID());
-              AbstractMemento currentMemento=unit.getState(MementoType.MEMENTO);
+              AbstractMemento currentMemento=new CompositeMemento(MementoType.MEMENTO).add(unit.getShapes());
           //2.is unit changed
                 if(!initMemento.equals(currentMemento)){
                   return true;
@@ -226,7 +231,7 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
       public void registerInitialState(){
             statesMap.clear();
             for(T unit:getUnits()) {
-              statesMap.put(unit.getUUID(),unit.getState(MementoType.MEMENTO));
+              statesMap.put(unit.getUUID(),new CompositeMemento(MementoType.MEMENTO).add(unit.getShapes()));
             }
        }
 
@@ -235,7 +240,7 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
            if(unit==null){
               throw new IllegalArgumentException("uuid is unknown");
            }
-           statesMap.put(uuid,unit.getState(MementoType.MEMENTO));
+           statesMap.put(uuid,new CompositeMemento(MementoType.MEMENTO).add(unit.getShapes()));
        }
 
 
@@ -276,12 +281,12 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
     }
 
 
-    public abstract StringBuffer Format();
+    public abstract StringBuffer format();
 
-    public abstract void Parse(String xml) throws XPathExpressionException, ParserConfigurationException, SAXException,
+    public abstract void parse(String xml) throws XPathExpressionException, ParserConfigurationException, SAXException,
                                                   IOException;
 
-    public abstract void Parse(String xml, int index) throws XPathExpressionException, ParserConfigurationException,
+    public abstract void parse(String xml, int index) throws XPathExpressionException, ParserConfigurationException,
                                                              SAXException, IOException;
 
 
@@ -339,6 +344,14 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         if(!unitsMap.containsKey(target.getKey())){
             unitsMap.put(target.getKey(), target.getValue()); 
         }
+        
+    }
+    
+    public  Transferable createClipboardContent(){        
+        return new StringSelection(this.format().toString());
+    }
+    
+    public  void realizeClipboardContent(Transferable transferable){
         
     }
 }

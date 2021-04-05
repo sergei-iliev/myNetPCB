@@ -1,16 +1,13 @@
 package com.mynetpcb.core.capi;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
+import com.mynetpcb.d2.shapes.Box;
 
 /**
  *Keep track of the visual pcb portion of the screen. PCB is large in size 1mm=1000000px so 1000mm equals 1 000 000 000 pixel!
  * Accomodate faster drawing - no need to draw figures outside of viewable area.
  * @author Sergey Iliev
  */
-public class ViewportWindow extends Rectangle{                            
+public class ViewportWindow extends Box{                            
     
     
     public ViewportWindow(){
@@ -26,10 +23,19 @@ public class ViewportWindow extends Rectangle{
      * @param height
      */
     public void setSize(int width,int height){
-      this.width=width;
-      this.height=height;
+      this.setRect(getX(), getY(), width, height);        
     }
 
+    public void setLocation(int x,int y){
+        this.setRect(x, y, getWidth(), getHeight());                
+    }
+    public void setX(int x){
+        this.setRect(x, getY(), getWidth(), getHeight());                 
+    }
+    
+    public void setY(int y){
+        this.setRect(getX(), y, getWidth(), getHeight());                
+    }
     
     /**
      *Scaling the viewport around a point.
@@ -37,11 +43,11 @@ public class ViewportWindow extends Rectangle{
      * @param yy
      * @param scale
      */
-    public void scalein(int xx,int yy,ScalableTransformation scale){ 
-        Point scaledPoint = new Point(this.x + xx, this.y + yy);  
-        AffineTransform.getScaleInstance(scale.getScaleRatio(),scale.getScaleRatio()).transform(scaledPoint,scaledPoint);
-        this.x=(int)scaledPoint.getX()-xx;
-        this.y=(int)scaledPoint.getY()-yy;            
+    public void scaleIn(int xx,int yy,ScalableTransformation scale){            
+        double a=(this.getX()+xx)*scale.getScaleRatio();
+        double b=(this.getY()+yy)*scale.getScaleRatio();
+        this.setX((int)a-xx);
+        this.setY((int)b-yy);      
     }
     
     /**
@@ -50,18 +56,11 @@ public class ViewportWindow extends Rectangle{
      * @param yy
      * @param scale
      */
-    public void scaleout(int xx,int yy,ScalableTransformation scale){ 
-      Point scaledPoint = new Point(this.x + xx, this.y + yy);    
-        try {
-            AffineTransform inverseTransform =
-                AffineTransform.getScaleInstance(scale.getScaleRatio(),
-                                                 scale.getScaleRatio()).createInverse();
-            inverseTransform.transform(scaledPoint, scaledPoint);
-        } catch (NoninvertibleTransformException f) {
-            f.printStackTrace(System.out);
-        }  
-        this.x=(int)scaledPoint.getX()-xx;
-        this.y=(int)scaledPoint.getY()-yy;       
+    public void scaleOut(int xx,int yy,ScalableTransformation scale){         
+            double a=(this.getX()+xx)*scale.getInverseScaleRatio();
+            double b=(this.getY()+yy)*scale.getInverseScaleRatio();
+	    this.setX((int)a-xx);
+	    this.setY((int)b-yy);   
     }  
 }
 

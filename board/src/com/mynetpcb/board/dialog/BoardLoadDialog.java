@@ -85,10 +85,10 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     } 
     private void Init(boolean enabled){
         this.setResizable(false);  
-        this.setPreferredSize(new Dimension(489, 343));
+        this.setPreferredSize(new Dimension(689, 543));
         basePanel.setLayout(borderLayout1);
         basePanel.setPreferredSize(new Dimension(400, 300));
-        leftPanel.setPreferredSize(new Dimension(150, 10));
+        leftPanel.setPreferredSize(new Dimension(200, 10));
         leftPanel.setLayout(borderLayout2);
         bottomPanel.setPreferredSize(new Dimension(10, 40));
         leftPanel.add(projectCombo, BorderLayout.NORTH);
@@ -156,7 +156,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     }
     
     @Override
-    public void OnStart(Class<?> reciever) {
+    public void onStart(Class<?> reciever) {
         this.disableControls();   
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         
@@ -166,7 +166,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     }
 
     @Override
-    public void OnRecive(String result, Class reciever) {
+    public void onRecive(String result, Class reciever) {
         if(reciever.getSimpleName().equals("JComboBox")||reciever.getSimpleName().equals("DefaultListModel")){
             try {
                 Document document = Utilities.buildDocument(result);
@@ -207,7 +207,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
             selectionPanel.Clear();
             try{
             UnitContainer model= new BoardContainer();
-            model.Parse(result);
+            model.parse(result);
             selectionPanel.getSelectionGrid().setModel(model);
             } catch (Exception ioe) {
             ioe.printStackTrace(System.out);
@@ -220,14 +220,14 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
     }
 
     @Override
-    public void OnFinish(Class<?> reciever) {
+    public void onFinish(Class<?> reciever) {
         this.setCursor(Cursor.getDefaultCursor());     
         this.enableControls();         
     }
 
     @Override
-    public void OnError(String error) {
-        OnFinish(null);
+    public void onError(String error) {
+        onFinish(null);
         JOptionPane.showMessageDialog(this, error, "Error",
                                       JOptionPane.ERROR_MESSAGE);
     }

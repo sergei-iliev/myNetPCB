@@ -6,21 +6,19 @@ import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.shape.Arc;
 
+public class ArcExtendAngleEventHandler<U extends UnitComponent,S extends Shape>  extends EventHandle<U,S>{    
 
-public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape>  extends EventHandle<U,S>{    
-
-    int centerX;
-    int centerY;
+    double centerX;
+    double centerY;
     
     public ArcExtendAngleEventHandler(U component) {
         super(component);
     }
     
     @Override
-    protected void Clear() {   
+    protected void clear() {   
     }
 
     @Override

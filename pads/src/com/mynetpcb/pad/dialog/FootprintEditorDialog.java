@@ -1,21 +1,28 @@
 package com.mynetpcb.pad.dialog;
 
 
+import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
+import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
-import com.mynetpcb.core.capi.popup.JPopupButton;
-import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
+import com.mynetpcb.core.capi.io.Command;
+import com.mynetpcb.core.capi.io.CommandExecutor;
+import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.io.WriteUnitLocal;
+import com.mynetpcb.core.capi.io.remote.WriteConnector;
+import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.component.FootprintComponent;
 import com.mynetpcb.pad.container.FootprintContainer;
@@ -29,17 +36,17 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.AffineTransform;
 
 import java.util.Collection;
 
@@ -55,8 +62,7 @@ import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
 
-
-public class FootprintEditorDialog extends JDialog implements DialogFrame, ActionListener {
+public class FootprintEditorDialog extends JDialog implements DialogFrame,CommandListener, ActionListener {
 
     protected FootprintComponent footprintComponent;
     private JPanel basePanel;
@@ -77,12 +83,12 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
     private JToggleButton SnapToGridButton = new JToggleButton();
     private JToggleButton CoordButton = new JToggleButton();
     private JToggleButton MeasureButton = new JToggleButton();
+    private JToggleButton SolidRegionButton = new JToggleButton();
     private ButtonGroup group = new ButtonGroup();
 
-    protected JPopupButton AddFootprintButton = new JPopupButton(this);
-    private JButton PrintButton = new JButton();
-    private JButton SaveButton = new JButton();
-    protected JButton LoadButton = new JButton();
+
+    
+    protected JButton SaveButton = new JButton();
     private JButton ScaleIn = new JButton();
     private JButton ScaleOut = new JButton();
     private JButton RotateLeft = new JButton();
@@ -164,6 +170,11 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         RectButton.setToolTipText("Add Rectangle");
         RectButton.setPreferredSize(new Dimension(35, 35));
 
+        SolidRegionButton.addActionListener(this);
+        SolidRegionButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/solid_region.png"));
+        SolidRegionButton.setToolTipText("Add Solid Region");
+        SolidRegionButton.setPreferredSize(new Dimension(35, 35));
+        
         EllipseButton.addActionListener(this);
         EllipseButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/ellipse.png"));
         EllipseButton.setToolTipText("Add Circle");
@@ -204,29 +215,12 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         MeasureButton.addActionListener(this);
         MeasureButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/measure.png"));
         
-        //***construct Top Buttons Panel
-
-        AddFootprintButton.setToolTipText("Add footprint");
-        AddFootprintButton.setPreferredSize(new Dimension(35, 35));
-        AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
-        AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addMenu("Exit","exit"); 
-        
-        PrintButton.addActionListener(this);
-        PrintButton.setToolTipText("Print footprint");
-        PrintButton.setPreferredSize(new Dimension(35, 35));
-        PrintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/print.png"));
 
         SaveButton.addActionListener(this);
         SaveButton.setToolTipText("Save Footprint");
-        SaveButton.setActionCommand("Save");  //for inline editing
         SaveButton.setPreferredSize(new Dimension(35, 35));
         SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
 
-        LoadButton.addActionListener(this);
-        LoadButton.setToolTipText("Load Footprint");
-        //LoadButton.setEnabled(false);
-        LoadButton.setPreferredSize(new Dimension(35, 35));
-        LoadButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/folder.png"));
 
         ScaleIn.addActionListener(this);
         ScaleIn.setToolTipText("Scale In");
@@ -240,13 +234,11 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
 
         RotateLeft.addActionListener(this);
         RotateLeft.setToolTipText("Rotate Left");
-        RotateLeft.setActionCommand("RotateLeft");
         RotateLeft.setPreferredSize(new Dimension(35, 35));
         RotateLeft.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_left.png"));
 
         RotateRight.addActionListener(this);
         RotateRight.setToolTipText("Rotate Right");
-        RotateRight.setActionCommand("RotateRight");
         RotateRight.setPreferredSize(new Dimension(35, 35));
         RotateRight.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_right.png"));
 
@@ -260,10 +252,7 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         PositionToCenter.addActionListener(this);
         PositionToCenter.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/tocenter.png"));
 
-        NorthPanel.add(AddFootprintButton);
-        NorthPanel.add(PrintButton);
         NorthPanel.add(SaveButton);
-        NorthPanel.add(LoadButton);
         NorthPanel.add(ScaleIn);
         NorthPanel.add(ScaleOut);
         NorthPanel.add(RotateLeft);
@@ -277,11 +266,11 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         group.add(EllipseButton);
         group.add(ArcButton);
         group.add(LineButton);
-        group.add(RectButton);        
+        group.add(RectButton);    
+        group.add(SolidRegionButton);    
         group.add(PadButton);
         group.add(LabelButton);
         group.add(DragHeand);
-        group.add(CoordButton);
         group.add(MeasureButton);
         
         EastPanel.setLayout(new BorderLayout());
@@ -306,6 +295,8 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame, Actio
         leftButtonGroupPanel.add(LineButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(RectButton);                
+        leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
+        leftButtonGroupPanel.add(SolidRegionButton);                
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(PadButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
@@ -333,8 +324,8 @@ exit();
     }
 
     @Override
-    public Window getParentFrame() {
-        return this;
+    public Frame getParentFrame() {
+        return null;
     }
 
     @Override
@@ -349,11 +340,11 @@ exit();
 
     @Override
     public void setButtonGroup(int requestedMode) {
-        if (requestedMode == FootprintComponent.COMPONENT_MODE) {
+        if (requestedMode == Mode.COMPONENT_MODE) {
             group.setSelected(SelectionButton.getModel(), true);
         }
         
-        if(requestedMode==FootprintComponent.LINE_MODE){
+        if(requestedMode==Mode.LINE_MODE){
             group.setSelected(LineButton.getModel(), true);            
         }
     }
@@ -370,54 +361,32 @@ exit();
                     return;
                 }                      
             }
-            footprintComponent.Clear();                              
+            footprintComponent.clear();                              
         }
         
         if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {  
             //rememeber current unit position
             if(footprintComponent.getModel().getUnit()!=null){
-                footprintComponent.getModel().getUnit().setScrollPositionValue(footprintComponent.getViewportWindow().x,footprintComponent.getViewportWindow().y);                      
+                footprintComponent.getModel().getUnit().setScrollPositionValue((int)footprintComponent.getViewportWindow().getX(),(int)footprintComponent.getViewportWindow().getY());                      
             }
-            Footprint footprint = new Footprint(Grid.MM_TO_COORD(50), Grid.MM_TO_COORD(50));
-            footprintComponent.getModel().Add(footprint);
+            Footprint footprint = new Footprint((int)Grid.MM_TO_COORD(50), (int)Grid.MM_TO_COORD(50));
+            footprintComponent.getModel().add(footprint);
             footprintComponent.getModel().setActiveUnit(footprint.getUUID());
             footprintComponent.componentResized(null);
             footprintComponent.getModel().fireUnitEvent(new UnitEvent(footprint, UnitEvent.SELECT_UNIT));
             footprintComponent.Repaint();
         }
-        if (e.getSource()==LoadButton) {
-                        AbstractLoadDialog.Builder builder=new FootprintLoadDialog.Builder();
-                        AbstractLoadDialog footprintLoadDialog =builder.setWindow(this.getParentFrame()).setCaption("Load Footprint").setEnabled(false).build();
 
-
-                        footprintLoadDialog.pack();
-                        footprintLoadDialog.setLocationRelativeTo(null); //centers on screen
-                        footprintLoadDialog.setVisible(true);
-            
-                        if(footprintLoadDialog.getSelectedModel()==null){
-                          return;
-                        }
-            
-                        LoadFootprints((FootprintContainer)footprintLoadDialog.getSelectedModel());
-            
-                        footprintLoadDialog.dispose();
-                        footprintLoadDialog=null;
-                        setButtonGroup(FootprintComponent.COMPONENT_MODE);
-            
-                        //position on center
-                        //Rectangle r=footprintComponent.getModel().getUnit().getBoundingRect();
-                        //footprintComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
-
-        }
         if (footprintComponent.getModel().getUnit() == null) {
             return;
         }
-
+        
+        if(e.getActionCommand().equals("export.clipboard")){            
+            ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.SYSTEM, new StringSelection(footprintComponent.getModel().format().toString()));
+        }
+        
         if (e.getActionCommand().equals("Save")||e.getActionCommand().equals("SaveAs")) {
-            if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
-               User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
-               return;
-            }
+
             //could be a freshly imported circuit with no library/project name
             if(e.getActionCommand().equals("Save")){
               if (footprintComponent.getModel().getLibraryName() == null||footprintComponent.getModel().getLibraryName().length()==0) {
@@ -429,14 +398,49 @@ exit();
                 return;                
             }            
             
+            if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
+                User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
+                return;
+            }
+            //could be a freshly imported circuit with no library/project name
+            if(e.getActionCommand().equals("Save")){
+              if(Configuration.get().isIsOnline()&&User.get().isAnonymous()){
+                   User.showMessageDialog(footprintComponent.getDialogFrame().getParentFrame(),"Anonymous access denied."); 
+                   return;
+              }                
+              if (footprintComponent.getModel().getLibraryName() == null||footprintComponent.getModel().getLibraryName().length()==0) {
+                 (new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline())).build();
+                  return;
+              }
+            }else{
+                (new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline())).build();
+                return;                
+            }
+            
+            //save the file
+            if (!Configuration.get().isIsApplet()) {
+                Command writer =
+                    new WriteUnitLocal(this, footprintComponent.getModel().format(),
+                                       Configuration.get().getFootprintsRoot(),
+                                       footprintComponent.getModel().getLibraryName(), null,
+                                       footprintComponent.getModel().getFileName(), true, FootprintComponent.class);
+                CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
+            } else {
+                Command writer =
+                    new WriteConnector(this, footprintComponent.getModel().format(),
+                                       new RestParameterMap.ParameterBuilder("/footprints").addURI(footprintComponent.getModel().getLibraryName()).addURI(footprintComponent.getModel().getFormatedFileName()).addAttribute("overwrite",
+                                                                                                                                                                                                                      String.valueOf(true)).build(),
+                                       FootprintComponent.class);
+                CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
+            }            
              
         }
         if (e.getSource()==ScaleIn) {
-            footprintComponent.ZoomOut(new Point((int)footprintComponent.getVisibleRect().getCenterX(),
+            footprintComponent.zoomOut(new Point((int)footprintComponent.getVisibleRect().getCenterX(),
                                                 (int)footprintComponent.getVisibleRect().getCenterY()));
         }
         if (e.getSource()==ScaleOut) {
-            footprintComponent.ZoomIn(new Point((int)footprintComponent.getVisibleRect().getCenterX(),
+            footprintComponent.zoomIn(new Point((int)footprintComponent.getVisibleRect().getCenterX(),
                                                  (int)footprintComponent.getVisibleRect().getCenterY()));
         }
         if (e.getSource()==RotateLeft || e.getSource()==RotateRight) {        
@@ -445,19 +449,18 @@ exit();
                return; 
             }   
             //***notify undo manager                    
-            footprintComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
-            Rectangle r=footprintComponent.getModel().getUnit().getShapesRect(shapes);  
+            footprintComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));
+            com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getShapesRect(shapes);  
             
             FootprintMgr.getInstance().rotateBlock(shapes,
-                                   AffineTransform.getRotateInstance((e.getActionCommand().equals("RotateLeft")?
-                                                                      -1 :
-                                                                      1) *(Math.PI /2),
-                                                                     r.getCenterX(),
-                                                                     r.getCenterY())); 
+                                   ((e.getSource()==RotateLeft?
+                                                                      1 :
+                                                                      -1) *90),
+                                                                     r.getCenter()); 
             FootprintMgr.getInstance().alignBlock(footprintComponent.getModel().getUnit().getGrid(),shapes);                     
 
             //***notify undo manager
-            footprintComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).Add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
+            footprintComponent.getModel().getUnit().registerMemento(shapes.size()>1?new CompositeMemento(MementoType.MOVE_MEMENTO).add(shapes):shapes.iterator().next().getState(MementoType.MOVE_MEMENTO));                    
             footprintComponent.Repaint();
         }
         
@@ -467,67 +470,91 @@ exit();
         }
 
         if (e.getSource()==RectButton) {
-            footprintComponent.setMode(FootprintComponent.RECT_MODE);
+            footprintComponent.setMode(Mode.RECT_MODE);
+        }
+        if (e.getSource()==SolidRegionButton) {
+            footprintComponent.setMode(Mode.SOLID_REGION);
         }
         if (e.getSource()==EllipseButton) {
-            footprintComponent.setMode(FootprintComponent.ELLIPSE_MODE);
+            footprintComponent.setMode(Mode.ELLIPSE_MODE);
         }
         if (e.getSource()==ArcButton) {
-            footprintComponent.setMode(FootprintComponent.ARC_MODE);
+            footprintComponent.setMode(Mode.ARC_MODE);
         }
         if (e.getSource()==LineButton) {
-            footprintComponent.setMode(FootprintComponent.LINE_MODE);
+            footprintComponent.setMode(Mode.LINE_MODE);
         }
         
         if (e.getSource()==PadButton) {
-            footprintComponent.setMode(FootprintComponent.PAD_MODE);
+            footprintComponent.setMode(Mode.PAD_MODE);
         }
         
         if (e.getSource()==LabelButton) {
-            footprintComponent.setMode(FootprintComponent.LABEL_MODE);
-        }
-        
-        if (e.getSource()==PrintButton) {
-            PrintContext printContext=new PrintContext();
-            printContext.setIsMirrored(false);
-            printContext.setLayermaskId(Layer.LAYER_ALL);
-            printContext.setTag("pads");
-            footprintComponent.Print(printContext);
+            footprintComponent.setMode(Mode.LABEL_MODE);
         }
         
         if (e.getSource()==DragHeand) {
-            footprintComponent.setMode(FootprintComponent.DRAGHEAND_MODE);
+            footprintComponent.setMode(Mode.DRAGHEAND_MODE);
         }
         if (e.getSource()==SnapToGridButton) {
             footprintComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
         }
         if(e.getSource()==CoordButton){ 
-            footprintComponent.setMode(FootprintComponent.ORIGIN_SHIFT_MODE);
+            if(CoordButton.getModel().isSelected()){
+               footprintComponent.getModel().getUnit().setCoordinateSystem(new CoordinateSystem(footprintComponent.getModel().getUnit()));
+               footprintComponent.setMode(Mode.ORIGIN_SHIFT_MODE);
+            }else{
+               footprintComponent.getModel().getUnit().deleteCoordinateSystem(); 
+               footprintComponent.setMode(Mode.COMPONENT_MODE); 
+            }
         }
         if (e.getSource()==SelectionButton) {
-            footprintComponent.setMode(FootprintComponent.COMPONENT_MODE);
+            footprintComponent.setMode(Mode.COMPONENT_MODE);
         }
         if (e.getSource()==MeasureButton) {
-            footprintComponent.setMode(FootprintComponent.MEASUMENT_MODE);
+            footprintComponent.setMode(Mode.MEASUMENT_MODE);
         }
     }
+    @Override
+    public void onStart(Class<?> receiver) {
+        if(receiver==FootprintComponent.class){
+            DisabledGlassPane.block(this.getRootPane(), "Saving..."); 
+        }
+    }
+
+    @Override
+    public void onRecive(String string, Class receiver) {
+    }
+    
+    @Override
+    public void onFinish(Class<?> receiver) {
+        DisabledGlassPane.unblock(this.getRootPane());        
+        
+        if(receiver==FootprintComponent.class){ 
+           footprintComponent.getModel().registerInitialState();
+        }
+    }
+
+    @Override
+    public void onError(String message) {
+    }    
 
 /**
      *Create,load footprint
      * @param source 
      */
     private void LoadFootprints(FootprintContainer source) {
-        footprintComponent.Clear();
-        footprintComponent.setMode(FootprintComponent.COMPONENT_MODE);
+        footprintComponent.clear();
+        footprintComponent.setMode(Mode.COMPONENT_MODE);
         if(source==null){
-            Footprint footprint=new Footprint(Grid.MM_TO_COORD(50),Grid.MM_TO_COORD(50)); 
-            footprintComponent.getModel().Add(footprint);
+            Footprint footprint=new Footprint((int)Grid.MM_TO_COORD(50),(int)Grid.MM_TO_COORD(50)); 
+            footprintComponent.getModel().add(footprint);
         }else{
         for (Footprint footprint : source.getUnits()) {
             try {
                 Footprint copy = footprint.clone();
-                copy.getScalableTransformation().Reset(0.5,10,4,13);
-                footprintComponent.getModel().Add(copy);
+                copy.getScalableTransformation().reset(0.5,10,4,13);
+                footprintComponent.getModel().add(copy);
                 copy.notifyListeners(ShapeEvent.ADD_SHAPE);
             } catch (CloneNotSupportedException f) {
                 f.printStackTrace(System.out);
@@ -550,15 +577,15 @@ exit();
 
         //position all to symbol center
         for(Unit unit:footprintComponent.getModel().getUnits()){
-            Rectangle r=unit.getBoundingRect();
-            Point dst=new Point();
-            unit.getScalableTransformation().getCurrentTransformation().transform(r.getLocation(),dst);
-            unit.setScrollPositionValue((int)dst.getX(),(int)dst.getY());            
+            com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
+            com.mynetpcb.d2.shapes.Point pt=r.min.clone();
+            pt.scale(unit.getScalableTransformation().getCurrentTransformation().getScaleX());            
+            unit.setScrollPositionValue((int)pt.x,(int)pt.y);            
         }
         //position to symbol center
-        Rectangle r=footprintComponent.getModel().getUnit().getBoundingRect();
-        footprintComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
-        
+        com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getBoundingRect();
+        footprintComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+
         //remember state
         footprintComponent.getModel().registerInitialState();
         footprintComponent.Repaint();
@@ -570,29 +597,29 @@ exit();
                 return;
             }
         }
-        footprintComponent.Release();
+        footprintComponent.release();
         FootprintEditorDialog.this.dispose();
     }
-//    public static void main(String[] args) {
-//        //***initialize configuration
-//        Configuration.Initilize(false);
-//        Configuration.get().read();
-//        //*****************Footprint editor
-//        final FootprintEditorDialog f = new FootprintEditorDialog(null, "Footprint Editor");
-//        f.setPreferredSize(new Dimension(730, 600));
-//        f.addWindowListener(new WindowAdapter() {
-//            public void windowClosing(WindowEvent e) {
-//                System.exit(0);
-//            }
-//        });
-//        f.addWindowListener(new WindowAdapter() {
-//            public void windowActivated(WindowEvent e) {
-//
-//            }
-//        });
-//        f.pack();
-//        f.setVisible(true);
-//
-//
-//    }
+    public static void main(String[] args) {
+        //***initialize configuration
+        Configuration.Initilize(false);
+        Configuration.get().read();
+        //*****************Footprint editor
+        final FootprintEditorDialog f = new FootprintEditorDialog(null, "Footprint Editor");
+        f.setPreferredSize(new Dimension(730, 600));
+        f.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+        f.addWindowListener(new WindowAdapter() {
+            public void windowActivated(WindowEvent e) {
+
+            }
+        });
+        f.pack();
+        f.setVisible(true);
+
+
+    }
 }

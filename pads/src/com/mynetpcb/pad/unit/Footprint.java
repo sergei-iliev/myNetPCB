@@ -47,9 +47,8 @@ public class Footprint extends Unit<Shape> {
         grid.setGridUnits(0.8, Grid.Units.MM);
         this.grid.setPointsColor(Color.WHITE);
         this.frame.setFillColor(Color.WHITE);
-        scalableTransformation.Reset(0.5, 10, 4, 13);
-        scalableTransformation.setScaleFactor(10);
-        this.getCoordinateSystem().setSelectionRectWidth(3000);
+        scalableTransformation.reset(0.5, 10, 4, 13);
+        scalableTransformation.setScaleFactor(10);        
     }
 
     public Footprint clone() throws CloneNotSupportedException {
@@ -80,7 +79,7 @@ public class Footprint extends Unit<Shape> {
         AffineTransform oldTransform = g2d.getTransform();
         g2d.scale((72d / 254000d), (72d / 254000d));
         for (Shape shape : getShapes()) {
-            shape.Print(g2d, context.get(), context.get().getLayermaskId());
+            shape.print(g2d, context.get(), context.get().getLayermaskId());
         }
 
         g2d.setTransform(oldTransform);
@@ -94,7 +93,7 @@ public class Footprint extends Unit<Shape> {
         context = null;
     }
 
-    public StringBuffer Format() {
+    public StringBuffer format() {
         StringBuffer xml = new StringBuffer();
         xml.append("<footprint width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\">\r\n");
         xml.append("<name>" + this.unitName + "</name>\r\n");
@@ -128,12 +127,12 @@ public class Footprint extends Unit<Shape> {
             }
         }).collect(Collectors.toList());
         
-        xml.append(Format(shapes));
+        xml.append(format(shapes));
         xml.append("</footprint>");
         return xml;
     }
 
-    protected StringBuffer Format(Collection<Shape> shapes) {
+    protected StringBuffer format(Collection<Shape> shapes) {
         StringBuffer xml = new StringBuffer();
 
         xml.append("<shapes>\r\n");
@@ -147,7 +146,7 @@ public class Footprint extends Unit<Shape> {
     }
 
 
-    public void Parse(Node node) throws XPathExpressionException, ParserConfigurationException {
+    public void parse(Node node) throws XPathExpressionException, ParserConfigurationException {
         Element e = (Element) node;
         this.setSize(e.hasAttribute("width") ?
                      (Integer.parseInt(e.getAttribute("width")) != 1 ? Integer.parseInt(e.getAttribute("width")) :
@@ -168,7 +167,7 @@ public class Footprint extends Unit<Shape> {
             GlyphLabel label = new GlyphLabel();
             label.fromXML(n);
             label.getTexture().setTag("reference");
-            Add(label);
+            add(label);
         }
         nlist = ((Element) node).getElementsByTagName("value");
         n = nlist.item(0);
@@ -176,7 +175,7 @@ public class Footprint extends Unit<Shape> {
             GlyphLabel label = new GlyphLabel();
             label.fromXML(n);
             label.getTexture().setTag("value");
-            Add(label);
+            add(label);
         }
 
         parseSelection(node, false);
@@ -192,7 +191,7 @@ public class Footprint extends Unit<Shape> {
         for (int i = 0; i < nodelist.getLength(); i++) {
             Shape shape = this.shapeFactory.createShape(nodelist.item(i));
             shape.setSelected(selection);
-            this.Add(shape);
+            this.add(shape);
         }
     }
 

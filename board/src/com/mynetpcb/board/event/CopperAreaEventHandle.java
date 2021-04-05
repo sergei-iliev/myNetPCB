@@ -7,8 +7,7 @@ import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
-
-import java.awt.Point;
+import com.mynetpcb.d2.shapes.Point;
 
 import javax.swing.SwingUtilities;
 
@@ -19,7 +18,7 @@ public class CopperAreaEventHandle  extends EventHandle<BoardComponent,Shape>{
     }
 
     @Override
-    protected void Clear() {
+    protected void clear() {
 
     }
 
@@ -44,10 +43,10 @@ public class CopperAreaEventHandle  extends EventHandle<BoardComponent,Shape>{
         boolean justcreated=area.getLinePoints().size()==2;         
         
         if(area.getLinePoints().size()==0){
-           area.addPoint(p);    
+           area.add(p);    
            //avoid point over point
         }else if(!area.getLinePoints().get(area.getLinePoints().size()-1).equals(p)){
-           area.addPoint(p);             
+           area.add(p);             
         }
         if(justcreated){
            getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.CREATE_MEMENTO));   
@@ -72,7 +71,7 @@ public class CopperAreaEventHandle  extends EventHandle<BoardComponent,Shape>{
 
     @Override
     public void mouseScaledMove(MouseScaledEvent e) {
-        ((Trackable)getTarget()).getFloatingEndPoint().setLocation(e.getX(),e.getY());   
+        ((Trackable)getTarget()).getFloatingEndPoint().set(e.getX(),e.getY());   
         getComponent().Repaint(); 
     }
 
@@ -84,11 +83,11 @@ public class CopperAreaEventHandle  extends EventHandle<BoardComponent,Shape>{
     }
     
     @Override
-    public void Detach() {
-        ((Trackable)getTarget()).Reset(); 
+    public void detach() {
+        ((Trackable)getTarget()).reset(); 
         if(((Trackable)getTarget()).getLinePoints().size()<3&&(getTarget()).getOwningUnit()!=null){
             getTarget().getOwningUnit().delete(((getTarget())).getUUID());
         }
-        super.Detach();
+        super.detach();
     }
 }

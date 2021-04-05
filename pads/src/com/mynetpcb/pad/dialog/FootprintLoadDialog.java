@@ -103,10 +103,10 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
     private void Init(boolean enabled) {
         this.setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        this.setPreferredSize(new Dimension(489, 543));
+        this.setPreferredSize(new Dimension(689, 543));
         basePanel.setLayout(new BorderLayout());
         basePanel.setPreferredSize(new Dimension(400, 300));
-        leftPanel.setPreferredSize(new Dimension(150, 10));
+        leftPanel.setPreferredSize(new Dimension(200, 10));
         leftPanel.setLayout(new BorderLayout());
         bottomPanel.setPreferredSize(new Dimension(10, 40));
         leftPanel.add(libraryCombo, BorderLayout.NORTH);
@@ -167,7 +167,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
                     CommandExecutor.INSTANCE.addTask("ReadRepositoryLocal", reader);
                 } else {
                     Command reader =
-                        new ReadConnector(FootprintLoadDialog.this, new RestParameterMap.ParameterBuilder("/footprints").build(),
+                        new ReadConnector(FootprintLoadDialog.this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").build(),
                                           JComboBox.class);
                     CommandExecutor.INSTANCE.addTask("ReadProjects", reader);
                 }
@@ -194,7 +194,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
                 CommandExecutor.INSTANCE.addTask("ReadCategoriesLocal", reader);
             } else {
                 Command reader =
-                    new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI((String)libraryCombo.getSelectedItem()).build(),
+                    new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI((String)libraryCombo.getSelectedItem()).addURI("categories").build(),
                                       footprintTree.getClass());
                 CommandExecutor.INSTANCE.addTask("ReadFootprints", reader);
             }
@@ -224,7 +224,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
                     CommandExecutor.INSTANCE.addTask("ReadUnitLocal", reader);
                 } else {                
                     Command reader =
-                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI(attachedItem.getLibrary()).addURI((node.getLevel()==1?"null":attachedItem.getCategory())).addURI(attachedItem.getFileName()).build(),
+                        new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI(attachedItem.getLibrary()).addURI("categories").addURI((node.getLevel()==1?"null":attachedItem.getCategory())).addURI(attachedItem.getFileName()).build(),
                                           Footprint.class);
                     CommandExecutor.INSTANCE.addTask("ReadFootprint", reader);
                 }
@@ -234,7 +234,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
     }
 
     @Override
-    public void OnStart(Class<?> sender) {
+    public void onStart(Class<?> sender) {
         this.disableControls();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         if (sender==JTree.class) {
@@ -245,7 +245,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
 
 
     @Override
-    public void OnRecive(String result, Class sender) {
+    public void onRecive(String result, Class sender) {
         if (sender==JComboBox.class) {
             //***parse xml
             this.libraryCombo.removeActionListener(this);
@@ -355,7 +355,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
             selectionPanel.Clear();
             try {
                 UnitContainer model = new FootprintContainer();
-                model.Parse(result);
+                model.parse(result);
                 selectionPanel.getSelectionGrid().setModel(model);
             } catch (Exception ioe) {
                 ioe.printStackTrace(System.out);
@@ -375,14 +375,14 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
     }
 
     @Override
-    public void OnFinish(Class<?> receiver) {
+    public void onFinish(Class<?> receiver) {
         this.setCursor(Cursor.getDefaultCursor());
         this.enableControls();
     }
 
     @Override
-    public void OnError(String error) {
-        OnFinish(null);
+    public void onError(String error) {
+        onFinish(null);
         JOptionPane.showMessageDialog(this, error, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
@@ -416,7 +416,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
                
                 CommandExecutor.INSTANCE.addTask("ReadUnitsLocal", reader);
             } else {   
-                Command reader =new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI(((AttachedItem)categoryNode.getUserObject()).getLibrary()).addURI(((AttachedItem)categoryNode.getUserObject()).getCategory()).build(),
+                Command reader =new ReadConnector(this, new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI(((AttachedItem)categoryNode.getUserObject()).getLibrary()).addURI("categories").addURI(((AttachedItem)categoryNode.getUserObject()).getCategory()).build(),
                                 ReadUnitsLocal.class);
                 CommandExecutor.INSTANCE.addTask("ReadFootprints", reader);
             }          

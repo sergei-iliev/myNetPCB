@@ -3,22 +3,22 @@ package com.mynetpcb.pad.shape;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,9 +27,9 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     protected GlyphTexture texture;
     
     public GlyphLabel(String text,int thickness,int layermaskId) {
-        super(0, 0, 0, 0, thickness, layermaskId);
+        super(thickness, layermaskId);
         texture=new GlyphTexture(text,"",0,0,thickness);
-        texture.setSize(Grid.MM_TO_COORD(2));
+        texture.setSize((int)Grid.MM_TO_COORD(2));
     }
     
     public GlyphLabel(){
@@ -41,53 +41,85 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         copy.texture = this.texture.clone();        
         return copy;
     }
+    
+    @Override
+    public int getThickness() {        
+        return texture.getThickness();
+    }
+    
+    @Override
+    public void setThickness(int thickness) {        
+        texture.setThickness(thickness);
+    }
+    
+    @Override
+    public void setSide(Layer.Side side, Line line,double angle) {
+        this.setCopper(Layer.Side.change(this.getCopper().getLayerMaskID()));
+        this.texture.setSide(side, line, angle);
+    }
+    @Override
+    public Box getBoundingShape() {
+          return this.texture.getBoundingShape();
+    }
+    public void  setCopper(Layer.Copper copper){
+            this.copper= copper;
+            //mirror horizontally
+            Line line=new Line(this.texture.getAnchorPoint(),new Point(this.texture.getAnchorPoint().x,this.texture.getAnchorPoint().y+100));
+            
+            Layer.Side side=Layer.Side.resolve(this.copper.getLayerMaskID());
+            
+            this.texture.mirror(side==Layer.Side.BOTTOM,line);
+    }
     @Override
     public Point getCenter() {
-        return new Point((int)texture.getBoundingShape().getBounds().getCenterX(),(int)texture.getBoundingShape().getBounds().getCenterY());
+        return texture.getBoundingShape().getCenter();
     }
-    @Override 
-    public Rectangle calculateShape(){ 
-     return texture.getBoundingShape();
-    }
+    
     @Override
     public GlyphTexture getTexture(){
        return texture;    
     }
+
     @Override
-    public void Mirror(Point A,Point B) {
-        texture.Mirror(A,B);
-    }
-    @Override
-    public void Rotate(AffineTransform rotation) {
-      texture.Rotate(rotation);
-    }
-    @Override
-    public void Move(int xoffset, int yoffset) {
-        texture.Move(xoffset, yoffset);
+    public void mirror(Line line) {
+        
     }
     
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
+    public void rotate(double angle,Point origin) {
+      texture.rotate(angle,origin);
+    }
+    
+    @Override
+    public void move(double xoffset, double yoffset) {
+        texture.move(xoffset, yoffset);
+    }
+    
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         if((this.getCopper().getLayerMaskID()&layermask)==0){
             return;
         }
-        Rectangle2D scaledRect = Utilities.getScaleRect(texture.getBoundingShape(),scale);
-        if(!scaledRect.intersects(viewportWindow)){
-          return;   
+        
+      
+        Box rect = this.texture.getBoundingShape();
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+            return;
         }
         texture.setFillColor((isSelected()?Color.GRAY:this.copper.getColor()));
-        texture.Paint(g2, viewportWindow, scale,copper.getLayerMaskID());
+        texture.paint(g2, viewportWindow, scale,copper.getLayerMaskID());        
     }
     @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {        
+    public void print(Graphics2D g2,PrintContext printContext,int layermask) {        
         if((this.copper.getLayerMaskID()&layermask)==0){
             return;
         }
         texture.setFillColor(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());
-        texture.Print(g2, printContext,layermask);
+        texture.print(g2, printContext,layermask);
     }
     @Override
-    public long getOrderWeight(){
+    public long getClickableOrder(){
         return 0;
     } 
     @Override
@@ -99,6 +131,19 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     public void setSelected(boolean selected) {
         this.texture.setSelected(selected);
     }
+    public void setRotation(double rotate,Point center){     
+            if(center==null){
+                this.texture.setRotation(rotate,this.getCenter());
+            }else{
+                this.texture.setRotation(rotate,center);      
+            }
+    }
+    
+    @Override
+    public boolean isClicked(int x, int y) {        
+        return this.texture.isClicked(x,y);
+    }
+
     @Override
     public boolean isSelected() {
         return this.texture.isSelected();
@@ -113,7 +158,6 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
     
     @Override
     public void fromXML(Node node){
-        //extract layer info
         Element  element= (Element)node;
         if(element.getAttribute("layer")!=null&&!element.getAttribute("layer").isEmpty()){
            this.copper =Layer.Copper.valueOf(element.getAttribute("layer"));
@@ -126,10 +170,6 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
-    }
-
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this);
     }
 
     public static class Memento extends AbstractMemento<Footprint,GlyphLabel>{
@@ -151,9 +191,9 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         }
         
         @Override
-        public void Clear(){
-          super.Clear();
-          memento.Clear();
+        public void clear(){
+          super.clear();
+          memento.clear();
         }
         @Override
         public boolean equals(Object obj){
@@ -166,8 +206,7 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
             
             Memento other=(Memento)obj;
 
-            return(this.getUUID().equals(other.getUUID()) &&
-                   getMementoType().equals(other.getMementoType())&&
+            return(super.equals(obj)&&
                    memento.equals(other.memento)
                 );            
           
@@ -175,12 +214,12 @@ public class GlyphLabel extends Shape implements Label,Externalizable{
         
         @Override
         public int hashCode(){
-          int hash=getUUID().hashCode();
-          hash+=getMementoType().hashCode();
+          int hash=super.hashCode();          
           hash+=memento.hashCode();
           return hash;
         }        
-        public boolean isSameState(Footprint unit) {
+        @Override
+        public boolean isSameState(Unit unit) {
             GlyphLabel label=(GlyphLabel)unit.getShape(getUUID());
             return (label.getState(getMementoType()).equals(this)); 
         }

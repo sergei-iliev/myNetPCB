@@ -1,13 +1,14 @@
 package com.mynetpcb.core.pad.shape;
 
 import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Pinable;
+import com.mynetpcb.core.capi.layer.ClearanceTarget;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.Textable;
-import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.core.pad.Net;
+import com.mynetpcb.core.capi.text.CompositeTextable;
+import com.mynetpcb.core.board.Net;
 
-public abstract class PadShape extends Shape implements Pinable, Net, Textable, Externalizable{
+public abstract class PadShape extends Shape implements Pinable, Net, CompositeTextable,ClearanceTarget, Externalizable{
     
     public enum Shape {
         RECTANGULAR,
@@ -27,11 +28,14 @@ public abstract class PadShape extends Shape implements Pinable, Net, Textable, 
        THERMAL
     }
     
-    public PadShape(int x, int y, int width, int height) {
-        super(x, y, width, height, -1, Layer.LAYER_BACK);
+    public PadShape() {
+        super(-1, Layer.LAYER_BACK);
     }
     
-    public abstract PadShape.Shape getShape();
+        
+    public abstract PadDrawing getPadDrawing();
+    
+    public abstract PadShape.Shape getShapeType();
     
     public abstract PadShape.Type getType();
 }

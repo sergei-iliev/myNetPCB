@@ -1,6 +1,5 @@
 package com.mynetpcb.symbol.dialog;
 
-
 import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.container.UnitContainer;
 import com.mynetpcb.core.capi.gui.UnitSelectionPanel;
@@ -65,9 +64,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-
 public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListener,TreeSelectionListener,TreeWillExpandListener,CommandListener{
-    
     private JPanel basePanel = new JPanel();
     private JPanel leftPanel = new JPanel();
     private JComboBox libraryCombo = new JComboBox();
@@ -92,10 +89,10 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
     private void Init(boolean enabled) {
         this.setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        this.setPreferredSize(new Dimension(489, 343));
+        this.setPreferredSize(new Dimension(689, 543));
         basePanel.setLayout(new BorderLayout());
         basePanel.setPreferredSize(new Dimension(400, 300));
-        leftPanel.setPreferredSize(new Dimension(150, 10));
+        leftPanel.setPreferredSize(new Dimension(200, 10));
         leftPanel.setLayout(new BorderLayout());
         bottomPanel.setPreferredSize(new Dimension(10, 40));
         leftPanel.add(libraryCombo, BorderLayout.NORTH);
@@ -224,7 +221,7 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
     }
 
     @Override
-    public void OnStart(Class<?> sender) {
+    public void onStart(Class<?> sender) {
         this.disableControls();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         if (sender== JTree.class) {
@@ -234,7 +231,7 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
     }
 
     @Override
-    public void OnRecive(String result, Class sender) {
+    public void onRecive(String result, Class sender) {
         if (sender==JComboBox.class||sender==JTree.class||sender==ReadUnitsLocal.class) {
             //***parse xml
             this.symbolTree.removeTreeSelectionListener(this);
@@ -294,7 +291,7 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
             selectionPanel.Clear();
         try{ 
             UnitContainer model= new SymbolContainer();
-            model.Parse(result);
+            model.parse(result);
             selectionPanel.getSelectionGrid().setModel(model);
         } catch (Exception ioe) {
             ioe.printStackTrace(System.out);
@@ -307,14 +304,14 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
     }
 
     @Override
-    public void OnFinish(Class<?> class1) {
+    public void onFinish(Class<?> clazz) {
         this.setCursor(Cursor.getDefaultCursor());
         this.enableControls();
     }
 
     @Override
-    public void OnError(String error) {
-        OnFinish(null);
+    public void onError(String error) {
+        onFinish(null);
         JOptionPane.showMessageDialog(this, error, "Error",
                                       JOptionPane.ERROR_MESSAGE);
     }
@@ -366,4 +363,4 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
            return new SymbolLoadDialog(window,caption,enabled);
         }
     }
-}
+    }

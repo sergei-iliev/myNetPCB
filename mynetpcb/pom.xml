@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.mynetpcb</groupId>
         <artifactId>mynetpcb-project</artifactId>
-        <version>1.0</version>
+        <version>2.0</version>
     </parent>
 
     <artifactId>mynetpcb</artifactId>
@@ -17,8 +17,14 @@
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>circuit</artifactId>
-            <version>1.0</version>
+            <version>2.0</version>
         </dependency>	
+        <dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>board</artifactId>
+            <version>2.0</version>
+        </dependency>	
+		
 	</dependencies>
 	
 	<build>
@@ -34,7 +40,7 @@
 					<configuration>
 					<archive>
 						<manifest>
-						<mainClass>com.mynetpcb.myNetPCB</mainClass>
+						<mainClass>com.mynetpcb.ui.myNetPCB</mainClass>
 						</manifest>
 					</archive>
 					</configuration>

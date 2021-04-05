@@ -1,6 +1,5 @@
 package com.mynetpcb.gerber.processor.aperture;
 
-
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -27,7 +26,7 @@ public class ApertureRectProcessor implements Processor{
                processRect(rect);                               
         }
         if(serviceContext.getParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN, Boolean.class)){        
-         List<FootprintShape> footprints= board.getShapes(FootprintShape.class, layermask);   
+         List<FootprintShape> footprints= board.getShapes(FootprintShape.class);   
          for(FootprintShape footrpint:footprints){
             Collection<? extends Shape> shapes=footrpint.getShapes();
             for(Shape shape:shapes){
@@ -44,4 +43,4 @@ public class ApertureRectProcessor implements Processor{
         circle.setDiameter(rect.getThickness());
         dictionary.add(circle);
     }
-}
+    }

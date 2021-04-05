@@ -1,43 +1,42 @@
 package com.mynetpcb.core.capi.event;
 
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.UnitMgr;
+import com.mynetpcb.d2.shapes.Point;
 
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
 
 public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extends EventHandle<U,S>{
     public CursorEventHandle(U component) {
         super(component);
     }
     @Override
-    public void Attach() {
-        super.Attach();
-        mx=getTarget().getCenter().x;
-        my=getTarget().getCenter().y;
+    public void attach() {
+        super.attach();
+        mx=(int)getTarget().getCenter().x;
+        my=(int)getTarget().getCenter().y;
     } 
     @Override
-    protected void Clear() {
+    protected void clear() {
         
     }
 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
         if(e.getModifiers()==InputEvent.BUTTON3_MASK){  
-           getComponent().getDialogFrame().setButtonGroup( getComponent().COMPONENT_MODE);
-           getComponent().setMode(getComponent().COMPONENT_MODE);  
+           getComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
+           getComponent().setMode(Mode.COMPONENT_MODE);  
            getComponent().Repaint();
            return;   //***right button click 
         } 
         try {
             Shape shape = getTarget().clone();
-            getComponent().getModel().getUnit().Add(shape);
+            getComponent().getModel().getUnit().add(shape);
             getComponent().getModel().getUnit().setSelected(false);
             shape.setSelected(true);
             shape.alignToGrid((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE));
@@ -70,7 +69,7 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
         int new_mx = e.getX();
         int new_my = e.getY();
 
-        getTarget().Move((new_mx - mx), (new_my - my));
+        getTarget().move((new_mx - mx), (new_my - my));
         
         // update our data
         mx = new_mx;
@@ -94,11 +93,11 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
                        
                         Point p=new Point(mx,my);
                         if(e.getKeyCode()==KeyEvent.VK_Q){ //left                                                                                    
-                            getTarget().Rotate(AffineTransform.getRotateInstance(Math.PI/2,p.x,p.y));     
+                            getTarget().rotate(90,p);     
                         }else{  //right
-                            getTarget().Rotate(AffineTransform.getRotateInstance(-Math.PI/2,p.x,p.y));     
+                            getTarget().rotate(-90,p);     
                         }           
-                        unitMgr.normalizePinText(getTarget());
+                        //unitMgr.normalizePinText(getTarget());
                         getComponent().Repaint(); 
                         
                     }  
@@ -110,11 +109,11 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
                     if(e.getKeyCode()==KeyEvent.VK_Q||e.getKeyCode()==KeyEvent.VK_A){                        
                         Point p=new Point(mx,my);
                         if(e.getKeyCode()==KeyEvent.VK_Q){
-                            getTarget().Mirror(new Point(p.x-10,p.y),new Point(p.x+10,p.y)); 
+                            //getTarget().mirror(new Point(p.x-10,p.y),new Point(p.x+10,p.y)); 
                         }else{
-                            getTarget().Mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
+                            //getTarget().mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
                         }                        
-                        unitMgr.normalizePinText(getTarget());  
+                        //unitMgr.normalizePinText(getTarget());  
                         getComponent().Repaint();  
                        
                     }

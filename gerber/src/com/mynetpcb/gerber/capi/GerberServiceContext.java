@@ -3,19 +3,21 @@ package com.mynetpcb.gerber.capi;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GerberServiceContext {
+public final class GerberServiceContext {
     public static final int FOOTPRINT_REFERENCE_ON_SILKSCREEN=1;
     public static final int FOOTPRINT_VALUE_ON_SILKSCREEN=2;
     public static final int FOOTPRINT_SHAPES_ON_SILKSCREEN=3;    
-    
+    public static final int FILLED_CONTOUR=4;   
     //parameter bag
     private final Map<Integer, Object> parameters;
+    
     
     public GerberServiceContext() {
         parameters = new HashMap<Integer, Object>(5);
         parameters.put(GerberServiceContext.FOOTPRINT_REFERENCE_ON_SILKSCREEN,false);
         parameters.put(GerberServiceContext.FOOTPRINT_VALUE_ON_SILKSCREEN,false);
-        parameters.put(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN,false);        
+        parameters.put(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN,false);     
+        parameters.put(GerberServiceContext.FILLED_CONTOUR,false);     
     }
     
     public <T> T getParameter(Integer key, Class<T> clazz) {

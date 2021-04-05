@@ -2,31 +2,24 @@ package com.mynetpcb.core.capi.shape;
 
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
-import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Trackable;
-
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polyline;
+import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
-
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 public abstract class AbstractLine extends Shape implements Trackable<LinePoint>, Resizeable{
     protected Point floatingStartPoint; //***the last wire point
@@ -35,23 +28,41 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
 
     protected Point floatingEndPoint;
 
-    protected List<LinePoint> points;
-
     protected Point resizingPoint;    
     
+    public Polyline<LinePoint> polyline;
+    
+    protected double rotate;
+    
+    protected ResumeState resumeState;
+    
     public AbstractLine(int thickness,int layermaskId) {
-        super(0,0,0,0,thickness,layermaskId);
-        this.points = new LinkedList<LinePoint>();
-        this.floatingStartPoint = new Point();
-        this.floatingMidPoint = new Point();
-        this.floatingEndPoint = new Point();
-        this.selectionRectWidth = 3000; 
-    }
-    @Override
-    public void Clear() {
-      points.clear();
+        super(thickness,layermaskId);
+        this.floatingStartPoint = new Point(0,0);
+        this.floatingMidPoint = new Point(0,0);
+        this.floatingEndPoint = new Point(0,0);
+        this.selectionRectWidth = 3000;                 
+        this.displayName="Line";                           
+        this.polyline=new Polyline<LinePoint>();
+        this.rotate=0;   
+        this.resumeState=ResumeState.ADD_AT_END;
     }
     
+    
+    @Override
+    public void clear() {
+      polyline.points.clear();
+      this.rotate=0;
+    }
+    
+    @Override
+    public Box getBoundingShape(){
+        return this.polyline.box();
+    }
+    @Override
+    public boolean isInRect(Box box) {
+         return this.polyline.intersect(box);       
+    }
     @Override
     public void alignResizingPointToGrid(Point targetPoint) {
         getOwningUnit().getGrid().snapToGrid(targetPoint); 
@@ -59,86 +70,94 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     
     @Override
     public List<LinePoint> getLinePoints() {    
-        return this.points;
+        return this.polyline.points;
     }
 
     @Override
-    public void addPoint(Point point) {
-        points.add(new LinePoint(point));
+    public void add(Point point) {
+        this.add(point.x, point.y);        
     }
 
     @Override
-    public void add(int x, int y) {
-        points.add(new LinePoint(x,y));
+    public void add(double x, double y) {
+        if(resumeState!=null&&resumeState==ResumeState.ADD_AT_FRONT)
+            polyline.points.add(0,new LinePoint(x,y));        
+        else
+            polyline.points.add(new LinePoint(x,y));        
+    }
+    
+
+    public long getClickableOrder(){
+        return 2;
     }
     @Override
-    public Rectangle calculateShape(){
-        int x1=Integer.MAX_VALUE,y1=Integer.MAX_VALUE,x2=Integer.MIN_VALUE,y2=Integer.MIN_VALUE;        
+    public boolean isClicked(int x,int y) {
+                
+                Point pt=new Point(x,y);
+
+                LinePoint prevPoint = this.polyline.points.get(0);
+                Line line=new Line(new Point(), new Point());
+                for(LinePoint point:this.polyline.points){
+                    if(prevPoint.equals(point)){
+                        prevPoint = point;
+                        continue;
+                    }
+
+                    line.setLine(prevPoint, point);
+                    Point projectionPoint = line.projectionPoint(pt);
+
+                    if(projectionPoint.distanceTo(pt)>(this.thickness/2<1?1:this.thickness/2)){
+                        prevPoint = point;
+                        continue;
+                    }
+                    
+                    double a = (projectionPoint.x - prevPoint.x) / ((point.x - prevPoint.x) == 0 ? 1 : point.x - prevPoint.x);
+                    double b = (projectionPoint.y - prevPoint.y) / ((point.y - prevPoint.y) == 0 ? 1 : point.y - prevPoint.y);
+
+                    if (0 <= a && a <= 1 && 0 <= b && b <= 1) { //is projection between start and end point                                                    
+                            return true;
+                    }
+                    prevPoint = point;
+                }
+                
+            return false;
+    }    
+    @Override
+    public void insertPoint(double x, double y) {
         
-        for (Point point : points) {
-            x1 = Math.min(x1, point.x);
-            y1 = Math.min(y1, point.y);
-            x2 = Math.max(x2, point.x);
-            y2 = Math.max(y2, point.y);
-        } 
-        //add bending points
-        return new Rectangle(x1, y1, (x2 - x1)==0?1:x2 - x1, y2 - y1==0?1:y2 - y1); 
-    }
-    @Override
-    public void insertPoint(int x, int y) {
+       Box rect = Box.fromRect(x
+                                                           - (this.thickness / 2), y
+                                                           - (this.thickness / 2), this.thickness,
+                                                           this.thickness);
+
+       
+       
         int count=-1,index=-1;
-        //build testing rect
-        FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-        Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
-        rect.setFrame(x-(selectionRectWidth/2), y-(selectionRectWidth/2),selectionRectWidth, selectionRectWidth);
-        //inspect line by line
-        FlyweightProvider lineProvider=ShapeFlyweightFactory.getProvider(Line2D.class);
-        Line2D line=(Line2D)lineProvider.getShape();
+        
         
         //***make lines and iterate one by one
-        Point prevPoint = this.points.get(0);
-        Iterator<LinePoint> i = points.iterator();
+        LinePoint prevPoint =this.polyline.points.get(0);
+        Iterator<LinePoint> i = this.polyline.points.iterator();
         while (i.hasNext()) {
             count++;
-            Point nextPoint = i.next();
-            line.setLine(prevPoint, nextPoint);
-            if (line.intersects(rect)){
+            LinePoint point = i.next();
+            
+            if (Utils.intersectLineLine(prevPoint, point, rect.min, rect.max)){
                 index=count;
                 break;
             }    
-            prevPoint = nextPoint;
+            prevPoint = point;
         }
         
-        lineProvider.reset();
-        rectProvider.reset();
         if(count!=-1){
-           points.add(index, new LinePoint(x,y)); 
+           this.polyline.points.add(index, new LinePoint(x,y)); 
         }
          
-    }
+   }
+
     @Override
-    public Point getEndPoint(int x, int y) {        
-        if (points.size() ==0) {
-            return null;
-        }
-        Point point=isBendingPointClicked(x, y);
-        if(point==null){
-            return null;
-        }
-        //***head point
-        if (points.get(0).x==point.x&&points.get(0).y==point.y) {
-            return points.get(0);
-        }
-        //***tail point
-        if ((points.get(points.size() - 1)).x==point.x&& (points.get(points.size() - 1)).y==point.y) {
-            return (points.get(points.size() - 1));
-        }
-        
-        return null;
-    }
-    @Override
-    public boolean isEndPoint(int x, int y) {
-        if (points.size() < 2) {
+    public boolean isEndPoint(double x, double y) {
+        if (polyline.points.size() < 2) {
             return false;
         }
         
@@ -147,135 +166,113 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
             return false;
         }
         //***head point
-        if (points.get(0).x==point.x&&points.get(0).y==point.y) {
+        if (polyline.points.get(0).x==point.x&&polyline.points.get(0).y==point.y) {
             return true;
         }
         //***tail point
-        if ((points.get(points.size() - 1)).x==point.x&& (points.get(points.size() - 1)).y==point.y) {
+        if ((polyline.points.get(polyline.points.size() - 1)).x==point.x&& (polyline.points.get(polyline.points.size() - 1)).y==point.y) {
             return true;
         }
         return false;
     }
-    @Override
-    public boolean isInRect(Rectangle r) {
-        for(Point wirePoint:points){
-            if (!r.contains(wirePoint))
-                return false;            
-        }
-        return true;
-    }
-    @Override
-    public void Reverse(int x,int y) {
-        Point p=isBendingPointClicked(x, y);
-        if (points.get(0).x == p.x &&
-            points.get(0).y == p.y) {
-            Collections.reverse(points);
-        }       
-    }
 
     @Override
-    public void removePoint(int x, int y) {
+    public Trackable.ResumeState getResumeState() {    
+        if(this.resumeState==ResumeState.ADD_AT_END){
+           return ResumeState.ADD_AT_END; 
+        }else{
+            return ResumeState.ADD_AT_FRONT;
+        }
+    }
+    @Override
+    public void resumeLine(double x, double y) {        
+        //the end or beginning
+        if (polyline.points.size() ==0) {
+          this.resumeState=ResumeState.ADD_AT_END;
+          return;
+        }
+        
+        Point point=isBendingPointClicked(x, y);
+        if(point==null){
+            this.resumeState=ResumeState.ADD_AT_END;
+        }
+        //***head point
+        if (polyline.points.get(0).x==point.x&&polyline.points.get(0).y==point.y) {
+            this.resumeState=ResumeState.ADD_AT_FRONT;
+        }
+        //***tail point
+        if ((polyline.points.get(polyline.points.size() - 1)).x==point.x&& (polyline.points.get(polyline.points.size() - 1)).y==point.y) {
+            this.resumeState=ResumeState.ADD_AT_END;
+        }        
+        
+        if(resumeState==ResumeState.ADD_AT_FRONT)
+           reset(this.polyline.points.get(0));
+        else
+           reset(this.polyline.points.get(this.polyline.points.size()-1));
+    }
+    
+//    @Override
+//    public void reverse(double x,double y) {
+//        Point p=isBendingPointClicked(x, y);
+//        if (Utils.EQ(polyline.points.get(0).x,p.x) &&
+//            Utils.EQ(polyline.points.get(0).y,p.y)) {
+//            Collections.reverse(polyline.points);
+//        }       
+//    }
+
+    @Override
+    public void removePoint(double x, double y) {
         Point point=isBendingPointClicked(x, y);
         if(point!=null){
-          points.remove(point);
+          this.polyline.points.remove(point);
           point = null;
         }    
     }    
     @Override
-    public boolean isClicked(int x, int y) {
-        boolean result=false;
-        //build testing rect
-        FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-        Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
-        rect.setFrame(x-(thickness/2), y-(thickness/2),thickness, thickness);
-        //inspect line by line
-        FlyweightProvider lineProvider=ShapeFlyweightFactory.getProvider(Line2D.class);
-        Line2D line=(Line2D)lineProvider.getShape();
+    public Point isBendingPointClicked(double x,double y){
+        Box rect = Box.fromRect(x
+                        - this.selectionRectWidth / 2, y - this.selectionRectWidth
+                        / 2, this.selectionRectWidth, this.selectionRectWidth);
+
         
-        //***make lines and iterate one by one
-        Point prevPoint = points.iterator().next();
-        Iterator<LinePoint> i = points.iterator();
-        while (i.hasNext()) {
-            Point nextPoint = i.next();
-            line.setLine(prevPoint, nextPoint);
-            if (line.intersects(rect)){
-                result= true;
-                break;
-            }    
-            prevPoint = nextPoint;
-        }
+        Optional<LinePoint> opt= this.polyline.points.stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                  
+                  
         
-        lineProvider.reset();
-        rectProvider.reset();        
-        return result;
-    }
-    @Override
-    public Point isBendingPointClicked(int x,int y){
-        return isControlRectClicked(x, y);
+        return opt.orElse(null);
     }
 
-//    public Point isControlRectClicked(int x, int y) {                
-//        FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-//        Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
-//        rect.setFrame(x-(thickness/2), y-(thickness/2),thickness, thickness);
-//        
-//        Point point=null;
-//        Point click=new Point(x,y);
-//        int distance=Integer.MAX_VALUE;
-//        
-//        for (Point wirePoint : points) {
-//            if(rect.contains(wirePoint)){ 
-//                int min=(int)click.distance(wirePoint);
-//                if(distance>min){
-//                    distance=min;  
-//                    point= wirePoint;                
-//                }
-//            }
-//        }
-//        
-//        rectProvider.reset();
-//        return point;
-//    } 
     @Override
     public Point isControlRectClicked(int x, int y) {
-            FlyweightProvider rectProvider=ShapeFlyweightFactory.getProvider(Rectangle2D.class);
-            Rectangle2D rect=(Rectangle2D)rectProvider.getShape();
-            rect.setFrame(x-(selectionRectWidth/2), y-(selectionRectWidth/2),selectionRectWidth, selectionRectWidth);
-            
-            Point point=null;
-            Point click=new Point(x,y);
-            int distance=Integer.MAX_VALUE;
-                    
-            for (Point wirePoint : points) {
-                if(rect.contains(wirePoint)){ 
-                    int min=(int)click.distance(wirePoint);
-                        if(distance>min){
-                                distance=min;  
-                                point= wirePoint;                
-                            }
-                        }
-            }            
-            
-            rectProvider.reset();
-            return point;
-        }
-    
+        return this.isBendingPointClicked(x, y);
+    }
     @Override
-    public void Reset(Point point) {
-        this.Reset(point.x, point.y);
+    public void move(double xoffset,double yoffset) {
+        this.polyline.move(xoffset,yoffset);
+    }
+    @Override
+    public void mirror(Line line) {        
+        this.polyline.mirror(line);
+    }
+    @Override
+    public void rotate(double angle, Point origin) {        
+        this.polyline.rotate(angle, origin);
+    }
+    @Override
+    public void reset(Point point) {
+        this.reset(point.x, point.y);
     }
 
     @Override
-    public void Reset() {
-        this.Reset(floatingStartPoint);
+    public void reset() {
+        this.reset(floatingStartPoint);
     }
 
     @Override
-    public void Reset(int x, int y) {
+    public void reset(double x, double y) {
         Point p = isBendingPointClicked(x, y);
-        floatingStartPoint.setLocation(p == null ? x : p.x, p == null ? y : p.y);
-        floatingMidPoint.setLocation(p == null ? x : p.x, p == null ? y : p.y);
-        floatingEndPoint.setLocation(p == null ? x : p.x, p == null ? y : p.y);
+        floatingStartPoint.set(p == null ? x : p.x, p == null ? y : p.y);
+        floatingMidPoint.set(p == null ? x : p.x, p == null ? y : p.y);
+        floatingEndPoint.set(p == null ? x : p.x, p == null ? y : p.y);
     }
 
     @Override
@@ -296,9 +293,31 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     public Point getResizingPoint(){
         return resizingPoint;
     }
-    
+    /*
+     * Could be first or end point
+     */
     @Override
-    public void setResizingPoint(Point point) {
+    public Point getEndPoint(double x, double y) {
+        if (polyline.points.size() ==0) {
+            return null;
+        }
+        Point point=isBendingPointClicked(x, y);
+        if(point==null){
+            return null;
+        }
+        //***head point
+        if (polyline.points.get(0).x==point.x&&polyline.points.get(0).y==point.y) {
+            return polyline.points.get(0);
+        }
+        //***tail point
+        if ((polyline.points.get(polyline.points.size() - 1)).x==point.x&& (polyline.points.get(polyline.points.size() - 1)).y==point.y) {
+            return (polyline.points.get(polyline.points.size() - 1));
+        }
+        
+        return null;
+    }
+    @Override
+    public void setResizingPoint(Point point) {        
         this.resizingPoint=point;
     }
     @Override
@@ -306,30 +325,34 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         super.setSelected(selection);
         if(!selection){
             resizingPoint=null;
-            for (LinePoint point : points) {
+            for (LinePoint point : polyline.points) {
                 point.setSelected(selection);
             }
         }
     }
     @Override
     public void shiftFloatingPoints() {
-        floatingStartPoint.setLocation(points.get(points.size()-1).x, points.get(points.size()-1).y);
-        floatingMidPoint.setLocation(floatingEndPoint.x, floatingEndPoint.y);       
+        if(resumeState==ResumeState.ADD_AT_FRONT){
+            this.floatingStartPoint.set(this.polyline.points.get(0));
+            this.floatingMidPoint.set(this.floatingEndPoint.x, this.floatingEndPoint.y);                  
+        }else{
+            this.floatingStartPoint.set(this.polyline.points.get(this.polyline.points.size()-1));
+            this.floatingMidPoint.set(this.floatingEndPoint.x, this.floatingEndPoint.y);      
+        }
     }
-    @Override
-    public void drawControlShape(Graphics2D g2,ViewportWindow viewportWindow,AffineTransform scale){   
-        Utilities.drawCrosshair(g2, viewportWindow, scale, points, resizingPoint, selectionRectWidth);
-    }
+
     @Override
     public void deleteLastPoint(){
-        if (points.size() == 0)
+        if (polyline.points.size() == 0)
             return;
-
-        points.remove(points.get(points.size() - 1));
-
+        if(resumeState==ResumeState.ADD_AT_FRONT){
+            polyline.points.remove(polyline.points.get(0));
+        }else{   
+            polyline.points.remove(polyline.points.get(polyline.points.size() - 1));
+        }
         //***reset floating start point
-        if (points.size() > 0)
-            floatingStartPoint.setLocation(points.get(points.size() - 1));        
+        if (polyline.points.size() > 0)
+            floatingStartPoint.set(polyline.points.get(polyline.points.size() - 1));        
     }
 
     @Override
@@ -337,49 +360,73 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
       return (!(floatingStartPoint.equals(floatingEndPoint) &&
               floatingStartPoint.equals(floatingMidPoint)));  
     }
-
     @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
+        if((this.getCopper().getLayerMaskID()&layermask)==0){
+            return;
+        }
+        
+        Box rect = this.polyline.box();
+        rect.scale(scale.getScaleX());           
+        if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
+                return;
+        }
+        g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
+        
+        Polyline r=this.polyline.clone();   
+        
+        // draw floating point
+        if (this.isFloating()) {                                                    
+            if(this.getResumeState()==ResumeState.ADD_AT_FRONT){                
+                Point p = this.floatingEndPoint.clone();
+                r.points.add(0,p);                
+            }else{
+                            
+                Point p = this.floatingEndPoint.clone();
+                r.add(p);                                
+            }            
+        }
+        
+        r.scale(scale.getScaleX());
+        r.move(-viewportWindow.getX(),- viewportWindow.getY());
+        
+        double wireWidth = thickness * scale.getScaleX();
+        g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+
+        //transparent rect
+        r.paint(g2, false);
+      
+        if (this.isSelected()&&isControlPointVisible) {
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            for(Object p:r.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+            }}
+        
+    }
+    @Override
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+        
+
+    }
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {
         if((this.copper.getLayerMaskID()&layermask)==0){
             return;
         }
-        GeneralPath line=null;
-        line = new GeneralPath(GeneralPath.WIND_EVEN_ODD,points.size());      
-        line.moveTo((float)points.get(0).getX(),(float)points.get(0).getY());
-         for(int i=1;i<points.size();i++){            
-             line.lineTo((float)points.get(i).getX(),(float)points.get(i).getY());       
-         } 
         g2.setStroke(new BasicStroke(thickness,JoinType.JOIN_ROUND.ordinal(),EndType.CAP_ROUND.ordinal()));
         g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:copper.getColor());
-        
-        g2.draw(line);
+        this.polyline.paint(g2,false);
+    }
+    
+    @Override
+    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+        clickedPoint.set(clickedPoint.x+xoffset, clickedPoint.y+yoffset);
     }
 
-    @Override
-    public void Resize(int xoffset, int yoffset, Point clickedPoint) {
-        clickedPoint.setLocation(clickedPoint.x+xoffset, clickedPoint.y+yoffset);
-    }
-    @Override
-    public void Move(int xoffset, int yoffset) {
-        for (Point wirePoint : points) {
-            wirePoint.setLocation(wirePoint.x + xoffset, wirePoint.y + yoffset);
-        }
-    }
-    @Override
-    public void Rotate(AffineTransform rotation) {
-        for(Point wirePoint:points){
-            rotation.transform(wirePoint, wirePoint);
-        }
-    }    
-    @Override
-    public void Mirror(Point A,Point B) {
-        for (Point wirePoint : points) {
-            wirePoint.setLocation(Utilities.mirrorPoint(A,B, wirePoint));
-        }
-    }
 
-    @Override
-    public String getDisplayName(){
-        return "Line";
-    }
 }

@@ -1,46 +1,40 @@
 package com.mynetpcb.circuit.shape;
 
-
 import com.mynetpcb.circuit.unit.Circuit;
-import com.mynetpcb.circuit.unit.CircuitMgr;
 import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Packageable;
-import com.mynetpcb.core.capi.PinLineable;
-import com.mynetpcb.core.capi.Pinaware;
 import com.mynetpcb.core.capi.Typeable;
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.pin.CompositePinable;
+import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
-import com.mynetpcb.core.capi.shape.Container;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.ChipText;
-import com.mynetpcb.core.capi.text.Text;
-import com.mynetpcb.core.capi.text.Textable;
+import com.mynetpcb.core.capi.text.CompositeTextable;
 import com.mynetpcb.core.capi.text.Texture;
-import com.mynetpcb.core.capi.text.font.FontTexture;
+import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.pad.Packaging;
-import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.symbol.shape.FontLabel;
-import com.mynetpcb.symbol.shape.Pin;
 import com.mynetpcb.symbol.shape.SymbolShapeFactory;
 import com.mynetpcb.symbol.unit.Symbol;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
+import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -52,120 +46,73 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
-public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>,Packageable,Externalizable{
-    private Typeable.Type type;
-    
+public class SCHSymbol extends Shape implements CompositeTextable,Typeable,CompositePinable,Externalizable{
     private List<Shape> shapes;
-    
-    private ChipText text;
-    
-    private String symbolName;
-    
-    private Packaging packaging;
+    private Typeable.Type type;
+    private SymbolFontTexture reference,unit;     
     
     public SCHSymbol() {
-        super(0,0,0,0,0,0);
-        this.shapes=new ArrayList<Shape>();
-        text = new ChipText();
-        text.Add(new FontTexture("reference", "", 0, 0, Text.Alignment.LEFT, 8));
-        text.Add(new FontTexture("unit", "", 8, 8, Text.Alignment.LEFT, 8));
-        text.setFillColor(Color.BLACK);
-        symbolName="";
-        packaging=new Packaging();
+        super(1,Layer.LAYER_ALL);
+        this.shapes=new ArrayList<Shape>();              
+        this.reference=new SymbolFontTexture("","reference",0,0,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
+        this.unit=new SymbolFontTexture("","unit",0,0,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
+        
+        this.reference.setFillColor(Color.BLACK);
+        this.unit.setFillColor(Color.BLACK);
+        
+        this.type=Typeable.Type.SYMBOL;
     }
     
+    @Override
     public SCHSymbol clone() throws CloneNotSupportedException {
         SCHSymbol copy=(SCHSymbol)super.clone();
-        copy.text =text.clone();
-        copy.shapes=new ArrayList<Shape>();
+        copy.reference =reference.clone();
+        copy.unit=unit.clone();
+        copy.shapes=new ArrayList<Shape>();        
         for(Shape shape:this.shapes){ 
-          copy.Add(shape.clone());  
+          copy.shapes.add(shape.clone());  
         }
-        copy.packaging.copy(this.packaging);
-        return copy;        
+        return copy;    
     }
-    public void Move(int xoffset, int yoffset) {
-        for(Shape shape:shapes){
-            shape.Move(xoffset,yoffset);
-        }        
-        //***move module text
-         text.Move(xoffset,yoffset);            
-    }
-    public void Mirror(Point A,Point B) {
-        for(Shape shape:shapes){
-            shape.Mirror(A,B);       
-        }
-        text.Mirror(A,B);
-    }
-
-
-    public void Translate(AffineTransform translate) {
-        for(Shape shape:shapes)
-            shape.Translate(translate);  
+    @Override
+    public void clear() {    
+          this.shapes.forEach(shape->{
+                      shape.setOwningUnit(null);
+                      shape.clear();
+                      shape=null;
+         });
+         this.shapes.clear();    
+         this.unit.clear();
+         this.reference.clear();         
+    }    
+    @Override
+    public long getClickableOrder(){
+        Box box = this.getBoundingShape();      
+        return (long)(box.getWidth()*box.getHeight());
         
-        //***scale module text
-        text.Translate(translate);             
-    }
-
-    public void Rotate(AffineTransform rotation) {
-        for(Shape shape:shapes)
-           shape.Rotate(rotation);        
-        //***Rotate text
-        text.Rotate(rotation);            
-    }
-
-    public void setDisplayName(String symbolName){
-        this.symbolName=symbolName; 
     }
     @Override
-    public String getDisplayName() {
-        return symbolName;
+    public Point alignToGrid(boolean isRequired) {
+        Box r=getPinsRect();
+        //may not have pins
+        if(r==null)
+           return null;
+        Point point=this.getOwningUnit().getGrid().positionOnGrid(r.min.x,r.min.y); 
+        this.move(point.x-r.min.x,point.y-r.min.y);
+        return null;
     }
-    
-    public void setType(Typeable.Type type) {
-        this.type = type;
-    }
-
-    public Typeable.Type getType() {
-        return type;
-    }
-    @Override
-    public List<Shape> getShapes(){
-        return shapes;
-    }
-    public void Add(Shape shape){
+    public void add(Shape shape){
       if (shape == null)
             return;   
       shapes.add(shape);  
     }
-    
-    @Override
-    public void Clear() {    
-       shapes.clear();
-       text.clear();
-    }
-    
-    public void setSelected(boolean isSelected) {
-        super.setSelected(isSelected);
-    
-        for(Shape shape: shapes){
-            if(shape instanceof Pin){
-              shape.setSelected(isSelected);
-            }
-        }
-        text.setSelected(isSelected);
+    public Collection<? extends Shape> getShapes() {
+        return this.shapes;
     } 
-    
     @Override
-    public ChipText getChipText() {
-        return text;
-    }
-    
-    @Override
-    public Rectangle calculateShape() {
-        Rectangle r = new Rectangle();
-        int x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+    public Box getBoundingShape(){
+        Box r = new Box();
+        double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
 
         //***empty schematic,element,package
         if (shapes.size() == 0) {
@@ -173,128 +120,127 @@ public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>
         }
 
         for (Shape shape : shapes) {
-            Rectangle tmp = shape.getBoundingShape().getBounds();
+            Box tmp = shape.getBoundingShape();
             if (tmp != null) {
-                x1 = Math.min(x1, tmp.x);
-                y1 = Math.min(y1, tmp.y);
-                x2 = Math.max(x2, tmp.x + tmp.width);
-                y2 = Math.max(y2, tmp.y + tmp.height);
+                x1 = Math.min(x1, tmp.min.x);
+                y1 = Math.min(y1, tmp.min.y);
+                x2 = Math.max(x2, tmp.max.x);
+                y2 = Math.max(y2, tmp.max.y);
             }
         }
         r.setRect(x1, y1, x2 - x1, y2 - y1);
         return r; 
-    }
-    
+    }    
     @Override
-    public long getOrderWeight() {
-        java.awt.Shape r=getBoundingShape();
-        return (r.getBounds().width * r.getBounds().height);
-    }
-    
-    @Override
-    public int getDrawingOrder() {        
-        return 99;
-    }
-    
-    @Override
-    public void Print(Graphics2D g2,PrintContext printContext,int layermask) {
-        g2.setColor(Color.BLACK); 
+    public void move(double xoffset, double yoffset) {
         for(Shape shape:shapes){
-            shape.Print(g2,printContext,layermask);   
-        }
-        this.text.Paint(g2, new ViewportWindow(0, 0, 0, 0), AffineTransform.getScaleInstance(1, 1),-1);    
+            shape.move(xoffset,yoffset);
+        }        
+        //***move module text
+         unit.move(xoffset,yoffset);
+         reference.move(xoffset,yoffset);
     }
-
     @Override
-    public void Paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermask) {
-        Rectangle2D scaledRect = Utilities.getScaleRect(getBoundingShape().getBounds() ,scale); 
-        if(!scaledRect.intersects(viewportWindow)){
-          return;   
-        }
-        
-        g2.setColor(isSelected()?Color.GRAY:fillColor); 
+    public void mirror(Line line){
         for(Shape shape:shapes){
-            shape.Paint(g2,viewportWindow, scale,layermask);   
+            shape.mirror(line);       
         }
 
-        this.text.Paint(g2,viewportWindow,scale,layermask);
-        
-        if(this.isSelected()){
-            AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);   
-            Composite originalComposite = g2.getComposite();
-            g2.setPaint(Color.gray);                      
-            g2.setComposite(composite );
-            Rectangle r=this.getBoundingShape().getBounds();
-            Utilities.setScaleRect(r.x, r.y, r.width, r.height, r, scale);
-            RoundRectangle2D shape=new RoundRectangle2D.Double(r.x-viewportWindow.x,r.y-viewportWindow.y,r.width,r.height, 10, 10);
-            g2.fill(shape);
-            g2.setComposite(originalComposite);
+        this.mirrorText(line,this.unit);
+        this.mirrorText(line,this.reference);           
+    }
+    private void mirrorText(Line line,SymbolFontTexture texture){
+        int oldalignment = texture.shape.alignment;
+        texture.mirror(line);   
+        if (line.isVertical()) { //right-left mirroring
+            if (texture.shape.alignment == oldalignment) {
+                texture.shape.anchorPoint.set(texture.shape.anchorPoint.x +
+                                        (texture.shape.metrics.ascent - texture.shape.metrics.descent),texture.shape.anchorPoint.y);
+            }
+        } else { //***top-botom mirroring          
+            if (texture.shape.alignment == oldalignment) {
+                    texture.shape.anchorPoint.set(texture.shape.anchorPoint.x,texture.shape.anchorPoint.y +(texture.shape.metrics.ascent - texture.shape.metrics.descent));
+            }
+        }   
+    }    
+    @Override
+    public void rotate(double angle, Point center){
+        for(Shape shape:this.shapes){                    
+           shape.rotate(angle,center);  
         }
+        this.unit.setRotation(angle,center);
+        this.reference.setRotation(angle,center);
+    }  
+    @Override
+    public void setSelected(boolean selected) {        
+        super.setSelected(selected);
+        for(Shape shape:this.shapes){   
+          shape.setFillColor(selected?Color.BLUE:Color.BLACK);
+        }
+        unit.setSelected(selected);
+        reference.setSelected(selected);
     }
     @Override
-    public Point alignToGrid(boolean isRequired) {
-        Rectangle r=getPinsRect();
-        //may not have pins
-        if(r==null)
-           return null;
-        Point point=getOwningUnit().getGrid().positionOnGrid(r.x,r.y); 
-        Move(point.x-r.x,point.y-r.y);
-        return null;
+    public void setType(Typeable.Type type) {
+        this.type = type;
     }
-    
-    
     @Override
-    public Collection<Pin> getPins() {
-        List<Pin> pins=new LinkedList<Pin>();
-        for(Shape shape:shapes)
-            if(shape instanceof Pin)
-              pins.add((Pin)shape);  
-        return pins; 
+    public Typeable.Type getType() {
+        return type;
+    }
+    @Override
+    public String toXML() {
+        StringBuffer xml=new StringBuffer();
+        String type="type=\""+(this.getType()==Symbol.Type.SYMBOL?Typeable.Type.SYMBOL.toString():this.getType())+"\"";
+               xml.append("<module "+type+" >\r\n");
+               //xml.append("<footprint library=\""+ (packaging.getFootprintLibrary()==null?"":packaging.getFootprintLibrary())+"\" category=\""+(packaging.getFootprintCategory()==null?"":packaging.getFootprintCategory())+"\"  filename=\""+(packaging.getFootprintFileName()==null?"":packaging.getFootprintFileName())+"\" name=\""+(packaging.getFootprintName()==null?"":packaging.getFootprintName())+"\"/>\r\n");
+               xml.append("<name>"+displayName+"</name>\r\n");
+
+               xml.append("<reference>"+(this.getTextureByTag("reference")==null?"":FontLabel.toXML(this.getTextureByTag("reference")))+"</reference>\r\n");                           
+               xml.append("<unit>"+(this.getTextureByTag("unit")==null?"":FontLabel.toXML(this.getTextureByTag("unit")))+"</unit>\r\n");
+               
+//               //***labels and connectors
+//               CircuitMgr circuitMgr = CircuitMgr.getInstance();
+//               if(circuitMgr.getChildrenByParent(getOwningUnit().getShapes(),this).size()>0){
+//                  xml.append("<children>\r\n");
+//                     Collection<Shape> children=circuitMgr.getChildrenByParent(getOwningUnit().getShapes(),this);
+//                     for(Shape child:children){
+//                       xml.append(((Externalizable)child).toXML());  
+//                     }
+//                  xml.append("</children>\r\n");
+//               }
+                  
+             xml.append("<elements>\r\n");
+             for(Shape e:shapes){
+                 xml.append(((Externalizable)e).toXML());
+             }
+             xml.append("</elements>\r\n");
+             xml.append("</module>\r\n");                 
+        return xml.toString();
     }
 
     @Override
-    public Rectangle getPinsRect(){
-        int x1=Integer.MAX_VALUE,y1=Integer.MAX_VALUE,x2=Integer.MIN_VALUE,y2=Integer.MIN_VALUE;
-        boolean isPinnable=false;        
-        
-        for(Shape shape:shapes) 
-          if(shape instanceof PinLineable){
-              PinLineable element=(PinLineable)shape;
-              Point p=element.getPinPoint();
-              x1=Math.min(x1,p.x );
-              y1=Math.min(y1,p.y);
-              x2=Math.max(x2,p.x+0);
-              y2=Math.max(y2,p.y +0);             
-              isPinnable=true;
-          }
-        if(isPinnable)
-            return new Rectangle(x1,y1,x2-x1,y2-y1);            
-        else
-            return null;        
-    }
-
-    public void fromXML(Node node)throws XPathExpressionException,ParserConfigurationException{
+    public void fromXML(Node node) throws XPathExpressionException, ParserConfigurationException {
         Element  element= (Element)node;
         
         setType(element.getAttribute("type").equals("")?Symbol.Type.SYMBOL:Symbol.Type.valueOf(element.getAttribute("type")));
         
-        //packaging
-        NodeList nlist=((Element)node).getElementsByTagName("footprint");
-        if(nlist.item(0)!=null){
-            Element e=(Element)nlist.item(0);
-            packaging.setFootprintLibrary(e.getAttribute("library"));
-            packaging.setFootprintCategory(e.getAttribute("category"));
-            packaging.setFootprintFileName(e.getAttribute("filename"));
-            packaging.setFootprintName(e.getAttribute("name"));
-        }
+//        //packaging
+//        NodeList nlist=((Element)node).getElementsByTagName("footprint");
+//        if(nlist.item(0)!=null){
+//            Element e=(Element)nlist.item(0);
+//            packaging.setFootprintLibrary(e.getAttribute("library"));
+//            packaging.setFootprintCategory(e.getAttribute("category"));
+//            packaging.setFootprintFileName(e.getAttribute("filename"));
+//            packaging.setFootprintName(e.getAttribute("name"));
+//        }
         
-        Texture reference= text.getTextureByTag("reference");
-     
-        Texture unit= text.getTextureByTag("unit");
+        Texture reference= this.getTextureByTag("reference");        
+        Texture unit= this.getTextureByTag("unit");
 
         Node n=element.getElementsByTagName("name").item(0);
         if(n!=null){
-         this.symbolName=n.getTextContent();  
+         this.displayName=n.getTextContent();  
         }       
         n=element.getElementsByTagName("reference").item(0);
         if(n!=null){
@@ -303,11 +249,9 @@ public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>
             if(refList.getLength()==0){
                 reference.fromXML(n);              //old schema 
             }else{
-                FontLabel.fromXML(refList.item(0),reference);    //new schema 
+                reference.fromXML(refList.item(0));    //new schema 
             }
-        }else{
-           reference.Move(this.getBoundingShape().getBounds().x,this.getBoundingShape().getBounds().y);
-        }    
+        }
 
         n=element.getElementsByTagName("unit").item(0);
         if(n!=null){
@@ -317,11 +261,9 @@ public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>
             if(unitList.getLength()==0){
                unit.fromXML(n);                //old schema
             }else{
-               FontLabel.fromXML(unitList.item(0),unit);    //new schema 
+               unit.fromXML(unitList.item(0));    //new schema 
             }                       
-        }else{
-           unit.Move(this.getBoundingShape().getBounds().x,this.getBoundingShape().getBounds().y);       
-        }    
+        }
         
         XPathFactory factory = XPathFactory.newInstance();
         XPath xpath = factory.newXPath();
@@ -331,89 +273,119 @@ public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>
         for(int i=0;i<nodelist.getLength();i++){
               n=nodelist.item(i);
               Shape shape = shapeFactory.createShape(n);
-              this.Add(shape);
+              this.add(shape);
         }       
         }catch(XPathExpressionException e){
             e.printStackTrace(System.out);
-        }             
-    }    
-    //***Very similar to MODULE.Save()
-    public String toXML() {
-        StringBuffer xml=new StringBuffer();
-        String type="type=\""+(this.getType()==Symbol.Type.SYMBOL?Typeable.Type.SYMBOL.toString():this.getType())+"\"";
-               xml.append("<module "+type+" >\r\n");
-               xml.append("<footprint library=\""+ (packaging.getFootprintLibrary()==null?"":packaging.getFootprintLibrary())+"\" category=\""+(packaging.getFootprintCategory()==null?"":packaging.getFootprintCategory())+"\"  filename=\""+(packaging.getFootprintFileName()==null?"":packaging.getFootprintFileName())+"\" name=\""+(packaging.getFootprintName()==null?"":packaging.getFootprintName())+"\"/>\r\n");
-               xml.append("<name>"+symbolName+"</name>\r\n");
+        }  
 
-               xml.append("<reference>"+(text.getTextureByTag("reference")==null?"":FontLabel.toXML(text.getTextureByTag("reference")))+"</reference>\r\n");                           
-               xml.append("<unit>"+(text.getTextureByTag("unit")==null?"":FontLabel.toXML(text.getTextureByTag("unit")))+"</unit>\r\n");
-               
-               //***labels and connectors
-               CircuitMgr circuitMgr = CircuitMgr.getInstance();
-               if(circuitMgr.getChildrenByParent(getOwningUnit().getShapes(),this).size()>0){
-                  xml.append("<children>\r\n");
-                     Collection<Shape> children=circuitMgr.getChildrenByParent(getOwningUnit().getShapes(),this);
-                     for(Shape child:children){
-                       xml.append(((Externalizable)child).toXML());  
-                     }
-                  xml.append("</children>\r\n");
-               }
-                  
-             xml.append("<elements>\r\n");
-             for(Shape e:shapes){
-                 xml.append(((Externalizable)e).toXML());
-             }
-             xml.append("</elements>\r\n");
-             xml.append("</module>\r\n");                 
-        return xml.toString();  
     }
+
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {
+        Box rect = this.getBoundingShape();             
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+         return;
+        }
+                
+        for(Shape shape:this.shapes){   
+          shape.paint(g2,viewportWindow,scale,layersmask);  
+        }   
+        unit.paint(g2, viewportWindow, scale, layersmask);
+        reference.paint(g2, viewportWindow, scale, layersmask);
+
+    }
+    
+    @Override
+    public void print(Graphics2D g2, PrintContext printContext, int layermask) {                        
+        for(Shape shape:this.shapes){   
+          shape.print(g2,printContext,layermask);  
+        }   
+        unit.print(g2, printContext, layermask);
+        reference.print(g2, printContext, layermask);                
+    }
+    @Override
+    public Texture getTextureByTag(String  tag) {
+        if(tag.equals(this.reference.getTag()))
+            return this.reference;
+        else if(tag.equals(this.unit.getTag()))
+            return this.unit;
+        else
+        return null;        
+    }
+    
+    @Override
+    public Texture getClickedTexture(int x, int y) {
+        if(this.reference.isClicked(x, y))
+            return this.reference;
+        else if(this.unit.isClicked(x, y))
+            return this.unit;
+        else
+        return null;
+    }
+
+    @Override
+    public boolean isClickedTexture(int x, int y) {
+        return this.getClickedTexture(x, y)!=null;
+    }
+    @Override
+    public  Box getPinsRect(){   
+        Box r = new Box();
+        double x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE, x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+        boolean  isPinnable=false;
+        //***empty schematic,element,package
+        if (shapes.size() == 0) {
+            return null;
+        }
+
+        for (Shape shape : shapes) {
+            if(shape instanceof Pinable){
+              Point p=((Pinable)shape).getPinPoint();
+              x1=Math.min(x1,p.x );
+              y1=Math.min(y1,p.y);
+              x2=Math.max(x2,p.x+0);
+              y2=Math.max(y2,p.y +0);             
+              isPinnable=true;
+            }
+        }
+        r.setRect(x1, y1, x2 - x1, y2 - y1);
+        return r;         
+        
+    }
+    @Override
+    public Collection<Point> getPinPoints() {
+        // TODO Implement this method
+        return Collections.emptySet();
+    }
+    
     @Override
     public AbstractMemento getState(MementoType operationType) {
         AbstractMemento memento = new Memento(operationType);
         memento.saveStateFrom(this);
         return memento;
     }
-    @Override
-    public void setState(AbstractMemento memento) {
-        memento.loadStateTo(this); 
-    }
-
-    @Override
-    public Pin getPin(int x, int y) {      
-        for(Pin pin:getPins()){              
-            PinLineable.Pair points  = pin.getPinPoints();
-            if(points.getA().x <= x && x <= points.getB().x && points.getA().y <= y && y <= points.getB().y){
-              return pin;  
-            }
-        }             
-        return null;  
-    }
-
-    @Override
-    public Packaging getPackaging() {
-       return packaging;
-    }
-
+    
     static class Memento extends AbstractMemento<Circuit,SCHSymbol>{
+        
         private final List<AbstractMemento> mementoList;
         
-        private ChipText.Memento text;
-        
-        private String symbolName;
-        
-        //private String packageName;
+        private SymbolFontTexture.Memento unit,reference;
+
+        private String displayName;
         
         public Memento(MementoType operationType){
            super(operationType);
            mementoList=new LinkedList<AbstractMemento>();
-           text=new ChipText.Memento();
+           unit=new SymbolFontTexture.Memento();
+           reference=new SymbolFontTexture.Memento();                      
         }
         
         public void loadStateTo(SCHSymbol symbol) {
           super.loadStateTo(symbol);
-          text.loadStateTo(symbol.text); 
-          symbol.symbolName=this.symbolName;
-          //shape.packageName=this.packageName;
+          unit.loadStateTo(symbol.unit); 
+          reference.loadStateTo(symbol.reference);                           
+          symbol.setDisplayName(displayName);
           /*
            * Symbol is recreated with empty shapes in it
            */
@@ -421,8 +393,8 @@ public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>
             //***fill elements
             AbstractShapeFactory shapeFactory=new SymbolShapeFactory();
             for(AbstractMemento elementMemento:mementoList){
-               Shape shape=shapeFactory.createShape(null,elementMemento); 
-               symbol.Add(shape);               
+               Shape shape=shapeFactory.createShape(elementMemento); 
+               symbol.add(shape);               
             } 
           }
           for(int i=0;i<mementoList.size();i++){
@@ -433,21 +405,22 @@ public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>
         
         public void saveStateFrom(SCHSymbol symbol) {
             super.saveStateFrom(symbol);
-            this.text.saveStateFrom(symbol.getChipText());
+            this.unit.saveStateFrom(symbol.unit);
+            this.reference.saveStateFrom(symbol.reference);
+            displayName=symbol.getDisplayName();
             for(Shape ashape:symbol.shapes){
                 mementoList.add(ashape.getState(mementoType));     
             }            
-            this.symbolName=symbol.symbolName;
-            //this.packageName=symbol.packageName;
+                        
         }
-        
-        public void Clear() {
-            super.Clear();
+        @Override
+        public void clear() {
+            super.clear();
             for(AbstractMemento memento:mementoList){
-              memento.Clear();  
+              memento.clear();  
             }
+            displayName=null;
             mementoList.clear();
-            text.Clear();
         }
 
         @Override
@@ -462,36 +435,26 @@ public class SCHSymbol extends Shape implements Container,Textable,Pinaware<Pin>
             Memento other=(Memento)obj;
             
     
-            return(getUUID().equals(other.getUUID())&&
-                   getMementoType().equals(other.getMementoType())&&
+            return  super.equals(obj)&&Objects.equals(this.displayName, other.displayName)&&                
                    mementoList.equals(other.mementoList)&&
-                   symbolName.equals(other.symbolName)&&
-                   //packageName.equals(other.packageName)&&
-                   text.equals(other.text)
-                );
-                      
+                   reference.equals(other.reference)&&
+                   unit.equals(other.unit);         
         }
 
         
         @Override
         public int hashCode(){
-            int hash=getUUID().hashCode(); 
-            hash+=this.getMementoType().hashCode();
+            int hash=super.hashCode(); 
+            hash+=Objects.hashCode(displayName);
             hash+=this.mementoList.hashCode();
-            hash+=this.symbolName.hashCode();
-            //hash+=this.packageName.hashCode();
-            hash+=this.text.hashCode();
+            hash+=this.unit.hashCode()+this.reference.hashCode();
             return hash;  
-        }              
+        }        
         
-        public boolean isSameState(Circuit unit) {
+        @Override
+        public boolean isSameState(Unit unit) {
             SCHSymbol shape=(SCHSymbol)unit.getShape(getUUID());            
-            if(shape==null){
-                throw new IllegalStateException("shape uuid="+getUUID()+" does not exist");
-            }
             return (shape.getState(getMementoType()).equals(this));  
         }
-
-    }
-
+    }    
 }

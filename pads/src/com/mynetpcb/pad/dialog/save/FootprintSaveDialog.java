@@ -13,7 +13,7 @@ import com.mynetpcb.core.capi.io.remote.rest.RestParameterMap;
 import com.mynetpcb.core.dialog.save.AbstractSaveDialog;
 import com.mynetpcb.core.utils.Utilities;
 
-import java.awt.Window;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class FootprintSaveDialog extends AbstractSaveDialog {
-    public FootprintSaveDialog(Window owner, UnitComponent component,boolean isonline) {
+    public FootprintSaveDialog(Frame owner, UnitComponent component,boolean isonline) {
         super(owner, component, "Save",isonline);
     }
 
@@ -92,13 +92,13 @@ public class FootprintSaveDialog extends AbstractSaveDialog {
             }
             if (!isonline) {
                 Command writer =
-                    new WriteUnitLocal(this, getComponent().getModel().Format(), Configuration.get().getFootprintsRoot(),
+                    new WriteUnitLocal(this, getComponent().getModel().format(), Configuration.get().getFootprintsRoot(),
                                        (String)libraryCombo.getSelectedItem(), (String)categoryCombo.getSelectedItem(),
                                        fileNameText.getText(), overrideCheck.isSelected(), WriteUnitLocal.class);
                 CommandExecutor.INSTANCE.addTask("WriteUnitLocal", writer);
             } else {   
                 Command writer =
-                    new WriteConnector(this, getComponent().getModel().Format(), new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI((String)libraryCombo.getSelectedItem()).addURI("categories").addURI(categoryCombo.getSelectedItem()==null||"".equals(categoryCombo.getSelectedItem())?"null":(String)categoryCombo.getSelectedItem()).addAttribute("footprintName",fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
+                    new WriteConnector(this, getComponent().getModel().format(), new RestParameterMap.ParameterBuilder("/footprints").addURI("libraries").addURI((String)libraryCombo.getSelectedItem()).addURI("categories").addURI(categoryCombo.getSelectedItem()==null||"".equals(categoryCombo.getSelectedItem())?"null":(String)categoryCombo.getSelectedItem()).addAttribute("footprintName",fileNameText.getText()).addAttribute("overwrite",String.valueOf(overrideCheck.isSelected())).build(),
                                        WriteConnector.class);
                 CommandExecutor.INSTANCE.addTask("WriteUnit", writer);
             }
@@ -108,8 +108,8 @@ public class FootprintSaveDialog extends AbstractSaveDialog {
 
 
     @Override
-    public void OnRecive(String result, Class reciever) {
-        super.OnRecive(result, reciever);
+    public void onRecive(String result, Class reciever) {
+        super.onRecive(result, reciever);
         if (reciever == FootprintSaveDialog.class) {
             categoryCombo.setEditable(false);
             categoryCombo.removeAllItems();

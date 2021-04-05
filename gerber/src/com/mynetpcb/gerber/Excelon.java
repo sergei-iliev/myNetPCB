@@ -1,9 +1,9 @@
 package com.mynetpcb.gerber;
 
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.pad.Layer;
 import com.mynetpcb.core.utils.VersionUtils;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
@@ -15,7 +15,7 @@ import com.mynetpcb.gerber.attribute.file.PartFunctionAttribute;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Gerberable;
 import com.mynetpcb.gerber.capi.GraphicsStateContext;
-import com.mynetpcb.gerber.capi.StringBufferEx;
+import com.mynetpcb.gerber.capi.StringBufferExt;
 import com.mynetpcb.gerber.command.AbstractCommand;
 import com.mynetpcb.gerber.command.CommandDictionary;
 import com.mynetpcb.gerber.command.extended.CoordinateResolutionCommand;
@@ -47,7 +47,7 @@ public class Excelon implements Gerberable{
     
     
     public void build(GerberServiceContext serviceContext,String fileName,int layermask)throws IOException{
-        this.apertureDictionary.Reset();
+        this.apertureDictionary.reset();
         ApertureDrillProcessor apertureProcessor=new ApertureDrillProcessor(apertureDictionary);
         apertureProcessor.process(serviceContext, board, layermask) ;
         
@@ -55,7 +55,7 @@ public class Excelon implements Gerberable{
         try (BufferedWriter writer = Files.newBufferedWriter(gerberFile,
                         StandardCharsets.UTF_8)) {
 
-           GraphicsStateContext context=new GraphicsStateContext(apertureDictionary, commandDictionary, new StringBufferEx());
+           GraphicsStateContext context=new GraphicsStateContext(apertureDictionary, commandDictionary, new StringBufferExt());
            
            writer.write(createHeader(context,layermask));
            writer.write(createCommands(serviceContext,context,layermask));
@@ -66,7 +66,7 @@ public class Excelon implements Gerberable{
     }
     
     private String createCommands(GerberServiceContext serviceContext,GraphicsStateContext context,int layermask){
-        StringBufferEx sb=new StringBufferEx();
+        StringBufferExt sb=new StringBufferExt();
         
         /*Start dark polarity*/
         context.resetPolarity(LevelPolarityCommand.Polarity.DARK);
@@ -85,7 +85,7 @@ public class Excelon implements Gerberable{
         return sb.toString();
     }
     private String createHeader(GraphicsStateContext context,int layremask){
-        StringBufferEx sb=new StringBufferEx();
+        StringBufferExt sb=new StringBufferExt();
         
         AbstractAttribute attribute=new GenerationSoftwareAttribute(VersionUtils.MYNETPCB_NAME, String.valueOf(VersionUtils.MYNETPCB_VERSION));
         sb.append(attribute.print());        
@@ -126,8 +126,9 @@ public class Excelon implements Gerberable{
     }
     
     private String createFooter(GraphicsStateContext context){
-        StringBufferEx sb=new StringBufferEx();
+        StringBufferExt sb=new StringBufferExt();
         sb.append("M02*");
         return sb.toString();  
     }
 }
+

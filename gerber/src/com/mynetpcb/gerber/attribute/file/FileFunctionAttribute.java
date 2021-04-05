@@ -1,8 +1,7 @@
 package com.mynetpcb.gerber.attribute.file;
 
-import com.mynetpcb.core.pad.Layer;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.gerber.attribute.AbstractAttribute;
-
 
 public class FileFunctionAttribute extends AbstractAttribute {
     public FileFunctionAttribute(int layermask) {
@@ -42,3 +41,4 @@ public class FileFunctionAttribute extends AbstractAttribute {
         throw new IllegalStateException("Unsupported layer: "+layermask);
     }
 }
+

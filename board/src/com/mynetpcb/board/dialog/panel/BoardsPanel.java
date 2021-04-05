@@ -12,10 +12,10 @@ import com.mynetpcb.core.capi.tree.TreeNodeData;
 import com.mynetpcb.core.capi.tree.UnitTreeCellRenderer;
 import com.mynetpcb.core.capi.tree.UnitTreeDragDropListener;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
 import java.util.UUID;
@@ -98,9 +98,8 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
                 boardInspector.selectShapeEvent(new ShapeEvent(boardComponent.getModel().getUnit().getShape(data.getUUID()),
                                                                                     ShapeEvent.SELECT_SHAPE));
                 //***position on a symbol
-                Rectangle symbolRect =
-                    boardComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape().getBounds();
-                final Point2D position = new Point2D.Double(symbolRect.x, symbolRect.y);
+                Box symbolRect=boardComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
+                final Point2D position = new Point2D.Double(symbolRect.min.x, symbolRect.min.y);
                 boardComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().transform(position,
                                                                                                                        position);
                 SwingUtilities.invokeLater(new Runnable() {

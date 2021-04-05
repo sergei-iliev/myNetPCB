@@ -2,7 +2,6 @@ package com.mynetpcb.gerber.command.extended;
 
 import com.mynetpcb.gerber.command.AbstractCommand;
 
-
 public abstract class ExtendedCommand extends AbstractCommand {
     private final String command;
     
@@ -17,5 +16,3 @@ public abstract class ExtendedCommand extends AbstractCommand {
 
 
 }
-
-
