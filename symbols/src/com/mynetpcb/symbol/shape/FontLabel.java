@@ -124,12 +124,15 @@ public class FontLabel extends Shape implements Label,Externalizable{
         else
           return "";          
     }
+    public static void fromXML(Texture _texture,Node node) {
+    	Element  element= (Element)node;
+        _texture.setFillColor(element.getAttribute("color").equals("")?Color.BLACK:new Color(Integer.parseInt(element.getAttribute("color"))));
+        _texture.fromXML(node);        
+    }
 
     @Override
     public void fromXML(Node node) {
-        Element  element= (Element)node;
-        texture.setFillColor(element.getAttribute("color").equals("")?Color.BLACK:new Color(Integer.parseInt(element.getAttribute("color"))));
-        texture.fromXML(node);        
+        fromXML(this.texture,node);        
     }
 
     @Override

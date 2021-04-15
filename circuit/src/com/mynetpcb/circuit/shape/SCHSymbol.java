@@ -17,6 +17,7 @@ import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.FontText;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.symbol.shape.FontLabel;
@@ -244,12 +245,13 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
         }       
         n=element.getElementsByTagName("reference").item(0);
         if(n!=null){
-            Element ref=(Element)n;  
+            Element ref=(Element)n;              
             NodeList refList=ref.getElementsByTagName("label");            
             if(refList.getLength()==0){
                 reference.fromXML(n);              //old schema 
             }else{
-                reference.fromXML(refList.item(0));    //new schema 
+                //reference.fromXML(refList.item(0));    //new schema
+                FontLabel.fromXML(reference,refList.item(0));
             }
         }
 
@@ -261,7 +263,8 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
             if(unitList.getLength()==0){
                unit.fromXML(n);                //old schema
             }else{
-               unit.fromXML(unitList.item(0));    //new schema 
+               //unit.fromXML(unitList.item(0));    //new schema
+            	FontLabel.fromXML(unit,unitList.item(0));
             }                       
         }
         
