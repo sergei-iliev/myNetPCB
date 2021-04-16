@@ -82,13 +82,13 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
 
         
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(arc.getThickness())));    
-        widthField.setText(toUnit(arc.getRadius()));
+        widthField.setText(toUnit(Utilities.roundDouble(arc.getRadius())));
         
         setSelectedItem(layerCombo, (getTarget()).getCopper());
         setSelectedIndex(fillCombo,(getTarget().getFill()==Shape.Fill.EMPTY?0:1)); 
         
-        extAngField.setText(String.valueOf(arc.getExtendAngle()));
-        startAngField.setText(String.valueOf(arc.getStartAngle())); 
+        extAngField.setText(String.valueOf(Utilities.roundDouble(arc.getExtendAngle())));
+        startAngField.setText(String.valueOf(Utilities.roundDouble(arc.getStartAngle()))); 
     }
 
     @Override

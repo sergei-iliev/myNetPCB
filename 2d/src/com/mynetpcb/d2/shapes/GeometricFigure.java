@@ -7,7 +7,9 @@ public abstract class GeometricFigure{
    public abstract GeometricFigure clone();
    
    public boolean contains(Point pt){return false;}
-        
+
+   public boolean isPointOn(Point pt,int diviation){return false;}
+   
    public abstract  void paint(Graphics2D g2,boolean fill); 
    
    public abstract void rotate(double angle,Point center);

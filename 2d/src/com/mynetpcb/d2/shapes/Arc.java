@@ -103,6 +103,37 @@ public class Arc  extends GeometricFigure{
             return Utils.GE(dist1,dist2);
 
     }
+    
+    @Override
+    public boolean isPointOn(Point pt,int diviation){        
+    		boolean isInside=false;
+        	double clickedAngle =new Vector(this.pc,pt).slope();    		            		
+    		double angle = 360 - clickedAngle;		
+    		//test angle		
+    	    if(this.endAngle>0){ //counter clockwise    	    	
+    	    	if(angle-this.startAngle>0){
+    	    	  angle=(angle-this.startAngle);
+    	    	}else{
+    	    	  angle=((360-this.startAngle)+angle);	
+    	    	}
+    	    	isInside=(angle<this.endAngle);
+    	    }else{ //clockwise    	    	
+    	    	if((angle-this.startAngle)>0){
+    	    	  angle=((angle-360)-this.startAngle);	
+    	    	}else{
+    	    	  angle=angle-this.startAngle;
+    	    	}
+    	    	isInside=(Math.abs(angle)<Math.abs(this.endAngle));
+    	    }    		
+    		if(!isInside){
+    			return false;
+    		}
+    		//test distance
+    		double dist=this.pc.distanceTo(pt);
+
+    		return ((this.r-diviation)<dist&&(this.r+diviation)>dist);
+    }
+    
     public void move(double offsetX,double offsetY){
       this.pc.move(offsetX,offsetY);        
     }

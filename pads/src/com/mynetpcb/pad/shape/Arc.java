@@ -16,6 +16,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
+import com.mynetpcb.d2.shapes.Vector;
 import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.AlphaComposite;
@@ -191,7 +192,10 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     
     @Override
     public boolean isClicked(int x,int y) {
-            if (this.arc.contains(new Point(x, y)))
+        if(this.arc.isPointOn(new Point(x, y),this.thickness))
+        	return true;
+        
+    	if (this.arc.contains(new Point(x, y)))
                     return true;
             else
                     return false;
@@ -230,10 +234,72 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     
     @Override
     public void resize(int xoffset, int yoffset, Point point) {
-        Point pt=this.calculateResizingMidPoint(xoffset,yoffset);  
-        this.resizingPoint=pt;
-        double r=this.arc.pc.distanceTo(pt);
-        this.arc.r=r;
+//        Point pt=this.calculateResizingMidPoint(xoffset,yoffset);  
+//        this.resizingPoint=pt;
+//        double r=this.arc.pc.distanceTo(pt);
+//        this.arc.r=r;
+        
+         
+          this.resizingPoint=this.calculateResizingMidPoint(xoffset,yoffset);
+            
+          //old middle point on arc
+          Point a1=this.arc.getMiddle();  
+          //mid point on line
+          Point m=new Point((this.arc.getStart().x+this.arc.getEnd().x)/2,(this.arc.getStart().y+this.arc.getEnd().y)/2);
+          //new middle point on arc
+          Point a2=this.resizingPoint;  //new middle
+        	
+        	//do they belong to the same plane in regard to m 
+          Vector vec = new Vector(m, a2);
+          Vector linevec=new Vector(m,a1);
+          boolean samePlane = Utils.GT(vec.dot(linevec.normalize()), 0);           
+            
+          //which plane            
+          if(!samePlane){
+              return;
+          }
+
+          Point C=this.resizingPoint;  //projection
+          Point C1=m;
+            
+          double y=C1.distanceTo(C);
+          double x=C1.distanceTo(this.arc.getStart());
+            
+          double l=(x*x)/y;
+          double lambda=(l-y)/2;
+
+          Vector v=new Vector(C,C1);
+          Vector norm=v.normalize();			  
+        	
+          double a=C1.x +lambda*norm.x;
+          double b=C1.y + lambda*norm.y;
+          Point center=new Point(a,b);
+            
+            
+          double startAngle =new Vector(center,this.arc.getStart()).slope();
+          double endAngle = new Vector(center, this.arc.getEnd()).slope();
+            
+          double r = center.distanceTo(this.arc.getStart());
+
+          double start = 360 - startAngle;		
+          double end= (360-endAngle)-start;		
+        		
+          if(this.arc.endAngle<0){  //negative extend
+        	if(end>0){			  
+        	  end=end-360;
+        	}
+          }else{		//positive extend			
+        	if(end<0){ 					   
+        	  end=360-Math.abs(end);
+        	}			
+       	  }
+
+        	
+          this.arc.getCenter().set(center.x,center.y);
+          this.arc.r=r;
+          this.arc.startAngle=start;
+          this.arc.endAngle=end;
+   
     }
     private Point calculateResizingMidPoint(int x, int y){
             Line line=new Line(this.arc.getCenter(),this.arc.getMiddle());
