@@ -82,6 +82,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     private JPanel leftButtonGroupPanel = new JPanel();
     private ButtonGroup group = new ButtonGroup();
     
+    private JButton SymbolButton = new JButton();
     private JPopupButton AddBoardButton=new JPopupButton(this);
     private JButton PrintButton = new JButton();
     private JButton SaveButton = new JButton();
@@ -102,8 +103,10 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     private JToggleButton ConnectorButton = new JToggleButton();
     private JToggleButton NoConnectorButton = new JToggleButton();
     private JToggleButton NetLabelButton = new JToggleButton();
+    private JToggleButton VccSymbolButton = new JToggleButton();
+    private JToggleButton GndSymbolButton = new JToggleButton();
     private JToggleButton CoordButton = new JToggleButton();
-    private JButton SymbolButton = new JButton();
+    
     
 
     
@@ -222,6 +225,16 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         NetLabelButton.setToolTipText("Add Net label");
         NetLabelButton.setPreferredSize(new Dimension(35, 35));
 
+        VccSymbolButton.addActionListener(this);
+        VccSymbolButton.setToolTipText("Add VCC symbol");
+        VccSymbolButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/vcc.png"));
+        VccSymbolButton.setPreferredSize(new Dimension(35, 35));
+
+        GndSymbolButton.addActionListener(this);
+        GndSymbolButton.setToolTipText("Add GND symbol");
+        GndSymbolButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/gnd.png"));
+        GndSymbolButton.setPreferredSize(new Dimension(35, 35));
+        
         CoordButton.addActionListener(this);
         CoordButton.setToolTipText("Change coordinate origin");
         CoordButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/origin.png"));
@@ -301,7 +314,9 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         group.add(LabelButton);
         group.add(ConnectorButton);
         group.add(NoConnectorButton);
-        group.add(NetLabelButton);        
+        group.add(NetLabelButton);     
+        group.add(VccSymbolButton);
+        group.add(GndSymbolButton);
         group.add(DragHeand);
         
         WestPanel.setLayout(new BorderLayout());
@@ -324,6 +339,10 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         leftButtonGroupPanel.add(SelectionButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(SymbolButton);
+        leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
+        leftButtonGroupPanel.add(VccSymbolButton);
+        leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
+        leftButtonGroupPanel.add(GndSymbolButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(WireButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
