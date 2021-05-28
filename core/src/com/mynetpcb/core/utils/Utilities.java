@@ -1,11 +1,6 @@
 package com.mynetpcb.core.utils;
 
 
-import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
-import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
-import com.mynetpcb.core.capi.tree.AttachedItem;
-import com.mynetpcb.d2.shapes.Point;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -14,17 +9,16 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
-
 import java.math.BigDecimal;
-
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -34,7 +28,6 @@ import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -48,9 +41,13 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
+import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
+import com.mynetpcb.core.capi.tree.AttachedItem;
+import com.mynetpcb.d2.shapes.Point;
 
 
 public final class Utilities {
@@ -76,7 +73,21 @@ public final class Utilities {
     public static Color fromHex(String value){
         return null;
     }
-
+    /** Read content from resources folder*/
+    public static String readResourceFile(Class clazz,String fileName) throws IOException{
+        try(
+        		BufferedReader reader = new BufferedReader(new InputStreamReader(clazz.getResourceAsStream(fileName)));
+        		){                	    
+        	    StringBuilder sb = new StringBuilder();
+        	    String line;
+        	    	while ((line = reader.readLine()) != null) {
+        	    		sb.append(line);
+        	    		sb.append("\n");
+        	    	}
+               return sb.toString(); 
+        }        
+        
+    }
     /** Returns an ImageIcon, or null if the path was invalid. */
     public static ImageIcon loadImageIcon(Object o, String filename) {
         Image image = null;

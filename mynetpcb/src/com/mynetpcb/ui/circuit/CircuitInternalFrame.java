@@ -32,9 +32,11 @@ import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.dialog.load.AbstractLoadDialog;
 import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.dialog.SymbolLoadDialog;
 import com.mynetpcb.symbol.unit.Symbol;
 import com.mynetpcb.ui.AbstractInternalFrame;
+import com.mynetpcb.ui.myNetPCB;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -45,7 +47,10 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.AccessControlException;
 
 import java.util.Collection;
@@ -83,7 +88,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
     private ButtonGroup group = new ButtonGroup();
     
     private JButton SymbolButton = new JButton();
-    private JPopupButton AddBoardButton=new JPopupButton(this);
+    private JPopupButton AddCircuitButton=new JPopupButton(this);
     private JButton PrintButton = new JButton();
     private JButton SaveButton = new JButton();
     private JButton LoadButton = new JButton();
@@ -242,9 +247,9 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         
         //***construct Top Buttons Panel
         //AddBoardButton.setToolTipText("Add Circuit");
-        AddBoardButton.setPreferredSize(new Dimension(35, 35));
-        AddBoardButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
-        AddBoardButton.addMenu("Create new circuits project","Create").addMenu("Add circuit to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
+        AddCircuitButton.setPreferredSize(new Dimension(35, 35));
+        AddCircuitButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
+        AddCircuitButton.addMenu("Create new circuits project","Create").addMenu("Add circuit to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
             .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSeparator().addMenu("Exit","exit");
         
         PrintButton.addActionListener(this);
@@ -294,7 +299,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         PositionToCenter.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/tocenter.png"));
         
         
-        NorthPanel.add(AddBoardButton);
+        NorthPanel.add(AddCircuitButton);
         NorthPanel.add(PrintButton);
         NorthPanel.add(SaveButton);
         NorthPanel.add(LoadButton);
@@ -754,7 +759,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
             if (symbolLoadDialog.getSelectedModel() == null) {
                 return;
             }
-            circuitComponent.setMode(Mode.SYMBOL_MODE);
+            
 
             Symbol symbol = (Symbol) symbolLoadDialog.getSelectedModel().getUnit();
             SCHSymbol schsymbol = CircuitMgr.getInstance().createSCHSymbol(symbol);
@@ -762,7 +767,8 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
             //            //***set chip cursor
             schsymbol.move(-1 * (int) schsymbol.getBoundingShape().getCenter().x,
                            -1 * (int) schsymbol.getBoundingShape().getCenter().y);
-            //pcbfootprint.setRotation(60, pcbfootprint.getBoundingShape().getCenter());
+            
+            circuitComponent.setMode(Mode.SYMBOL_MODE);
             circuitComponent.setContainerCursor(schsymbol);
             circuitComponent.getEventMgr().setEventHandle("cursor", schsymbol);
 
@@ -770,6 +776,22 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
             symbolLoadDialog = null;
             this.circuitComponent.requestFocusInWindow(); //***enable keyboard clicks
 
+        }
+        if(e.getSource()==VccSymbolButton || e.getSource()==GndSymbolButton) {
+        	try {        		
+        		String content=Utilities.readResourceFile(Circuit.class,(e.getSource()==VccSymbolButton?"/com/mynetpcb/circuit/resources/symbols/Power.xml":"/com/mynetpcb/circuit/resources/symbols/Ground.xml"));
+        		SymbolContainer symbolContainer=new SymbolContainer();
+        		symbolContainer.parse(content);        		
+        		SCHSymbol schsymbol = CircuitMgr.getInstance().createSCHSymbol(symbolContainer.getUnit());
+                //            //***set chip cursor
+                schsymbol.move(-1 * (int) schsymbol.getBoundingShape().getCenter().x,
+                               -1 * (int) schsymbol.getBoundingShape().getCenter().y);
+                circuitComponent.setMode(Mode.SYMBOL_MODE);
+                circuitComponent.setContainerCursor(schsymbol);
+                circuitComponent.getEventMgr().setEventHandle("cursor", schsymbol);
+        	}catch(Exception ioe) {
+        		ioe.printStackTrace();
+        	}
         }
         if (e.getSource()==SelectionButton ){
             circuitComponent.setMode(Mode.COMPONENT_MODE);
