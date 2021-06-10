@@ -1,4 +1,8 @@
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/sergei-iliev/myNetPCB)
+
+
 ![myNetPCB](screenshots/logo.png?raw=true "myNetPCB")   **myNetPCB**</br></br>
 PCB Layout and Schematic capture tool for Win/Linux/Mac</br></br>
 **Features**
