@@ -15,7 +15,7 @@ PCB Layout and Schematic capture tool for Win/Linux/Mac</br></br>
 
 
 Download myNetPCB application at
-https://github.com/sergei-iliev/myNetPCB/releases/tag/v8.1
+https://github.com/sergei-iliev/myNetPCB/releases/tag/v8_1
 
 
 **How to run**
