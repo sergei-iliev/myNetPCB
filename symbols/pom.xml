@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.mynetpcb</groupId>
         <artifactId>mynetpcb-project</artifactId>
-        <version>8.1</version>
+        <version>8.2</version>
     </parent>
 
     <artifactId>symbols</artifactId>
@@ -17,12 +17,12 @@
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>core</artifactId>
-            <version>8.1</version>
+            <version>8.2</version>
         </dependency>
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>pads</artifactId>
-            <version>8.1</version>
+            <version>8.2</version>
         </dependency>		
     </dependencies>
 	

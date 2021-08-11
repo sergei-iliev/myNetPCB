@@ -6,7 +6,6 @@ import java.nio.file.Path;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import sun.security.util.SecurityConstants;
 
 
 @XmlTransient
@@ -83,15 +82,15 @@ public abstract class Configuration {
     /*
      * if securoty manager is present then - no access to local files!
      */
-    public boolean isLoacalFileAccessAllowed(){ 
-        if(System.getSecurityManager()==null){
-          return true;  
-        }
-        try{
-            System.getSecurityManager().checkPermission(new FilePermission("*",SecurityConstants.FILE_WRITE_ACTION));  
-        }catch(SecurityException e){
-            return false;
-        }
-        return true;
-    }
+//    public boolean isLoacalFileAccessAllowed(){ 
+//        if(System.getSecurityManager()==null){
+//          return true;  
+//        }
+//        try{
+//            System.getSecurityManager().checkPermission(new FilePermission("*",SecurityConstants.FILE_WRITE_ACTION));  
+//        }catch(SecurityException e){
+//            return false;
+//        }
+//        return true;
+//    }
 }
