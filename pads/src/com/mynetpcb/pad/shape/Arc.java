@@ -15,6 +15,7 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.d2.shapes.Vector;
 import com.mynetpcb.pad.unit.Footprint;
@@ -33,17 +34,20 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     
     private com.mynetpcb.d2.shapes.Arc arc;
     private Point resizingPoint;
+    private ArcType arcType;
     
     public Arc(double x,double y,double r,double startAngle,double endAngle,int thickness,int layermaskid)   {
         super(thickness,layermaskid);
         this.displayName="Arc";
         this.arc=new com.mynetpcb.d2.shapes.Arc(new Point(x,y),r,startAngle,endAngle); 
         this.selectionRectWidth=3000;
+        this.arcType=ArcType.TWO_POINT_ARC;
     }
     @Override
     public Arc clone() throws CloneNotSupportedException {        
         Arc copy= (Arc)super.clone();
         copy.arc=this.arc.clone();
+        
         return copy;
     }
     
@@ -84,8 +88,12 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     public double getExtendAngle(){
         return arc.endAngle;
     }
-
-
+    public ArcType getArcType() {
+		return arcType;
+	}
+    public void setArcType(ArcType arcType) {
+    	this.arcType = arcType;
+    }
     @Override
     public Box getBoundingShape() {
         
@@ -94,6 +102,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     @Override
     public void move(double xoffset,double yoffset) {
         this.arc.move(xoffset,yoffset);
+        
     } 
     @Override
     public Point getStartPoint() {        
@@ -231,14 +240,88 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
       this.rotate=alpha;    
       this.arc.rotate(angle,origin); 
     }
+    @Override
+    public void resizeStartEndPoint(int xoffset, int yoffset, boolean isStartPoint) {
+   	    Point A=this.arc.getStart().clone();
+   	    Point B=this.arc.getEnd().clone();
+   	    Point M=this.arc.getMiddle().clone();
+   	    Point O=new Point();
+   	    
+    	Segment middleSegment=new Segment(A,B);
+    	Point middlePoint=middleSegment.middle();
+    	
+    	double delta=M.distanceTo(middlePoint);
+    	if(isStartPoint) {
+    		A.move(xoffset, yoffset);
+    	}else {
+    		B.move(xoffset, yoffset);
+    	}
+    	middleSegment.set(A, B);
+    	middlePoint=middleSegment.middle();
+    	
+    	O.set(middlePoint);
+    	M.set(middlePoint);
+    	
+    	Vector v=new Vector(middlePoint,A);
+    	if(this.arc.endAngle>0) {
+    	  v.rotate90CW();	
+    	}else {
+    	  v.rotate90CCW();	
+    	}
+    	
+    	Vector norm=v.normalize();
+    	double x=M.x+delta*norm.x;
+    	double y=M.y+delta*norm.y;
+    	M.set(x, y);  //set new position of mid point
+    	
+    	//same calculation as arc on 3 points
+        Point C=M;  //projection
+        Point C1=O;
+        
+        x=C1.distanceTo(A);
+        y=C1.distanceTo(C);
+        
+        double l=(x*x)/y;
+        double lambda=(l-y)/2;
+        
+        v=new Vector(C,C1);
+        norm=v.normalize();			  
+      	
+        double a=C1.x +lambda*norm.x;
+        double b=C1.y + lambda*norm.y;
+        Point center=new Point(a,b);
+        double r = center.distanceTo(A);  
+          
+        double startAngle =new Vector(center,A).slope();
+        double endAngle = new Vector(center, B).slope();
+          
+        
+
+        double start = 360 - startAngle;		
+        double end= (360-endAngle)-start;		
+      		
+        if(this.arc.endAngle<0){  //negative extend
+      	if(end>0){			  
+      	  end=end-360;
+      	}
+        }else{		//positive extend			
+      	if(end<0){ 					   
+      	  end=360-Math.abs(end);
+      	}			
+     	  }
+
+      	
+        this.arc.getCenter().set(center.x,center.y);
+        this.arc.r=r;
+        this.arc.startAngle=start;
+        this.arc.endAngle=end;
+    	
+    	
+    	
+    }
     
     @Override
-    public void resize(int xoffset, int yoffset, Point point) {
-//        Point pt=this.calculateResizingMidPoint(xoffset,yoffset);  
-//        this.resizingPoint=pt;
-//        double r=this.arc.pc.distanceTo(pt);
-//        this.arc.r=r;
-        
+    public void resize(int xoffset, int yoffset, Point point) {        
          
           this.resizingPoint=this.calculateResizingMidPoint(xoffset,yoffset);
             
@@ -261,9 +344,10 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
 
           Point C=this.resizingPoint;  //projection
           Point C1=m;
-            
-          double y=C1.distanceTo(C);
+          
           double x=C1.distanceTo(this.arc.getStart());
+          double y=C1.distanceTo(C);
+
             
           double l=(x*x)/y;
           double lambda=(l-y)/2;
@@ -372,6 +456,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         if(this.isSelected()&&isControlPointVisible){            
             Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),a.getStart(),a.getEnd(),a.getMiddle());
         } 
+    	
     }
     @Override
     public void print(Graphics2D g2,PrintContext printContext,int layermask) {

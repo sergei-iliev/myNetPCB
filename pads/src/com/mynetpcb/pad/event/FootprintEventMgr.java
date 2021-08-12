@@ -33,6 +33,7 @@ public class FootprintEventMgr extends EventMgr<FootprintComponent,Shape> {
         hash.put("line",new LineEventHandle<FootprintComponent,Shape>(component));
         hash.put("block",new BlockEventHandle<FootprintComponent,Shape>(component,false));
         hash.put("cursor",new CursorEventHandle<FootprintComponent,Shape>(component));
+        hash.put("arc.resize",new ArcResizeEventHandle<FootprintComponent,Shape>(component));
         hash.put("resize",new ResizeEventHandle<FootprintComponent,Shape>(component));
         hash.put("texture",new TextureEventHandle<FootprintComponent,Shape>(component));
         hash.put("dragheand",new DragingEventHandle<FootprintComponent,Shape>(component)); 

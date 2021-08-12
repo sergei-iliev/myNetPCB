@@ -30,7 +30,11 @@ import java.util.UUID;
  * @author Sergey Iliev
  */
 public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Unit>,Layerable{
-    public enum Fill{
+    public enum ArcType{
+    	TWO_POINT_ARC,
+    	CENTER_POINT_ARC
+    }
+	public enum Fill{
         EMPTY(1),
         FILLED(2),
         GRADIENT(3);

@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.shape.Shape.ArcType;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.pad.shape.Arc;
@@ -24,9 +25,9 @@ import javax.swing.SwingConstants;
 public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
 
   private JTextField startAngField,extAngField; 
-        
+  private JComboBox<ArcType> arcTypeCombo;      
     public ArcPanelBuilder(UnitComponent component) {
-        super(component,new GridLayout(8,1));
+        super(component,new GridLayout(9,1));
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -47,6 +48,11 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Thickness"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 thicknessField=new JTextField("0"); thicknessField.addKeyListener(this); panel.add(thicknessField,BorderLayout.CENTER);
+                layoutPanel.add(panel);
+        //arc type        	
+                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+                label=new JLabel("Arc Type"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                arcTypeCombo=new JComboBox<>(ArcType.values());arcTypeCombo.addActionListener(this);  panel.add(arcTypeCombo,BorderLayout.CENTER);
                 layoutPanel.add(panel); 
         //***Fill
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
@@ -77,16 +83,17 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
         leftField.setEnabled(arc.getResizingPoint()==null?false:true);  
         topField.setEnabled(arc.getResizingPoint()==null?false:true);
   
-        leftField.setText(toUnitX(arc.getResizingPoint()==null?0:Utilities.roundDouble(arc.getResizingPoint().x)));
-        topField.setText(toUnitY(arc.getResizingPoint()==null?0:Utilities.roundDouble(arc.getResizingPoint().y))); 
+        leftField.setText(toUnitX(arc.getResizingPoint()==null?0:arc.getResizingPoint().x));
+        topField.setText(toUnitY(arc.getResizingPoint()==null?0:arc.getResizingPoint().y)); 
 
         
-        thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(arc.getThickness())));    
-        widthField.setText(toUnit(Utilities.roundDouble(arc.getRadius())));
+        thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(arc.getThickness()))); 
+        widthField.setText(toUnit(arc.getRadius()));
         
         setSelectedItem(layerCombo, (getTarget()).getCopper());
         setSelectedIndex(fillCombo,(getTarget().getFill()==Shape.Fill.EMPTY?0:1)); 
         
+        setSelectedItem(arcTypeCombo, arc.getArcType());
         extAngField.setText(String.valueOf(Utilities.roundDouble(arc.getExtendAngle())));
         startAngField.setText(String.valueOf(Utilities.roundDouble(arc.getStartAngle()))); 
     }
@@ -99,6 +106,9 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
         if(e.getSource()==fillCombo){
            getTarget().setFill(Shape.Fill.values()[fillCombo.getSelectedIndex()]);
         }
+        if(e.getSource()==arcTypeCombo){
+            ((Arc)getTarget()).setArcType((ArcType)arcTypeCombo.getSelectedItem());
+         }
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint();         
     }

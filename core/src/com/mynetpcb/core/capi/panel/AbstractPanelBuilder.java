@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.CoordinateSystem;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.utils.Utilities;
 
 import java.awt.Component;
 import java.awt.LayoutManager;
@@ -109,7 +110,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @return
      */
     protected String toUnit(double value){
-       return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value));  
+       return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value)));  
     }
     
     /**
@@ -128,9 +129,9 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
     protected String toUnitX(double value){        
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
         if(Objects.isNull(coordinateSystem))
-           return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value));      
+           return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value)));      
         else    
-           return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().x));      
+           return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().x)));      
 
     }
     /**
@@ -141,9 +142,9 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
     protected String toUnitY(double value){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
         if(Objects.isNull(coordinateSystem))
-            return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value));
+            return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value)));
         else    
-            return String.valueOf(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().y));
+            return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().y)));
     }
     /**
      *Convert from unit coordinate to internal one,taking care of coordinate shift

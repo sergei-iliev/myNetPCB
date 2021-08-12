@@ -36,6 +36,7 @@ public interface Resizeable {
      */
    public void resize(int xOffset, int yOffset,Point clickedPoint);
   
+   
    /**
     * Align resizing point to grid raster
     */
@@ -49,6 +50,12 @@ public interface Resizeable {
        */
     public default void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale){
         
+    }
+    /**
+     * Arc complient      
+     */
+    public default void resizeStartEndPoint(int xoffset,int yoffset,boolean isStartPoint) {
+    	
     }
 }
 

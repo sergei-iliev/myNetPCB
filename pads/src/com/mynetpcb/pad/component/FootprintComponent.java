@@ -24,6 +24,7 @@ import com.mynetpcb.core.capi.line.DefaultBendingProcessorFactory;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.shape.Shape.ArcType;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -94,7 +95,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
              getEventMgr().setEventHandle("cursor",shape);   
              break;
             case Mode.ARC_MODE:
-             shape=new Arc(0,0,Grid.MM_TO_COORD(3.4),60,60,(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
+             shape=new Arc(0,0,Grid.MM_TO_COORD(3.4),60,160,(int)Grid.MM_TO_COORD(0.2),Layer.SILKSCREEN_LAYER_FRONT);
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;                           
@@ -154,17 +155,24 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                 
                 if(shape!=null){
                     if(shape instanceof Arc){
+                      if(((Arc)shape).getArcType()==ArcType.CENTER_POINT_ARC) {
                         if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
                           getEventMgr().setEventHandle("arc.start.angle",shape);                    
                         }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
                           getEventMgr().setEventHandle("arc.extend.angle",shape);      
                         }else if(((Arc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
                           getEventMgr().setEventHandle("arc.mid.point",shape);
-                        }else{
-                          getEventMgr().setEventHandle("resize",shape);    
                         }
-                    }else{
-                      getEventMgr().setEventHandle("resize",shape);  
+                        
+                       }else{
+                          if(((Arc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                        	  getEventMgr().setEventHandle("arc.mid.point",shape);	  
+                          }else {
+                        	  getEventMgr().setEventHandle("arc.resize",shape);
+                          }
+                       }
+                     }else{
+                      getEventMgr().setEventHandle("resize",shape);                      
                     }
                 }else if((shape = getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true))!=null){
                     //***block operation

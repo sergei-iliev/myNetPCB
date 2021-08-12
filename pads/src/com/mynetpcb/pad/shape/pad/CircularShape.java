@@ -87,7 +87,7 @@ public class CircularShape implements PadDrawing {
         }
 
         if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){
-            System.out.println(111);
+           
 //           //draw thermal
 //            g2.setClip(ellipse);                              
 //            FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Line2D.class);
