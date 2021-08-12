@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.gerber.Fillable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -219,7 +220,7 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
     public String toXML() {
         StringBuffer sb = new StringBuffer();
         sb.append("<rectangle copper=\"" + getCopper().getName() + "\" thickness=\"" + this.getThickness()+"\"");
-        sb.append(" fill=\"" + this.getFill().ordinal() + "\" arc=\"" + this.roundRect.rounding + "\" points=\"");
+        sb.append(" fill=\"" + this.getFill().index + "\" arc=\"" + this.roundRect.rounding + "\" points=\"");
         for (Point point : this.roundRect.points) {
             sb.append(Utilities.roundDouble(point.x) + "," + Utilities.roundDouble(point.y) + ",");
         }
@@ -248,8 +249,10 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
         }
         
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
-        this.setFill(Fill.values()[(element.getAttribute("fill") == "" ? 0 :
-                                            Integer.parseInt(element.getAttribute("fill")))]);   
+
+//        this.setFill(Fill.values()[(element.getAttribute("fill") == "" ? 0 :
+//                                            Integer.parseInt(element.getAttribute("fill")))]);   
+        this.setFill(Fill.byIndex(Integer.parseInt(element.getAttribute("fill"))==0?1:Integer.parseInt(element.getAttribute("fill"))));
     
     }
     @Override

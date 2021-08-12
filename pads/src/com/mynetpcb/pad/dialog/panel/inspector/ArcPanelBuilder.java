@@ -43,17 +43,17 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
                 label=new JLabel("Y"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 topField=new JTextField("0"); topField.addKeyListener(this); panel.add(topField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
-               
+        //***arc type        	
+                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+                label=new JLabel("Arc Type"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
+                arcTypeCombo=new JComboBox<>(ArcType.values());arcTypeCombo.addActionListener(this);  panel.add(arcTypeCombo,BorderLayout.CENTER);
+                layoutPanel.add(panel);       
         //***Thickness        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Thickness"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
                 thicknessField=new JTextField("0"); thicknessField.addKeyListener(this); panel.add(thicknessField,BorderLayout.CENTER);
                 layoutPanel.add(panel);
-        //arc type        	
-                panel=new JPanel(); panel.setLayout(new BorderLayout()); 
-                label=new JLabel("Arc Type"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                arcTypeCombo=new JComboBox<>(ArcType.values());arcTypeCombo.addActionListener(this);  panel.add(arcTypeCombo,BorderLayout.CENTER);
-                layoutPanel.add(panel); 
+
         //***Fill
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Fill"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);

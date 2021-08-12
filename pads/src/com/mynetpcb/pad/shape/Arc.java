@@ -41,7 +41,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         this.displayName="Arc";
         this.arc=new com.mynetpcb.d2.shapes.Arc(new Point(x,y),r,startAngle,endAngle); 
         this.selectionRectWidth=3000;
-        this.arcType=ArcType.TWO_POINT_ARC;
+        this.arcType=ArcType.CENTER_POINT_ARC;
     }
     @Override
     public Arc clone() throws CloneNotSupportedException {        
@@ -421,7 +421,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         
         this.setStartAngle(Double.parseDouble(element.getAttribute("start")));
         this.setExtendAngle(Double.parseDouble(element.getAttribute("extend")));
-
+System.out.println(element.getAttribute("fill"));
         this.setThickness(Integer.parseInt(element.getAttribute("thickness")));
         this.setFill(Fill.byIndex(Integer.parseInt(element.getAttribute("fill"))==0?1:Integer.parseInt(element.getAttribute("fill")))); 
     }
