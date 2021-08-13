@@ -50,6 +50,22 @@ public class Segment extends GeometricFigure {
     public Point middle() {
         return new Point((this.ps.x + this.pe.x)/2, (this.ps.y + this.pe.y)/2);
     } 
+    @Override
+    public boolean isPointOn(Point pt,double diviation){  		 
+	  var rect = Box.fromRect(pt.x
+								- (diviation / 2), pt.y
+								- (diviation / 2), diviation,
+								diviation);
+	 var r1 = rect.min;
+	 var r2 = rect.max;
+
+	 if (Utils.intersectLineRectangle(this.ps,this.pe, r1, r2)) {				
+			return true;
+	 }
+
+	 	return false;        	
+    }   
+    
     public void move(double offsetX,double offsetY){
         this.ps.move(offsetX,offsetY);
         this.pe.move(offsetX,offsetY);              

@@ -105,7 +105,7 @@ public class Arc  extends GeometricFigure{
     }
     
     @Override
-    public boolean isPointOn(Point pt,int diviation){        
+    public boolean isPointOn(Point pt,double diviation){        
     		boolean isInside=false;
         	double clickedAngle =new Vector(this.pc,pt).slope();    		            		
     		double angle = 360 - clickedAngle;		
@@ -169,8 +169,6 @@ public class Arc  extends GeometricFigure{
        this.pc.scale(alpha);
        this.r*=alpha;
     }
-
-
 
     @Override
     public void paint(Graphics2D g2, boolean fill) {

@@ -134,7 +134,11 @@ public class FontText extends GeometricFigure {
     public void rotate(double angle) {
         this.rotate(angle,this.anchorPoint);
     }
-
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {
+    
+    	return false;
+    }
     public static class TextMetrics{
          //int fontSize;
         public double width,height;

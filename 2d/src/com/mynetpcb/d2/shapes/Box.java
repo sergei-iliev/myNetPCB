@@ -131,17 +131,6 @@ public class Box extends GeometricFigure {
     public Point[] getVertices() {
         return new Point[]{this.min,new Point(this.max.x,this.min.y),this.max,new Point(this.min.x,this.max.y)};    
     }
-    
-    @Override
-    public void paint(Graphics2D g2, boolean fill) {
-       rect.setRect(getX(),getY(), getWidth(), getHeight());
-       if(fill){
-         g2.fill(rect);   
-       }else{
-         g2.draw(rect);
-       }
-    }
-
     @Override
     public void rotate(double angle, Point center) {
         // TODO Implement this method
@@ -152,4 +141,19 @@ public class Box extends GeometricFigure {
     public void rotate(double angle) {
         // TODO Implement this method
     }
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {
+    
+    	return false;
+    }
+    @Override
+    public void paint(Graphics2D g2, boolean fill) {
+       rect.setRect(getX(),getY(), getWidth(), getHeight());
+       if(fill){
+         g2.fill(rect);   
+       }else{
+         g2.draw(rect);
+       }
+    }
+
 }

@@ -186,7 +186,11 @@ public class Obround extends GeometricFigure {
         else
           return this.width;        
     }
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {
     
+    	return false;
+    }
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         Stroke s=g2.getStroke();

@@ -60,7 +60,11 @@ public class Hexagon extends Polygon {
             
             
     }
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {
     
+    	return false;
+    }
     public void scale(double alpha){
             this.pc.scale(alpha);
             this.width*=alpha;  

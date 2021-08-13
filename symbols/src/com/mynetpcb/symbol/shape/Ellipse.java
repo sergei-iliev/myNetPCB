@@ -56,10 +56,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
     }
     @Override
     public boolean isClicked(int x,int y) {
-            if (this.ellipse.contains(x, y))
-                    return true;
-            else
-                    return false;
+		return this.ellipse.isPointOn(new Point(x, y),this.thickness);
     }
     public com.mynetpcb.d2.shapes.Ellipse getShape(){
         return ellipse;

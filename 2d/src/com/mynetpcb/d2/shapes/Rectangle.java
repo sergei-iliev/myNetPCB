@@ -189,7 +189,11 @@ public class Rectangle extends Polygon {
         this.points.get(2).set(x3, y3);
         this.points.get(3).set(x4, y4);
     }
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {
     
+    	return false;
+    }
     public double area(){
             return (this.points.get(0).distanceTo(this.points.get(1)))*(this.points.get(1).distanceTo(this.points.get(2)));
     }

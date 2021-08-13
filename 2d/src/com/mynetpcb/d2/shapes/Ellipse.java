@@ -45,7 +45,8 @@ public class Ellipse extends GeometricFigure {
         Rectangle rect=new Rectangle(topleft.x,topleft.y,2*this.width,2*this.height);
         rect.rotate(this.rotate,this.pc);
         return rect.box();
-    }    
+    }      
+    
     public void move(double offsetX,double offsetY){
         this.pc.move(offsetX,offsetY);              
     }
@@ -59,6 +60,44 @@ public class Ellipse extends GeometricFigure {
        this.height*=alpha;
     }
     
+    @Override
+    public boolean isPointOn(Point pt,double diviation){
+        double alpha=-1*Utils.radians(this.rotate);
+        double cos = Math.cos(alpha),
+        sin = Math.sin(alpha);
+        double dx  = (pt.x - this.pc.x),
+        dy  = (pt.y - this.pc.y);
+        double tdx = cos * dx + sin * dy,
+        tdy = sin * dx - cos * dy;
+
+       
+        double pos= (tdx * tdx) / (this.width * this.width) + (tdy * tdy) / (this.height * this.height);
+        //is pt on shape
+        if(Utils.EQ(pos,1)){
+        	return true;
+        }
+        
+        Vector v=new Vector(this.pc,pt);
+	    Vector norm=v.normalize();			  
+		//1.in
+	    if(pos<1){
+		    double xx=pt.x +diviation*norm.x;
+			double yy=pt.y +diviation*norm.y;
+			//check if new point is out
+			if(!this.contains(xx,yy)){
+				return true;
+			}
+	    }else{  //2.out
+		    double xx=pt.x - diviation*norm.x;
+			double yy=pt.y - diviation*norm.y;
+			//check if new point is in
+			if(this.contains(xx,yy)){
+				return true;
+			}		    	
+	    }
+
+      	return false;
+    }      
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         cache.setFrame(this.pc.x-width, this.pc.y-height,2*width,2*height);        

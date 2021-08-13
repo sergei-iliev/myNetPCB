@@ -67,14 +67,11 @@ public class Circle extends GeometricFigure{
     public void grow(double offset){
        this.r+=offset; 
     }
-//    public List<Point> vertices() {
-//        List<Point> vertices=new ArrayList<>(4);
-//        vertices.add(new Point(this.pc.x-this.r,this.pc.y));        
-//        vertices.add(new Point(this.pc.x,this.pc.y-this.r));
-//        vertices.add(new Point(this.pc.x+this.r,this.pc.y));
-//        vertices.add(new Point(this.pc.x,this.pc.y+this.r));
-//        return vertices;
-//    }   
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {
+    
+    	return false;
+    }  
     @Override
     public void paint(Graphics2D g2,boolean fill) {        
         cache.setFrame(this.pc.x-r, this.pc.y-r, 2*r, 2*r);        

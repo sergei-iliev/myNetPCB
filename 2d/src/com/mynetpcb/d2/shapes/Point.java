@@ -68,6 +68,12 @@ public class Point extends GeometricFigure{
         this.x+=offsetX;
         this.y+=offsetY;        
     } 
+    
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {    
+    	return false;
+    }
+    
     /**
     * Returns true if point is on a shape, false otherwise
     * @param {Shape} shape Shape of the one of supported types Point, Line, Circle, Segment, Arc, Polygon

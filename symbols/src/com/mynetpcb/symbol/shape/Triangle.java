@@ -73,7 +73,7 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
     }
     @Override
     public boolean isClicked(int x,int y) {
-      return this.shape.contains(new Point(x, y));       
+      return this.shape.isPointOn(new Point(x, y),thickness);       
     }
     @Override
     public Point isControlRectClicked(int x, int y) {

@@ -92,9 +92,21 @@ public class BaseFontText  extends GeometricFigure {
              return box;
              
     }
-//    public Box  box(){
-//        return new Box(this.anchorPoint.x-(this.metrics.width/2), this.anchorPoint.y-(this.metrics.height/2),this.anchorPoint.x+(this.metrics.width/2), this.anchorPoint.y+(this.metrics.height/2));
-//    }
+    @Override
+    public void rotate(double angle, Point center) {
+      
+
+    }
+
+    @Override
+    public void rotate(double angle) {
+     
+    }
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {
+    
+    	return false;
+    }
 
     @Override
     public void paint(Graphics2D g2, boolean fill) {
@@ -134,14 +146,5 @@ public class BaseFontText  extends GeometricFigure {
         //Utils.drawCrosshair(g2,4,this.anchorPoint);
     }
     
-    @Override
-    public void rotate(double angle, Point center) {
-      
-
-    }
-
-    @Override
-    public void rotate(double angle) {
-     
-    }
+    
 }

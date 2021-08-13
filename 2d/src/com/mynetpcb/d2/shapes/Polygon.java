@@ -104,7 +104,29 @@ public class Polygon extends GeometricFigure{
     public List<Point> vertices() {
         return this.points;
     } 
-    
+    @Override
+    public boolean isPointOn(Point pt,double diviation){    	       
+  	   var segment=new Segment(0,0,0,0);	   
+       Point prevPoint = this.points.get(0);        
+       for(Point point:this.points){    	        	  
+            if(prevPoint.equals(point)){    	            	  
+          	  prevPoint = point;
+                continue;
+            }    	              
+            segment.set(prevPoint.x,prevPoint.y,point.x,point.y);
+            if(segment.isPointOn(pt,diviation)){
+                return true;
+            }
+            prevPoint = point;
+        }		
+        //close polygon	
+        segment.set(prevPoint.x,prevPoint.y,this.points.get(0).x,this.points.get(0).y);
+        if(segment.isPointOn(pt,diviation)){
+            return true;
+        }
+        
+        return false;
+    } 	    
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         polygon.reset();

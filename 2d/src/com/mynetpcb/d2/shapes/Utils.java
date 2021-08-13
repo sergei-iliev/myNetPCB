@@ -15,7 +15,7 @@ public class Utils{
     
     public static double degrees (double radians) {
         return radians * 180 / Math.PI;
-    }
+    }       	
     /*****
     *
     *   Intersect Line with Rectangle
@@ -57,6 +57,19 @@ public class Utils{
         }
         return result;
     };
+    /*
+     * to the upper left corner of the screen
+     */
+   	public Point min(Point p1,Point p2){
+   		return new Point(Math.min(p1.x,p2.x),Math.min(p1.y,p2.y));	
+   	}
+   	/*
+   	 * to the bottom right corner of the screen
+   	 */
+   	public Point max(Point p1,Point p2){
+   	    return new Point(Math.max(p1.x,p2.x),Math.max(p1.y,p2.y));	
+   	}
+    
 //    public static boolean intersectLine2Circle(Line line,Circle circle) {
 //        let ip = [];
 //        Point prj = circle.pc.projectionOn(line);            // projection of circle center on line

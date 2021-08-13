@@ -12,21 +12,15 @@ import java.awt.geom.Arc2D;
  * @param {number} startAngle - start angle in degrees from 0 to 360
  * @param {number} endAngle - end angle in degrees from -360 to 360
  */
-public class Arcellipse extends GeometricFigure{
-    public double width,height;
-    public Point pc;
-    public double rotate;
+public class Arcellipse extends Ellipse{
     private Point vert[]={new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0)};
     
     public double startAngle,endAngle;
     private Arc2D cache=new Arc2D.Double();
     
     public Arcellipse(double x,double y,double width,double height) {
-        this.pc=new Point(x,y);
-        this.width=width;
-        this.height=height;    
+    	super(x,y,width,height);	
         this.startAngle = 90;
-        this.rotate=0;
         this.endAngle = 236;
     }
 
@@ -68,7 +62,8 @@ public class Arcellipse extends GeometricFigure{
         Point p=new Point(x,y);
         p.rotate(this.rotate,this.pc);
         return  p;
-    }    
+    }   
+    
     private double convertExtend(double start,double extend){
         double s = 360 - start;
         double e=0;
@@ -82,44 +77,7 @@ public class Arcellipse extends GeometricFigure{
          }               
         }
         return  e;        
-    }
-    public Box box(){
-        Point topleft=this.pc.clone();
-        topleft.move(-this.width,-this.height);
-        Rectangle rect=new Rectangle(topleft.x,topleft.y,2*this.width,2*this.height);
-        rect.rotate(this.rotate,this.pc);
-        return rect.box();
-    }    
-    public void scale(double alpha){
-       this.pc.scale(alpha);
-       this.width*=alpha;
-       this.height*=alpha;
-    }    
-    public void move(double offsetX,double offsetY){
-        this.pc.move(offsetX,offsetY);              
-    }
-    public boolean contains(double x,double y) {            
-            double alpha=-1*Utils.radians(this.rotate);
-            double cos = Math.cos(alpha),
-            sin = Math.sin(alpha);
-            double dx  = (x - this.pc.x),
-            dy  = (y - this.pc.y);
-            double tdx = cos * dx + sin * dy,
-            tdy = sin * dx - cos * dy;
-
-        return (tdx * tdx) / (this.width * this.width) + (tdy * tdy) / (this.height * this.height) <= 1;
     } 
-    
-    @Override
-    public void rotate(double angle, Point center) {
-        this.pc.rotate((angle-this.rotate),center);
-        this.rotate=angle;
-    }
-
-    @Override
-    public void rotate(double angle) {
-       this.rotate(angle,this.pc);
-    }   
     public void mirror(Line line){
         this.pc.mirror(line);
         this.endAngle=-1*this.endAngle;
@@ -132,7 +90,8 @@ public class Arcellipse extends GeometricFigure{
         }else{
                 this.startAngle=360-this.startAngle; 
         }                        
-    }    
+    }  
+    
     public void resize(double offX,double offY,Point pt){      
       if(pt.equals(vert[0])){
                     Point point=vert[0];
@@ -191,6 +150,32 @@ public class Arcellipse extends GeometricFigure{
                     }
       }
     }
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {
+        	boolean result=super.isPointOn(pt,diviation);
+        	if(!result){
+        		return false;
+        	}
+        	double start=new Vector(this.pc,this.getStart()).slope();
+        	double end=new Vector(this.pc,this.getEnd()).slope();        	        	        	        	
+        	double clickedAngle =new Vector(this.pc,pt).slope();
+        	
+        	if(this.endAngle>0){
+        	  if(start>end){
+        		  return (start>=clickedAngle)&&(clickedAngle>=end);	
+        	  }else{
+        		  return !((start<=clickedAngle)&&(clickedAngle<=end));        		  
+        	  }
+        	}else{
+        	 if(start>end){
+    			return !((start>=clickedAngle)&&(clickedAngle>=end));
+    		 }else{        			
+    			return (start<=clickedAngle)&&(clickedAngle<=end);
+    		 }        		
+        	}      	        	        	        	
+       
+    }    
+    
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         cache.setArc(this.pc.x-width, this.pc.y-height, 2*width, 2*height,startAngle,endAngle,Arc2D.OPEN);

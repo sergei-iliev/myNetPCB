@@ -91,8 +91,33 @@ public class Polyline<P extends Point> extends GeometricFigure{
         this.points.forEach(point->{
              point.rotate(angle,center);
         });
-    }    
-    
+    }
+    @Override
+    public boolean isPointOn(Point pt,double diviation){
+		  boolean result = false;
+			// build testing rect
+		  
+		  var rect = Box.fromRect(pt.x
+									- (diviation / 2), pt.y
+									- (diviation / 2), diviation,
+									diviation);
+		  var r1 = rect.min;
+		  var r2 = rect.max;
+
+		  // ***make lines and iterate one by one
+		  Point prevPoint = this.points.get(0);
+
+
+		  for(Point wirePoint:this.points){															
+			if (Utils.intersectLineRectangle(prevPoint, wirePoint, r1, r2)) {
+			    result = true;
+				break;
+			}
+			prevPoint = wirePoint;								
+		 }
+		 return result;
+	   
+ }
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         polyline.reset();

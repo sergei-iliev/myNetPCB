@@ -164,7 +164,30 @@ public class RoundRectangle extends Rectangle {
     public void resize(int offX,int offY,Point point){
             super.resize(offX,offY,point);
             this.reset();
-    }    
+    }   
+    @Override
+	public boolean isPointOn(Point pt,double diviation){
+		if (this.rounding == 0) {
+			for(Segment seg :this.segments){
+			 	if(seg.isPointOn(pt,diviation)){				 		
+			 		return true;
+			 	}										
+			}
+		}else{
+			for(Segment seg:this.segments){
+			 	if(seg.isPointOn(pt,diviation)){
+			 		return true;
+			 	}										
+			}
+			for(Arc arc :this.arcs){
+			 	if(arc.isPointOn(pt,diviation/2)){
+			 		return true;
+			 	}										
+			}
+
+		}			
+		return false;
+	}    
     private void reset() {
 
         if (this.rounding == 0) {

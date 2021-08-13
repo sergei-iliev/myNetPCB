@@ -79,7 +79,11 @@ public class Line extends GeometricFigure {
     public Point[] getVertices() {
         return new Point[] { this.p1.clone(), this.p2.clone() };
     }
-
+    @Override
+    public boolean isPointOn(Point pt, double diviation) {
+    
+    	return false;
+    }
 
     @Override
     public void paint(Graphics2D g2, boolean fill) {

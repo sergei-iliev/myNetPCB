@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.RoundRectangle;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.symbol.unit.Symbol;
 
@@ -30,7 +31,7 @@ import org.w3c.dom.Node;
 public class RoundRect extends ResizableShape implements Externalizable{
     
         
-    private RoundRectangle2D roundRect;
+    private RoundRectangle2D roundRectCache;
     int rounding;
     private Point resizingPoint;
     
@@ -39,14 +40,14 @@ public class RoundRect extends ResizableShape implements Externalizable{
             this.setDisplayName("Rect");            
             this.selectionRectWidth=2;
             this.fillColor=Color.BLACK;
-            this.roundRect=new RoundRectangle2D.Double();
+            this.roundRectCache=new RoundRectangle2D.Double();
             this.rounding=0;
     }
     
     @Override
     public RoundRect clone() throws CloneNotSupportedException{
         RoundRect copy= (RoundRect)super.clone();
-        copy.roundRect=new RoundRectangle2D.Double();        
+        copy.roundRectCache=new RoundRectangle2D.Double();        
         copy.resizingPoint=null;                        
         return copy;
     }
@@ -61,7 +62,11 @@ public class RoundRect extends ResizableShape implements Externalizable{
             resizingPoint = null;
         }
     }
-    
+    @Override
+    public boolean isClicked(int x, int y) {
+    	RoundRectangle r=new RoundRectangle(getX(),getY(), getWidth(), getHeight(),rounding);
+    	return r.isPointOn(new Point(x, y),this.thickness);				
+    }
     @Override
     public Point getResizingPoint() {
         return resizingPoint;
@@ -88,7 +93,7 @@ public class RoundRect extends ResizableShape implements Externalizable{
                 return;
         }
                
-        roundRect.setRoundRect(getX() ,getY(),getWidth(),getHeight(),rounding,rounding);
+        roundRectCache.setRoundRect(getX() ,getY(),getWidth(),getHeight(),rounding,rounding);
         
         
         g2.setStroke(new BasicStroke((this.thickness),1,1));  
@@ -100,21 +105,21 @@ public class RoundRect extends ResizableShape implements Externalizable{
         tr.scale(scale.getScaleX(),scale.getScaleY());
         g2.setTransform(tr);                
         if(fill == Fill.EMPTY)   //***empty
-          g2.draw(roundRect);
+          g2.draw(roundRectCache);
         if(this.getFill() == Fill.FILLED)  //***filled
-          g2.fill(roundRect);
+          g2.fill(roundRectCache);
         if(this.getFill() == Fill.GRADIENT){   //***gradual
             Composite originalComposite = g2.getComposite();
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
             GradientPaint gp = 
-                new GradientPaint(roundRect.getBounds().x, roundRect.getBounds().y, 
-                                  Color.white, roundRect.getBounds().x, 
-                                  (roundRect.getBounds().y+roundRect.getBounds().height), isSelected()?Color.GRAY:fillColor, true);
+                new GradientPaint(roundRectCache.getBounds().x, roundRectCache.getBounds().y, 
+                                  Color.white, roundRectCache.getBounds().x, 
+                                  (roundRectCache.getBounds().y+roundRectCache.getBounds().height), isSelected()?Color.GRAY:fillColor, true);
             g2.setPaint(gp);
-            g2.fill(roundRect);
+            g2.fill(roundRectCache);
             g2.setComposite(originalComposite);
             g2.setColor(isSelected()?Color.GRAY:fillColor);
-            g2.draw(roundRect);
+            g2.draw(roundRectCache);
         }      
         g2.setTransform(old);
 
@@ -126,22 +131,22 @@ public class RoundRect extends ResizableShape implements Externalizable{
                pt.scale(scale.getScaleX());
                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
             }           
-            Point p=new Point(roundRect.getMinX(),roundRect.getMinY());     
+            Point p=new Point(roundRectCache.getMinX(),roundRectCache.getMinY());     
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());              
             Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
 
-            p.set(roundRect.getMinX()+roundRect.getWidth(),roundRect.getMinY());     
+            p.set(roundRectCache.getMinX()+roundRectCache.getWidth(),roundRectCache.getMinY());     
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());              
             Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
 
-            p.set(roundRect.getMinX(),roundRect.getMinY()+roundRect.getHeight());     
+            p.set(roundRectCache.getMinX(),roundRectCache.getMinY()+roundRectCache.getHeight());     
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());              
             Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p);
 
-            p.set(roundRect.getMinX()+roundRect.getWidth(),roundRect.getMinY()+roundRect.getHeight());     
+            p.set(roundRectCache.getMinX()+roundRectCache.getWidth(),roundRectCache.getMinY()+roundRectCache.getHeight());     
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());              
             Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p);            
@@ -151,7 +156,7 @@ public class RoundRect extends ResizableShape implements Externalizable{
     
     @Override
     public void print(Graphics2D g2,PrintContext printContext,int layermask) {              
-        roundRect.setRoundRect(getX() ,getY(),getWidth(),getHeight(),rounding,rounding);
+    	roundRectCache.setRoundRect(getX() ,getY(),getWidth(),getHeight(),rounding,rounding);
         
         
         g2.setStroke(new BasicStroke((this.thickness),1,1));  
@@ -159,18 +164,18 @@ public class RoundRect extends ResizableShape implements Externalizable{
 
                  
         if(fill == Fill.EMPTY)   //***empty
-          g2.draw(roundRect);
+          g2.draw(roundRectCache);
         if(this.getFill() == Fill.FILLED)  //***filled
-          g2.fill(roundRect);
+          g2.fill(roundRectCache);
         if(this.getFill() == Fill.GRADIENT){   //***gradual
             GradientPaint gp = 
-                new GradientPaint(roundRect.getBounds().x, roundRect.getBounds().y, 
-                                  Color.white, roundRect.getBounds().x, 
-                                  (roundRect.getBounds().y+roundRect.getBounds().height), isSelected()?Color.GRAY:fillColor, true);
+                new GradientPaint(roundRectCache.getBounds().x, roundRectCache.getBounds().y, 
+                                  Color.white, roundRectCache.getBounds().x, 
+                                  (roundRectCache.getBounds().y+roundRectCache.getBounds().height), isSelected()?Color.GRAY:fillColor, true);
             g2.setPaint(gp);
-            g2.fill(roundRect);
+            g2.fill(roundRectCache);
             g2.setColor(isSelected()?Color.GRAY:fillColor);
-            g2.draw(roundRect);
+            g2.draw(roundRectCache);
         }      
         
     }
