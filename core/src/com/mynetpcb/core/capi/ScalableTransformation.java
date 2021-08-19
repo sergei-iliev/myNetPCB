@@ -92,17 +92,17 @@ public class ScalableTransformation implements Cloneable{
          return new Point((int) Math.floor(result.getX()+0.5),(int) Math.floor(result.getY()+0.5));
      }
 
-     public Point2D getInversePoint(Point2D scaledPoint){
-         AffineTransform unscaledTransformation=null;
-         try {
-             unscaledTransformation = currentTransformation.createInverse();
-         } catch (NoninvertibleTransformException e) {
-            e.printStackTrace(System.out);
-         }
-         Point2D result=new Point2D.Double();
-         unscaledTransformation.transform(scaledPoint,result);    
-         return result;
-     }
+//     public Point2D getInversePoint(Point2D scaledPoint){
+//         AffineTransform unscaledTransformation=null;
+//         try {
+//             unscaledTransformation = currentTransformation.createInverse();
+//         } catch (NoninvertibleTransformException e) {
+//            e.printStackTrace(System.out);
+//         }
+//         Point2D result=new Point2D.Double();
+//         unscaledTransformation.transform(scaledPoint,result);    
+//         return result;
+//     }
 
      public Box getInverseRect(Box box){
           double s=1;
