@@ -162,7 +162,7 @@ public class FontTexture implements Texture{
         return null;
     }
     @Override
-    public boolean isClicked(int x, int y) {
+    public boolean isClicked(double x, double y) {
             if (this.shape.text == null || this.shape.text.length() == 0){
                 return false;
             } 

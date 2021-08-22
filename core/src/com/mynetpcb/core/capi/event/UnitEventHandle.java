@@ -25,15 +25,14 @@ public class UnitEventHandle <U extends UnitComponent,S extends Shape> extends E
 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
+        if (SwingUtilities.isRightMouseButton(e.getMouseEvent())) {
             getComponent().getPopupMenu().registerUnitPopup(e, getTarget());
             return;
         }
         getComponent().getModel().getUnit().setSelected(false);  
         getComponent().Repaint();
         mx = e.getWindowX();
-        my = e.getWindowY();
-        e.consume();     
+        my = e.getWindowY();    
     }
 
     @Override
@@ -45,8 +44,8 @@ public class UnitEventHandle <U extends UnitComponent,S extends Shape> extends E
 
     @Override
     public void mouseScaledDragged(MouseScaledEvent e) {
-        int w=e.getWindowX() - mx;
-        int h=e.getWindowY() - my;
+        int w=e.getWindowX() - (int)mx;
+        int h=e.getWindowY() - (int)my;
         selectionRect.setRect(mx - (w < 0 ? Math.abs(w) : 0),
                                   my - (h < 0 ? Math.abs(h) : 0), Math.abs(w),
                                   Math.abs(h));

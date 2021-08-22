@@ -80,12 +80,12 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
        return (!this.floatingStartPoint.equals(this.floatingEndPoint));                
     }
     @Override
-    public boolean isClicked(int x,int y){
+    public boolean isClicked(double x,double y){
        return this.polygon.contains(x,y);
     }
     
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         return this.isBendingPointClicked(x, y);
     }
 
@@ -100,7 +100,7 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
     }
 
     @Override
-    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+    public void resize(double xoffset, double yoffset, Point clickedPoint) {
         clickedPoint.set(clickedPoint.x + xoffset,
                                                                 clickedPoint.y + yoffset);
     }

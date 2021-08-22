@@ -407,7 +407,7 @@ public class GlyphTexture implements Texture {
     
 
     @Override
-    public boolean isClicked(int x, int y) {
+    public boolean isClicked(double x, double y) {
         if (this.text == null || this.text.length() == 0){
             return false;
         } 

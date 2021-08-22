@@ -15,7 +15,7 @@ public class MoveEventHandle <U extends UnitComponent,S extends Shape> extends E
     }
     
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 
+        if ((e.getMouseEvent().getModifiers() & ActionEvent.CTRL_MASK) == 
             ActionEvent.CTRL_MASK) {
             getComponent().getModel().getUnit().setSelected(getTarget().getUUID(), !getTarget().isSelected());
             getComponent().Repaint(); 
@@ -23,7 +23,7 @@ public class MoveEventHandle <U extends UnitComponent,S extends Shape> extends E
             return;
         }
         //***is this a right click popup request?
-        if (SwingUtilities.isRightMouseButton(e)) {
+        if (SwingUtilities.isRightMouseButton(e.getMouseEvent())) {
             if (getTarget() instanceof AbstractLine){
                 getComponent().getPopupMenu().registerLineSelectPopup(e, getTarget());
             }else{
@@ -52,11 +52,11 @@ public class MoveEventHandle <U extends UnitComponent,S extends Shape> extends E
     }    
     
     public void mouseScaledDragged(MouseScaledEvent e) {  
-        int new_mx = e.getX();
-        int new_my = e.getY();
+        double new_mx = e.getX();
+        double new_my = e.getY();
 
 
-        getTarget().move(new_mx - mx, new_my - my);
+        getTarget().move(new_mx - mx,new_my - my);
 
         //***update PropertiesPanel           
         getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
@@ -65,7 +65,6 @@ public class MoveEventHandle <U extends UnitComponent,S extends Shape> extends E
         my = new_my;
 
         getComponent().Repaint();
-        e.consume();
     }
     
     @Override

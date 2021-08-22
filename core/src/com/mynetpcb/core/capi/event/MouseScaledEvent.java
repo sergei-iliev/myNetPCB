@@ -1,27 +1,29 @@
 package com.mynetpcb.core.capi.event;
 
 
-import java.awt.Component;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-public class MouseScaledEvent extends MouseEvent{
+import com.mynetpcb.d2.shapes.Point;
+
+public class MouseScaledEvent{
         
-    private int x;
+    private double x;
 
-    private int y;
+    private double y;
 
+    private final MouseEvent event;
+    
         public MouseScaledEvent(MouseEvent event,Point basePoint) {
-          super((Component)event.getSource(),event.getID(),event.getWhen(),event.getModifiers(),event.getX(),event.getY(),event.getClickCount(),event.isPopupTrigger(),event.getButton());
+          this.event=event;
           x=basePoint.x;
           y=basePoint.y;
         }
         
-        public int getX() {
+        public double getX() {
             return x;
         }
 
-        public int getY() {
+        public double getY() {
             return y;
         }
         
@@ -30,16 +32,17 @@ public class MouseScaledEvent extends MouseEvent{
         }
         
         public int getWindowX(){
-          return super.getX();  
+          return event.getX();  
         }
         
         public int getWindowY(){
-          return super.getY();  
+          return event.getY();  
         }
         
-        public Point getWindowPoint(){
-          return super.getPoint();  
+        public MouseEvent getMouseEvent(){
+        	return event;
         }
+        
         
         @Override
         public String toString(){

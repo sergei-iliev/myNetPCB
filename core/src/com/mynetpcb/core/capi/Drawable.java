@@ -27,7 +27,7 @@ public interface Drawable {
      * @param y coord of mouse click
      * @return if shape is clicked upon
      */
-    public boolean isClicked(int x,int y);
+    public boolean isClicked(double x,double y);
     
     /**
      * Check if shape falls within rectangle

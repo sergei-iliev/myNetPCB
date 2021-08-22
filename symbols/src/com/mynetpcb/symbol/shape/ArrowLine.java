@@ -77,7 +77,7 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
     }
    
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         Box rect = Box.fromRect(x-this.selectionRectWidth / 2, y - this.selectionRectWidth/ 2, this.selectionRectWidth, this.selectionRectWidth);        
         if (rect.contains(this.line.ps)){
            return this.line.ps;  
@@ -102,7 +102,7 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
     }
 
     @Override
-    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+    public void resize(double xoffset, double yoffset, Point clickedPoint) {
         clickedPoint.set(clickedPoint.x + xoffset, 
                                  clickedPoint.y + yoffset);
         this.setHeadSize(this.headSize);

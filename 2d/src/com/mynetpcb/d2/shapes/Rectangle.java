@@ -32,7 +32,7 @@ public class Rectangle extends Polygon {
     public void setSize(double width,double height){
       this.reset(width,height);                         
     }
-    public void resize(int offX,int offY,Point point){
+    public void resize(double offX,double offY,Point point){
             if(point==this.points.get(2)){
     //do same
                     Point pt=this.points.get(2);

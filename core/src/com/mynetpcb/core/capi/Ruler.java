@@ -50,7 +50,7 @@ public class Ruler extends Shape implements Resizeable{
     }
 
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         return null;
     }
 
@@ -65,7 +65,7 @@ public class Ruler extends Shape implements Resizeable{
     }
 
     @Override
-    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+    public void resize(double xoffset, double yoffset, Point clickedPoint) {
        resizingPoint.set(resizingPoint.x+xoffset,resizingPoint.y+yoffset);
        text.set(resizingPoint.x,resizingPoint.y);
     }

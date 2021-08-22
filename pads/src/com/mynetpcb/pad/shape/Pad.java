@@ -320,7 +320,7 @@ public class Pad extends PadShape{
     }
     
     @Override
-    public boolean isClicked(int x,int y){
+    public boolean isClicked(double x,double y){
         return this.shape.contains(new Point(x,y));         
     }
     public void setSelected (boolean selection) {
@@ -357,7 +357,7 @@ public class Pad extends PadShape{
     }
 
     @Override
-    public Texture getClickedTexture(int x, int y) {
+    public Texture getClickedTexture(double x, double y) {
         if(number.isClicked(x, y))
             return number;
         else if(netvalue.isClicked(x, y))
@@ -367,7 +367,7 @@ public class Pad extends PadShape{
     }
 
     @Override
-    public boolean isClickedTexture(int x, int y) {
+    public boolean isClickedTexture(double x, double y) {
         return getClickedTexture(x, y)!=null;
     }
 

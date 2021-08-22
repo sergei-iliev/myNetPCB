@@ -319,7 +319,7 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
     }
     
     @Override
-    public Texture getClickedTexture(int x, int y) {
+    public Texture getClickedTexture(double x, double y) {
         if(this.reference.isClicked(x, y))
             return this.reference;
         else if(this.unit.isClicked(x, y))
@@ -329,7 +329,7 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
     }
 
     @Override
-    public boolean isClickedTexture(int x, int y) {
+    public boolean isClickedTexture(double x, double y) {
         return this.getClickedTexture(x, y)!=null;
     }
     @Override

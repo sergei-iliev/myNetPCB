@@ -98,7 +98,7 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
     }
     
     @Override
-    public boolean isClicked(int x, int y) {        
+    public boolean isClicked(double x,double y) {        
         if (this.circle.contains(new Point(x, y)))
             return true;
          else
@@ -149,7 +149,7 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
     }
 
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         Point pt=new Point(x,y);
                        
         for(Point p:this.circle.vertices()){
@@ -172,7 +172,7 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
     }
 
     @Override
-    public void resize(int xoffset, int yoffset, Point point) {
+    public void resize(double xoffset, double yoffset, Point point) {
         
         double radius=this.circle.r;
 

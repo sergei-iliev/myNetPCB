@@ -94,7 +94,7 @@ public class Box extends GeometricFigure {
       this.min.scale(alpha);
       this.max.scale(alpha);
     }
-    public boolean contains(int x,int y){
+    public boolean contains(double x,double y){
       
         if(this.min.x<=x&&x<=this.max.x){
           if(this.min.y<=y&&y<=this.max.y)

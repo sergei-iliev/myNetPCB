@@ -34,8 +34,8 @@ public class ArcResizeEventHandle <U extends UnitComponent,S extends Shape>  ext
 
 	@Override
 	public void mouseScaledDragged(MouseScaledEvent e) {			    
-        int new_mx = e.getX();
-        int new_my = e.getY();
+        double new_mx = e.getX();
+        double new_my = e.getY();
 		((Arc)this.getTarget()).resizeStartEndPoint(new_mx - mx, new_my - my, isStartPoint);
         //***update PropertiesPanel           
         getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));

@@ -161,7 +161,7 @@ public class RoundRectangle extends Rectangle {
                 
     }
     @Override
-    public void resize(int offX,int offY,Point point){
+    public void resize(double offX,double offY,Point point){
             super.resize(offX,offY,point);
             this.reset();
     }   

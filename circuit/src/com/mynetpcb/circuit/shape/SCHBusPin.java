@@ -80,7 +80,7 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
 
 
     @Override
-    public Texture getClickedTexture(int x, int y) {
+    public Texture getClickedTexture(double x, double y) {
         if(this.texture.isClicked(x, y))
             return this.texture;        
         else
@@ -88,7 +88,7 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
     }
 
     @Override
-    public boolean isClickedTexture(int x, int y) {
+    public boolean isClickedTexture(double x, double y) {
         return this.getClickedTexture(x, y)!=null;
     }
     @Override
@@ -101,7 +101,7 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
         this.texture.setSelected(selection);
     }
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         Box rect = Box.fromRect(x-this.selectionRectWidth / 2, y - this.selectionRectWidth/ 2, this.selectionRectWidth, this.selectionRectWidth);
 
         if(rect.contains(this.polyline.points.get(1))){
@@ -131,7 +131,7 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
     }
     
     @Override
-    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+    public void resize(double xoffset, double yoffset, Point clickedPoint) {
         clickedPoint.set(clickedPoint.x + xoffset,
                                                                 clickedPoint.y + yoffset);
     }

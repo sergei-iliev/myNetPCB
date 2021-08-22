@@ -78,7 +78,7 @@ public class PCBHole extends HoleShape implements PCBShape{
         return this.circle.box();         
     }
     @Override
-    public boolean isClicked(int x, int y) {        
+    public boolean isClicked(double x, double y) {        
         if (this.circle.contains(new Point(x, y)))
             return true;
          else

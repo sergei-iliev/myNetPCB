@@ -181,7 +181,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         return false;
     }  
     @Override
-    public boolean isClicked(int x, int y, int layermasks) {
+    public boolean isClicked(double x, double y, int layermasks) {
         for(Shape shape:this.shapes){
             if(shape.isVisibleOnLayers(layermasks)){
                 if(shape.isClicked(x, y))
@@ -191,7 +191,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         return false;   
     }
     @Override
-    public boolean isClicked(int x, int y) {
+    public boolean isClicked(double x, double y) {
         Box r=this.getBoundingShape();
         if(!r.contains(x,y)){
              return false;
@@ -503,7 +503,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
           return null;
     }
     @Override
-    public Texture getClickedTexture(int x, int y) {
+    public Texture getClickedTexture(double x, double y) {
         if(this.reference.isClicked(x, y))
             return this.reference;
         else if(this.value.isClicked(x, y))
@@ -513,7 +513,7 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     }
 
     @Override
-    public boolean isClickedTexture(int x, int y) {
+    public boolean isClickedTexture(double x, double y) {
         return this.getClickedTexture(x, y)!=null;
     }
 

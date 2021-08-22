@@ -157,7 +157,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
         if (getModel().getUnit() == null) {
             getEventMgr().resetEventHandle();
         } else {
-            MouseScaledEvent scaledEvent =new MouseScaledEvent(event,getModel().getUnit().getScalableTransformation().getInversePoint(new java.awt.Point((int)getViewportWindow().getX()+event.getX(),(int)getViewportWindow().getY()+event.getY())));
+            MouseScaledEvent scaledEvent =new MouseScaledEvent(event,getModel().getUnit().getScalableTransformation().getInversePoint(getViewportWindow().getX()+event.getX(),getViewportWindow().getY()+event.getY()));
 
             switch (getMode()) {
             case Mode.COMPONENT_MODE:

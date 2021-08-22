@@ -32,7 +32,7 @@ public interface Layerable {
     /*
      * Is shape clicked in regard to visible layers
      */
-    public boolean isClicked(int x,int y,int layermaskId);
+    public boolean isClicked(double x,double y,int layermaskId);
     
     /**
      * Sets the viewing side {TOP,BOTTOM}

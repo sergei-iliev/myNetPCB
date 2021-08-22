@@ -61,7 +61,7 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
             return (long)this.roundRect.area(); 
     }
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
                     Point pt=new Point(x,y);                    
                     for(Point p:this.roundRect.points){
                         if(Utils.LE(pt.distanceTo(p),this.selectionRectWidth/2)){                                  
@@ -88,7 +88,7 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
     }
     
     @Override
-    public void resize(int x, int y, Point point) {
+    public void resize(double x, double y, Point point) {
         this.roundRect.resize(x, y,point);
     }
     
@@ -176,8 +176,8 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
     
     }
     @Override
-    public boolean isClicked(int x, int y) {
-            return this.roundRect.contains(new Point(x, y));
+    public boolean isClicked(double x, double y) {
+            return this.roundRect.isPointOn(new Point(x, y),this.thickness);
                     
     }
     public void setRotation(double rotate,Point center){

@@ -24,7 +24,7 @@ public class SolidRegionEventHandle <U extends UnitComponent,S extends Shape>  e
     public void mouseScaledPressed(MouseScaledEvent e) {
         this.mx=e.getX();
         this.my=e.getY();
-        if(SwingUtilities.isRightMouseButton(e)){                         
+        if(SwingUtilities.isRightMouseButton(e.getMouseEvent())){                         
              return;
         }
         

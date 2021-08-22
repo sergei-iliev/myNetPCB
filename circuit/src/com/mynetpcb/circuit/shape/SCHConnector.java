@@ -138,14 +138,14 @@ public class SCHConnector extends Shape implements Pinable,Textable,Externalizab
         return texture;
     }
     @Override
-    public Texture getClickedTexture(int x, int y) {
+    public Texture getClickedTexture(double x, double y) {
         if(this.texture.isClicked(x, y))
             return this.texture;        
         else
         return null;
     }
     @Override
-    public boolean isClickedTexture(int x, int y) {        
+    public boolean isClickedTexture(double x, double y) {        
         return this.getClickedTexture(x, y)!=null;
     }
     @Override
@@ -153,7 +153,7 @@ public class SCHConnector extends Shape implements Pinable,Textable,Externalizab
             return 4;
     }    
     @Override
-    public boolean isClicked(int x,int y){
+    public boolean isClicked(double x,double y){
             Box rect = Box.fromRect(x
                                     - (this.selectionRectWidth / 2), y
                                     - (this.selectionRectWidth / 2), this.selectionRectWidth,

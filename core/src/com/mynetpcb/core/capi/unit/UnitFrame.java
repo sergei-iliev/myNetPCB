@@ -45,7 +45,7 @@ public class UnitFrame implements Frameable,Printable{
     }
 
     @Override
-    public boolean isClicked(int x, int y) {
+    public boolean isClicked(double x, double y) {
         return false;
     }
 

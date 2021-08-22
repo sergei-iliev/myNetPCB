@@ -16,7 +16,7 @@ public interface Resizeable {
      *Check if shapes'control rect/spot is clicked
      * @return the clicked point
      */
-  public Point isControlRectClicked(int x, int y);
+  public Point isControlRectClicked(double x, double y);
   
   /**
      * There is always a point under the mouse pointer,which is being moved/dragged
@@ -34,7 +34,7 @@ public interface Resizeable {
      * @param y offset
      * @param clickedPoint dragged point
      */
-   public void resize(int xOffset, int yOffset,Point clickedPoint);
+   public void resize(double xOffset, double yOffset,Point clickedPoint);
   
    
    /**
@@ -54,7 +54,7 @@ public interface Resizeable {
     /**
      * Arc complient      
      */
-    public default void resizeStartEndPoint(int xoffset,int yoffset,boolean isStartPoint) {
+    public default void resizeStartEndPoint(double xoffset,double yoffset,boolean isStartPoint) {
     	
     }
 }

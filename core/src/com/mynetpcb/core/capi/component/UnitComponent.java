@@ -783,15 +783,14 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.LOCAL ));
             
             //position onto screen center                            
-            Point point=getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)(getViewportWindow().getX() +
-                                                                                                                   getWidth()/2),
-                                                                                                                   (int)(getViewportWindow().getY() +
-                                                                                                                   getHeight()/2)));
+            double xx=getModel().getUnit().getScalableTransformation().getInversePoint(getViewportWindow().getX() +getWidth()/2,getViewportWindow().getY() +getHeight()/2).x;
+            double yy=getModel().getUnit().getScalableTransformation().getInversePoint(getViewportWindow().getX() +getWidth()/2,getViewportWindow().getY() +getHeight()/2).y;
+            
             UnitMgr unitMgr = new UnitMgr();
             Collection<Shape> shapes=this.getModel().getUnit().getSelectedShapes();
             Box r=this.getModel().getUnit().getShapesRect(shapes);                                                      
             //move to screen center
-            unitMgr.moveBlock(shapes,point.x-(int)r.min.x,point.y-(int)r.min.y);
+            unitMgr.moveBlock(shapes,xx-r.min.x,yy-r.min.y);
 
             //register with Do/Undo Mgr
             getModel().getUnit().registerMemento(new CompositeMemento(MementoType.CREATE_MEMENTO).add(getModel().getUnit().getSelectedShapes()));

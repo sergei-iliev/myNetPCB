@@ -46,11 +46,11 @@ public class BlockEventHandle <U extends UnitComponent,S extends Shape> extends 
 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if(SwingUtilities.isRightMouseButton(e)){ 
+        if(SwingUtilities.isRightMouseButton(e.getMouseEvent())){ 
             getComponent().getPopupMenu().registerBlockPopup(e,null);            
             return;
         } 
-        if((e.getModifiers()&ActionEvent.CTRL_MASK)==ActionEvent.CTRL_MASK){
+        if((e.getMouseEvent().getModifiers()&ActionEvent.CTRL_MASK)==ActionEvent.CTRL_MASK){
          getComponent().getModel().getUnit().setSelected(getTarget().getUUID(),!getTarget().isSelected());
          this.ctrlButtonPress=true;
          getComponent().Repaint(); 
@@ -60,9 +60,7 @@ public class BlockEventHandle <U extends UnitComponent,S extends Shape> extends 
         my = e.getY(); 
      
         getComponent().getModel().getUnit().registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(selectedSymbols).add(selectedWires));
-
-        
-        e.consume();      
+    
     }
 
     @Override
@@ -84,8 +82,8 @@ public class BlockEventHandle <U extends UnitComponent,S extends Shape> extends 
 
     @Override
     public void mouseScaledDragged(MouseScaledEvent e) {               
-           int new_mx = e.getX();
-           int new_my = e.getY();
+           double new_mx = e.getX();
+           double new_my = e.getY();
 
            UnitMgr.getInstance().moveBlock(selectedSymbols,new_mx - mx, new_my - my);
 
@@ -96,8 +94,7 @@ public class BlockEventHandle <U extends UnitComponent,S extends Shape> extends 
            mx = new_mx;
            my = new_my;    
            
-           getComponent().Repaint();           
-           e.consume();      
+           getComponent().Repaint();                
     }
 
     @Override

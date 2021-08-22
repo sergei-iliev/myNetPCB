@@ -55,14 +55,14 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
         return this.ellipse.box();                
     }
     @Override
-    public boolean isClicked(int x,int y) {
+    public boolean isClicked(double x,double y) {
 		return this.ellipse.isPointOn(new Point(x, y),this.thickness);
     }
     public com.mynetpcb.d2.shapes.Ellipse getShape(){
         return ellipse;
     }
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         Point pt=new Point(x,y);        
         for(Point v:this.ellipse.vertices()){
             if(Utils.LE(pt.distanceTo(v),this.selectionRectWidth)){
@@ -90,7 +90,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
         this.ellipse.height=w;               
     }
     @Override
-    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+    public void resize(double xoffset, double yoffset, Point clickedPoint) {
         this.ellipse.resize(xoffset, yoffset,clickedPoint);
 
     }

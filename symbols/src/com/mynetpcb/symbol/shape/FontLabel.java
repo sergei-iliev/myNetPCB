@@ -49,7 +49,7 @@ public class FontLabel extends Shape implements Label,Externalizable{
         return this.texture.getBoundingShape();
     }
     @Override
-    public boolean isClicked(int x,int y) {
+    public boolean isClicked(double x,double y) {
             if (this.texture.isClicked(x, y))
                     return true;
             else

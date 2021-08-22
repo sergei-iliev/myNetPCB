@@ -129,7 +129,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
 //        }
 //    };
     @Override
-    protected List<Shape> buildClickedShapesList(int x, int y, boolean isTextIncluded) {
+    protected List<Shape> buildClickedShapesList(double x, double y, boolean isTextIncluded) {
         List<Shape> orderElements = new ArrayList<>();
         
             for (int i = this.shapes.size(); i-- > 0; ) {            
@@ -148,7 +148,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         
     }
     @Override
-    public Shape getClickedShape(int x, int y, boolean isTextIncluded) {
+    public Shape getClickedShape(double x, double y, boolean isTextIncluded) {
         List<Shape> clickedShapes = buildClickedShapesList(x,y,isTextIncluded);
         if(clickedShapes.size()==0){
             return null;

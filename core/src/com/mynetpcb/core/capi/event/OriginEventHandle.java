@@ -42,15 +42,14 @@ public class OriginEventHandle<U extends UnitComponent,S extends Shape> extends 
 
     @Override
     public void mouseScaledMove(MouseScaledEvent e) {
-        int new_mx = e.getX();
-        int new_my = e.getY();
+        double new_mx = e.getX();
+        double new_my = e.getY();
         
         getComponent().getModel().getUnit().getCoordinateSystem().move((new_mx - mx), (new_my - my));
         getComponent().getModel().fireUnitEvent(new UnitEvent(null, UnitEvent.PROPERTY_CHANGE));
         // update our data
         mx = new_mx;
         my = new_my;    
-        e.consume(); 
         getComponent().Repaint();     
     }
 

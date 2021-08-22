@@ -148,7 +148,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
             if (getModel().getUnit() == null) {
                 getEventMgr().resetEventHandle();
             } else {
-                MouseScaledEvent scaledEvent =new MouseScaledEvent(event,getModel().getUnit().getScalableTransformation().getInversePoint(new java.awt.Point((int)getViewportWindow().getX()+event.getX(),(int)getViewportWindow().getY()+event.getY())));
+                MouseScaledEvent scaledEvent =new MouseScaledEvent(event,getModel().getUnit().getScalableTransformation().getInversePoint(getViewportWindow().getX()+event.getX(),getViewportWindow().getY()+event.getY()));
 
     
             switch (getMode()) {

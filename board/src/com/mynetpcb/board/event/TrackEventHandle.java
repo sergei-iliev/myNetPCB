@@ -31,7 +31,7 @@ public class TrackEventHandle extends EventHandle<BoardComponent,Shape>{
     }
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if(SwingUtilities.isRightMouseButton(e)){           
+        if(SwingUtilities.isRightMouseButton(e.getMouseEvent())){           
             getComponent().getPopupMenu().registerTrackPopup(e,getTarget());  
             return;
         }

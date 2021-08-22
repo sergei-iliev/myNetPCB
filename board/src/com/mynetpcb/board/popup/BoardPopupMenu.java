@@ -95,7 +95,7 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
     
     public void registerTrackPopup(MouseScaledEvent e, Shape target) {
         initializePopupMenu(e, target, trackMenu);
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
     }
     
     
@@ -113,7 +113,7 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
 
     public void registerChipPopup(MouseScaledEvent e, Shape target) {
         initializePopupMenu(e, target, chipMenu);
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
     }
     
     public void registerUnitPopup(MouseScaledEvent e, Shape target) {
@@ -128,7 +128,7 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
         else
             this.setEnabled(unitMenu, "Copy", false);
 
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
     }
     
     public void actionPerformed(ActionEvent e) {

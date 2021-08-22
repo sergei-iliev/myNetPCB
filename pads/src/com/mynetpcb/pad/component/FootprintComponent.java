@@ -134,7 +134,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
           getEventMgr().resetEventHandle();
         }else{
             //transform event into a real footprint size one
-            MouseScaledEvent scaledEvent =new MouseScaledEvent(event,getModel().getUnit().getScalableTransformation().getInversePoint(new java.awt.Point((int)getViewportWindow().getX()+event.getX(),(int)getViewportWindow().getY()+event.getY())));
+            MouseScaledEvent scaledEvent =new MouseScaledEvent(event,getModel().getUnit().getScalableTransformation().getInversePoint(getViewportWindow().getX()+event.getX(),getViewportWindow().getY()+event.getY()));
 
             //find the right handler to handle the event
             switch (getMode()){

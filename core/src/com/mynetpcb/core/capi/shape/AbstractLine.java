@@ -91,7 +91,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         return 2;
     }
     @Override
-    public boolean isClicked(int x,int y) {
+    public boolean isClicked(double x,double y) {
                 
                 Point pt=new Point(x,y);
 
@@ -242,7 +242,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     }
 
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         return this.isBendingPointClicked(x, y);
     }
     @Override
@@ -424,7 +424,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
     }
     
     @Override
-    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+    public void resize(double xoffset, double yoffset, Point clickedPoint) {
         clickedPoint.set(clickedPoint.x+xoffset, clickedPoint.y+yoffset);
     }
 

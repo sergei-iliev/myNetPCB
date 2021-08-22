@@ -120,10 +120,10 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
             getEventMgr().resetEventHandle();
         } else {
             MouseScaledEvent scaledEvent =
-                new MouseScaledEvent(event, getModel().getUnit().getScalableTransformation().getInversePoint(new Point((int)getViewportWindow().getX() +
+                new MouseScaledEvent(event, getModel().getUnit().getScalableTransformation().getInversePoint(getViewportWindow().getX() +
                                                                                                                        event.getX(),
-                                                                                                                       (int)getViewportWindow().getY() +
-                                                                                                                       event.getY())));
+                                                                                                                       getViewportWindow().getY() +
+                                                                                                                       event.getY()));
           
 
             switch (getMode()) {

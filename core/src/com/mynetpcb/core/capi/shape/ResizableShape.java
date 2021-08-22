@@ -65,7 +65,7 @@ public abstract class ResizableShape extends Shape implements Resizeable {
     }
     
     @Override
-    public Point isControlRectClicked(int x, int y) {        
+    public Point isControlRectClicked(double x, double y) {        
         Point p = new Point(x, y);
   
         if(Utils.LE(upperLeft.distanceTo(p),this.selectionRectWidth/2)){                                  
@@ -96,7 +96,7 @@ public abstract class ResizableShape extends Shape implements Resizeable {
     }
 
     @Override
-    public void resize(int xOffset, int yOffset, Point clickedPoint) {
+    public void resize(double xOffset, double yOffset, Point clickedPoint) {
         if (clickedPoint.equals(upperLeft)) {
             upperLeft.set(upperLeft.x + xOffset, upperLeft.y + yOffset);
             bottomLeft.set(bottomLeft.x + xOffset, bottomLeft.y);

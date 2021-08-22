@@ -189,12 +189,12 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     }
 
     @Override
-    public boolean isClicked(int x, int y) {
+    public boolean isClicked(double x, double y) {
         return this.getBoundingShape().contains(x,y);         
     }
     
     @Override
-    public boolean isClicked(int x, int y, int layermaskId) {        
+    public boolean isClicked(double x, double y, int layermaskId) {        
         return this.isClicked(x, y);
     }
     

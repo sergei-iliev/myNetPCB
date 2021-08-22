@@ -66,13 +66,13 @@ public class SymbolPopupMenu extends AbstractPopupItemsContainer<SymbolComponent
 
     public void registerShapePopup(MouseScaledEvent e,Shape target){  
         initializePopupMenu(e,target,shapeMenu);   
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());             
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());             
     }
       
     
     public void registerBasicPopup(MouseScaledEvent e,Shape target){                     
         initializePopupMenu(e,target,basicMenu);   
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());        
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());        
     
     }    
 
@@ -88,7 +88,7 @@ public class SymbolPopupMenu extends AbstractPopupItemsContainer<SymbolComponent
         else
           this.setEnabled(unitMenu,"Copy",false);
         
-          this.show(e.getComponent(),e.getWindowX() ,e.getWindowY());
+          this.show(e.getMouseEvent().getComponent(),e.getWindowX() ,e.getWindowY());
     }
     
     public void actionPerformed(ActionEvent e) {                

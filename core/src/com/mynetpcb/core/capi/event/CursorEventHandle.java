@@ -28,7 +28,7 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if(e.getModifiers()==InputEvent.BUTTON3_MASK){  
+        if(e.getMouseEvent().getModifiers()==InputEvent.BUTTON3_MASK){  
            getComponent().getDialogFrame().setButtonGroup(Mode.COMPONENT_MODE);
            getComponent().setMode(Mode.COMPONENT_MODE);  
            getComponent().Repaint();
@@ -66,15 +66,14 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
 
     public void mouseScaledMove(MouseScaledEvent e) {
         
-        int new_mx = e.getX();
-        int new_my = e.getY();
+        double new_mx = e.getX();
+        double new_my = e.getY();
 
         getTarget().move((new_mx - mx), (new_my - my));
         
         // update our data
         mx = new_mx;
-        my = new_my;    
-        e.consume(); 
+        my = new_my;            
         getComponent().Repaint();
     }
 

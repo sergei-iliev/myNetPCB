@@ -28,14 +28,14 @@ public class FootprintEventHandle extends EventHandle<BoardComponent,Shape>{
     }
     
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {                       
+        if (SwingUtilities.isRightMouseButton(e.getMouseEvent())) {                       
             getComponent().getModel().getUnit().setSelected(false);  
             getTarget().setSelected(true);     
             getComponent().Repaint();            
             getComponent().getPopupMenu().registerChipPopup(e,getTarget());            
             return;
         }
-        if ((e.getModifiers() & ActionEvent.CTRL_MASK) ==
+        if ((e.getMouseEvent().getModifiers() & ActionEvent.CTRL_MASK) ==
             ActionEvent.CTRL_MASK) {
             getComponent().getModel().getUnit().setSelected(getTarget().getUUID(),
                                                  !getTarget().isSelected());
@@ -53,7 +53,6 @@ public class FootprintEventHandle extends EventHandle<BoardComponent,Shape>{
         my = e.getY();
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint();
-        e.consume();
 
 
     }
@@ -69,8 +68,8 @@ public class FootprintEventHandle extends EventHandle<BoardComponent,Shape>{
     }
 
     public void mouseScaledDragged(MouseScaledEvent e) {
-        int new_mx = e.getX();
-        int new_my = e.getY();
+        double new_mx = e.getX();
+        double new_my = e.getY();
 
 
         getTarget().move(new_mx - mx, new_my - my);
@@ -82,11 +81,10 @@ public class FootprintEventHandle extends EventHandle<BoardComponent,Shape>{
         my = new_my;
 
         getComponent().Repaint();
-        e.consume();
     }
-
+    @Override
     public void mouseScaledMove(MouseScaledEvent e) {
-        e.consume();
+  
     }
 
     public void doubleScaledClick(MouseScaledEvent e) {

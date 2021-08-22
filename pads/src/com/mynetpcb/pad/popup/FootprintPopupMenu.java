@@ -77,12 +77,12 @@ public class FootprintPopupMenu extends AbstractPopupItemsContainer<FootprintCom
     
     public void registerBasicPopup(MouseScaledEvent e,Shape target){                     
         initializePopupMenu(e,target,basicMenu);   
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());            
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());            
     }   
     
     public void registerShapePopup(MouseScaledEvent e,Shape target){  
         initializePopupMenu(e,target,shapeMenu);   
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());             
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());             
     }
     
     public void registerUnitPopup(MouseScaledEvent e,Shape target){
@@ -97,7 +97,7 @@ public class FootprintPopupMenu extends AbstractPopupItemsContainer<FootprintCom
         else
           this.setEnabled(unitMenu,"Copy",false);
         
-        this.show(e.getComponent(),e.getWindowX() ,e.getWindowY());
+        this.show(e.getMouseEvent().getComponent(),e.getWindowX() ,e.getWindowY());
     }
     
     public void actionPerformed(ActionEvent e) { 

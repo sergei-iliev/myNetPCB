@@ -29,7 +29,7 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
 
     public void registerBasicPopup(MouseScaledEvent e, Shape target) {
         initializePopupMenu(e, target, basicMenu);
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
     }
 
     @Override
@@ -63,7 +63,7 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
 //            this.setEnabled(chipMenu, "Unbind", false);
 //        }
 
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
 
     }
     
@@ -134,7 +134,7 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
         else
             this.setEnabled(unitMenu, "Copy", false);
 
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
     }
 
     public void actionPerformed(ActionEvent e) {

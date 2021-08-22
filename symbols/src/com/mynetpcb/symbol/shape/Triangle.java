@@ -72,11 +72,11 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
         this.shape.mirror(line);                
     }
     @Override
-    public boolean isClicked(int x,int y) {
+    public boolean isClicked(double x,double y) {
       return this.shape.isPointOn(new Point(x, y),thickness);       
     }
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         Box rect = Box.fromRect(x
                         - this.selectionRectWidth / 2, y - this.selectionRectWidth
                         / 2, this.selectionRectWidth, this.selectionRectWidth);
@@ -102,7 +102,7 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
         this.shape.rotate(angle,origin);    
     }    
     @Override
-    public void resize(int xoffset, int yoffset, Point clickedPoint) {
+    public void resize(double xoffset, double yoffset, Point clickedPoint) {
         clickedPoint.set(clickedPoint.x+xoffset, clickedPoint.y+yoffset);
     }
 

@@ -26,7 +26,7 @@ public class ResizeEventHandle <U extends UnitComponent,S extends Shape> extends
 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
+        if (SwingUtilities.isRightMouseButton(e.getMouseEvent())) {
                 if (getTarget() instanceof Trackable){
                     getComponent().getPopupMenu().registerLineSelectPopup(e, getTarget());
                 }
@@ -57,10 +57,10 @@ public class ResizeEventHandle <U extends UnitComponent,S extends Shape> extends
 
     @Override
     public void mouseScaledDragged(MouseScaledEvent e) {
-        int new_mx = e.getX();
-        int new_my = e.getY();
+        double new_mx = e.getX();
+        double new_my = e.getY();
         
-        ((Resizeable)getTarget()).resize(new_mx - mx, new_my - my,targetPoint);
+        ((Resizeable)getTarget()).resize((new_mx - mx),(new_my - my),targetPoint);
         // update our data
         mx = new_mx;
         my = new_my;
@@ -68,8 +68,7 @@ public class ResizeEventHandle <U extends UnitComponent,S extends Shape> extends
         getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
         
         getComponent().Repaint();
-        
-        e.consume();   
+         
          
     }
 

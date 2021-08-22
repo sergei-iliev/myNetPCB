@@ -331,7 +331,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         return null;
     }
 
-    public S isControlRectClicked(int x, int y) {
+    public S isControlRectClicked(double x, double y) {
         /*
          * if two symbols overlap and one is selected
          * then the selected should be checked for control rect click first
@@ -409,7 +409,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
     /*
      * is junshion click
      */
-    public Optional<S> getShapeAt(int x,int y,Class<?> clazz){
+    public Optional<S> getShapeAt(double x,double y,Class<?> clazz){
         S s=getClickedShape(x, y, false);
     
                 
@@ -420,7 +420,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         }                
     }
     
-    protected List<Shape> buildClickedShapesList(int x, int y, boolean isTextIncluded) {
+    protected List<Shape> buildClickedShapesList(double x, double y, boolean isTextIncluded) {
         List<Shape> orderElements = new ArrayList<>();
                 for (Shape shape : this.shapes) {
                     if (isTextIncluded && shape instanceof Textable) {                   
@@ -466,7 +466,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
         }
     };
     
-    public S getClickedShape(int x, int y, boolean isTextIncluded) {
+    public S getClickedShape(double x, double y, boolean isTextIncluded) {
         List<Shape> clickedShapes = buildClickedShapesList(x,y,isTextIncluded);
         if(clickedShapes.size()==0){
             return null;

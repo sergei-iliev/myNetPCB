@@ -14,11 +14,11 @@ public interface Label extends Textable{
     /*
      * Get texture under coordinate (x,y)
      */
-   public default Texture getClickedTexture(int x,int y){
+   public default Texture getClickedTexture(double x,double y){
        return null;
    }
     
-   public default boolean isClickedTexture(int x,int y){
+   public default boolean isClickedTexture(double x,double y){
        return false;
    }
 }

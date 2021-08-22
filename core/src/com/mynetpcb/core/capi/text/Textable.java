@@ -17,7 +17,7 @@ public interface Textable {
     /*
      * Get texture under coordinate (x,y)
      */
-    public Texture getClickedTexture(int x,int y);
+    public Texture getClickedTexture(double x,double y);
     
-    public boolean isClickedTexture(int x,int y);
+    public boolean isClickedTexture(double x,double y);
 }

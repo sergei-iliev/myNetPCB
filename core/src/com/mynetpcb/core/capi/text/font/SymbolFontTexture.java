@@ -242,7 +242,7 @@ public class SymbolFontTexture implements Texture{
         this.shape.paint(g2, false);
     }
     @Override
-    public boolean isClicked(int x, int y) {
+    public boolean isClicked(double x, double y) {
         if (this.shape.text == null || this.shape.text.length() == 0){
             return false;
         } 

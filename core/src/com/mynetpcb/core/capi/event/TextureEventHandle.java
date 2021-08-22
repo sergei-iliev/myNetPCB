@@ -33,7 +33,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
         }
     }
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if ((e.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
+        if ((e.getMouseEvent().getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
             getComponent().getModel().getUnit().setSelected(getTarget().getUUID(), !getTarget().isSelected());
             getComponent().Repaint(); 
             this.ctrlButtonPress = true;
@@ -42,7 +42,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
         /*
          * right mouse click on text owner
          */
-        if(SwingUtilities.isRightMouseButton(e)){
+        if(SwingUtilities.isRightMouseButton(e.getMouseEvent())){
             getComponent().getModel().getUnit().setSelected(false);
             getTarget().setSelected(true);            
             getComponent().Repaint(); 
@@ -65,8 +65,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
          texture= new WeakReference<Texture>(((Textable)getTarget()).getClickedTexture(e.getX(),e.getY()));  
          getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
          
-         getComponent().Repaint();
-         e.consume();          
+         getComponent().Repaint();                  
     }
 
     public void mouseScaledReleased(MouseScaledEvent e) {
@@ -83,8 +82,8 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
     }
 
     public void mouseScaledDragged(MouseScaledEvent e) {       
-        int new_mx = e.getX();
-        int new_my = e.getY();        
+        double new_mx = e.getX();
+        double new_my = e.getY();        
         
         
         texture.get().move(new_mx - mx, new_my - my);
@@ -94,8 +93,7 @@ public class TextureEventHandle<U extends UnitComponent,S extends Shape> extends
         mx = new_mx;
         my = new_my;   
 
-        getComponent().Repaint();   
-        e.consume();                
+        getComponent().Repaint();                  
     }
 
     public void mouseScaledMove(MouseScaledEvent e) {

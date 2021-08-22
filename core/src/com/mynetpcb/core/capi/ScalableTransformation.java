@@ -1,8 +1,8 @@
 package com.mynetpcb.core.capi;
 
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Point;
 
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -79,30 +79,29 @@ public class ScalableTransformation implements Cloneable{
         
          return true;
      }
-    
-     public Point getInversePoint(Point scaledPoint){
-         AffineTransform unscaledTransformation=null;
-         try {
-             unscaledTransformation = currentTransformation.createInverse();
-         } catch (NoninvertibleTransformException e) {
-            e.printStackTrace(System.out);
-         }
-         Point result=new Point();
-         unscaledTransformation.transform(scaledPoint,result);    
-         return new Point((int) Math.floor(result.getX()+0.5),(int) Math.floor(result.getY()+0.5));
+     public Point getInversePoint(double x,double y){
+        double s=1.0;
+        if(this.scaleFactor!=0){     
+            for(int i=0;i<this.scaleFactor;i++){
+              s*=this.getInverseScaleRatio();
+            }
+        }
+ 	    return new Point(x*s,y*s);
      }
-
-//     public Point2D getInversePoint(Point2D scaledPoint){
+    
+//     public Point getInversePoint(Point scaledPoint){
 //         AffineTransform unscaledTransformation=null;
 //         try {
 //             unscaledTransformation = currentTransformation.createInverse();
 //         } catch (NoninvertibleTransformException e) {
 //            e.printStackTrace(System.out);
 //         }
-//         Point2D result=new Point2D.Double();
+//         Point result=new Point();
 //         unscaledTransformation.transform(scaledPoint,result);    
-//         return result;
+//         return new Point((int) Math.floor(result.getX()+0.5),(int) Math.floor(result.getY()+0.5));
 //     }
+
+
 
      public Box getInverseRect(Box box){
           double s=1;

@@ -109,7 +109,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
 
     }
     @Override
-    public boolean isClicked(int x,int y) {               
+    public boolean isClicked(double x,double y) {               
                 Point pt=new Point(x,y);
 
                 Point prevPoint = this.polygon.points.get(this.polygon.points.size()-1);
@@ -152,7 +152,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     }
 
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         return this.isBendingPointClicked(x, y);
     }
 
@@ -368,7 +368,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     }
 
     @Override
-    public void resize(int xoffset, int yoffset, Point point) {
+    public void resize(double xoffset, double yoffset, Point point) {
         point.set(point.x + xoffset,point.y + yoffset);        
     }
 

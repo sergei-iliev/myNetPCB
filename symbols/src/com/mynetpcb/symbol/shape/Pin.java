@@ -150,7 +150,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
     }
     
     @Override
-    public boolean isClicked(int x,int y) {
+    public boolean isClicked(double x,double y) {
               Box rect = Box.fromRect(x
                                     - (this.selectionRectWidth / 2), y
                                     - (this.selectionRectWidth / 2), this.selectionRectWidth,
@@ -640,7 +640,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         return segment.ps;
     }
     @Override
-    public Texture getClickedTexture(int x, int y) {
+    public Texture getClickedTexture(double x, double y) {
         if(this.type==PinType.SIMPLE){
             return null;
         }
@@ -654,7 +654,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
     }
 
     @Override
-    public boolean isClickedTexture(int x, int y) {
+    public boolean isClickedTexture(double x, double y) {
         return this.getClickedTexture(x, y)!=null;
     }
     @Override

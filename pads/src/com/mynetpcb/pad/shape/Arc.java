@@ -161,7 +161,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         return arc.endAngle <0;
     }
 
-    public Point isControlRectClicked(int x,int y) {
+    public Point isControlRectClicked(double x,double y) {
           Point a=new Point(x,y);
           if(Utils.LT( a.distanceTo(this.arc.getStart()),selectionRectWidth/2)){
               return this.arc.getStart();
@@ -174,7 +174,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
           }
           return null;
     }
-    public boolean isStartAnglePointClicked(int x,int y){  
+    public boolean isStartAnglePointClicked(double x,double y){  
         Point a=new Point(x,y);
         if(Utils.LT(a.distanceTo(this.arc.getStart()),selectionRectWidth/2)){
             return true;
@@ -182,7 +182,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
             return false;
         }
     }
-    public boolean isMidPointClicked(int x,int y){
+    public boolean isMidPointClicked(double x,double y){
         Point a=new Point(x,y);
         if(Utils.LT(a.distanceTo(this.arc.getMiddle()),selectionRectWidth/2)){
             return true;
@@ -190,7 +190,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
             return false;
         }
     }
-    public boolean isExtendAnglePointClicked(int x,int y){
+    public boolean isExtendAnglePointClicked(double x,double y){
         Point a=new Point(x,y);
         if(Utils.LT(a.distanceTo(this.arc.getEnd()),selectionRectWidth/2)){
             return true;
@@ -200,14 +200,14 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     }    
     
     @Override
-    public boolean isClicked(int x,int y) {
-        if(this.arc.isPointOn(new Point(x, y),this.thickness))
-        	return true;
+    public boolean isClicked(double x,double y) {
+        return (this.arc.isPointOn(new Point(x, y),this.thickness/2));
+    
         
-    	if (this.arc.contains(new Point(x, y)))
-                    return true;
-            else
-                    return false;
+//    	if (this.arc.contains(new Point(x, y)))
+//                    return true;
+//            else
+//                    return false;
     }
 
     @Override
@@ -241,7 +241,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
       this.arc.rotate(angle,origin); 
     }
     @Override
-    public void resizeStartEndPoint(int xoffset, int yoffset, boolean isStartPoint) {
+    public void resizeStartEndPoint(double xoffset, double yoffset, boolean isStartPoint) {
    	    Point A=this.arc.getStart().clone();
    	    Point B=this.arc.getEnd().clone();
    	    Point M=this.arc.getMiddle().clone();
@@ -321,7 +321,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     }
     
     @Override
-    public void resize(int xoffset, int yoffset, Point point) {        
+    public void resize(double xoffset, double yoffset, Point point) {        
          
           this.resizingPoint=this.calculateResizingMidPoint(xoffset,yoffset);
             
@@ -385,7 +385,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
           this.arc.endAngle=end;
    
     }
-    private Point calculateResizingMidPoint(int x, int y){
+    private Point calculateResizingMidPoint(double x, double y){
             Line line=new Line(this.arc.getCenter(),this.arc.getMiddle());
             return line.projectionPoint(new Point(x,y)); 
     }

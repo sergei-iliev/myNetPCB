@@ -36,8 +36,8 @@ public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape
 
     @Override
     public void mouseScaledDragged(MouseScaledEvent e) {
-        int new_mx = e.getX();
-        int new_my = e.getY();
+    	double new_mx = e.getX();
+    	double new_my = e.getY();
         
         Arc arc=(Arc)this.getTarget();
         
@@ -70,8 +70,7 @@ public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape
         
         
         getComponent().Repaint();
-        
-        e.consume(); 
+
     }
 
     @Override

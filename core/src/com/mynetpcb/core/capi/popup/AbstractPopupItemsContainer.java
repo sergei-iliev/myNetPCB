@@ -83,7 +83,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         
     public void registerLinePopup(MouseScaledEvent e, Shape target) {
         initializePopupMenu(e, target, lineMenu);
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
     }
 
     protected void createLineMenuItems(){
@@ -216,11 +216,11 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         
     public void registerShapePopup(MouseScaledEvent e,Shape target){  
         initializePopupMenu(e,target,shapeMenu);   
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());             
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());             
     }
     public void registerBlockPopup(MouseScaledEvent e,Shape target){
         initializePopupMenu(e,target,blockMenu);              
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());            
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());            
     }  
     
     protected void createShapeMenuItems(){
@@ -314,7 +314,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             this.setEnabled(lineSelectMenu, "DeleteBendingPoint", false);
         }
 
-        this.show(e.getComponent(), e.getWindowX(), e.getWindowY());
+        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
 
     }
     
@@ -346,7 +346,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         while(this.getSubElements().length>0){  
           this.remove(0);
         }
-        x=e.getX();  y=e.getY();
+        x=(int)e.getX();  y=(int)e.getY();
 
         //****Construct menu dynamically according to the requested action -> itemsMap
         populateMenuItems(null,itemsMap);

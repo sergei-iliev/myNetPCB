@@ -28,7 +28,7 @@ public class WireEventHandle extends EventHandle<CircuitComponent,Shape>{
     }
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if(SwingUtilities.isRightMouseButton(e)){           
+        if(SwingUtilities.isRightMouseButton(e.getMouseEvent())){           
             getComponent().getPopupMenu().registerLinePopup(e,getTarget());  
             return;
         }

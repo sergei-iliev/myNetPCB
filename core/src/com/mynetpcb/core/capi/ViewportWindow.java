@@ -14,7 +14,7 @@ public class ViewportWindow extends Box{
         super(0,0,0,0);
     }
     
-    public ViewportWindow(int x,int y,int width,int height) {
+    public ViewportWindow(double x,double y,double width,double height) {
         super(x, y, width, height);
     }
     /**
@@ -22,18 +22,18 @@ public class ViewportWindow extends Box{
      * @param width
      * @param height
      */
-    public void setSize(int width,int height){
+    public void setSize(double width,double height){
       this.setRect(getX(), getY(), width, height);        
     }
 
-    public void setLocation(int x,int y){
+    public void setLocation(double x,double y){
         this.setRect(x, y, getWidth(), getHeight());                
     }
-    public void setX(int x){
+    public void setX(double x){
         this.setRect(x, getY(), getWidth(), getHeight());                 
     }
     
-    public void setY(int y){
+    public void setY(double y){
         this.setRect(getX(), y, getWidth(), getHeight());                
     }
     
@@ -43,11 +43,11 @@ public class ViewportWindow extends Box{
      * @param yy
      * @param scale
      */
-    public void scaleIn(int xx,int yy,ScalableTransformation scale){            
+    public void scaleIn(double xx,double yy,ScalableTransformation scale){            
         double a=(this.getX()+xx)*scale.getScaleRatio();
         double b=(this.getY()+yy)*scale.getScaleRatio();
-        this.setX((int)a-xx);
-        this.setY((int)b-yy);      
+        this.setX(a-xx);
+        this.setY(b-yy);      
     }
     
     /**
@@ -56,11 +56,11 @@ public class ViewportWindow extends Box{
      * @param yy
      * @param scale
      */
-    public void scaleOut(int xx,int yy,ScalableTransformation scale){         
+    public void scaleOut(double xx,double yy,ScalableTransformation scale){         
             double a=(this.getX()+xx)*scale.getInverseScaleRatio();
             double b=(this.getY()+yy)*scale.getInverseScaleRatio();
-	    this.setX((int)a-xx);
-	    this.setY((int)b-yy);   
+            this.setX(a-xx);
+            this.setY(b-yy);   
     }  
 }
 

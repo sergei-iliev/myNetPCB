@@ -42,15 +42,14 @@ public class MeasureEventHandle  <U extends UnitComponent,S extends Shape> exten
 
     @Override
     public void mouseScaledMove(MouseScaledEvent e) {
-        int new_mx = e.getX();
-        int new_my = e.getY();
-        getComponent().getModel().getUnit().getRuler().resize(new_mx - mx, new_my - my,null);
+        double new_mx = e.getX();
+        double new_my = e.getY();
+        getComponent().getModel().getUnit().getRuler().resize((int)(new_mx - mx),(int)(new_my - my),null);
         // update our data
         mx = new_mx;
         my = new_my;
         
-        getComponent().Repaint();
-        e.consume();          
+        getComponent().Repaint();                 
     }
 
     @Override

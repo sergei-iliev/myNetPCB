@@ -58,11 +58,11 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
         return this.arc.box();             
     }
     @Override
-    public boolean isClicked(int x, int y) {
+    public boolean isClicked(double x, double y) {
     	return (this.arc.isPointOn(new Point(x,y),this.thickness));
     }
     @Override
-    public Point isControlRectClicked(int x, int y) {
+    public Point isControlRectClicked(double x, double y) {
         Point pt=new Point(x,y);
         
         for(Point v:this.arc.vertices()){
@@ -111,7 +111,7 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
         }
     }
     @Override
-    public void resize(int xoffset, int yoffset, Point clickedPoint) {        
+    public void resize(double xoffset, double yoffset, Point clickedPoint) {        
         this.arc.resize(xoffset, yoffset,clickedPoint);
     }
 

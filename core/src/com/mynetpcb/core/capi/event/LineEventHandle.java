@@ -29,7 +29,7 @@ public class LineEventHandle <U extends UnitComponent,S extends Shape> extends E
 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-        if(SwingUtilities.isRightMouseButton(e)){           
+        if(SwingUtilities.isRightMouseButton(e.getMouseEvent())){           
             getComponent().getPopupMenu().registerLinePopup(e,getTarget());  
             return;
         }
