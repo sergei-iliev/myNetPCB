@@ -1,12 +1,15 @@
 package com.mynetpcb.pad.shape;
 
-import com.mynetpcb.core.board.shape.CopperAreaShape;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
-import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
-import com.mynetpcb.core.capi.layer.Layer.Side;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.text.Texture;
 import com.mynetpcb.core.capi.text.font.FontTexture;
@@ -15,7 +18,6 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.pad.shape.PadShape;
-import com.mynetpcb.core.pad.shape.PadShape.Shape;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
@@ -26,12 +28,6 @@ import com.mynetpcb.pad.shape.pad.OvalShape;
 import com.mynetpcb.pad.shape.pad.PolygonShape;
 import com.mynetpcb.pad.shape.pad.RectangularShape;
 import com.mynetpcb.pad.unit.Footprint;
-
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  *Pad is a composite shape consisting of circle,ellipse,rectangle combination
@@ -295,7 +291,8 @@ public class Pad extends PadShape{
     }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
-        switch(this.type){
+        if((this.getCopper().getLayerMaskID()&layermask)!=0) {
+    	    switch(this.type){
             case THROUGH_HOLE:
                 if(this.shape.paint(g2, viewportWindow, scale)){
                  if(this.drill!=null){
@@ -309,7 +306,8 @@ public class Pad extends PadShape{
             
             }
             this.number.paint(g2, viewportWindow, scale,0);
-            this.netvalue.paint(g2, viewportWindow, scale,0);
+            this.netvalue.paint(g2, viewportWindow, scale,0);    	    
+        }
      } 
     public Drill getDrill(){
         return drill;

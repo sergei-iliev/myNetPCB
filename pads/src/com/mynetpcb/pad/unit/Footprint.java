@@ -14,9 +14,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 
 import java.lang.ref.WeakReference;
@@ -25,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -83,7 +86,23 @@ public class Footprint extends Unit<Shape> {
         }
 
         g2d.setTransform(oldTransform);
+        
         /* tell the caller that this page is part of the printed document */
+        
+        
+		//scale out to 300dpi
+//    	var file = new File("D:\\sergei\\Zebra\\labelary.png"); 
+//		try {
+//    	  BufferedImage origin=ImageIO.read(file);
+//
+//		  g2d.scale((72d / 300d), (72d / 300d));
+//		  g2d.drawImage(origin, 0, 0, origin.getWidth(), origin.getHeight(), null);
+//		  g2d.dispose();
+//
+//		}catch(IOException e) {
+//			e.printStackTrace();
+//		}
+		
         return PAGE_EXISTS;
     }
 

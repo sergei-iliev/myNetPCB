@@ -464,10 +464,14 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
           shape.paint(g2,viewportWindow,scale,layersmask);  
         }
         
-        value.setFillColor(Layer.Copper.resolve(value.getLayermaskId()).getColor());
-        value.paint(g2, viewportWindow, scale, layersmask);
-        reference.setFillColor(Layer.Copper.resolve(reference.getLayermaskId()).getColor());
-        reference.paint(g2, viewportWindow, scale, layersmask);
+        if((value.getLayermaskId()&layersmask)!=0) {
+        	value.setFillColor(Layer.Copper.resolve(value.getLayermaskId()).getColor());
+        	value.paint(g2, viewportWindow, scale, layersmask);
+        }
+        if((reference.getLayermaskId()&layersmask)!=0) {
+        	reference.setFillColor(Layer.Copper.resolve(reference.getLayermaskId()).getColor());
+        	reference.paint(g2, viewportWindow, scale, layersmask);
+        }
     }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {
