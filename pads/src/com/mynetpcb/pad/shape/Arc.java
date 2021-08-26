@@ -8,6 +8,7 @@ import com.mynetpcb.core.capi.gerber.Fillable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -201,13 +202,11 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     
     @Override
     public boolean isClicked(double x,double y) {
-        return (this.arc.isPointOn(new Point(x, y),this.thickness/2));
-    
-        
-//    	if (this.arc.contains(new Point(x, y)))
-//                    return true;
-//            else
-//                    return false;
+    	if(this.fill==Fill.EMPTY) {
+      	  return (this.arc.isPointOn(new Point(x,y),this.thickness/2));
+      	}else {    		
+      	  return this.arc.contains(x, y);	
+      	}
     }
 
     @Override

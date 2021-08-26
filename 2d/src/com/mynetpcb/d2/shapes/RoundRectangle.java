@@ -122,20 +122,23 @@ public class RoundRectangle extends Rectangle {
             
             this.reset();
     }  
-    public boolean contains(Point pt){
-       if(!super.contains(pt)){
-               return false;
-       }               
-//       
-//       //constrauct polygon
-//       let pol=new d2.Polygon();
-//       this.segments.forEach(segment=>{
-//             pol.add(segment.ps);
-//             pol.add(segment.pe);
-//       });
-//       
-//       return pol.contains(pt);
-       return true;
+    public boolean contains(Point pt){              
+  	 var pol=new Polygon();
+  	 for(Segment segment:this.segments){
+  		 pol.points.add(segment.ps);
+  		 pol.points.add(segment.pe);
+  	 }
+  	   
+  	 if(pol.contains(pt)) {
+  		 return true;
+  	 }
+  	 
+	   for(Arc arc :this.arcs){
+		 if(arc.contains(pt)){
+			return true;
+		 }										
+	   }			
+	 return false;
     }
     
     public List<Point> vertices(){

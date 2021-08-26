@@ -177,7 +177,12 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
     }
     @Override
     public boolean isClicked(double x, double y) {
-            return this.roundRect.isPointOn(new Point(x, y),this.thickness);
+    	if(this.fill==Fill.EMPTY) {
+    		return this.roundRect.isPointOn(new Point(x, y),this.thickness);
+      }else {    		
+      	    return this.roundRect.contains(new Point(x, y));	
+      }    	
+            
                     
     }
     public void setRotation(double rotate,Point center){

@@ -8,6 +8,7 @@ import com.mynetpcb.core.capi.gerber.Fillable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -98,11 +99,13 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
     }
     
     @Override
-    public boolean isClicked(double x,double y) {        
-        if (this.circle.contains(new Point(x, y)))
-            return true;
-         else
-            return false;                
+    public boolean isClicked(double x,double y) {  
+    	if(this.fill==Fill.EMPTY) {
+        	  return (this.circle.isPointOn(new Point(x,y),this.thickness/2));
+        }else {    		
+        	  return this.circle.contains(new Point(x, y));	
+        }
+    	               
     }
     @Override
     public void setSide(Layer.Side side, Line line,double angle) {

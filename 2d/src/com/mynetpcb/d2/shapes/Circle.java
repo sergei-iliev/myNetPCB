@@ -68,9 +68,10 @@ public class Circle extends GeometricFigure{
        this.r+=offset; 
     }
     @Override
-    public boolean isPointOn(Point pt, double diviation) {
-    
-    	return false;
+    public boolean isPointOn(Point pt, double diviation) {    
+		//test distance
+		double dist=this.pc.distanceTo(pt);
+		return ((this.r-diviation)<dist&&(this.r+diviation)>dist);
     }  
     @Override
     public void paint(Graphics2D g2,boolean fill) {        
