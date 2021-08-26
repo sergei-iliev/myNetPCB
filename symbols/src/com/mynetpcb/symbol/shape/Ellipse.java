@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -13,6 +14,7 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.RoundRectangle;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.symbol.unit.Symbol;
 
@@ -55,8 +57,13 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
         return this.ellipse.box();                
     }
     @Override
-    public boolean isClicked(double x,double y) {
-		return this.ellipse.isPointOn(new Point(x, y),this.thickness);
+    public boolean isClicked(double x,double y) {		    
+    	if(this.fill==Fill.EMPTY){
+    		return this.ellipse.isPointOn(new Point(x, y),this.thickness);
+      	}else {
+      	  return this.ellipse.contains(x, y);   	  
+      	}
+    	
     }
     public com.mynetpcb.d2.shapes.Ellipse getShape(){
         return ellipse;
@@ -91,8 +98,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
     }
     @Override
     public void resize(double xoffset, double yoffset, Point clickedPoint) {
-        this.ellipse.resize(xoffset, yoffset,clickedPoint);
-
+        this.resizingPoint=this.ellipse.resize(xoffset, yoffset,clickedPoint);
     }
 
     @Override

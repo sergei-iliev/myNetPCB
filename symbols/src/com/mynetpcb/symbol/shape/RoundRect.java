@@ -64,8 +64,13 @@ public class RoundRect extends ResizableShape implements Externalizable{
     }
     @Override
     public boolean isClicked(double x, double y) {
-    	RoundRectangle r=new RoundRectangle(getX(),getY(), getWidth(), getHeight(),rounding);
-    	return r.isPointOn(new Point(x, y),this.thickness);				
+    	if(this.fill==Fill.EMPTY){
+    	  RoundRectangle r=new RoundRectangle(getX(),getY(), getWidth(), getHeight(),rounding);    	
+    	  return r.isPointOn(new Point(x, y),this.thickness);
+    	}else {
+    	  roundRectCache.setRoundRect(getX() ,getY(),getWidth(),getHeight(),rounding,rounding);
+    	  return roundRectCache.contains(x, y);    	  
+    	}
     }
     @Override
     public Point getResizingPoint() {

@@ -1,5 +1,6 @@
 package com.mynetpcb.symbol.event;
 
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
@@ -11,8 +12,6 @@ import com.mynetpcb.symbol.shape.Arc;
 
 public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape>  extends EventHandle<U,S>{    
 
-    double centerX;
-    double centerY;
     
     public ArcExtendAngleEventHandler(U component) {
         super(component);
@@ -20,13 +19,14 @@ public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape
     
     @Override
     protected void clear() {   
+    	((Resizeable)getTarget()).setResizingPoint(null);
     }
 
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
         Arc arc=(Arc)this.getTarget();
-        centerX=arc.getCenter().x;
-        centerY=arc.getCenter().y;             
+        arc.setResizingPoint(arc.getShape().getEnd());
+        getComponent().Repaint();           
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape
         
         Arc arc=(Arc)this.getTarget();
         
-        double extend = (180/Math.PI*Math.atan2(new_my-centerY,new_mx-centerX));
+        double extend = (180/Math.PI*Math.atan2(new_my-arc.getCenter().y,new_mx-arc.getCenter().x));
 
         if(extend<0){
             extend=(-1*(extend));                  
@@ -67,7 +67,7 @@ public class ArcExtendAngleEventHandler <U extends UnitComponent,S extends Shape
         
         //***update PropertiesPanel           
         getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));        
-        
+        ((Resizeable)getTarget()).setResizingPoint(((Arc)getTarget()).getShape().getEnd());
         
         getComponent().Repaint();
 

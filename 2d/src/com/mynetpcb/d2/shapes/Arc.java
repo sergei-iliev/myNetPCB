@@ -82,6 +82,10 @@ public class Arc  extends GeometricFigure{
     public Point[] vertices() {
         return new Point[]{getStart(),getCenter(),getMiddle()};
     }
+    @Override
+    public boolean contains(double x,double y){
+    	return this.contains(new Point(x,y)); 
+    }
     public boolean contains(Point pt){
                 
             //is on circle

@@ -12,16 +12,14 @@ import java.awt.geom.Arc2D;
  * @param {number} startAngle - start angle in degrees from 0 to 360
  * @param {number} endAngle - end angle in degrees from -360 to 360
  */
-public class Arcellipse extends Ellipse{
-    private Point vert[]={new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0)};
-    
+public class Arcellipse extends Ellipse{    
     public double startAngle,endAngle;
     private Arc2D cache=new Arc2D.Double();
     
     public Arcellipse(double x,double y,double width,double height) {
     	super(x,y,width,height);	
-        this.startAngle = 90;
-        this.endAngle = 236;
+        this.startAngle = 45;
+        this.endAngle = 100;
     }
 
     @Override
@@ -33,6 +31,9 @@ public class Arcellipse extends Ellipse{
         return copy;        
         
     }
+    public double getSweep(){
+        return Math.abs(this.endAngle);
+}
     public Point getStart() {
         double x=this.pc.x+(this.width*Math.cos(-1*Utils.radians(startAngle)));
         double y=this.pc.y+(this.height*Math.sin(-1*Utils.radians(startAngle)));
@@ -41,7 +42,17 @@ public class Arcellipse extends Ellipse{
         p.rotate(this.rotate,this.pc);
         return  p;
     }
-    
+    public Point getMiddle() {
+        double angle = this.endAngle>0 ? this.startAngle + this.getSweep()/2 : this.startAngle - this.getSweep()/2;
+        
+        double x=this.pc.x+(this.width*Math.cos(-1*Utils.radians(angle)));
+        double y=this.pc.y+(this.height*Math.sin(-1*Utils.radians(angle)));
+        
+        Point p=new Point(x,y);
+        p.rotate(this.rotate,this.pc);
+        return  p;
+        
+    }
     public Point[] vertices(){         
         this.vert[0].set(this.pc.x-this.width,this.pc.y);
         this.vert[1].set(this.pc.x,this.pc.y-this.height);
@@ -92,70 +103,113 @@ public class Arcellipse extends Ellipse{
         }                        
     }  
     
-    public void resize(double offX,double offY,Point pt){      
-      if(pt.equals(vert[0])){
-                    Point point=vert[0];
-                    point.move(offX,offY);
-
-                    Vector v1=new Vector(pt,point);
-                    Vector v2=new Vector(this.pc,pt);
-    
-                    Vector v=v1.projectionOn(v2);
-    //translate point
-                    double x=pt.x +v.x;                    
-                    if(this.pc.x>x){
-                      this.width=this.pc.x-x;
-                    }
-      }else if(pt.equals(vert[1])){
-                    Point point=vert[1];
-                    point.move(offX,offY);
-
-                    Vector v1=new Vector(pt,point);
-                    Vector v2=new Vector(this.pc,pt);
-    
-                    Vector v=v1.projectionOn(v2);
-    //translate point
-                    //let x=pt.x +v.x;
-                    double y=pt.y + v.y;
-                    if(this.pc.y>y){
-                      this.height=this.pc.y-y;
-                    }
-      }else if(pt.equals(vert[2])){
-                    Point point=vert[2];
-                    point.move(offX,offY);
-
-                    Vector v1=new Vector(pt,point);
-                    Vector v2=new Vector(this.pc,pt);
-    
-                    Vector v=v1.projectionOn(v2);
-    //translate point
-                    double x=pt.x +v.x;
-                    //let y=pt.y + v.y;
-                    if(x>this.pc.x){
-                       this.width=x-this.pc.x;
-                    }
-      }else{
-                    Point point=vert[3];
-                    point.move(offX,offY);
-
-                    Vector v1=new Vector(pt,point);
-                    Vector v2=new Vector(this.pc,pt);
-    
-                    Vector v=v1.projectionOn(v2);
-    //translate point
-                    
-                    double y=pt.y + v.y;
-                    if(y>this.pc.y){
-                       this.height=y-this.pc.y;
-                    }
-      }
+//    public Point resize(double offX,double offY,Point pt){      
+//      if(pt.equals(vert[0])){
+//                    Point point=vert[0];
+//                    point.move(offX,offY);
+//
+//                    Vector v1=new Vector(pt,point);
+//                    Vector v2=new Vector(this.pc,pt);
+//    
+//                    Vector v=v1.projectionOn(v2);
+//    //translate point
+//                    double x=pt.x +v.x;                    
+//                    if(this.pc.x>x){
+//                      this.width=this.pc.x-x;
+//                    }
+//      }else if(pt.equals(vert[1])){
+//                    Point point=vert[1];
+//                    point.move(offX,offY);
+//
+//                    Vector v1=new Vector(pt,point);
+//                    Vector v2=new Vector(this.pc,pt);
+//    
+//                    Vector v=v1.projectionOn(v2);
+//    //translate point
+//                    //let x=pt.x +v.x;
+//                    double y=pt.y + v.y;
+//                    if(this.pc.y>y){
+//                      this.height=this.pc.y-y;
+//                    }
+//      }else if(pt.equals(vert[2])){
+//                    Point point=vert[2];
+//                    point.move(offX,offY);
+//
+//                    Vector v1=new Vector(pt,point);
+//                    Vector v2=new Vector(this.pc,pt);
+//    
+//                    Vector v=v1.projectionOn(v2);
+//    //translate point
+//                    double x=pt.x +v.x;
+//                    //let y=pt.y + v.y;
+//                    if(x>this.pc.x){
+//                       this.width=x-this.pc.x;
+//                    }
+//      }else{
+//                    Point point=vert[3];
+//                    point.move(offX,offY);
+//
+//                    Vector v1=new Vector(pt,point);
+//                    Vector v2=new Vector(this.pc,pt);
+//    
+//                    Vector v=v1.projectionOn(v2);
+//    //translate point
+//                    
+//                    double y=pt.y + v.y;
+//                    if(y>this.pc.y){
+//                       this.height=y-this.pc.y;
+//                    }
+//      }
+//    }
+    /*
+     * 
+     */
+    @Override
+    public boolean contains(double x, double y) {    
+    	var c=super.contains(x, y);
+    	if(!c) {
+    		return c;
+    	}
+    	
+        Line l=new Line(this.getStart(),this.getEnd());
+        boolean result=l.isLeftOrTop(this.getMiddle());
+        //are they on the same line side?
+        return (l.isLeftOrTop(new Point(x,y))==result);    	    	
     }
     @Override
     public boolean isPointOn(Point pt, double diviation) {
-        	boolean result=super.isPointOn(pt,diviation);
-        	if(!result){
-        		return false;
-        	}
+    	//same as ellipse
+        double alpha=-1*Utils.radians(this.rotate);
+        double cos = Math.cos(alpha),
+        sin = Math.sin(alpha);
+        double dx  = (pt.x - this.pc.x),
+        dy  = (pt.y - this.pc.y);
+        double tdx = cos * dx + sin * dy,
+        tdy = sin * dx - cos * dy;
+
+       
+        double pos= (tdx * tdx) / (this.width * this.width) + (tdy * tdy) / (this.height * this.height);
+        
+        
+        Vector v=new Vector(this.pc,pt);
+	    Vector norm=v.normalize();			  
+		//1.in
+	    if(pos<1){
+		    double xx=pt.x +diviation*norm.x;
+			double yy=pt.y +diviation*norm.y;
+			//check if new point is out
+			if(super.contains(xx,yy)){
+				return false;
+			}
+	    }else{  //2.out
+		    double xx=pt.x - diviation*norm.x;
+			double yy=pt.y - diviation*norm.y;
+			//check if new point is in
+			if(!this.contains(xx,yy)){
+				return false;
+			}		    	
+	    }    	
+        //narrow down to start and end point/angle
         	double start=new Vector(this.pc,this.getStart()).slope();
         	double end=new Vector(this.pc,this.getEnd()).slope();        	        	        	        	
         	double clickedAngle =new Vector(this.pc,pt).slope();
@@ -190,7 +244,6 @@ public class Arcellipse extends Ellipse{
         }else{
            g2.draw(cache);
         } 
-
         g2.setTransform(old);
 
     }

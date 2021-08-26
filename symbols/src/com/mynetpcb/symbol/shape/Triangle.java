@@ -6,6 +6,7 @@ import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -73,7 +74,11 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
     }
     @Override
     public boolean isClicked(double x,double y) {
-      return this.shape.isPointOn(new Point(x, y),thickness);       
+      if(this.fill==Fill.EMPTY) {
+          return this.shape.isPointOn(new Point(x, y),thickness);
+      }else {
+    	  return this.shape.contains(new Point(x, y));  
+      }
     }
     @Override
     public Point isControlRectClicked(double x, double y) {

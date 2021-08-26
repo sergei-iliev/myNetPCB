@@ -8,7 +8,8 @@ public class Ellipse extends GeometricFigure {
     public double width,height;
     public Point pc;
     public double rotate;
-    private Point vert[]={new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0)};
+    protected Point vert[]={new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0)};
+
 
     private Ellipse2D cache=new Ellipse2D.Double();
     
@@ -123,7 +124,7 @@ public class Ellipse extends GeometricFigure {
         this.vert[3].set(this.pc.x,this.pc.y+this.height);                         
         return this.vert;       
     }
-    public void resize(double offX,double offY,Point pt){      
+    public Point resize(double offX,double offY,Point pt){      
       if(pt.equals(vert[0])){
                     Point point=vert[0];
                     point.move(offX,offY);
@@ -137,6 +138,7 @@ public class Ellipse extends GeometricFigure {
                     if(this.pc.x>x){
                       this.width=this.pc.x-x;
                     }
+                    return new Point(this.pc.x-this.width,this.pc.y);
       }else if(pt.equals(vert[1])){
                     Point point=vert[1];
                     point.move(offX,offY);
@@ -151,6 +153,7 @@ public class Ellipse extends GeometricFigure {
                     if(this.pc.y>y){
                       this.height=this.pc.y-y;
                     }
+                    return new Point(this.pc.x,this.pc.y-this.height);
       }else if(pt.equals(vert[2])){
                     Point point=vert[2];
                     point.move(offX,offY);
@@ -165,6 +168,7 @@ public class Ellipse extends GeometricFigure {
                     if(x>this.pc.x){
                        this.width=x-this.pc.x;
                     }
+                    return new Point(this.pc.x+this.width,this.pc.y);
       }else{
                     Point point=vert[3];
                     point.move(offX,offY);
@@ -179,6 +183,7 @@ public class Ellipse extends GeometricFigure {
                     if(y>this.pc.y){
                        this.height=y-this.pc.y;
                     }
+                    return new Point(this.pc.x,this.pc.y+this.height);
       }
     }
     @Override

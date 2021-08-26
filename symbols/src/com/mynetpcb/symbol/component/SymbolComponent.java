@@ -14,6 +14,7 @@ import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.dialog.SymbolLoadDialog;
 import com.mynetpcb.symbol.event.SymbolEventMgr;
@@ -31,7 +32,6 @@ import com.mynetpcb.symbol.unit.SymbolMgr;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -104,7 +104,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
                 Cursor cursor =
                         getToolkit().getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame() ,
                                                                                              "/com/mynetpcb/core/images/dragopen.png").getImage(),
-                                                                       new Point(16,
+                                                                       new java.awt.Point(16,
                                                                                  16),
                                                                        "DragHeandOpen");
                 this.setCursor(cursor);
@@ -145,9 +145,10 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
                 //***is control rect clicked
                 if (shape != null) {
                     if(shape instanceof Arc){
-                        if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
-                            this.getEventMgr().setEventHandle("arc.start.angle",shape);                    
-                        }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX(), scaledEvent.getY() )){
+                    	Point pt=((Arc) shape).isControlRectClicked(scaledEvent.getX() , scaledEvent.getY());
+                        if(pt.equals(((Arc)shape).getShape().getStart())){ 
+                        	this.getEventMgr().setEventHandle("arc.start.angle",shape);                    
+                        }else if(pt.equals(((Arc)shape).getShape().getEnd())){
                             this.getEventMgr().setEventHandle("arc.extend.angle",shape);                                              
                         }else{
                              this.getEventMgr().setEventHandle("resize",shape);    

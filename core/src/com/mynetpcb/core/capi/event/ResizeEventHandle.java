@@ -21,6 +21,7 @@ public class ResizeEventHandle <U extends UnitComponent,S extends Shape> extends
     
     @Override
     protected void clear() {
+    	((Resizeable)getTarget()).setResizingPoint(null);
         targetPoint=null;        
     }
 

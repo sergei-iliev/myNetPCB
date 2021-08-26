@@ -3,6 +3,7 @@ package com.mynetpcb.symbol.dialog.panel.inspector;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.symbol.component.SymbolComponent;
 import com.mynetpcb.symbol.shape.Ellipse;
@@ -65,8 +66,8 @@ public class EllipsePanelBuilder extends  AbstractPanelBuilder<Shape> {
         topField.setText(toUnitY(ellipse.getResizingPoint()==null?0:ellipse.getResizingPoint().y)); 
         
         thicknessField.setText(String.valueOf((ellipse.getThickness())));    
-        widthField.setText(String.valueOf((ellipse.getShape().width)));
-        heightField.setText(String.valueOf(( ellipse.getShape().height))); 
+        widthField.setText(String.valueOf(Utilities.roundDouble(ellipse.getShape().width)));
+        heightField.setText(String.valueOf(Utilities.roundDouble( ellipse.getShape().height))); 
         
         setSelectedItem(fillCombo,ellipse.getFill()); 
     }

@@ -31,6 +31,12 @@ public class Line extends GeometricFigure {
         return new Line(p1.clone(), p2.clone());
     }
     /*
+     * Find position of point in regard to line
+     */
+    public boolean isLeftOrTop(Point pt){
+        return ((p2.x - p1.x)*(pt.y - p1.y) - (p2.y - p1.y)*(pt.x - p1.x)) > 0;
+    }
+    /*
      * Find point belonging to line, which the pt projects on.
      */
     public Point projectionPoint(Point pt) {

@@ -1,5 +1,6 @@
 package com.mynetpcb.symbol.event;
 
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
@@ -10,8 +11,6 @@ import com.mynetpcb.symbol.shape.Arc;
 
 public class ArcStartAngleEventHandle<U extends UnitComponent,S extends Shape>  extends EventHandle<U,S>{
     
-    double centerX;
-    double centerY;
     
     public ArcStartAngleEventHandle(U component) {
         super(component);        
@@ -20,8 +19,8 @@ public class ArcStartAngleEventHandle<U extends UnitComponent,S extends Shape>  
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
         Arc arc=(Arc)this.getTarget();
-        centerX=arc.getCenter().x;
-        centerY=arc.getCenter().y;      
+        arc.setResizingPoint(arc.getShape().getStart());
+        getComponent().Repaint();
     }
 
     @Override
@@ -31,25 +30,20 @@ public class ArcStartAngleEventHandle<U extends UnitComponent,S extends Shape>  
 
     @Override
     public void mouseScaledDragged(MouseScaledEvent e) {
+    	Arc arc=(Arc)this.getTarget();
     	double new_mx = e.getX();
     	double new_my = e.getY();
-        
-        Arc arc=(Arc)this.getTarget();
-        
-        
-        double start = (180/Math.PI*Math.atan2(new_my-centerY,new_mx-centerX));
+
+        double start = (180/Math.PI*Math.atan2(new_my-arc.getCenter().y,new_mx-arc.getCenter().x));
 
         if(start<0){
             arc.setStartAngle(-1*(start));            
         }else{
             arc.setStartAngle(360-(start));            
         }
-
-        
         //***update PropertiesPanel           
-        getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
-        
-        
+        getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));        
+        arc.setResizingPoint(arc.getShape().getStart());
         getComponent().Repaint();
 
     }
@@ -67,7 +61,7 @@ public class ArcStartAngleEventHandle<U extends UnitComponent,S extends Shape>  
 
     @Override
     protected void clear() {
-
+    	((Resizeable)getTarget()).setResizingPoint(null);
     }
 }
 

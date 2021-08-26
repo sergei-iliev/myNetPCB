@@ -146,7 +146,9 @@ public class Point extends GeometricFigure{
         Point pt=(Point)obj;
         return Utils.EQ(this.x, pt.x) && Utils.EQ(this.y, pt.y);
     }
-    
+    public boolean equals(double x,double y) {
+    	return Utils.EQ(this.x, x) && Utils.EQ(this.y, y);
+    }
     @Override
     public int hashCode() {        
         return 31+Double.hashCode(x)+Double.hashCode(y);        

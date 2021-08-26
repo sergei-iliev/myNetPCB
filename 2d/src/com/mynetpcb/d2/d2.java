@@ -1,5 +1,6 @@
 package com.mynetpcb.d2;
 
+import com.mynetpcb.d2.shapes.Arcellipse;
 import com.mynetpcb.d2.shapes.BaseFontText;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.FontText;
@@ -77,7 +78,12 @@ public class d2 extends  JFrame {
            d2Component.add(bft);
 
            BaseFontText bfb=new BaseFontText(150,400,"Basic Sergio Leonq",3,24,Font.BOLD);
-           d2Component.add(bfb);           
+           d2Component.add(bfb);     
+           
+           Arcellipse ae=new Arcellipse( 800, 500, 150, 80); 
+           d2Component.add(ae);
+           
+           
 //           
 //           Circle circle=new Circle(new Point(100,100),20);
 //           d2Component.add(circle);
@@ -166,8 +172,10 @@ public class d2 extends  JFrame {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     shapes.forEach(s->{
-                        if(s.contains(new Point(e.getPoint().x,e.getPoint().y)))
-                        System.out.println(s);        
+                    	if(s instanceof Arcellipse) {
+                        if(s.contains(e.getPoint().x,e.getPoint().y))
+                           System.out.println(s);    
+                    	}
                     });
                 
                 }

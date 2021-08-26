@@ -59,16 +59,19 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     }
     @Override
     public boolean isClicked(double x, double y) {
-    	return (this.arc.isPointOn(new Point(x,y),this.thickness));
+    	if(this.fill==Fill.EMPTY) {
+    	  return (this.arc.isPointOn(new Point(x,y),this.thickness));
+    	}else {    		
+    	  return this.arc.contains(x, y);	
+    	}
     }
     @Override
     public Point isControlRectClicked(double x, double y) {
         Point pt=new Point(x,y);
-        
-        for(Point v:this.arc.vertices()){
-            if(Utils.LE(pt.distanceTo(v),this.selectionRectWidth)){
-              return v;
-            }                        
+        for(Point v:this.arc.vertices()){           	
+        	if(Utils.LE(pt.distanceTo(v),this.selectionRectWidth)){
+        		return v;
+            }
         };
         return null;
     }
@@ -112,7 +115,7 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     }
     @Override
     public void resize(double xoffset, double yoffset, Point clickedPoint) {        
-        this.arc.resize(xoffset, yoffset,clickedPoint);
+    	this.resizingPoint=this.arc.resize(xoffset, yoffset,clickedPoint);
     }
 
     @Override
