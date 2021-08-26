@@ -43,12 +43,14 @@ import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.shape.Shape.ArcType;
 import com.mynetpcb.core.capi.text.Textable;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.event.SolidRegionEventHandle;
+import com.mynetpcb.pad.shape.Arc;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -188,6 +190,28 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     }else{
                       getEventMgr().setEventHandle("resize",shape);  
                     }
+                    
+                    if(shape instanceof PCBArc){
+                        if(((PCBArc)shape).getArcType()==ArcType.CENTER_POINT_ARC) {
+                          if(((PCBArc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
+                            getEventMgr().setEventHandle("arc.start.angle",shape);                    
+                          }else if(((PCBArc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                            getEventMgr().setEventHandle("arc.extend.angle",shape);      
+                          }else if(((PCBArc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                            getEventMgr().setEventHandle("arc.mid.point",shape);
+                          }
+                          
+                         }else{
+                            if(((PCBArc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                          	  getEventMgr().setEventHandle("arc.mid.point",shape);	  
+                            }else {
+                          	  getEventMgr().setEventHandle("arc.resize",shape);
+                            }
+                         }
+                       }else{
+                        getEventMgr().setEventHandle("resize",shape);                      
+                      }                    
+                    
                 } else if ((shape =
                             getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true)) !=
                            null) {
