@@ -52,7 +52,7 @@ public abstract class ResizableShape extends Shape implements Resizeable {
     @Override
     public void alignResizingPointToGrid(Point targetPoint){           
         Point point=getOwningUnit().getGrid().positionOnGrid(targetPoint.x,targetPoint.y);  
-        resize((int)(point.x -targetPoint.x),(int)(point.y-targetPoint.y),targetPoint); 
+        resize((point.x -targetPoint.x),(point.y-targetPoint.y),targetPoint); 
     }
     @Override
     public Point getCenter() {        

@@ -597,8 +597,8 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
             Footprint footprint = (Footprint) footprintLoadDialog.getSelectedModel().getUnit();
             PCBFootprint pcbfootprint = BoardMgr.getInstance().createPCBFootprint(footprint,boardComponent.getModel().getUnit().getActiveSide());
             //            //***set chip cursor
-            pcbfootprint.move(-1 * (int) pcbfootprint.getBoundingShape().getCenter().x,
-                           -1 * (int) pcbfootprint.getBoundingShape().getCenter().y);
+            pcbfootprint.move(-1 *  pcbfootprint.getBoundingShape().getCenter().x,
+                           -1 *  pcbfootprint.getBoundingShape().getCenter().y);
             //pcbfootprint.setRotation(60, pcbfootprint.getBoundingShape().getCenter());
             boardComponent.setContainerCursor(pcbfootprint);
             boardComponent.getEventMgr().setEventHandle("cursor", pcbfootprint);

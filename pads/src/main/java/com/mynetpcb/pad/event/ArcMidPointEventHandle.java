@@ -32,7 +32,7 @@ public class ArcMidPointEventHandle<U extends UnitComponent,S extends Shape>  ex
         Arc arc=(Arc)this.getTarget();
         
 
-        arc.resize((int)e.getX(),(int)e.getY(),null);
+        arc.resize(e.getX(),e.getY(),null);
         
         //***update PropertiesPanel           
         getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));

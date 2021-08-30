@@ -359,8 +359,8 @@ public class FootprintsPanel extends JPanel implements
                 boardComponent.getModel().getUnit().setSelected(false);
 
             //***set chip cursor
-                shape.move(-1 * (int)shape.getBoundingShape().getCenter().x,
-                      -1 * (int)shape.getBoundingShape().getCenter().y);
+                shape.move(-1 *shape.getBoundingShape().getCenter().x,
+                      -1 *shape.getBoundingShape().getCenter().y);
                 boardComponent.setContainerCursor(shape);
                 boardComponent.getEventMgr().setEventHandle("cursor", shape);
           }

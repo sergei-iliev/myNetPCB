@@ -233,8 +233,8 @@ public class SymbolsPanel extends JPanel implements
                 circuitComponent.getModel().getUnit().setSelected(false);
 
             //***set chip cursor
-                shape.move(-1 * (int)shape.getBoundingShape().getCenter().x,
-                      -1 * (int)shape.getBoundingShape().getCenter().y);
+                shape.move(-1 * shape.getBoundingShape().getCenter().x,
+                      -1 * shape.getBoundingShape().getCenter().y);
                 circuitComponent.setContainerCursor(shape);
                 circuitComponent.getEventMgr().setEventHandle("cursor", shape);
           }
