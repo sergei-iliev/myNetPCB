@@ -119,7 +119,7 @@ public class BoardLoadDialog extends AbstractLoadDialog  implements CommandListe
         CenterPanel.add(scrollViewer, BorderLayout.CENTER);
         basePanel.add(CenterPanel, BorderLayout.CENTER);
         
-        projectCombo.setRenderer(new IconListCellRenderer(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/library.png")));
+        projectCombo.setRenderer(new IconListCellRenderer(Utilities.loadImageIcon(this,"images/library.png")));
         projectCombo.addActionListener(this); 
             
         //moduleList.setBackground(TopPanel.getBackground());

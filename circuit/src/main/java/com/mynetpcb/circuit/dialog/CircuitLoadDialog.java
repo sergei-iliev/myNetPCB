@@ -123,7 +123,7 @@ public class CircuitLoadDialog extends AbstractLoadDialog  implements CommandLis
         CenterPanel.add(scrollViewer, BorderLayout.CENTER);
         basePanel.add(CenterPanel, BorderLayout.CENTER);
         
-        libraryCombo.setRenderer(new IconListCellRenderer(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/library.png")));
+        libraryCombo.setRenderer(new IconListCellRenderer(Utilities.loadImageIcon(this,"images/library.png")));
         libraryCombo.addActionListener(this); 
             
         //moduleList.setBackground(TopPanel.getBackground());

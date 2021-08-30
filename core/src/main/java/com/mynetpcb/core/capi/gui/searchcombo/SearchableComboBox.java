@@ -76,10 +76,10 @@ public class SearchableComboBox extends JComboBox{
                 textField.setEditable(true);
                 textField.setText("");
                 //imageIconLabel.setIcon(Utility.loadImageIcon(this,"../../../dialogs/images/selectcb_search.png"));  
-                imageIconLabel.setIcon(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/selectcb_search.png")); 
+                imageIconLabel.setIcon(Utilities.loadImageIcon(this,"images/selectcb_search.png")); 
             }else{                
                 textField.setEditable(false);
-                imageIconLabel.setIcon(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/selectcb.png"));                  
+                imageIconLabel.setIcon(Utilities.loadImageIcon(this,"images/selectcb.png"));                  
             }
         }
         

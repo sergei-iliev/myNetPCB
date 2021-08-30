@@ -64,11 +64,11 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
         circuitsTree.addTreeSelectionListener(this);
         circuitsTree.setModel(new DefaultTreeModel(root));
         circuitsTree.setCellRenderer(new UnitTreeCellRenderer(Utilities.loadImageIcon(this,
-                                                                                      "/com/mynetpcb/core/images/library.png"),
+                                                                                      "images/library.png"),
                                                               Utilities.loadImageIcon(this,
-                                                                                      "/com/mynetpcb/core/images/circuit.png"),
+                                                                                      "images/circuit.png"),
                                                               Utilities.loadImageIcon(this,
-                                                                                      "/com/mynetpcb/core/images/chip_ico.png")));
+                                                                                      "images/chip_ico.png")));
         basePanel.add(scrollPaneTree, BorderLayout.NORTH);
         
         circuitInspector=new PropertyInspectorPanel(circuitComponent);

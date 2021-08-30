@@ -195,7 +195,7 @@ public class UnitSelectionGrid {
 
             if (this.enabled) {
              icon=(element.selected == true ? Utilities.loadImageIcon(this,
-                                                                  "/com/mynetpcb/core/images/checkbox_checked.png") : Utilities.loadImageIcon(this,
+                                                                  "images/checkbox_checked.png") : Utilities.loadImageIcon(this,
                                "/com/mynetpcb/core/images/checkbox_unchecked.png"));
             if (element.selected) {  
                RoundRectangle2D selectionRect= new RoundRectangle2D.Double(element.unitRect.x,

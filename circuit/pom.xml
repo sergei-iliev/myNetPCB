@@ -44,13 +44,7 @@
                 </configuration>
             </plugin>
         </plugins>
-		
-    <resources>
-        <resource>
-            <directory>src/main/java/com/mynetpcb/circuit/resources</directory>
-			<targetPath>com/mynetpcb/circuit/resources</targetPath>
-        </resource>
-    </resources>        
+		      
 	
     </build>
 </project>

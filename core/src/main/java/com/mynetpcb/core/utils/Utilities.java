@@ -76,7 +76,8 @@ public final class Utilities {
     /** Read content from resources folder*/
     public static String readResourceFile(Class clazz,String fileName) throws IOException{
         try(
-        		BufferedReader reader = new BufferedReader(new InputStreamReader(clazz.getResourceAsStream(fileName)));
+        		
+        		BufferedReader reader = new BufferedReader(new InputStreamReader(clazz.getClassLoader().getResourceAsStream(fileName)));
         		){                	    
         	    StringBuilder sb = new StringBuilder();
         	    String line;

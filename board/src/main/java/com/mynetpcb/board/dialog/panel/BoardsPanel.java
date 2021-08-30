@@ -62,11 +62,11 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
         boardsTree.addTreeSelectionListener(this);
         boardsTree.setModel(new DefaultTreeModel(root));
         boardsTree.setCellRenderer(new UnitTreeCellRenderer(Utilities.loadImageIcon(this,
-                                                                                      "/com/mynetpcb/core/images/library.png"),
+                                                                                      "images/library.png"),
                                                               Utilities.loadImageIcon(this,
-                                                                                      "/com/mynetpcb/core/images/circuit.png"),
+                                                                                      "images/circuit.png"),
                                                               Utilities.loadImageIcon(this,
-                                                                                      "/com/mynetpcb/core/images/chip_ico.png")));
+                                                                                      "images/chip_ico.png")));
         basePanel.add(scrollPaneTree, BorderLayout.NORTH);
         
         boardInspector=new PropertyInspectorPanel(boardComponent);

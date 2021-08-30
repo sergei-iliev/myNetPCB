@@ -176,127 +176,128 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
 //        
         SelectionButton.addActionListener(this);
         SelectionButton.setIcon(Utilities.loadImageIcon(this, 
-                                                      "/com/mynetpcb/core/images/selection.png"));
+                                                      "images/selection.png"));
         SelectionButton.setSelected(true);
         SelectionButton.setToolTipText("Select Symbol");
         SelectionButton.setPreferredSize(new Dimension(35, 35));
 
         SymbolButton.addActionListener(this);
-        SymbolButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/symbol.png"));
+        SymbolButton.setIcon(Utilities.loadImageIcon(this, "images/symbol.png"));
         SymbolButton.setToolTipText("Add Symbol");
         SymbolButton.setPreferredSize(new Dimension(35, 35));
 
         WireButton.addActionListener(this);
-        WireButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/wire.png"));
+        WireButton.setIcon(Utilities.loadImageIcon(this, "images/wire.png"));
         WireButton.setToolTipText("Draw Wire");
         WireButton.setPreferredSize(new Dimension(35, 35));
 
         BusButton.addActionListener(this);
         BusButton.setActionCommand("bus");
-        BusButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/bus.png"));
+        BusButton.setIcon(Utilities.loadImageIcon(this, "images/bus.png"));
         BusButton.setToolTipText("Draw Bus");
         BusButton.setPreferredSize(new Dimension(35, 35));
 
         BusPinButton.addActionListener(this);
-        BusPinButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/buspin.png"));
+        BusPinButton.setIcon(Utilities.loadImageIcon(this, "images/buspin.png"));
         BusPinButton.setToolTipText("Add Bus Pin");
         BusPinButton.setPreferredSize(new Dimension(35, 35));
 
+        System.out.println(this.getClass().getClassLoader());
 
         JunctionButton.addActionListener(this);
-        JunctionButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/junction.png"));
+        JunctionButton.setIcon(Utilities.loadImageIcon(this, "images/junction.png"));
         JunctionButton.setToolTipText("Draw Junction");
         JunctionButton.setPreferredSize(new Dimension(35, 35));
 
 
         LabelButton.addActionListener(this);
-        LabelButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/label.png"));
+        LabelButton.setIcon(Utilities.loadImageIcon(this, "images/label.png"));
         LabelButton.setToolTipText("Add Label");
         LabelButton.setPreferredSize(new Dimension(35, 35));
 
 
         ConnectorButton.addActionListener(this);
-        ConnectorButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/connector.png"));
+        ConnectorButton.setIcon(Utilities.loadImageIcon(this, "images/connector.png"));
         ConnectorButton.setToolTipText("Add Connector");
         ConnectorButton.setPreferredSize(new Dimension(35, 35));
 
         NoConnectorButton.addActionListener(this);
-        NoConnectorButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/noconnection.png"));
+        NoConnectorButton.setIcon(Utilities.loadImageIcon(this, "images/noconnection.png"));
         NoConnectorButton.setToolTipText("Add No Connection flag");
         NoConnectorButton.setPreferredSize(new Dimension(35, 35));
 
         NetLabelButton.addActionListener(this);
-        NetLabelButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/netlabel.png"));
+        NetLabelButton.setIcon(Utilities.loadImageIcon(this, "images/netlabel.png"));
         NetLabelButton.setToolTipText("Add Net label");
         NetLabelButton.setPreferredSize(new Dimension(35, 35));
 
         VccSymbolButton.addActionListener(this);
         VccSymbolButton.setToolTipText("Add VCC symbol");
-        VccSymbolButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/vcc.png"));
+        VccSymbolButton.setIcon(Utilities.loadImageIcon(this, "images/vcc.png"));
         VccSymbolButton.setPreferredSize(new Dimension(35, 35));
 
         GndSymbolButton.addActionListener(this);
         GndSymbolButton.setToolTipText("Add GND symbol");
-        GndSymbolButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/gnd.png"));
+        GndSymbolButton.setIcon(Utilities.loadImageIcon(this, "images/gnd.png"));
         GndSymbolButton.setPreferredSize(new Dimension(35, 35));
         
         CoordButton.addActionListener(this);
         CoordButton.setToolTipText("Change coordinate origin");
-        CoordButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/origin.png"));
+        CoordButton.setIcon(Utilities.loadImageIcon(this, "images/origin.png"));
         CoordButton.setPreferredSize(new Dimension(35, 35));
         
         //***construct Top Buttons Panel
         //AddBoardButton.setToolTipText("Add Circuit");
         AddCircuitButton.setPreferredSize(new Dimension(35, 35));
-        AddCircuitButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/subject.png"));
+        AddCircuitButton.setIcon(Utilities.loadImageIcon(this, "images/subject.png"));
         AddCircuitButton.addMenu("Create new circuits project","Create").addMenu("Add circuit to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
             .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSeparator().addMenu("Exit","exit");
         
         PrintButton.addActionListener(this);
         PrintButton.setToolTipText("Print Circuit");
         PrintButton.setPreferredSize(new Dimension(35, 35));
-        PrintButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/print.png"));
+        PrintButton.setIcon(Utilities.loadImageIcon(this, "images/print.png"));
         
         
         SaveButton.addActionListener(this);
         SaveButton.setToolTipText("Save Circuits Project");
         SaveButton.setPreferredSize(new Dimension(35, 35));
-        SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
+        SaveButton.setIcon(Utilities.loadImageIcon(this, "images/save.png"));
         
         LoadButton.addActionListener(this);
         LoadButton.setToolTipText("Load Circuits Project");
         LoadButton.setPreferredSize(new Dimension(35, 35));
-        LoadButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/folder.png"));
+        LoadButton.setIcon(Utilities.loadImageIcon(this, "images/folder.png"));
 
         ScaleIn.addActionListener(this);
         ScaleIn.setToolTipText("Scale In");
         ScaleIn.setPreferredSize(new Dimension(35, 35));
-        ScaleIn.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/zoom_out.png"));
+        ScaleIn.setIcon(Utilities.loadImageIcon(this, "images/zoom_out.png"));
 
         ScaleOut.addActionListener(this);
         ScaleOut.setToolTipText("Scale Out");
         ScaleOut.setPreferredSize(new Dimension(35, 35));
-        ScaleOut.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/zoom_in.png"));
+        ScaleOut.setIcon(Utilities.loadImageIcon(this, "images/zoom_in.png"));
 
         RotateLeft.addActionListener(this);    
         RotateLeft.setToolTipText("Rotate Left");
         RotateLeft.setPreferredSize(new Dimension(35, 35));
-        RotateLeft.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_left.png"));
+        RotateLeft.setIcon(Utilities.loadImageIcon(this, "images/rotate_left.png"));
         
         RotateRight.addActionListener(this);
         RotateRight.setToolTipText("Rotate Right");
         RotateRight.setPreferredSize(new Dimension(35, 35));
-        RotateRight.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_right.png"));        
+        RotateRight.setIcon(Utilities.loadImageIcon(this, "images/rotate_right.png"));        
         
         DragHeand.setPreferredSize(new Dimension(35, 35));
         DragHeand.setToolTipText("Drag to view");
         DragHeand.addActionListener(this);
-        DragHeand.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/grab.png"));
+        DragHeand.setIcon(Utilities.loadImageIcon(this, "images/grab.png"));
         
         PositionToCenter.setPreferredSize(new Dimension(35, 35));
         PositionToCenter.setToolTipText("View position to center");
         PositionToCenter.addActionListener(this);
-        PositionToCenter.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/tocenter.png"));
+        PositionToCenter.setIcon(Utilities.loadImageIcon(this, "images/tocenter.png"));
         
         
         NorthPanel.add(AddCircuitButton);
@@ -779,7 +780,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         }
         if(e.getSource()==VccSymbolButton || e.getSource()==GndSymbolButton) {
         	try {        		
-        		String content=Utilities.readResourceFile(Circuit.class,(e.getSource()==VccSymbolButton?"/com/mynetpcb/circuit/resources/symbols/Power.xml":"/com/mynetpcb/circuit/resources/symbols/Ground.xml"));
+        		String content=Utilities.readResourceFile(Circuit.class,(e.getSource()==VccSymbolButton?"symbols/power.xml":"symbols/ground.xml"));
         		SymbolContainer symbolContainer=new SymbolContainer();
         		symbolContainer.parse(content);        		
         		SCHSymbol schsymbol = CircuitMgr.getInstance().createSCHSymbol(symbolContainer.getUnit());
