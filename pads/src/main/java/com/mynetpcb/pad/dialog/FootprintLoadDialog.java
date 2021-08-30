@@ -133,7 +133,7 @@ public class FootprintLoadDialog extends AbstractLoadDialog implements ActionLis
         basePanel.add(CenterPanel, BorderLayout.CENTER);
 
         libraryCombo.setRenderer(new IconListCellRenderer(Utilities.loadImageIcon(this,
-                                                                                  "/com/mynetpcb/core/images/library.png")));
+                                                                                  "images/library.png")));
         libraryCombo.addActionListener(this);
 
 

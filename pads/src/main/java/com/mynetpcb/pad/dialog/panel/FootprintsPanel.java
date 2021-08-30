@@ -57,7 +57,7 @@ public class FootprintsPanel extends JPanel  implements TreeSelectionListener,Un
         footprintsTree.setEditable(false);
         footprintsTree.addTreeSelectionListener(this);
         footprintsTree.setModel(new DefaultTreeModel(root));                                                  
-        footprintsTree.setCellRenderer(new UnitTreeCellRenderer(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/library.png"), Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/chip_ico.png"),null));
+        footprintsTree.setCellRenderer(new UnitTreeCellRenderer(Utilities.loadImageIcon(this,"images/library.png"), Utilities.loadImageIcon(this,"images/chip_ico.png"),null));
 
         basePanel.add(scrollPaneTree, BorderLayout.NORTH);
         
