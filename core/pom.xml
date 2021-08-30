@@ -45,18 +45,6 @@
                 </configuration>
             </plugin>
         </plugins>
-		
-
-    <resources>
-        <resource>
-            <directory>src/main/java/com/mynetpcb/core/images</directory>
-			<targetPath>com/mynetpcb/core/images</targetPath>
-        </resource>
-        <resource>
-            <directory>src/main/java/com/mynetpcb/core/fonts</directory>
-			<targetPath>com/mynetpcb/core/fonts</targetPath>
-        </resource>
-    </resources>
 
     </build>
 	

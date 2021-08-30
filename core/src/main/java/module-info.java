@@ -44,5 +44,7 @@ module com.mynetpcb.core {
 	requires java.xml;
     requires java.xml.bind;
 	requires  java.desktop; 
-	requires  com.mynetpcb.d2;	
+	requires  com.mynetpcb.d2;
+	
+	opens com.mynetpcb.core.capi.config to java.xml.bind;
 }

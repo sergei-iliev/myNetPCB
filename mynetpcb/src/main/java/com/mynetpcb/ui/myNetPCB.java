@@ -28,7 +28,7 @@ public class myNetPCB extends JFrame {
     
     public myNetPCB() {
         super("myNetPCB");
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage(myNetPCB.class.getResource("/com/mynetpcb/core/images/circuit.png")));
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/circuit.png")));
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         //Make the big window be indented 50 pixels from each edge
         //of the screen.

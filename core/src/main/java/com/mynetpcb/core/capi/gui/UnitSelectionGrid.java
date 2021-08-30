@@ -214,7 +214,7 @@ public class UnitSelectionGrid {
                 g2.draw(selectionRect);
             }
         }else {
-            icon = Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/checkbox_checked_dis.png");
+            icon = Utilities.loadImageIcon(this, "images/checkbox_checked_dis.png");
         }
         g2.drawImage(icon.getImage(),
                     element.checkboxRect.x,

@@ -125,7 +125,7 @@ public class SymbolLoadDialog  extends AbstractLoadDialog implements ActionListe
         basePanel.add(CenterPanel, BorderLayout.CENTER);
 
         libraryCombo.setRenderer(new IconListCellRenderer(Utilities.loadImageIcon(this,
-                                                                                "/com/mynetpcb/core/images/library.png")));
+                                                                                "images/library.png")));
         libraryCombo.addActionListener(this);
 
 

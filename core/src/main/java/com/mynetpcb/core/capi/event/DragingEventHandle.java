@@ -21,7 +21,7 @@ public class DragingEventHandle <U extends UnitComponent,S extends Shape> extend
     public void mouseScaledPressed(MouseScaledEvent e) {
         Cursor cursor =
                 Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getComponent(),
-                                                                                     "/com/mynetpcb/core/images/dragclose.png").getImage(),
+                                                                                     "images/dragclose.png").getImage(),
                                                                new Point(16,
                                                                          16),
                                                                "DragHeandClose");
@@ -38,7 +38,7 @@ public class DragingEventHandle <U extends UnitComponent,S extends Shape> extend
     public void mouseScaledReleased(MouseScaledEvent e) {
         Cursor cursor =
                 Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getComponent(),
-                                                                                     "/com/mynetpcb/core/images/dragopen.png").getImage(),
+                                                                                     "images/dragopen.png").getImage(),
                                                                new Point(16,
                                                                          16),
                                                                "DragHeandOpen");

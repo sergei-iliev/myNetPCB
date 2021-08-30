@@ -52,7 +52,7 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
         symbolsTree.setEditable(false);
         symbolsTree.addTreeSelectionListener(this);
         symbolsTree.setModel(new DefaultTreeModel(root));
-        symbolsTree.setCellRenderer(new UnitTreeCellRenderer(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/library.png"), Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/chip_ico.png"),null));
+        symbolsTree.setCellRenderer(new UnitTreeCellRenderer(Utilities.loadImageIcon(this,"images/library.png"), Utilities.loadImageIcon(this,"images/chip_ico.png"),null));
 
         basePanel.add(scrollPaneTree, BorderLayout.NORTH);
         

@@ -93,7 +93,7 @@ public final class Utilities {
         Image image = null;
         try {
             // get a stream to read the image
-            InputStream in = o.getClass().getResource(filename).openStream();
+            InputStream in = o.getClass().getClassLoader().getResource(filename).openStream();
             // buffering -> more efficient
             BufferedInputStream bufIn = new BufferedInputStream(in);
             // the byte array that will contain the image

@@ -130,7 +130,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         menuButton.setBackground(Color.white);
         menuButton.setPreferredSize(new Dimension(44,44));
         menuButton.setIcon(Utilities.loadImageIcon(this, 
-                                                    "/com/mynetpcb/core/images/navbar.png"));
+                                                    "images/navbar.png"));
         
         menuButton.addMenu("Preferences","preferences").addSeparator().addRootMenu("Import","import").addSubMenu("import","Clipboard" , "import.clipboard").addSubMenu("import","XML" , "import.xml").addMenu("Exit","exit"); 
         
@@ -162,7 +162,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         symbolButton=new JButton();
         symbolButton.addActionListener(this);
         symbolButton.setIcon(Utilities.loadImageIcon(this, 
-                                                    "/com/mynetpcb/core/images/symbol_icon.png"));
+                                                    "images/symbol_icon.png"));
         symbolButton.setBackground(Color.white);
         symbolButton.setPreferredSize(new Dimension(130,130));
         symbolsPanel.add(symbolButton);
@@ -175,7 +175,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         footprintButton=new JButton();
         footprintButton.addActionListener(this);
         footprintButton.setIcon(Utilities.loadImageIcon(this, 
-                                                    "/com/mynetpcb/core/images/footprint_icon.png"));
+                                                    "images/footprint_icon.png"));
         footprintButton.setBackground(Color.white);
         footprintButton.setPreferredSize(new Dimension(130,130));
         padsPanel.add(footprintButton);  
@@ -189,7 +189,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         circuitButton=new JButton();
         circuitButton.addActionListener(this);
         circuitButton.setIcon(Utilities.loadImageIcon(this, 
-                                                    "/com/mynetpcb/core/images/circuit_icon.png"));
+                                                    "images/circuit_icon.png"));
         circuitButton.setBackground(Color.white);
         circuitButton.setPreferredSize(new Dimension(130,130));
         circuitPanel.add(circuitButton);        
@@ -202,7 +202,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         boardButton=new JButton();
         boardButton.addActionListener(this);
         boardButton.setIcon(Utilities.loadImageIcon(this, 
-                                                    "/com/mynetpcb/core/images/board_icon.png"));
+                                                    "images/board_icon.png"));
         boardButton.setBackground(Color.white);
         boardButton.setPreferredSize(new Dimension(143,130));
         boardPanel.add(boardButton);        

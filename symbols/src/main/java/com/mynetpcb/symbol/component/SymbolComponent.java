@@ -103,7 +103,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
         case Mode.DRAGHEAND_MODE:
                 Cursor cursor =
                         getToolkit().getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame() ,
-                                                                                             "/com/mynetpcb/core/images/dragopen.png").getImage(),
+                                                                                             "images/dragopen.png").getImage(),
                                                                        new java.awt.Point(16,
                                                                                  16),
                                                                        "DragHeandOpen");
