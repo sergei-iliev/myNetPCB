@@ -29,15 +29,11 @@ public class ArcMidPointEventHandle<U extends UnitComponent,S extends Shape>  ex
 
     @Override
     public void mouseScaledDragged(MouseScaledEvent e) {    
-        Arc arc=(Arc)this.getTarget();
-        
-
+        Arc arc=(Arc)this.getTarget();        
         arc.resize(e.getX(),e.getY(),null);
         
         //***update PropertiesPanel           
-        getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
-        
-        
+        getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));                
         getComponent().Repaint();
         
     }
