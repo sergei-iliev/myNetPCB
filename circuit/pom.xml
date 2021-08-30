@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.mynetpcb</groupId>
         <artifactId>mynetpcb-project</artifactId>
-        <version>8.2</version>
+        <version>8.3</version>
     </parent>
 
     <artifactId>circuit</artifactId>
@@ -17,41 +17,40 @@
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>core</artifactId>
-            <version>8.2</version>
+            <version>8.3</version>
         </dependency>
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>symbols</artifactId>
-            <version>8.2</version>
+            <version>8.3</version>
         </dependency>		
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>board</artifactId>
-            <version>8.2</version>
+            <version>8.3</version>
         </dependency>		
 	</dependencies>
 	
 	<build>
-	<outputDirectory>classes</outputDirectory>
-	<sourceDirectory>src</sourceDirectory>
 	<finalName>circuit</finalName>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
-                    <configuration>
-                        <testFailureIgnore>true</testFailureIgnore>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
+		
     <resources>
         <resource>
-            <directory>src/com/mynetpcb/circuit/resources</directory>
+            <directory>src/main/java/com/mynetpcb/circuit/resources</directory>
 			<targetPath>com/mynetpcb/circuit/resources</targetPath>
         </resource>
     </resources>        
+	
     </build>
 </project>

@@ -1,100 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/maven-v4_0_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    
     <groupId>com.mynetpcb</groupId>
     <artifactId>mynetpcb-project</artifactId>
     <packaging>pom</packaging>
-    <version>8.2</version>
+    <version>8.3</version>
     <name>myNetPCB Project</name>
-
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<deploy.dir>../../deploy/lib</deploy.dir>
-		<java.version>11</java.version>
 	</properties>
- 
+
     <modules>
 		<module>2d</module>
         <module>core</module>
-        <module>pads</module>
-		<module>gerber</module>		
+		<module>pads</module>
 		<module>symbols</module>
+		<module>gerber</module>
 		<module>board</module>
 		<module>circuit</module>
-		<module>mynetpcb</module>		
+		<module>mynetpcb</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
+                    <artifactId>maven-compiler-plugin</artifactId>  
+					<version>3.8.0</version>					
                     <configuration>
                         <source>11</source>
                         <target>11</target>
                     </configuration>
-                </plugin>
-<!--                 
-<plugin>
-    <artifactId>maven-resources-plugin</artifactId>
-    <version>3.0.2</version>
-    <executions>
-        <execution>
-            <id>copy-files-on-build</id>
-            <phase>package</phase>
-            <goals>
-                <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-                <outputDirectory>${deploy.dir}</outputDirectory>
-                <resources>
-                    <resource>
-                        <directory>/target</directory>
-							<includes>
-								<include>**/*.jar</include>
-							</includes>
-                    </resource>
-                </resources>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
- -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
-
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>                        
-                    </descriptorRefs>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <outputDirectory>${deploy.dir}</outputDirectory>                  
-					<archive>
-						<manifest>
-							<mainClass>com.mynetpcb.ui.myNetPCB</mainClass>
-						</manifest>
-					</archive>                    
-                </configuration>
-<!-- mvn clean compile assembly:single -->
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-    
-            </plugin>
+            </plugin>				
             </plugins>
         </pluginManagement>
-    
     </build>
+
+
 </project>

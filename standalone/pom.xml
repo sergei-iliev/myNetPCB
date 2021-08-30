@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<groupId>com.mynetpcb</groupId>
+<artifactId>distribution</artifactId>
+<version>8.3</version>
+<packaging>pom</packaging>
+
+<name>mynetpcb</name>
+
+<dependencies>
+        <dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>d2</artifactId>
+            <version>8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>core</artifactId>
+            <version>8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>gerber</artifactId>
+            <version>8.3</version>
+        </dependency>		
+        <dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>pads</artifactId>
+            <version>8.3</version>
+        </dependency>		
+        <dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>symbols</artifactId>
+            <version>8.3</version>
+        </dependency>		
+		<dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>circuit</artifactId>
+            <version>8.3</version>
+        </dependency>
+		<dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>board</artifactId>
+            <version>8.3</version>
+        </dependency>	
+				<dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>mynetpcb</artifactId>
+            <version>8.3</version>
+        </dependency>
+</dependencies>
+<build>
+	<finalName>mynetpcb</finalName>
+    <plugins>
+	<!-- mvn install [in root] -->
+	<!-- mvn clean compile assembly:single -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.5.2</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>                        
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <outputDirectory>${deploy.dir}</outputDirectory>                  
+					<archive>
+						<manifest>
+							<mainClass>com.mynetpcb.ui.myNetPCB</mainClass>
+						</manifest>
+					</archive>                    
+                </configuration>
+        </plugin>
+    </plugins>
+</build> 
+</project>   
