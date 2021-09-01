@@ -26,7 +26,7 @@ https://github.com/sergei-iliev/myNetPCB/releases/tag/v8_2
 1. Unzip myNetPCB.zip in a folder of your choice
 2. Run with JDK version 11 or above - make sure the version is grater or equal by running 'java -version' command!
 3. Windows users - double click myNetPCB.bat
-4. Linux users - make myNetPCB.sh executable with the command: chmod 755 myNetPCB.sh and then execute command: ./myNetPCB.sh
+4. Linux users - make myNetPCB.sh executable with the command: **chmod 755 myNetPCB.sh** and then execute command: **./myNetPCB.sh**
 4. Set library/workspace folder at Preferences->Workspace/Library folder(Default one is selected with my workings)
 
 
