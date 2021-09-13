@@ -552,7 +552,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
                            (Double.compare(width,clipRect.getWidth()) < 0?width:(int)clipRect.getWidth()),
                            (Double.compare(height,clipRect.getHeight()) < 0?height:(int)clipRect.getHeight()));
         }catch(Exception e){            
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         g2.dispose();

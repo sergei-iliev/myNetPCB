@@ -96,9 +96,8 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
                         }else{  //right
                             getTarget().rotate(-90,p);     
                         }           
-                        //unitMgr.normalizePinText(getTarget());
                         getComponent().Repaint(); 
-                        
+                        return true;
                     }  
                 }
             } 
@@ -108,18 +107,18 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
                     if(e.getKeyCode()==KeyEvent.VK_Q||e.getKeyCode()==KeyEvent.VK_A){                        
                         Point p=new Point(mx,my);
                         if(e.getKeyCode()==KeyEvent.VK_Q){
-                            //getTarget().mirror(new Point(p.x-10,p.y),new Point(p.x+10,p.y)); 
+                            getTarget().mirror(new com.mynetpcb.d2.shapes.Line(p.x-10,p.y,p.x+10,p.y)); 
                         }else{
-                            //getTarget().mirror(new Point(p.x,p.y-10),new Point(p.x,p.y+10)); 
-                        }                        
-                        //unitMgr.normalizePinText(getTarget());  
+                            getTarget().mirror(new com.mynetpcb.d2.shapes.Line(p.x,p.y-10,p.x,p.y+10)); 
+                        }                                              
+                        
                         getComponent().Repaint();  
-                       
+                        return true;
                     }
                
                 }
             }          
         }     
-        return true;
+        return false;
     }
 }

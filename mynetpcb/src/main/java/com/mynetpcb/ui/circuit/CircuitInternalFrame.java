@@ -202,7 +202,6 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         BusPinButton.setToolTipText("Add Bus Pin");
         BusPinButton.setPreferredSize(new Dimension(35, 35));
 
-        System.out.println(this.getClass().getClassLoader());
 
         JunctionButton.addActionListener(this);
         JunctionButton.setIcon(Utilities.loadImageIcon(this, "images/junction.png"));
