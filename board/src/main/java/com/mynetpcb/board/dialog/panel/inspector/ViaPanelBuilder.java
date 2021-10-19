@@ -58,8 +58,8 @@ public class ViaPanelBuilder extends AbstractPanelBuilder<Shape>{
     @Override
     public void updateUI() {
         PCBVia via=(PCBVia)getTarget(); 
-        leftField.setText(toUnitX(via.getInner().pc.x));
-        topField.setText(toUnitY(via.getInner().pc.y));
+        leftField.setText(toUnitX(via.getInner().pc.x,5));
+        topField.setText(toUnitY(via.getInner().pc.y,5));
         netField.setText(via.getNetName());
         
         thicknessField.setText(toUnit(via.getInner().r*2));

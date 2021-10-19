@@ -166,13 +166,13 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         
         padNumber.setText(pad.getTextureByTag("number").getText());
         numberSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("number").getSize())));
-        numberX.setText(toUnitX(pad.getTextureByTag("number").getAnchorPoint().x));
-        numberY.setText(toUnitY(pad.getTextureByTag("number").getAnchorPoint().y));
+        numberX.setText(toUnitX(pad.getTextureByTag("number").getAnchorPoint().x,5));
+        numberY.setText(toUnitY(pad.getTextureByTag("number").getAnchorPoint().y,5));
         
         padNetName.setText(pad.getTextureByTag("netvalue").getText());        
         netvalueSize.setText(String.valueOf(Grid.COORD_TO_MM(pad.getTextureByTag("netvalue").getSize())));
-        netvalueX.setText(toUnitX(pad.getTextureByTag("netvalue").getAnchorPoint().x));
-        netvalueY.setText(toUnitY(pad.getTextureByTag("netvalue").getAnchorPoint().y));
+        netvalueX.setText(toUnitX(pad.getTextureByTag("netvalue").getAnchorPoint().x,5));
+        netvalueY.setText(toUnitY(pad.getTextureByTag("netvalue").getAnchorPoint().y,5));
         
         widthField.setText(String.valueOf(Grid.COORD_TO_MM(pad.getWidth())));
         if(pad.getShapeType() == Pad.Shape.CIRCULAR||pad.getShapeType()==Pad.Shape.POLYGON){
@@ -182,8 +182,8 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
             heightField.setText(String.valueOf(Grid.COORD_TO_MM(pad.getHeight())));  
         }
         
-        leftField.setText(toUnitX(pad.getCenter().x));
-        topField.setText(toUnitY(pad.getCenter().y));
+        leftField.setText(toUnitX(pad.getCenter().x,5));
+        topField.setText(toUnitY(pad.getCenter().y,5));
         
         setSelectedItem(layerCombo, pad.getCopper());
         setSelectedItem(padTypeCombo, pad.getType());

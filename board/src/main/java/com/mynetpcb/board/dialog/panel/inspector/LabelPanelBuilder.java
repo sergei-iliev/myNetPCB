@@ -78,8 +78,8 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
     public void updateUI() {                   
         PCBLabel label=(PCBLabel)getTarget();        
         textField.setText(label.getTexture().getText());
-        leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x ));
-        topField.setText(toUnitY(label.getTexture().getAnchorPoint().y));
+        leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x,5));
+        topField.setText(toUnitY(label.getTexture().getAnchorPoint().y,5));
         rotateField.setText(String.valueOf(label.getTexture().getRotation()));
         heightField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getSize())));
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getThickness())));

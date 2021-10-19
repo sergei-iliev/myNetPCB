@@ -3,6 +3,9 @@ package com.mynetpcb.pad.unit;
 
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.Resizeable;
+import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -13,6 +16,7 @@ import com.mynetpcb.pad.shape.GlyphLabel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
@@ -71,7 +75,29 @@ public class Footprint extends Unit<Shape> {
     public int getNumberOfPages() {
         return 1;
     }
-
+    @Override
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow) {
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        //frame
+        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);
+        for (Shape shape : shapes) {
+            shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        
+        }
+        for (Shape shape : shapes) {
+            if ((shape instanceof Resizeable)&&shape.isSelected()) {                
+                  ((Resizeable) shape).drawControlShape(g2, viewportWindow,
+                                                      scalableTransformation.getCurrentTransformation());                
+            }
+        }
+        grid.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation());
+        //coordinate system
+        if(coordinateSystem!=null){
+           coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), -1);
+        }
+        //ruler
+        ruler.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);     
+    }
     @Override
     public int print(Graphics g, PageFormat pf, int page) {
         if (page > 0) { /* We have only one page, and 'page' is zero-based */

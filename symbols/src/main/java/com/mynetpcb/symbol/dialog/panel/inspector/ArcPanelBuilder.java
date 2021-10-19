@@ -73,8 +73,8 @@ public class ArcPanelBuilder extends  AbstractPanelBuilder<Shape> {
         leftField.setEnabled(arc.getResizingPoint()==null?false:true);  
         topField.setEnabled(arc.getResizingPoint()==null?false:true);
         
-        leftField.setText(toUnitX(arc.getResizingPoint()==null?0:arc.getResizingPoint().x));
-        topField.setText(toUnitY(arc.getResizingPoint()==null?0:arc.getResizingPoint().y)); 
+        leftField.setText(toUnitX(arc.getResizingPoint()==null?0:arc.getResizingPoint().x,1));
+        topField.setText(toUnitY(arc.getResizingPoint()==null?0:arc.getResizingPoint().y,1)); 
         
         thicknessField.setText(String.valueOf((arc.getThickness())));    
         widthField.setText(String.valueOf(Utilities.roundDouble(arc.getShape().width)));

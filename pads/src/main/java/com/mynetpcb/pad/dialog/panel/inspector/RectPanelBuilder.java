@@ -31,7 +31,7 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                layerCombo=new JComboBox(Layer.PCB_SYMBOL_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
+                layerCombo=new JComboBox(Layer.PCB_SYMBOL_OUTLINE_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);         
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
@@ -74,8 +74,8 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
         leftField.setEnabled(rect.getResizingPoint()==null?false:true);  
         topField.setEnabled(rect.getResizingPoint()==null?false:true);
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(rect.getThickness())));    
-        leftField.setText(toUnitX(rect.getResizingPoint()==null?0:Utilities.roundDouble(rect.getResizingPoint().x)));
-        topField.setText(toUnitY(rect.getResizingPoint()==null?0:Utilities.roundDouble(rect.getResizingPoint().y))); 
+        leftField.setText(toUnitX(rect.getResizingPoint()==null?0:(rect.getResizingPoint().x),5));
+        topField.setText(toUnitY(rect.getResizingPoint()==null?0:(rect.getResizingPoint().y),5)); 
         roundCornerField.setText(String.valueOf(Grid.COORD_TO_MM(rect.getRounding()))); 
         setSelectedItem(layerCombo, rect.getCopper());
         setSelectedIndex(fillCombo,(rect.getFill()==Shape.Fill.EMPTY?0:1));    

@@ -84,8 +84,8 @@ public class ArrowPanelBuilder extends AbstractPanelBuilder<Shape> {
         Point p = arrow.getResizingPoint();
         leftField.setEnabled(p == null ? false : true);
         topField.setEnabled(p == null ? false : true);
-        leftField.setText(toUnitX(p == null ? 0 : p.x));
-        topField.setText(toUnitY(p == null ? 0 : p.y));
+        leftField.setText(toUnitX(p == null ? 0 : p.x,1));
+        topField.setText(toUnitY(p == null ? 0 : p.y,1));
         headField.setText(String.valueOf(arrow.getHeadSize())); 
         thicknessField.setText(String.valueOf((arrow.getThickness())));
         setSelectedItem(fillCombo,(arrow.getFill().toString()));  

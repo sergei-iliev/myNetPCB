@@ -9,6 +9,7 @@ import com.mynetpcb.board.dialog.print.BoardPrintDialog;
 import com.mynetpcb.board.dialog.save.BoardImageExportDialog;
 import com.mynetpcb.board.dialog.save.BoardSaveDialog;
 import com.mynetpcb.board.dialog.save.GerberExportDialog;
+import com.mynetpcb.board.shape.BoardOutlineShapeFactory;
 import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.board.unit.BoardMgr;
@@ -110,7 +111,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
     private JToggleButton SolidRegionButton = new JToggleButton();
     private ButtonGroup group = new ButtonGroup();
     
-    private JPopupButton AddBoardButton=new JPopupButton(this);
+    private JPopupButton MainMenu=new JPopupButton(this);
     private JButton PrintButton = new JButton();
     private JButton SaveButton = new JButton();
     private JButton LoadButton = new JButton();
@@ -120,7 +121,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
     private JButton RotateRight=new JButton();  
     private JToggleButton DragHeand = new JToggleButton();
     private JButton PositionToCenter = new JButton();
-
+    private JPopupButton BoardOutline = new JPopupButton(this);
     
     private JPanel basePanel;
     private JTabbedPane tabbedPane = new JTabbedPane();
@@ -261,9 +262,9 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         
         //***construct Top Buttons Panel
         //AddBoardButton.setToolTipText("Add board");
-        AddBoardButton.setPreferredSize(new Dimension(35, 35));
-        AddBoardButton.setIcon(Utilities.loadImageIcon(this, "images/subject.png"));
-        AddBoardButton.addMenu("Create new boards project","Create").addMenu("Add board to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
+        MainMenu.setPreferredSize(new Dimension(35, 35));
+        MainMenu.setIcon(Utilities.loadImageIcon(this, "images/subject.png"));
+        MainMenu.addMenu("Create new boards project","Create").addMenu("Add board to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
             .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSubMenu("export","Gerber RS-274X/X2", "export.gerber").addSeparator().addMenu("Exit","exit");
     
         PrintButton.addActionListener(this);
@@ -313,8 +314,13 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         PositionToCenter.addActionListener(this);
         PositionToCenter.setIcon(Utilities.loadImageIcon(this, "images/tocenter.png"));
         
+        BoardOutline.setPreferredSize(new Dimension(35, 35));        
+        BoardOutline.setToolTipText("Add Board Outline");
+        BoardOutline.setIcon(Utilities.loadImageIcon(this, "images/board_outline.png"));
+        BoardOutline.addMenu("Rectangle Ouline","RectOutline").addMenu("Round Rectangle Outline","RoundRectOutline").addMenu("Circle Outline","CircleOutline");
+
         
-        NorthPanel.add(AddBoardButton);
+        NorthPanel.add(MainMenu);
         NorthPanel.add(PrintButton);
         NorthPanel.add(SaveButton);
         NorthPanel.add(LoadButton);
@@ -324,7 +330,8 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         NorthPanel.add(RotateRight); 
         NorthPanel.add(DragHeand);
         NorthPanel.add(PositionToCenter);
-
+        NorthPanel.add(BoardOutline);
+        
         //***Add buttons to group
         group.add(SelectionButton);       
         group.add(EllipseButton);
@@ -429,7 +436,24 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
             }
             boardComponent.clear();                              
         }
-        
+        if(e.getActionCommand().equals("RectOutline")) {
+        	BoardMgr.getInstance().deleteBoardOutlineShapes(boardComponent.getModel().getUnit());
+        	BoardOutlineShapeFactory.createRect(boardComponent.getModel().getUnit());
+        	boardComponent.Repaint();
+        	return;
+        }
+        if(e.getActionCommand().equals("CircleOutline")) {
+        	BoardMgr.getInstance().deleteBoardOutlineShapes(boardComponent.getModel().getUnit());
+        	BoardOutlineShapeFactory.createCircle(boardComponent.getModel().getUnit());
+        	boardComponent.Repaint();
+        	return;
+        }     
+        if(e.getActionCommand().equals("RoundRectOutline")) {
+        	BoardMgr.getInstance().deleteBoardOutlineShapes(boardComponent.getModel().getUnit());
+        	BoardOutlineShapeFactory.createRoundRect(boardComponent.getModel().getUnit());
+        	boardComponent.Repaint();
+        	return;
+        }          
         if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {  
             //rememeber current unit position
             if(boardComponent.getModel().getUnit()!=null){

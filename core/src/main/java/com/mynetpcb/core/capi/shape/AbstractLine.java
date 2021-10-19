@@ -396,22 +396,32 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         //transparent rect
         r.paint(g2, false);
       
-        if (this.isSelected()&&isControlPointVisible) {
-            Point pt=null;
-            if(resizingPoint!=null){
-                pt=resizingPoint.clone();
-                pt.scale(scale.getScaleX());
-                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-            }
-            for(Object p:r.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
-            }}
+//        if (this.isSelected()&&isControlPointVisible) {
+//            Point pt=null;
+//            if(resizingPoint!=null){
+//                pt=resizingPoint.clone();
+//                pt.scale(scale.getScaleX());
+//                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+//            }
+//            for(Object p:r.points){
+//              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+//            }}
         
     }
     @Override
     public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-        
-
+        Point pt=null;
+        if(resizingPoint!=null){
+            pt=resizingPoint.clone();
+            pt.scale(scale.getScaleX());
+            pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+        }
+        Polyline r=this.polyline.clone(); 
+        r.scale(scale.getScaleX());
+        r.move(-viewportWindow.getX(),- viewportWindow.getY());
+        for(Object p:r.points){
+          Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+        }        
     }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {

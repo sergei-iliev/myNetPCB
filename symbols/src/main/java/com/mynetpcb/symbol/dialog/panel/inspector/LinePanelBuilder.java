@@ -46,8 +46,8 @@ public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
         Point p=line.getResizingPoint();
         leftField.setEnabled(p==null?false:true);  
         topField.setEnabled(p==null?false:true);
-        leftField.setText(toUnitX(p==null?0:p.x));
-        topField.setText(toUnitY(p==null?0:p.y)); 
+        leftField.setText(toUnitX(p==null?0:p.x,1));
+        topField.setText(toUnitY(p==null?0:p.y,1)); 
         thicknessField.setText(String.valueOf((line.getThickness())));
     }
     

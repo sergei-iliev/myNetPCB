@@ -72,8 +72,8 @@ public class LabelPanelBuilder extends AbstractPanelBuilder<Shape>{
         GlyphLabel label=(GlyphLabel)getTarget();          
         textField.setText(label.getTexture().getText());
         rotateField.setText(String.valueOf(label.getTexture().getRotation())); 
-        leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x ));
-        topField.setText(toUnitY(label.getTexture().getAnchorPoint().y));
+        leftField.setText(toUnitX(label.getTexture().getAnchorPoint().x,5));
+        topField.setText(toUnitY(label.getTexture().getAnchorPoint().y,5));
         heightField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getSize())));
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(label.getTexture().getThickness())));            
         setSelectedItem(layerCombo, label.getCopper());

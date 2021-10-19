@@ -5,7 +5,7 @@
 <modelVersion>4.0.0</modelVersion>
 <groupId>com.mynetpcb</groupId>
 <artifactId>distribution</artifactId>
-<version>8.3</version>
+<version>8.4</version>
 <packaging>pom</packaging>
 
 <name>mynetpcb</name>
@@ -14,42 +14,42 @@
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>d2</artifactId>
-            <version>8.3</version>
+            <version>8.4</version>
         </dependency>
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>core</artifactId>
-            <version>8.3</version>
+            <version>8.4</version>
         </dependency>
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>gerber</artifactId>
-            <version>8.3</version>
+            <version>8.4</version>
         </dependency>		
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>pads</artifactId>
-            <version>8.3</version>
+            <version>8.4</version>
         </dependency>		
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>symbols</artifactId>
-            <version>8.3</version>
+            <version>8.4</version>
         </dependency>		
 		<dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>circuit</artifactId>
-            <version>8.3</version>
+            <version>8.4</version>
         </dependency>
 		<dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>board</artifactId>
-            <version>8.3</version>
+            <version>8.4</version>
         </dependency>	
 				<dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>mynetpcb</artifactId>
-            <version>8.3</version>
+            <version>8.4</version>
         </dependency>
 </dependencies>
 <build>

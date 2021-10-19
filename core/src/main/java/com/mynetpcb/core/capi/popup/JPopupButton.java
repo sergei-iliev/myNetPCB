@@ -19,7 +19,7 @@ public class JPopupButton extends JButton{
       this.popup = new JPopupMenu();
       this.addMouseListener(new MouseAdapter() {
              public void mousePressed(MouseEvent e) {
-                 popup.show(e.getComponent(), JPopupButton.this.getX() ,JPopupButton.this.getY() +JPopupButton.this.getBounds().height);
+                 popup.show(e.getComponent(), 0 ,JPopupButton.this.getY() +JPopupButton.this.getBounds().height);
              }
       });
     }

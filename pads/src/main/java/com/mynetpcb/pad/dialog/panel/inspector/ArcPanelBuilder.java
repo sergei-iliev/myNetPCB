@@ -31,7 +31,7 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                layerCombo=new JComboBox(Layer.PCB_SYMBOL_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
+                layerCombo=new JComboBox(Layer.PCB_SYMBOL_OUTLINE_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);        
         //***X        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
@@ -83,8 +83,8 @@ public class ArcPanelBuilder extends AbstractPanelBuilder<Shape>{
         leftField.setEnabled(arc.getResizingPoint()==null?false:true);  
         topField.setEnabled(arc.getResizingPoint()==null?false:true);
   
-        leftField.setText(toUnitX(arc.getResizingPoint()==null?0:arc.getResizingPoint().x));
-        topField.setText(toUnitY(arc.getResizingPoint()==null?0:arc.getResizingPoint().y)); 
+        leftField.setText(toUnitX(arc.getResizingPoint()==null?0:arc.getResizingPoint().x,5));
+        topField.setText(toUnitY(arc.getResizingPoint()==null?0:arc.getResizingPoint().y,5)); 
 
         
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(arc.getThickness()))); 

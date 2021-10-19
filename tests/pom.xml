@@ -6,10 +6,10 @@
     <parent>
         <groupId>com.mynetpcb</groupId>
         <artifactId>mynetpcb-project</artifactId>
-        <version>8.4</version>
+        <version>8.3</version>
     </parent>
 
-    <artifactId>gerber</artifactId>
+    <artifactId>tests</artifactId>
     <packaging>jar</packaging>
 	
 
@@ -17,18 +17,23 @@
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>core</artifactId>
-            <version>8.4</version>
+            <version>8.3</version>
         </dependency>
         <dependency>
             <groupId>com.mynetpcb</groupId>
             <artifactId>pads</artifactId>
-            <version>8.4</version>
-        </dependency>		
+            <version>8.3</version>
+        </dependency>
+		<dependency>
+            <groupId>com.mynetpcb</groupId>
+            <artifactId>board</artifactId>
+            <version>8.3</version>
+        </dependency>
     </dependencies>
 	
 	<build>
-	<finalName>gerber</finalName>
-         <plugins>
+	<finalName>tests</finalName>
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -61,8 +61,8 @@ public class RectPanelBuilder extends AbstractPanelBuilder<Shape>{
         leftField.setEnabled(rect.getResizingPoint()==null?false:true);  
         topField.setEnabled(rect.getResizingPoint()==null?false:true);
         thicknessField.setText(String.valueOf((rect.getThickness())));    
-        leftField.setText(toUnitX(rect.getResizingPoint()==null?0:Utilities.roundDouble(rect.getResizingPoint().x)));
-        topField.setText(toUnitY(rect.getResizingPoint()==null?0:Utilities.roundDouble(rect.getResizingPoint().y))); 
+        leftField.setText(toUnitX(rect.getResizingPoint()==null?0:Utilities.roundDouble(rect.getResizingPoint().x),1));
+        topField.setText(toUnitY(rect.getResizingPoint()==null?0:Utilities.roundDouble(rect.getResizingPoint().y),1)); 
         roundCornerField.setText(String.valueOf((rect.getRounding()))); 
         setSelectedIndex(fillCombo,(rect.getFill()==Shape.Fill.EMPTY?0:1));    
     }

@@ -244,15 +244,17 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        //frame
+        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);
         for (Shape shape : shapes) {
             shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),
                         compositeLayer.getLayerMaskID());
         
         }
         for (Shape shape : shapes) {
-            if (shape instanceof Resizeable) {
-                ((Resizeable) shape).drawControlShape(g2, viewportWindow,
-                                                      scalableTransformation.getCurrentTransformation());
+            if ((shape instanceof Resizeable)&&shape.isSelected()) {                
+                  ((Resizeable) shape).drawControlShape(g2, viewportWindow,
+                                                      scalableTransformation.getCurrentTransformation());                
             }
         }
         grid.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation());
@@ -262,8 +264,7 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         }
         //ruler
         ruler.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);
-        //frame
-        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);
+
 
     }
     @Override

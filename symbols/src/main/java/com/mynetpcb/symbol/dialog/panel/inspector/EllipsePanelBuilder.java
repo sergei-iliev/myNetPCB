@@ -62,8 +62,8 @@ public class EllipsePanelBuilder extends  AbstractPanelBuilder<Shape> {
         leftField.setEnabled(ellipse.getResizingPoint()==null?false:true);  
         topField.setEnabled(ellipse.getResizingPoint()==null?false:true);
         
-        leftField.setText(toUnitX(ellipse.getResizingPoint()==null?0:ellipse.getResizingPoint().x));
-        topField.setText(toUnitY(ellipse.getResizingPoint()==null?0:ellipse.getResizingPoint().y)); 
+        leftField.setText(toUnitX(ellipse.getResizingPoint()==null?0:ellipse.getResizingPoint().x,1));
+        topField.setText(toUnitY(ellipse.getResizingPoint()==null?0:ellipse.getResizingPoint().y,1)); 
         
         thicknessField.setText(String.valueOf((ellipse.getThickness())));    
         widthField.setText(String.valueOf(Utilities.roundDouble(ellipse.getShape().width)));

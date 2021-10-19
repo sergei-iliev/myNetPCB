@@ -28,7 +28,7 @@ public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                layerCombo=new JComboBox(Layer.PCB_SYMBOL_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
+                layerCombo=new JComboBox(Layer.PCB_SYMBOL_OUTLINE_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
@@ -55,8 +55,8 @@ public class LinePanelBuilder extends AbstractPanelBuilder<Shape>{
         Point p=line.getResizingPoint();
         leftField.setEnabled(p==null?false:true);  
         topField.setEnabled(p==null?false:true);
-        leftField.setText(toUnitX(p==null?0:p.x));
-        topField.setText(toUnitY(p==null?0:p.y)); 
+        leftField.setText(toUnitX(p==null?0:p.x,5));
+        topField.setText(toUnitY(p==null?0:p.y,5)); 
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(line.getThickness())));
         setSelectedItem(layerCombo, line.getCopper());
     }

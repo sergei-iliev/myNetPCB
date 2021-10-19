@@ -126,12 +126,12 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @param X value to convert
      * @return display value in user units
      */
-    protected String toUnitX(double value){        
+    protected String toUnitX(double value,int rounding){        
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
         if(Objects.isNull(coordinateSystem))
-           return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value)));      
+           return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value),rounding));      
         else    
-           return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().x)));      
+           return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().x),rounding));      
 
     }
     /**
@@ -139,12 +139,12 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
      * @param Y value to convert
      * @return display value in user units
      */
-    protected String toUnitY(double value){
+    protected String toUnitY(double value,int rounding){
         CoordinateSystem coordinateSystem =getComponent().getModel().getUnit().getCoordinateSystem();
         if(Objects.isNull(coordinateSystem))
-            return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value)));
+            return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value),rounding));
         else    
-            return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().y)));
+            return String.valueOf(Utilities.roundDouble(getComponent().getModel().getUnit().getGrid().COORD_TO_UNIT(value-coordinateSystem.getOrigin().y),rounding));
     }
     /**
      *Convert from unit coordinate to internal one,taking care of coordinate shift

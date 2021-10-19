@@ -149,7 +149,7 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         //***add action listeners
         SelectionButton.addActionListener(this);
         SelectionButton.setIcon(Utilities.loadImageIcon(this, 
-                                                      "/com/mynetpcb/core/images/selection.png"));
+                                                      "images/selection.png"));
         SelectionButton.setSelected(true);
         SelectionButton.setToolTipText("Select Symbol");
         SelectionButton.setPreferredSize(new Dimension(35, 35));
@@ -157,101 +157,101 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
 
 
         RectButton.addActionListener(this);
-        RectButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rect.png"));
+        RectButton.setIcon(Utilities.loadImageIcon(this, "images/rect.png"));
         RectButton.setToolTipText("Draw Rectangle");
         RectButton.setPreferredSize(new Dimension(35, 35));        
         
         EllipseButton.addActionListener(this);
         EllipseButton.setToolTipText("Draw Ellipse");
         EllipseButton.setIcon(Utilities.loadImageIcon(this, 
-                                                    "/com/mynetpcb/core/images/ellipse.png"));
+                                                    "images/ellipse.png"));
         EllipseButton.setPreferredSize(new Dimension(35, 35));
          
         ArcButton.addActionListener(this);
         ArcButton.setToolTipText("Draw Arc");
-        ArcButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/arc.png"));
+        ArcButton.setIcon(Utilities.loadImageIcon(this, "images/arc.png"));
         ArcButton.setPreferredSize(new Dimension(35, 35));
 
         LineButton.addActionListener(this);
         LineButton.setToolTipText("Draw Line");
-        LineButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/line.png"));
+        LineButton.setIcon(Utilities.loadImageIcon(this, "images/line.png"));
         LineButton.setPreferredSize(new Dimension(35, 35));
        
         
         ArrowButton.addActionListener(this);
         ArrowButton.setToolTipText("Draw ArrowLine");
         ArrowButton.setIcon(Utilities.loadImageIcon(this, 
-                                                    "/com/mynetpcb/core/images/arrowline.png"));
+                                                    "images/arrowline.png"));
         ArrowButton.setPreferredSize(new Dimension(35, 35));
         
         TriangleButton.addActionListener(this);
         TriangleButton.setToolTipText("Draw Triangle");
         TriangleButton.setIcon(Utilities.loadImageIcon(this, 
-                                                       "/com/mynetpcb/core/images/triangle.png"));
+                                                       "images/triangle.png"));
         TriangleButton.setPreferredSize(new Dimension(35, 35));
         
         PinButton.addActionListener(this);
         PinButton.setToolTipText("Add Pin");
-        PinButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/pin.png"));
+        PinButton.setIcon(Utilities.loadImageIcon(this, "images/pin.png"));
         PinButton.setPreferredSize(new Dimension(35, 35));
 
         LabelButton.addActionListener(this);
-        LabelButton.setIcon(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/label.png"));
+        LabelButton.setIcon(Utilities.loadImageIcon(this,"images/label.png"));
         LabelButton.setToolTipText("Add Label");
         LabelButton.setPreferredSize(new Dimension(35, 35));
     
         SnapToGridButton.addActionListener(this);
-        SnapToGridButton.setIcon(Utilities.loadImageIcon(this,"/com/mynetpcb/core/images/anchor.png"));
+        SnapToGridButton.setIcon(Utilities.loadImageIcon(this,"images/anchor.png"));
         SnapToGridButton.setToolTipText("Snap dragging point to grid");
         SnapToGridButton.setPreferredSize(new Dimension(35, 35));
 
         CoordButton.addActionListener(this);
         CoordButton.setToolTipText("Change coordinate origin");
-        CoordButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/origin.png"));
+        CoordButton.setIcon(Utilities.loadImageIcon(this, "images/origin.png"));
         CoordButton.setPreferredSize(new Dimension(35, 35));
         
         SaveButton.addActionListener(this);
         SaveButton.setToolTipText("Save Module");
         SaveButton.setPreferredSize(new Dimension(35, 35));
-        SaveButton.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/save.png"));
+        SaveButton.setIcon(Utilities.loadImageIcon(this, "images/save.png"));
         
 
         ScaleIn.addActionListener(this);
         ScaleIn.setToolTipText("Scale In");
         ScaleIn.setPreferredSize(new Dimension(35, 35));
-        ScaleIn.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/zoom_out.png"));
+        ScaleIn.setIcon(Utilities.loadImageIcon(this, "images/zoom_out.png"));
 
         ScaleOut.addActionListener(this);
         ScaleOut.setToolTipText("Scale Out");
         ScaleOut.setPreferredSize(new Dimension(35, 35));
-        ScaleOut.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/zoom_in.png"));
+        ScaleOut.setIcon(Utilities.loadImageIcon(this, "images/zoom_in.png"));
 
         RotateLeft.addActionListener(this);
         RotateLeft.setToolTipText("Rotate Left");
         RotateLeft.setPreferredSize(new Dimension(35, 35));
-        RotateLeft.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_left.png"));
+        RotateLeft.setIcon(Utilities.loadImageIcon(this, "images/rotate_left.png"));
         
         RotateRight.addActionListener(this);
         RotateRight.setToolTipText("Rotate Right");
         RotateRight.setPreferredSize(new Dimension(35, 35));
-        RotateRight.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/rotate_right.png"));        
+        RotateRight.setIcon(Utilities.loadImageIcon(this, "images/rotate_right.png"));        
         
         DragHeand.setPreferredSize(new Dimension(35, 35));
         DragHeand.setToolTipText("Drag canvas");
         DragHeand.addActionListener(this);
         DragHeand.setActionCommand("dragheand");
-        DragHeand.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/grab.png"));
+        DragHeand.setIcon(Utilities.loadImageIcon(this, "images/grab.png"));
         
         PositionToCenter.setPreferredSize(new Dimension(35, 35));
         PositionToCenter.setToolTipText("Position viewport to center");
         PositionToCenter.addActionListener(this);
-        PositionToCenter.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/tocenter.png"));
+        PositionToCenter.setIcon(Utilities.loadImageIcon(this, "images/tocenter.png"));
         
         AssignPackage.setPreferredSize(new Dimension(35, 35));
         AssignPackage.setToolTipText("Assign default package");
         AssignPackage.addActionListener(this);
         AssignPackage.setActionCommand("assignfootprint");
-        AssignPackage.setIcon(Utilities.loadImageIcon(this, "/com/mynetpcb/core/images/footprint.png"));
+        AssignPackage.setIcon(Utilities.loadImageIcon(this, "images/footprint.png"));
    
         NorthPanel.add(SaveButton);
         NorthPanel.add(ScaleIn);

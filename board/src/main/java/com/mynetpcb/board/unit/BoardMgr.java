@@ -13,6 +13,11 @@ import com.mynetpcb.pad.container.FootprintContainer;
 import com.mynetpcb.pad.shape.GlyphLabel;
 import com.mynetpcb.pad.unit.Footprint;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.UUID;
+
 import javax.swing.JFrame;
 
 public final class BoardMgr extends UnitMgr {
@@ -28,6 +33,15 @@ public final class BoardMgr extends UnitMgr {
             circuitMgr = new BoardMgr();
         }
         return circuitMgr;
+    }
+    public void deleteBoardOutlineShapes(Board board) {
+    	Collection<String> uuids=new ArrayList<>();
+    	for (Shape shape : board.getShapes()) {
+    		if((shape.getCopper().getLayerMaskID()&Layer.BOARD_OUTLINE_LAYER)!=0) {
+    		   uuids.add(shape.getUUID().toString());	
+    		}
+    	}
+    	uuids.forEach(u->board.delete(UUID.fromString(u)));
     }
     public PCBFootprint createPCBFootprint(Footprint footprint,Layer.Side activeSide) {
         PCBFootprint pcbfootprint = new PCBFootprint(Layer.LAYER_FRONT);

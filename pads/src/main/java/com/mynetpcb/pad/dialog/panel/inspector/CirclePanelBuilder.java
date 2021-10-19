@@ -34,7 +34,7 @@ public class CirclePanelBuilder extends AbstractPanelBuilder<Shape> {
         //***layer        
                 panel=new JPanel(); panel.setLayout(new BorderLayout()); 
                 label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(114,label.getHeight())); panel.add(label,BorderLayout.WEST);
-                layerCombo=new JComboBox(Layer.PCB_SYMBOL_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
+                layerCombo=new JComboBox(Layer.PCB_SYMBOL_OUTLINE_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
                 layoutPanel.add(panel);        
         //***Left        
                 panel=new JPanel(); panel.setLayout(new BorderLayout());
@@ -68,8 +68,8 @@ public class CirclePanelBuilder extends AbstractPanelBuilder<Shape> {
     public void updateUI() {
         Circle circle=(Circle)getTarget();  
         
-        leftField.setText(toUnitX(circle.getCenter().x ));
-        topField.setText(toUnitY(circle.getCenter().y )); 
+        leftField.setText(toUnitX(circle.getCenter().x,5));
+        topField.setText(toUnitY(circle.getCenter().y,5)); 
         
         thicknessField.setText(String.valueOf(Grid.COORD_TO_MM(circle.getThickness())));    
         widthField.setText(String.valueOf(Grid.COORD_TO_MM(circle.getRadius())));

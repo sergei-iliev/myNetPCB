@@ -48,8 +48,8 @@ public class SolidRegionPanelBuilder extends AbstractPanelBuilder<Shape>{
         Point p=region.getResizingPoint();
         leftField.setEnabled(p==null?false:true);  
         topField.setEnabled(p==null?false:true);
-        leftField.setText(toUnitX(p==null?0:p.x));
-        topField.setText(toUnitY(p==null?0:p.y));
+        leftField.setText(toUnitX(p==null?0:p.x,5));
+        topField.setText(toUnitY(p==null?0:p.y,5));
         setSelectedItem(layerCombo, getTarget().getCopper());
     }
     

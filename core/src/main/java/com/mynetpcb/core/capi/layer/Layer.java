@@ -25,9 +25,9 @@ public class Layer {
                 return Color.red;
             }
 
-            public Color getBoardColor() {
-                return BOARD_COLOR_FRONT;
-            }
+//            public Color getBoardColor() {
+//                return BOARD_COLOR_FRONT;
+//            }
         },
         BCu() {
             public String toString() {
@@ -46,9 +46,9 @@ public class Layer {
                 return Color.green;
             }
 
-            public Color getBoardColor() {
-                return BOARD_COLOR_BACK;
-            }
+//            public Color getBoardColor() {
+//                return BOARD_COLOR_BACK;
+//            }
         },
         Cu() {
             private Color c = new Color(128, 128, 0);
@@ -69,9 +69,9 @@ public class Layer {
                 return c;
             }
 
-            public Color getBoardColor() {
-                return Color.WHITE;
-            }
+//            public Color getBoardColor() {
+//                return Color.WHITE;
+//            }
         },
         FSilkS() {
             public String toString() {
@@ -90,9 +90,9 @@ public class Layer {
                 return Color.cyan;
             }
 
-            public Color getBoardColor() {
-                return BOARD_COLOR_FRONT;
-            }
+//            public Color getBoardColor() {
+//                return BOARD_COLOR_FRONT;
+//            }
         },
         BSilkS() {
             public String toString() {
@@ -111,9 +111,9 @@ public class Layer {
                 return Color.magenta;
             }
 
-            public Color getBoardColor() {
-                return BOARD_COLOR_BACK;
-            }
+//            public Color getBoardColor() {
+//                return BOARD_COLOR_BACK;
+//            }
         },
         BMask() {
             private Color c = new Color(128, 128, 0);
@@ -134,9 +134,9 @@ public class Layer {
                 return c;
             }
 
-            public Color getBoardColor() {
-                return BOARD_COLOR_BACK;
-            }
+//            public Color getBoardColor() {
+//                return BOARD_COLOR_BACK;
+//            }
         },
         FMask() {
             public String toString() {
@@ -155,32 +155,32 @@ public class Layer {
                 return Color.magenta;
             }
 
-            public Color getBoardColor() {
-                return BOARD_COLOR_BACK;
-            }
+//            public Color getBoardColor() {
+//                return BOARD_COLOR_BACK;
+//            }
         },
-        BoardEdgeCuts() {
-            private Color c = new Color(128, 128, 0);
+        BOutln() {
+           
 
             public String toString() {
-                return "Board.Edge.Cuts";
+                return "B.Outline";
             }
 
             public String getName() {
-                return "BoardEdgeCuts";
+                return "BOutln";
             }
 
             public int getLayerMaskID() {
-                return BOARD_EDGE_CUTS;
+                return BOARD_OUTLINE_LAYER;
             }
 
             public Color getColor() {
-                return c;
+                return Color.YELLOW;
             }
 
-            public Color getBoardColor() {
-                return Color.WHITE;
-            }
+//            public Color getBoardColor() {
+//                return Color.WHITE;
+//            }
         },        
         All() {
             private Color c = new Color(128, 128, 0);
@@ -201,9 +201,9 @@ public class Layer {
                 return c;
             }
 
-            public Color getBoardColor() {
-                return Color.WHITE;
-            }
+//            public Color getBoardColor() {
+//                return Color.WHITE;
+//            }
         },
         None() {
             public String toString() {
@@ -222,9 +222,9 @@ public class Layer {
                 return Color.BLACK;
             }
 
-            public Color getBoardColor() {
-                return Color.BLACK;
-            }
+//            public Color getBoardColor() {
+//                return Color.BLACK;
+//            }
         };
 
         public Color getBoardColor() {
@@ -268,8 +268,8 @@ public class Layer {
             if (layermask == SILKSCREEN_LAYER_BACK) {
                 return Copper.BSilkS;
             }
-            if(layermask==BOARD_EDGE_CUTS){
-                return Copper.BoardEdgeCuts;
+            if(layermask==BOARD_OUTLINE_LAYER){
+                return Copper.BOutln;
             }
             if ((layermask & (LAYER_BACK|LAYER_FRONT))!=0) {
                 return Copper.Cu;
@@ -301,7 +301,9 @@ public class Layer {
                 return Copper.FSilkS;
             } else if (layermaskId == SOLDERMASK_LAYER_BACK) {
                 return Copper.FMask;
-            }
+            } else if (layermaskId == BOARD_OUTLINE_LAYER) {
+                return Copper.BOutln;
+            } 
 
             return Copper.All;
         }
@@ -344,6 +346,10 @@ public class Layer {
 
     public static final Layer.Copper[] PCB_SYMBOL_LAYERS =
         Arrays.asList(Layer.Copper.FCu, Layer.Copper.BCu, Layer.Copper.BSilkS, Layer.Copper.FSilkS).toArray(new Copper[3]);
+ 
+    public static final Layer.Copper[] PCB_SYMBOL_OUTLINE_LAYERS =
+            Arrays.asList(Layer.Copper.FCu, Layer.Copper.BCu, Layer.Copper.BSilkS, Layer.Copper.FSilkS,Layer.Copper.BOutln).toArray(new Copper[3]);
+     
     
     public static final Layer.Copper[] GRAPHICS_LAYERS =
         Arrays.asList(Layer.Copper.BSilkS, Layer.Copper.FSilkS, Layer.Copper.BMask, Layer.Copper.FMask,
@@ -429,13 +435,13 @@ public class Layer {
     public final static int COMMENT_LAYER = (1 << COMMENT_N);
     public final static int ECO1_LAYER = (1 << ECO1_N);
     public final static int ECO2_LAYER = (1 << ECO2_N);
-    public final static int EDGE_LAYER = (1 << EDGE_N);
+    public final static int BOARD_OUTLINE_LAYER = (1 << EDGE_N);
     public final static int PTH_LAYER_DRILL = (1 << UNUSED_LAYER_29);
     public final static int NPTH_LAYER_DRILL = (1 << UNUSED_LAYER_30);
     
     public final static int LAYER_ALL =
         LAYER_BACK | LAYER_FRONT | ADHESIVE_LAYER_BACK | ADHESIVE_LAYER_FRONT | SILKSCREEN_LAYER_BACK |
-        SILKSCREEN_LAYER_FRONT | SOLDERMASK_LAYER_BACK | SOLDERMASK_LAYER_FRONT | BOARD_EDGE_CUTS;
+        SILKSCREEN_LAYER_FRONT | SOLDERMASK_LAYER_BACK | SOLDERMASK_LAYER_FRONT | BOARD_OUTLINE_LAYER ;
 
 }
 

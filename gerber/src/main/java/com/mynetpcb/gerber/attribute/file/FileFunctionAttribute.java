@@ -37,7 +37,10 @@ public class FileFunctionAttribute extends AbstractAttribute {
         } 
         if(layermask==Layer.SILKSCREEN_LAYER_BACK){
             return "Legend,Bot";
-        }                                
+        }  
+        if(layermask==Layer.BOARD_OUTLINE_LAYER) {
+        	return "Profile,NP*";
+        }
         throw new IllegalStateException("Unsupported layer: "+layermask);
     }
 }
