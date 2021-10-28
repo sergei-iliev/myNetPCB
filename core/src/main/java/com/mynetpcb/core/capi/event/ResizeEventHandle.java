@@ -51,6 +51,7 @@ public class ResizeEventHandle <U extends UnitComponent,S extends Shape> extends
         //***snap to grid
         if((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)==true){
          ((Resizeable)getTarget()).alignResizingPointToGrid(targetPoint);
+         getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
           getComponent().Repaint(); 
         }
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));  

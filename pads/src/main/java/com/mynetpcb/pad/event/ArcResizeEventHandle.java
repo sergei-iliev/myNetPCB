@@ -1,5 +1,6 @@
 package com.mynetpcb.pad.event;
 
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
@@ -29,7 +30,13 @@ public class ArcResizeEventHandle <U extends UnitComponent,S extends Shape>  ext
 
 	@Override
 	public void mouseScaledReleased(MouseScaledEvent e) {
-        getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));  
+        if((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)==true){
+            ((Resizeable)getTarget()).alignStartEndPointToGrid(isStartPoint);
+            getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
+            getComponent().Repaint(); 
+        }
+		getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));  
+		
 	}
 
 	@Override
@@ -48,7 +55,6 @@ public class ArcResizeEventHandle <U extends UnitComponent,S extends Shape>  ext
 	@Override
 	public void mouseScaledMove(MouseScaledEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

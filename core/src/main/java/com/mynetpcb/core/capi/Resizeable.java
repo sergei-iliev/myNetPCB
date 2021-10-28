@@ -57,5 +57,11 @@ public interface Resizeable {
     public default void resizeStartEndPoint(double xoffset,double yoffset,boolean isStartPoint) {
     	
     }
+    /**
+     * Arc complient      
+     */
+    public default void alignStartEndPointToGrid(boolean isStartPoint) {
+    	
+    }
 }
 

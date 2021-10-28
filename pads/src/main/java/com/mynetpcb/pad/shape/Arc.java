@@ -316,6 +316,8 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         this.arc.endAngle=end;
     	
     	
+    	this.resizingPoint=isStartPoint?this.arc.getStart():this.arc.getEnd();
+    	
     	
     }
     
@@ -392,7 +394,19 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     public void alignResizingPointToGrid(Point point) {
         // TODO Implement this method
     }
-
+    @Override
+    public void alignStartEndPointToGrid(boolean isStartPoint) {
+    	var A=this.arc.getStart().clone();
+    	var B=this.arc.getEnd().clone();
+    	
+    	if(isStartPoint) {
+    		var targetPoint=this.getOwningUnit().getGrid().positionOnGrid(A.x,A.y);
+    		this.resizeStartEndPoint(targetPoint.x-A.x,targetPoint.y-A.y, isStartPoint);
+    	}else {
+    		var targetPoint=this.getOwningUnit().getGrid().positionOnGrid(B.x,B.y);
+    		this.resizeStartEndPoint(targetPoint.x-B.x,targetPoint.y-B.y, isStartPoint);    		
+    	}
+    }
     @Override
     public String toXML() {
         return "<arc copper=\""+getCopper().getName()+"\"  x=\""+Utilities.roundDouble(this.arc.pc.x)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y)+"\" radius=\""+Utilities.roundDouble(this.arc.r)+"\"  thickness=\""+this.getThickness()+"\" start=\""+Utilities.roundDouble(this.arc.startAngle)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle)+"\" fill=\""+this.getFill().index+"\" />\r\n";
@@ -452,8 +466,14 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
             g2.setComposite(originalComposite); 
         }
         
-        if(this.isSelected()&&isControlPointVisible){            
-            Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),a.getStart(),a.getEnd(),a.getMiddle());
+        if(this.isSelected()&&isControlPointVisible){ 
+            Point pt=null;
+        	if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),a.getStart(),a.getEnd(),a.getMiddle(),a.getCenter());
         } 
     	
     }

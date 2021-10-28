@@ -8,17 +8,12 @@ import com.mynetpcb.board.shape.PCBTrack;
 import com.mynetpcb.board.shape.PCBVia;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.pad.Layer;
-import com.mynetpcb.gerber.CutOuts;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.gerber.Excelon;
 import com.mynetpcb.gerber.Gerber;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.GraphicsStateContext;
-import com.mynetpcb.gerber.capi.StringBufferEx;
-import com.mynetpcb.gerber.command.CommandDictionary;
-import com.mynetpcb.gerber.processor.aperture.ApertureCutOutProcessor;
-import com.mynetpcb.gerber.processor.command.CommandCutOutProcessor;
 import com.mynetpcb.pad.shape.Pad;
 
 import java.io.BufferedReader;
@@ -258,10 +253,10 @@ private String demo="c:\\sergei\\java\\myNetPCB\\deploy\\workspace\\boards\\demo
         }
     } 
         BoardContainer container=new BoardContainer();
-        container.Add(new Board(1, 1));
+        container.add(new Board(1, 1));
         
         //second board
-        container.Parse(xml.toString(),0);
+        container.parse(xml.toString(),0);
         GerberServiceContext gerberServiceContext=new GerberServiceContext();
         gerberServiceContext.setParameter(GerberServiceContext.FOOTPRINT_SHAPES_ON_SILKSCREEN,true);
         
