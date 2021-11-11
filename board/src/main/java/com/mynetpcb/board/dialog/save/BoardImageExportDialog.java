@@ -60,6 +60,7 @@ public class BoardImageExportDialog extends BoardPrintDialog implements ActionLi
                 return;
           }           
           unitComponent.get().export(targetFile.getText(), createContext());
+          this.close();
           return;
         }
         super.actionPerformed(e);

@@ -20,11 +20,11 @@ import javax.swing.border.TitledBorder;
 public class BoardPrintDialog extends PrintDialog {
 
    
-    protected JCheckBox fsilk, fmask, bmask, bsilk, topcb, bottomcb;
+    protected JCheckBox fsilk, fmask, bmask, bsilk, topcb, bottomcb,boutline;
     protected JCheckBox mirrorcb;
     
     public BoardPrintDialog(Window owner, UnitComponent unitComponent,String caption) {
-        super(owner, unitComponent,caption,"d:\\sergei");        
+        super(owner, unitComponent,caption,"");        
     }
 
     protected JPanel initDialogContent(){
@@ -82,19 +82,25 @@ public class BoardPrintDialog extends PrintDialog {
         TitledBorder title = BorderFactory.createTitledBorder(lowerEtched, "Layout");
         sidegroup.setBorder(title);
 
+        boutline = new JCheckBox("Board Outline");
+        sidegroup.add(boutline);
+        boutline.setSelected(true);
+        
         fsilk = new JCheckBox("Top Silkscreen");
         sidegroup.add(fsilk);
         fsilk.setSelected(true);
+                
+        //fmask = new JCheckBox("Top Soldermask");
+        //sidegroup.add(fmask);
+        //fmask.setSelected(true);
         
-        fmask = new JCheckBox("Top Soldermask");
-        sidegroup.add(fmask);
-        fmask.setSelected(true);
-        
-        bmask = new JCheckBox("Bottom Soldermask");
-        sidegroup.add(bmask);
+        //bmask = new JCheckBox("Bottom Soldermask");
+        //sidegroup.add(bmask);
 
         bsilk = new JCheckBox("Bottom Silkscreen");
         sidegroup.add(bsilk);
+        
+        
         sidegroup.setAlignmentY(JPanel.TOP_ALIGNMENT);
         return sidegroup;
     }
@@ -132,12 +138,16 @@ public class BoardPrintDialog extends PrintDialog {
         if(bsilk.isSelected()){
             layermaskid|=Layer.SILKSCREEN_LAYER_BACK;
         }
-        if(fmask.isSelected()){
-            layermaskid|=Layer.SOLDERMASK_LAYER_FRONT;
+        if(boutline.isSelected()){
+            layermaskid|=Layer.BOARD_OUTLINE_LAYER;
         }
-        if(bmask.isSelected()){
-            layermaskid|=Layer.SOLDERMASK_LAYER_BACK;
-        }
+        
+        //if(fmask.isSelected()){
+        //    layermaskid|=Layer.SOLDERMASK_LAYER_FRONT;
+        //}
+        //if(bmask.isSelected()){
+        //    layermaskid|=Layer.SOLDERMASK_LAYER_BACK;
+        //}
         
         
         context.setLayermaskId(layermaskid);
