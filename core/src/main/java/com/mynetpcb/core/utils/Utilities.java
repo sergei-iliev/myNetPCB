@@ -356,6 +356,14 @@ public final class Utilities {
             }
         }
     }
+    /**
+    a = line point 1; b = line point 2; c = point to check against.
+    If the formula is equal to 0, the points are colinear.
+    If the line is horizontal, then this returns true if the point is above the line.
+    **/
+    public static boolean isLeftPlane(Point a, Point b, Point c){
+       return ((c.x - a.x)*(b.y - a.y) - (c.y - a.y)*(b.x - a.x)) > 0;
+    }    
 //    public static boolean isSameNet(ClearanceSource source,Net target){
 //        if(Objects.equals(source.getNetName(), target.getNetName())&&(!("".equals(target.getNetName())))&&(!(null==(target.getNetName())))){
 //            return true;

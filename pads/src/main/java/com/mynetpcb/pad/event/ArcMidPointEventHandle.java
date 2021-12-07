@@ -18,7 +18,9 @@ public class ArcMidPointEventHandle<U extends UnitComponent,S extends Shape>  ex
     
     @Override
     public void mouseScaledPressed(MouseScaledEvent e) {
-
+    	((Arc)this.getTarget()).A=((Arc)this.getTarget()).getStartPoint().clone();
+    	((Arc)this.getTarget()).B=((Arc)this.getTarget()).getEndPoint().clone();
+    	((Arc)this.getTarget()).M=((Arc)this.getTarget()).getMiddlePoint().clone();    	
     }
 
     @Override

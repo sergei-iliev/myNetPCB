@@ -37,6 +37,8 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     private Point resizingPoint;
     private ArcType arcType;
     
+    public Point A,B,M;   //points to track arc vertices during mid point resize - it turns out arc.start,arc.end,arc.middle are different due to double math
+    
     public Arc(double x,double y,double r,double startAngle,double endAngle,int thickness,int layermaskid)   {
         super(thickness,layermaskid);
         this.displayName="Arc";
@@ -320,7 +322,67 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     	
     	
     }
-    
+    @Override
+    public void resize(double xoffset, double yoffset, Point point) {        
+
+    	//previous mid pont
+    	var oldM=this.M.clone();		
+        this.M=this.calculateResizingMidPoint(xoffset,yoffset);
+        
+         
+    	//mid point on line
+    	var m=new Point((this.A.x+this.B.x)/2,(this.A.y+this.B.y)/2);    		    	
+    	var C=this.M;  //projection
+    	var C1=m;
+        
+    	var y=C1.distanceTo(C);
+    	var x=C1.distanceTo(this.A);
+        
+    	var l=(x*x)/y;
+    	var lambda=(l-y)/2;
+
+    	var v=new Vector(C,C1);
+    	var norm=v.normalize();			  
+    	
+    	var a=C1.x +lambda*norm.x;
+    	var b=C1.y + lambda*norm.y;
+    	var center=new Point(a,b);
+        var r = center.distanceTo(this.A);
+    			        
+            
+        var startAngle =new Vector(center,this.A).slope();
+        var endAngle = new Vector(center, this.B).slope();
+    	
+    	var start = 360 - startAngle;		
+    	var end= (360-endAngle)-start;		
+    		
+    	if(this.arc.endAngle<0){  //negative extend
+    			if(end>0){			  
+    			  end=end-360;
+    			}
+    	}else{		//positive extend			
+    			if(end<0){ 					   
+    				end=360-Math.abs(end);
+    			}			
+    	}
+    	this.arc.getCenter().set(center.x,center.y);
+    	this.arc.r=r;
+    	this.arc.startAngle=start;
+    		
+        //check if M and oldM on the same plane	    
+    	if(Utilities.isLeftPlane(this.A,this.B,this.M)!=Utilities.isLeftPlane(this.A,this.B,oldM)){		     					
+    			if(this.arc.endAngle<0){  //negative extend
+    			 this.arc.endAngle=(360-end);
+    			}else{
+    			 this.arc.endAngle=-1*(360-end);	
+    			}						     		
+    	    }else{							
+    	    	this.arc.endAngle=end;			
+    	    }			   
+    	
+        this.resizingPoint=this.arc.getMiddle();
+    }
+/*    
     @Override
     public void resize(double xoffset, double yoffset, Point point) {        
          
@@ -386,9 +448,13 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
           this.arc.endAngle=end;
    
     }
+*/
     private Point calculateResizingMidPoint(double x, double y){
-            Line line=new Line(this.arc.getCenter(),this.arc.getMiddle());
-            return line.projectionPoint(new Point(x,y)); 
+            //Line line=new Line(this.arc.getCenter(),this.arc.getMiddle());
+            //return line.projectionPoint(new Point(x,y));
+    	    var middle=new Point((this.A.x+this.B.x)/2,(this.A.y+this.B.y)/2);
+    	    var line=new Line(middle,this.M);
+    	    return line.projectionPoint(new Point(x,y));
     }
     @Override
     public void alignResizingPointToGrid(Point point) {

@@ -269,9 +269,9 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         r.scale(scale.getScaleX());
         r.move(-viewportWindow.getX(),- viewportWindow.getY());
         
-        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
-        Composite originalComposite = g2.getComposite();                     
-        g2.setComposite(composite ); 
+        //AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
+        //Composite originalComposite = g2.getComposite();                     
+        //g2.setComposite(composite ); 
         
         g2.setStroke(new BasicStroke());
 
@@ -290,7 +290,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
               target.drawClearance(g2, viewportWindow, scale, this);
          }
         }
-        g2.setComposite(originalComposite);
+        //g2.setComposite(originalComposite);
                 
     }
     @Override

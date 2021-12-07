@@ -22,8 +22,10 @@ import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
 import com.mynetpcb.d2.shapes.Segment;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -260,6 +262,15 @@ public class PCBTrack extends TrackShape implements PCBShape{
             return;
         }
         
+        Composite originalComposite = g2.getComposite();
+        AlphaComposite composite;
+        if(((CompositeLayerable)this.getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())) {
+            composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);                                                        	  
+        }else {
+            composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f);                                                        	           
+        }
+        g2.setComposite(composite );
+        
         Box rect = this.polyline.box();
         rect.scale(scale.getScaleX());           
         if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
@@ -295,7 +306,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
 
         //transparent rect
         r.paint(g2, false);
-        
+        g2.setComposite(originalComposite);
     }
     
     @Override
