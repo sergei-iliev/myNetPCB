@@ -52,7 +52,7 @@ public class HolePanelBuilder extends AbstractPanelBuilder<Shape>{
         leftField.setText(toUnitX(getTarget().getCenter().x,5));
         topField.setText(toUnitY(getTarget().getCenter().y,5));
         widthField.setText(toUnit(hole.getInner().r*2));
-        //clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(((ClearanceTarget)getTarget()).getClearance())));
+        clearanceField.setText(String.valueOf(Grid.COORD_TO_MM(((ClearanceTarget)getTarget()).getClearance())));
     }
 
     @Override

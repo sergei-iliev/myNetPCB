@@ -97,11 +97,11 @@ public class PCBHole extends HoleShape implements PCBShape{
                                                           AffineTransform scale, T source) {
         
         //only if explicitly set
-        if(Utils.EQ(this.clearance,0)){
-            return;
-        }
+        //if(Utils.EQ(this.clearance,0)){
+        //    return;
+        //}
         Box rect = this.circle.box();
-        rect.grow(this.clearance);        
+        rect.grow(this.clearance!=0?this.clearance:source.getClearance());        
         
         //is via within copper area
         if(!(source.getBoundingShape().intersects(rect))){
