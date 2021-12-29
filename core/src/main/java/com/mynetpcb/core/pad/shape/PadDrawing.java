@@ -31,7 +31,7 @@ public interface PadDrawing extends Printable {
 
     public Box getBoundingShape();
 
-    public <D extends PadDrawing> D copy(Shape pad);
+    public <D extends PadDrawing,P extends PadShape> D copy(P pad);
 
     public boolean contains(Point pt);
 
