@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Hexagon;
@@ -18,10 +19,10 @@ import java.awt.geom.AffineTransform;
 import java.lang.ref.WeakReference;
 
 public class PolygonShape implements PadDrawing {
-    private WeakReference<Shape> padRef;
+    private WeakReference<PadShape> padRef;
     private Hexagon hexagon;
 
-    public PolygonShape(double x, double y, double width, Shape pad) {
+    public PolygonShape(double x, double y, double width, PadShape pad) {
         padRef = new WeakReference<>(pad);
         this.hexagon=new Hexagon(x,y,width);
     }
@@ -106,7 +107,7 @@ public class PolygonShape implements PadDrawing {
     }
 
     @Override
-    public PolygonShape copy(Shape shape) {
+    public PolygonShape copy(PadShape shape) {
         PolygonShape copy=new PolygonShape(0,0,0,shape);
         copy.hexagon=this.hexagon.clone(); 
         return copy; 

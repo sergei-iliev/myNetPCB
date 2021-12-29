@@ -1,15 +1,19 @@
 package com.mynetpcb.pad.shape.pad;
 
 import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
+import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Rectangle;
+import com.mynetpcb.pad.shape.Pad;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -18,10 +22,10 @@ import java.awt.geom.AffineTransform;
 import java.lang.ref.WeakReference;
 
 public class RectangularShape implements PadDrawing {
-        private WeakReference<Shape> padRef; 
+        private WeakReference<PadShape> padRef; 
         private Rectangle rect;
         
-    public RectangularShape(double x,double y,double width,double height,Shape pad){
+    public RectangularShape(double x,double y,double width,double height,PadShape pad){
         padRef=new WeakReference<>(pad);
         this.rect=new Rectangle(x-width/2,y-height/2,width,height);
     }
@@ -61,6 +65,10 @@ public class RectangularShape implements PadDrawing {
         r.move(-viewportWindow.getX(),- viewportWindow.getY());
         g2.setColor(Color.BLACK);
         r.paint(g2,true);
+        
+        if(this.padRef.get().isSameNet(source)&&source.getPadConnection()==PadShape.PadConnection.THERMAL) {
+        	
+        }
 
     }
 
@@ -106,7 +114,7 @@ public class RectangularShape implements PadDrawing {
     }
 
     @Override
-    public RectangularShape copy(Shape pad) {
+    public RectangularShape copy(PadShape pad) {
         RectangularShape copy=new RectangularShape(0,0,0,0,pad);
         copy.rect=this.rect.clone(); 
         return copy;  
@@ -147,5 +155,7 @@ public class RectangularShape implements PadDrawing {
                 i++;
             }            
         }
-    } 
+    }
+
+	 
 }

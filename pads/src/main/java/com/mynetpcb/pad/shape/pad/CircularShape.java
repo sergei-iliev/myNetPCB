@@ -20,16 +20,16 @@ import java.awt.geom.AffineTransform;
 import java.lang.ref.WeakReference;
 
 public class CircularShape implements PadDrawing {
-    private WeakReference<Shape> padRef;
+    private WeakReference<PadShape> padRef;
     private Circle circle;
 
-    public CircularShape(double x, double y, double width, Shape pad) {
+    public CircularShape(double x, double y, double width, PadShape pad) {
         padRef = new WeakReference<>(pad);
         this.circle = new Circle(new Point(x, y), width / 2);
     }
 
     @Override
-    public CircularShape copy(Shape pad) {
+    public CircularShape copy(PadShape pad) {
         CircularShape copy = new CircularShape(this.circle
                                                    .pc
                                                    .x, this.circle

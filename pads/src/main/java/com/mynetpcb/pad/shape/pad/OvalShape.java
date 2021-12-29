@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
+import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
@@ -18,15 +19,15 @@ import java.awt.geom.AffineTransform;
 import java.lang.ref.WeakReference;
 
 public class OvalShape implements PadDrawing {
-    private WeakReference<Shape> padRef;
+    private WeakReference<PadShape> padRef;
     private Obround obround;
 
-    public OvalShape(double x, double y, double width, double height, Shape pad) {
+    public OvalShape(double x, double y, double width, double height, PadShape pad) {
         padRef = new WeakReference<>(pad);
         this.obround = new Obround(x,y, width, height);
     }
 
-    public OvalShape copy(Shape pad) {
+    public OvalShape copy(PadShape pad) {
         OvalShape copy = new OvalShape(this.obround
                                            .getCenter()
                                            .x, obround.getCenter().y, 0, 0, pad);
