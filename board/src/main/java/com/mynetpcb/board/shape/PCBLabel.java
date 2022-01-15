@@ -6,6 +6,8 @@ import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.layer.ClearanceTarget;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.glyph.GlyphTexture;
@@ -16,7 +18,9 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.pad.shape.GlyphLabel;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -32,7 +36,19 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget{
     public void mirror(Line line) {
         texture.mirror(line);
     }
-    
+
+//    @Override
+//    public int getDrawingLayerPriority() {
+//   	 	if(!this.copper.isCopperLayer()) {
+//		 return super.getDrawingLayerPriority();
+//   	 	}
+//	  	if(((CompositeLayerable)getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())){
+//   	 		return 4;
+//   	 	}else{
+//   	 		return 3; 
+//   	 	}           
+//    }
+
     @Override
     public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
                                                           AffineTransform scale, T source) {
@@ -66,16 +82,36 @@ public class PCBLabel extends GlyphLabel implements PCBShape,ClearanceTarget{
 
 
     }
-
     @Override
-    public void setClearance(int i) {
-        // TODO Implement this method
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {        
+        Box rect = this.texture.getBoundingShape();
+        rect.scale(scale.getScaleX());
+        if (!rect.intersects(viewportWindow)) {
+            return;
+        }
+        Composite originalComposite = g2.getComposite();
+        AlphaComposite composite;
+        if(((CompositeLayerable)this.getOwningUnit()!=null)&&(((CompositeLayerable)this.getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID()))) {
+            composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);                                                        	  
+        }else {
+            composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f);                                                        	           
+        }                                               
+        g2.setComposite(composite );             
+        
+        texture.setFillColor((isSelected()?Color.GRAY:this.copper.getColor()));
+        texture.paint(g2, viewportWindow, scale,copper.getLayerMaskID());
+        
+        g2.setComposite(originalComposite);
     }
 
     @Override
-    public int getClearance() {
-        // TODO Implement this method
-        return 0;
+    public void setClearance(int clearance) {
+        this.clearance=clearance;
+    }
+
+    @Override
+    public int getClearance() {        
+        return clearance;
     }
 
     public AbstractMemento getState(MementoType operationType) {

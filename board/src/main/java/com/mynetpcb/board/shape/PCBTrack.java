@@ -257,11 +257,12 @@ public class PCBTrack extends TrackShape implements PCBShape{
         
     }
     @Override
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
-        if((this.getCopper().getLayerMaskID()&layermask)==0){
-            return;
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {                     
+        Box rect = this.polyline.box();
+        rect.scale(scale.getScaleX());           
+        if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
+                return;
         }
-        
         Composite originalComposite = g2.getComposite();
         AlphaComposite composite;
         if(((CompositeLayerable)this.getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())) {
@@ -271,11 +272,6 @@ public class PCBTrack extends TrackShape implements PCBShape{
         }
         g2.setComposite(composite );
         
-        Box rect = this.polyline.box();
-        rect.scale(scale.getScaleX());           
-        if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
-                return;
-        }
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
         
         Polyline r=this.polyline.clone();   
@@ -304,7 +300,6 @@ public class PCBTrack extends TrackShape implements PCBShape{
         double wireWidth = thickness * scale.getScaleX();
         g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
 
-        //transparent rect
         r.paint(g2, false);
         g2.setComposite(originalComposite);
     }

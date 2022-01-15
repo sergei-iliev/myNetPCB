@@ -16,6 +16,8 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
+import com.mynetpcb.d2.shapes.Polyline;
+import com.mynetpcb.d2.shapes.RoundRectangle;
 import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.AlphaComposite;
@@ -136,7 +138,23 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
                 this.rotate=alpha;
                 this.polygon.rotate(angle,origin);
     }
-                                                                                 
+    @Override
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {                               
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+           
+            Polygon r=this.polygon.clone();   
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(),- viewportWindow.getY());
+            for(var p:r.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+            }                                               
+    }
+
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {
         if((this.copper.getLayerMaskID()&layersmask)==0){
@@ -174,11 +192,7 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
         }
         
         g2.setComposite(originalComposite);
-        
-        if (this.isSelected()&&isControlPointVisible) {
-            r.points.forEach(p->Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p));        
-        }            
-        
+                
     }
     @Override
     public void print(Graphics2D g2,PrintContext printContext,int layermask) {

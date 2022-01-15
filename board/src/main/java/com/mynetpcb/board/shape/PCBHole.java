@@ -163,24 +163,19 @@ public class PCBHole extends HoleShape implements PCBShape{
     }
 
     @Override
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
-        //is this my layer mask
-        if((this.getCopper().getLayerMaskID()&layermask)==0){
-            return;
-        }
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {        
         Box rect = this.circle.box();
         rect.scale(scale.getScaleX());
         if (!rect.intersects(viewportWindow)) {
                 return;
-        }
-        g2.setColor(isSelected() ? Color.GRAY : fillColor);
+        }        
         
         Circle  c=this.circle.clone();
         c.grow(this.thickness);
         c.scale(scale.getScaleX());
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
 
-        //g2.setStroke(new BasicStroke((float)(thickness*scale.getScaleX())));            
+                  
         g2.setColor(isSelected() ? Color.GRAY : fillColor);        
         c.paint(g2,true);
         

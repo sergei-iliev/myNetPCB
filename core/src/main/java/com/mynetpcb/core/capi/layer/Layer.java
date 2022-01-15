@@ -249,7 +249,10 @@ public class Layer {
         }
 
         public static Copper resolve(int layermask) {
-            if (layermask == SILKSCREEN_LAYER_FRONT) {
+        	if (layermask == LAYER_ALL) {
+                return Copper.All;
+            }
+        	if (layermask == SILKSCREEN_LAYER_FRONT) {
                 return Copper.FSilkS;
             }
             if (layermask == SOLDERMASK_LAYER_FRONT) {
@@ -274,9 +277,7 @@ public class Layer {
             if ((layermask & (LAYER_BACK|LAYER_FRONT))!=0) {
                 return Copper.Cu;
             }             
-            if (layermask == (LAYER_ALL)) {
-                return Copper.All;
-            } else {
+            else {
                 return Copper.None;
             }
 

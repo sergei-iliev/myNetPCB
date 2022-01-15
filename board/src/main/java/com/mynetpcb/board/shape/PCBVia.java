@@ -116,9 +116,9 @@ public class PCBVia extends ViaShape implements PCBShape{
                                                           AffineTransform scale, T source) {
         
         
-//        if(Utilities.isSameNet(source, this)){
-//            return;
-//        } 
+    	if(isSameNet(source)){
+            return;
+        }
         
         Box rect = this.outer.box();
         rect.grow(this.clearance!=0?this.clearance:source.getClearance());        
@@ -164,6 +164,13 @@ public class PCBVia extends ViaShape implements PCBShape{
     public Point getCenter() {
         return this.inner.pc;
     }
+    public String getNetName(){
+        return net;
+    }    
+    @Override
+    public void setNetName(String net){
+        this.net=net;
+    }    
     @Override
     public void setClearance(int clearance) {
         this.clearance=clearance;
@@ -200,12 +207,7 @@ public class PCBVia extends ViaShape implements PCBShape{
     }
 
     @Override
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
-        //is this my layer mask
-        if((this.getCopper().getLayerMaskID()&layermask)==0){
-            return;
-        }
-
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {        
         Box rect = this.outer.box();
         rect.scale(scale.getScaleX());
         if (!rect.intersects(viewportWindow)) {
@@ -225,12 +227,10 @@ public class PCBVia extends ViaShape implements PCBShape{
         c.pc.set(inner.pc.x, inner.pc.y);
         c.scale(scale.getScaleX());
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
-        c.paint(g2, true);
-        //if(this.isSelected()){                          
-        //   Utilities.drawCrosshair(g2,  null,(int)(selectionRectWidth*scale.getScaleX()),c.getCenter());
-        //}
+        c.paint(g2, true);        
 
     }
+    
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {
           g2.setColor(printContext.getBackgroundColor()==Color.BLACK?Color.WHITE:Color.BLACK);                

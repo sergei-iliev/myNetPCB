@@ -392,21 +392,8 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         
         double wireWidth = thickness * scale.getScaleX();
         g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-
-        //transparent rect
-        r.paint(g2, false);
-      
-//        if (this.isSelected()&&isControlPointVisible) {
-//            Point pt=null;
-//            if(resizingPoint!=null){
-//                pt=resizingPoint.clone();
-//                pt.scale(scale.getScaleX());
-//                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-//            }
-//            for(Object p:r.points){
-//              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
-//            }}
-        
+       
+        r.paint(g2, false);              
     }
     @Override
     public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {

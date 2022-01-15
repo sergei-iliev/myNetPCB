@@ -1,6 +1,7 @@
 package com.mynetpcb.board.unit;
 
 import com.mynetpcb.board.shape.BoardShapeFactory;
+import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.core.board.Net;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
@@ -246,10 +247,11 @@ public class Board extends Unit<Shape> implements CompositeLayerable {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         //frame
         frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);
-        for (Shape shape : shapes) {
-            shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),
-                        compositeLayer.getLayerMaskID());
-        
+        for (Shape shape : shapes) {        	
+        	if((shape instanceof PCBFootprint)||(shape.getCopper().getLayerMaskID()&compositeLayer.getLayerMaskID())!=0){
+        		shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),
+                        compositeLayer.getLayerMaskID());           
+            }        	
         }
         for (Shape shape : shapes) {
             if ((shape instanceof Resizeable)&&shape.isSelected()) {                

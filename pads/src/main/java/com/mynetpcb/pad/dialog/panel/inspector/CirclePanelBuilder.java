@@ -81,13 +81,11 @@ public class CirclePanelBuilder extends AbstractPanelBuilder<Shape> {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==fillCombo){
-           getTarget().setFill(Shape.Fill.values()[fillCombo.getSelectedIndex()]);
-           getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));          
+        super.actionPerformed(e);
+    	if(e.getSource()==fillCombo){
+           getTarget().setFill(Shape.Fill.values()[fillCombo.getSelectedIndex()]);                    
         }
-        if(e.getSource()==layerCombo){
-            getTarget().setCopper((Layer.Copper)layerCombo.getSelectedItem());
-        }        
+    	getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));       
         this.getComponent().Repaint();
     }
     

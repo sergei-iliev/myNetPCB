@@ -32,7 +32,7 @@ import org.w3c.dom.Node;
 public class RoundRect extends Shape implements Resizeable,Fillable, Externalizable{
   
     private Point resizingPoint;
-    private RoundRectangle roundRect;
+    protected RoundRectangle roundRect;
     
     public RoundRect(double x,double y,double width,double height,int arc,int thickness,int layermaskid) {
         super(thickness,layermaskid);
@@ -113,6 +113,24 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
         this.roundRect.mirror(line);        
     }
     @Override
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {                               
+            Point pt=null;
+            if(resizingPoint!=null){
+                pt=resizingPoint.clone();
+                pt.scale(scale.getScaleX());
+                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            }
+            RoundRectangle r=this.roundRect.clone();   
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+            for(var p:r.points){
+              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+            }        
+        
+    }
+    
+    @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         if((this.getCopper().getLayerMaskID()&layermask)==0){
             return;
@@ -132,30 +150,14 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
         
         if (fill == Fill.EMPTY) { //framed
             double wireWidth = thickness * scale.getScaleX();
-            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-            //transparent rect
+            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));           
             r.paint(g2, false);
-        } else { //filled
-            //AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
-            //Composite originalComposite = g2.getComposite();                     
-            //g2.setComposite(composite ); 
+        } else { //filled            
             r.paint(g2,true);
-            //g2.setComposite(originalComposite);
+            
         }
 
         
-        if (this.isSelected()&&isControlPointVisible) {
-            Point pt=null;
-            if(resizingPoint!=null){
-                pt=resizingPoint.clone();
-                pt.scale(scale.getScaleX());
-                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-            }
-            for(Object p:r.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
-            }
-  
-        }
     }
 
     @Override

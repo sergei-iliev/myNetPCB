@@ -231,9 +231,11 @@ public class Pad extends PadShape{
                                                           AffineTransform scale, T source) {
         
         //is different layer and SMD -> no clearance
+    	
         if ((source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {           
                return; //not on the same layer
         }
+        
         //no need to draw clearance if not on active side
         //if(this.copper.getLayerMaskID()!=Layer.Copper.Cu.getLayerMaskID()){
         // if( ((CompositeLayerable)((CopperAreaShape)source).getOwningUnit()).getActiveSide() !=Layer.Side.resolve(this.copper.getLayerMaskID())){
@@ -241,7 +243,7 @@ public class Pad extends PadShape{
         // }
         //}
         
-        //2. is same net 
+        //2. is same net         
         if(isSameNet(source)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
             return;
         }
@@ -252,7 +254,10 @@ public class Pad extends PadShape{
         if(!source.getBoundingShape().intersects(rect)){
           return; 
         }  
+        g2.setClip(source.getClippingRegion());
         shape.drawClearance(g2, viewportWindow, scale, source);
+        g2.setClip(null);
+        
     }
     @Override
     public <T extends ClearanceSource> void printClearance(Graphics2D g2, PrintContext printContext,

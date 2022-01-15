@@ -247,10 +247,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         }             
     }
     @Override
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {
-        if((this.copper.getLayerMaskID()&layersmask)==0){
-            return;
-        }
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layersmask) {        
         Box rect = this.polygon.box();
         rect.scale(scale.getScaleX());           
         if (!this.isFloating()&& (!rect.intersects(viewportWindow))) {
@@ -269,19 +266,26 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         r.scale(scale.getScaleX());
         r.move(-viewportWindow.getX(),- viewportWindow.getY());
         
-        //AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
-        //Composite originalComposite = g2.getComposite();                     
-        //g2.setComposite(composite ); 
         
         g2.setStroke(new BasicStroke());
 
-        //transparent rect
+        Composite originalComposite = g2.getComposite();
+        AlphaComposite composite;
+        if(((CompositeLayerable)this.getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID())) {
+            composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);                                                        	  
+        }else {
+            composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f);                                                        	           
+        }
+        g2.setComposite(composite );
+        
+        g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
+        
         if (this.isFloating()) {
           r.paint(g2, false);
         }else{
           r.paint(g2, true);  
         }
-        
+        g2.setComposite(originalComposite);
         if(this.fill==Fill.FILLED){
         //draw clearence background
          Collection<ClearanceTarget> targets=getOwningUnit().getShapes(ClearanceTarget.class);
@@ -290,7 +294,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
               target.drawClearance(g2, viewportWindow, scale, this);
          }
         }
-        //g2.setComposite(originalComposite);
+        
                 
     }
     @Override
@@ -346,10 +350,11 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     public int getClearance() {    
         return clearance;
     }
+    @Override
     public String getNetName(){
         return net;
     }
-    
+    @Override
     public void setNetName(String net){
         this.net=net;
     }

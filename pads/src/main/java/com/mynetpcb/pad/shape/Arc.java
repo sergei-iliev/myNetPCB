@@ -33,8 +33,8 @@ import org.w3c.dom.Node;
 
 public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Externalizable {
     
-    private com.mynetpcb.d2.shapes.Arc arc;
-    private Point resizingPoint;
+    protected com.mynetpcb.d2.shapes.Arc arc;
+    protected Point resizingPoint;
     private ArcType arcType;
     
     public Point A,B,M;   //points to track arc vertices during mid point resize - it turns out arc.start,arc.end,arc.middle are different due to double math
@@ -52,6 +52,20 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         copy.arc=this.arc.clone();
         
         return copy;
+    }
+    @Override
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {        
+        Point pt=null;
+        if(resizingPoint!=null){
+            pt=resizingPoint.clone();
+            pt.scale(scale.getScaleX());
+            pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+        }        
+        com.mynetpcb.d2.shapes.Arc a=this.arc.clone();
+        a.scale(scale.getScaleX());
+        a.move(-viewportWindow.getX(),- viewportWindow.getY());        
+        Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),a.getStart(),a.getEnd(),a.getMiddle(),a.getCenter());
+                            
     }
     
     @Override
@@ -530,18 +544,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
             g2.setComposite(composite ); 
             a.paint(g2,true);
             g2.setComposite(originalComposite); 
-        }
-        
-        if(this.isSelected()&&isControlPointVisible){ 
-            Point pt=null;
-        	if(resizingPoint!=null){
-                pt=resizingPoint.clone();
-                pt.scale(scale.getScaleX());
-                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-            }
-            Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),a.getStart(),a.getEnd(),a.getMiddle(),a.getCenter());
-        } 
-    	
+        }            	
     }
     @Override
     public void print(Graphics2D g2,PrintContext printContext,int layermask) {

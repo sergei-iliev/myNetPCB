@@ -16,6 +16,7 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.unit.Footprint;
 
@@ -31,12 +32,12 @@ import org.w3c.dom.Node;
 
 public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,Externalizable{
     
-    private com.mynetpcb.d2.shapes.Circle circle;
-    private Point resizingPoint;
+    protected com.mynetpcb.d2.shapes.Circle circle;
+    protected Point resizingPoint;
     
     public Circle(double x,double y,double r,int thickness,int layermaskId) {
 		super( thickness,layermaskId);
-                this.displayName="Circle";
+        this.displayName="Circle";
 		this.selectionRectWidth=3000;
 		this.resizingPoint=null;
 		this.circle=new com.mynetpcb.d2.shapes.Circle(new Point(x,y),r);
@@ -164,14 +165,13 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
     }
 
     @Override
-    public Point getResizingPoint() {
-        // TODO Implement this method
-        return null;
+    public Point getResizingPoint() {       
+        return resizingPoint;
     }
 
     @Override
     public void setResizingPoint(Point point) {
-        // TODO Implement this method
+    	this.resizingPoint=point;
     }
 
     @Override
@@ -262,16 +262,27 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
             g2.setComposite(composite );             
             c.paint(g2,true);
             g2.setComposite(originalComposite);
-        }
-                
-        if(this.isSelected()&&isControlPointVisible){            
-            Point[] points=c.vertices();
-            for(Point p:points){
-                Utilities.drawCrosshair(g2,  resizingPoint,(int)(selectionRectWidth*scale.getScaleX()),p);
-            }            
-        } 
+        }                
 
     }
+    
+    @Override
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {        
+        Point pt=null;
+        if(resizingPoint!=null){
+            pt=resizingPoint.clone();
+            pt.scale(scale.getScaleX());
+            pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+        }        
+        com.mynetpcb.d2.shapes.Circle c=this.circle.clone();
+        c.scale(scale.getScaleX());
+        c.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+        for(Point p:c.vertices()){
+            Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p);
+        }                    
+    }
+    
     @Override
     public void print(Graphics2D g2,PrintContext printContext,int layermask) {
         if((this.getCopper().getLayerMaskID()&layermask)==0){
