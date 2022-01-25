@@ -587,21 +587,29 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
 //        }
     }
 */
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow) {
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow) {        
+           
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        for (S shape : shapes) {
+        //frame
+        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);
+        for (Shape shape : shapes) {
             shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
+        
+        }
+        for (Shape shape : shapes) {
+            if ((shape instanceof Resizeable)&&shape.isSelected()) {                
+                  ((Resizeable) shape).drawControlShape(g2, viewportWindow,
+                                                      scalableTransformation.getCurrentTransformation());                
+            }
         }
         grid.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation());
         //coordinate system
-        if(this.coordinateSystem!=null){
+        if(coordinateSystem!=null){
            coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
         }
         //ruler
-        ruler.paint(g2, viewportWindow,  scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
-        //frame
-        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
-                
+        ruler.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);     
+        
     }
 
     @Override

@@ -76,29 +76,6 @@ public class Footprint extends Unit<Shape> {
         return 1;
     }
     @Override
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow) {
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        //frame
-        frame.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);
-        for (Shape shape : shapes) {
-            shape.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(),Layer.LAYER_ALL);
-        
-        }
-        for (Shape shape : shapes) {
-            if ((shape instanceof Resizeable)&&shape.isSelected()) {                
-                  ((Resizeable) shape).drawControlShape(g2, viewportWindow,
-                                                      scalableTransformation.getCurrentTransformation());                
-            }
-        }
-        grid.Paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation());
-        //coordinate system
-        if(coordinateSystem!=null){
-           coordinateSystem.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), -1);
-        }
-        //ruler
-        ruler.paint(g2, viewportWindow, scalableTransformation.getCurrentTransformation(), Layer.LAYER_ALL);     
-    }
-    @Override
     public int print(Graphics g, PageFormat pf, int page) {
         if (page > 0) { /* We have only one page, and 'page' is zero-based */
             return NO_SUCH_PAGE;

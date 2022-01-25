@@ -327,7 +327,15 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
         else
         return null;
     }
-
+    @Override
+    public boolean isClicked(double x, double y) {
+    	for(Shape shape:this.shapes) {
+    		if(shape.isClicked(x, y)) {
+    			return true;
+    		}
+    	}
+    	return super.isClicked(x, y);
+    }
     @Override
     public boolean isClickedTexture(double x, double y) {
         return this.getClickedTexture(x, y)!=null;

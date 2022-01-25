@@ -315,8 +315,9 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
             this.openInternalFrame(new BoardInternalFrame());
         }   
         if(event.getSource()==symbolButton){
-            //this.openInternalFrame(new SymbolInternalFrame());
-        	try {
+            this.openInternalFrame(new SymbolInternalFrame());
+        	/*
+            try {
         	 Socket clientSocket = new Socket("192.168.8.106", 9100);
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));                          
@@ -340,6 +341,7 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
         	}catch(Exception e) {
         		e.printStackTrace();
         	}
+        	*/
         }
         if(event.getSource()==circuitButton){
             this.openInternalFrame(new CircuitInternalFrame());

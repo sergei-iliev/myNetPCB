@@ -74,7 +74,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
         case Mode.WIRE_MODE:
             Cursor cursor =
                     Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),
-                                                                                         "/com/mynetpcb/core/images/cursor_cross.png").getImage(),
+                                                                                         "images/cursor_cross.png").getImage(),
                                                                    new java.awt.Point(16,
                                                                              16),
                                                                    "Wire");
@@ -88,7 +88,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
         case Mode.BUS_MODE:
             cursor =
                     Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImageIcon(getDialogFrame(),
-                                                                                         "/com/mynetpcb/core/images/cursor_cross_bus.png").getImage(),
+                                                                                         "images/cursor_cross_bus.png").getImage(),
                                                                    new java.awt.Point(16,
                                                                              16),
                                                                    "Bus");

@@ -93,6 +93,10 @@ public class PCBHole extends HoleShape implements PCBShape{
         this.circle.mirror(line);        
     }
     @Override
+    public void rotate(double angle, Point center) {
+        this.circle.rotate(angle,center);        
+    }    
+    @Override
     public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
                                                           AffineTransform scale, T source) {
         
