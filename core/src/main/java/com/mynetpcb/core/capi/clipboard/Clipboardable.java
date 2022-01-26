@@ -4,11 +4,13 @@ import java.awt.datatransfer.Transferable;
 
 public interface Clipboardable {
     public enum Clipboard{
-        LOCAL,
+        //LOCAL,
         SYSTEM    
     }
     
     public  Transferable createClipboardContent();   
     
-    public  void realizeClipboardContent(Transferable transferable);
+    public default boolean realizeClipboardContent(Transferable transferable) {
+    	return false;
+    }
 }

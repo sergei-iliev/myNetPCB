@@ -124,7 +124,7 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
 
     public void registerUnitPopup(MouseScaledEvent e, Shape target) {
         initializePopupMenu(e, target, unitMenu);
-        if (ClipboardMgr.getInstance().isTransferDataAvailable(Clipboardable.Clipboard.LOCAL))
+        if (ClipboardMgr.getInstance().isTransferDataAvailable(Clipboardable.Clipboard.SYSTEM))
             this.setEnabled(unitMenu, "Paste", true);
         else
             this.setEnabled(unitMenu, "Paste", false);

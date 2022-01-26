@@ -652,15 +652,17 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
     
     protected abstract void parseClipboardSelection(String xml) throws XPathExpressionException,ParserConfigurationException,
                                                    SAXException, IOException;
-    
-    public void realizeClipboardContent(Transferable transferable) {
+    @Override
+    public boolean realizeClipboardContent(Transferable transferable) {
         if(transferable==null){
-           return; 
+           return false; 
         }
-        try {
+        try {        	
             parseClipboardSelection((String)transferable.getTransferData(DataFlavor.stringFlavor));
+            return true;
         }catch(Exception e){
             e.printStackTrace(System.out);
+            return false;
         }
     }
     
@@ -671,7 +673,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
             xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
             Collection<S> list=this.getSelectedShapes();
             if(list.size()>0){
-               xml.append("<clipboard>");
+               xml.append("<clipboard>\r\n");
                xml.append(format(list));
                 xml.append("</clipboard>");
                return new StringSelection(xml.toString());

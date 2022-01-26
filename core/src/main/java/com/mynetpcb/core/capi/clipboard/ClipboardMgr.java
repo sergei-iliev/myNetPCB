@@ -31,9 +31,9 @@ public class ClipboardMgr{
     
     public void setClipboardContent(Clipboardable.Clipboard type,Transferable transferable){
         switch(type){
-        case LOCAL:
-            clipboard.setContents(transferable, null); 
-            break;
+        //case LOCAL:
+        //    clipboard.setContents(transferable, null); 
+        //    break;
         case SYSTEM:
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferable,null);
         }
@@ -41,8 +41,8 @@ public class ClipboardMgr{
 
     public Transferable getClipboardContent(Clipboardable.Clipboard type)throws AccessControlException{
         switch(type){
-        case LOCAL:
-            return clipboard.getContents(this);
+        //case LOCAL:
+        //    return clipboard.getContents(this);
         case SYSTEM:
             return Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         }        
@@ -51,8 +51,8 @@ public class ClipboardMgr{
     
     public boolean isTransferDataAvailable(Clipboardable.Clipboard type){        
         switch(type){
-        case LOCAL:
-            return clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor);
+        //case LOCAL:
+        //    return clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor);
         case SYSTEM:
             return Toolkit.getDefaultToolkit().getSystemClipboard().isDataFlavorAvailable(DataFlavor.stringFlavor);
         }        

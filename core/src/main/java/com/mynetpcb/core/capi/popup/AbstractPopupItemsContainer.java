@@ -621,12 +621,12 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         }
         
         if(e.getActionCommand().equalsIgnoreCase("Copy")){
-            ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.LOCAL,getUnitComponent().getModel().getUnit().createClipboardContent());    
+            ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.SYSTEM,getUnitComponent().getModel().getUnit().createClipboardContent());    
         }
         if(e.getActionCommand().equalsIgnoreCase("Paste")){
             UnitMgr unitMgr=new UnitMgr();            
             getUnitComponent().getModel().getUnit().setSelected(false);
-            getUnitComponent().getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.LOCAL));
+            getUnitComponent().getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.SYSTEM));
             unitMgr.locateBlock(getUnitComponent().getModel().getUnit(),
                                                  getUnitComponent().getModel().getUnit().getSelectedShapes(),
                                                  x, y);

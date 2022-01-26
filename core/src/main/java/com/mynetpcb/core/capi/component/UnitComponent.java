@@ -767,20 +767,17 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
 
     public void copy(){
-        try {
-            ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.LOCAL,
+        
+          ClipboardMgr.getInstance().setClipboardContent(Clipboardable.Clipboard.SYSTEM,
                                                            getModel().getUnit().createClipboardContent());
-        } catch (AccessControlException ace) {
-            JOptionPane.showMessageDialog(getDialogFrame().getParentFrame(),
-                                          "You need to use the signed applet version.",
-                                          "Security exception", JOptionPane.ERROR_MESSAGE);
-        }
+        
     }
     
-    public void paste(){
-        try {
+    public void paste(){        
             getModel().getUnit().setSelected(false);
-            getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.LOCAL ));
+            if(!getModel().getUnit().realizeClipboardContent(ClipboardMgr.getInstance().getClipboardContent(Clipboardable.Clipboard.SYSTEM))) {
+            	return;
+            }
             
             //position onto screen center                            
             double xx=getModel().getUnit().getScalableTransformation().getInversePoint(getViewportWindow().getX() +getWidth()/2,getViewportWindow().getY() +getHeight()/2).x;
@@ -801,11 +798,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         //                                getModel().getUnit().fireShapeEvent(new ShapeEvent((Moveable)getModel().getUnit().getSelectedShapes(false).iterator().next(),
         //                                                                               ShapeEvent.SELECT_SHAPE));
         //                            }
-        } catch (AccessControlException ace) {
-            JOptionPane.showMessageDialog(getDialogFrame().getParentFrame(),
-                                          "You need to use the signed applet version.",
-                                          "Security exception", JOptionPane.ERROR_MESSAGE);
-        }
+        
     }
     public static final class Canvas extends BufferedImage {
 

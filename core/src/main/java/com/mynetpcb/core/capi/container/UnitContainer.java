@@ -346,13 +346,9 @@ public abstract class UnitContainer<T extends Unit, S extends Shape> implements 
         }
         
     }
-    
+    @Override
     public  Transferable createClipboardContent(){        
         return new StringSelection(this.format().toString());
-    }
-    
-    public  void realizeClipboardContent(Transferable transferable){
-        
     }
 }
 
