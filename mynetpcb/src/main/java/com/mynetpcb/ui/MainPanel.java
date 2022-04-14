@@ -318,25 +318,25 @@ public class MainPanel extends JPanel implements InternalFrameListener,MainFrame
             this.openInternalFrame(new SymbolInternalFrame());
         	/*
             try {
-        	 Socket clientSocket = new Socket("192.168.8.106", 9100);
+        	 Socket clientSocket = new Socket("192.168.8.109", 9090);
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));                          
-             //out.println("SOUND 850,10 : SOUND 950,10 ");
+             out.println("SOUND 850,10 : SOUND 950,10 ");
              //out.println("FORMFEED");
              
-             out.println("5 SYSVAR(18)=0");
-             out.println("6 DATE$=\"220105\"");
-             out.println("10 PRINT DATE$");
+             //out.println("5 SYSVAR(18)=0");
+             //out.println("6 DATE$=\"220105\"");
+             //out.println("10 PRINT DATE$");
              //out.println("20 FORMAT TIME$ \"HH.MM\"");
              //out.println("21 TIME$=\"153300\"");
-             out.println("30 PRINT TIME$(\"F\")");             
-             out.println("40 PRINT SYSVAR(18)");
-             out.println("RUN");
+             //out.println("30 PRINT TIME$(\"F\")");             
+             //out.println("40 PRINT SYSVAR(18)");
+             //out.println("RUN");
              
              System.out.println(in.readLine());
              System.out.println(in.readLine());
              System.out.println(in.readLine());
-             
+             System.out.println(in.readLine());
              clientSocket.close();
         	}catch(Exception e) {
         		e.printStackTrace();
