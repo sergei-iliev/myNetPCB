@@ -6,6 +6,7 @@ import com.mynetpcb.circuit.container.CircuitContainer;
 import com.mynetpcb.circuit.dialog.panel.CircuitsPanel;
 import com.mynetpcb.circuit.dialog.panel.SymbolsPanel;
 import com.mynetpcb.circuit.dialog.print.CircuitPrintDialog;
+import com.mynetpcb.circuit.dialog.save.CircuitImageExportDialog;
 import com.mynetpcb.circuit.dialog.save.CircuitSaveDialog;
 import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.unit.Circuit;
@@ -19,7 +20,10 @@ import com.mynetpcb.core.capi.credentials.User;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
+import com.mynetpcb.core.capi.gui.filter.ImpexFileFilter;
 import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
+import com.mynetpcb.core.capi.impex.ImpexProcessor;
+import com.mynetpcb.core.capi.impex.XMLExporter;
 import com.mynetpcb.core.capi.io.Command;
 import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
@@ -48,12 +52,15 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.AccessControlException;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -61,6 +68,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -578,36 +586,36 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
 //            CircuitMgr.getInstance().generateShapeNaming(circuitComponent.getModel().getUnit());
 //            circuitComponent.Repaint();
 //        }
-//        if (e.getActionCommand().equals("exportcircuitimage")) {            
-//            JDialog d=new CircuitImageExportDialog(parent, circuitComponent);
-//            d.setLocationRelativeTo(null); //centers on screen
-//            d.setVisible(true);
-//
-//        }
-//        if (e.getActionCommand().equals("exportcircuitxml")) {
-//            circuitComponent.getModel().getUnit().setSelected(false);
-//            JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-//            fc.setDialogTitle("Export circuit");
-//            fc.setAcceptAllFileFilterUsed(false);
-//            fc.setSelectedFile(new File(circuitComponent.getModel().getFormatedFileName()));
-//            fc.addChoosableFileFilter(new ImpexFileFilter(".xml"));
-//            if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-//                ImpexProcessor impexProcessor = new ImpexProcessor(new XMLExporter());
-//                try {
-//                    Map<String,Object> context=new HashMap<String,Object>(1);
-//                    if(fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml"))                                           {
-//                        context.put("target.file",fc.getSelectedFile().getAbsolutePath());               
-//                    }else{                            
-//                        context.put("target.file",fc.getSelectedFile().getAbsolutePath()+".xml");                                             
-//                    }
-//                    
-//                    impexProcessor.process(circuitComponent.getModel(), context);
-//                } catch (IOException ioe) {
-//                    ioe.printStackTrace(System.out);
-//                }
-//            }
-//        }
-//
+        if (e.getActionCommand().equals("export.image")) {            
+            JDialog d=new CircuitImageExportDialog(getParentFrame(), circuitComponent);
+            d.setLocationRelativeTo(null); //centers on screen
+            d.setVisible(true);
+
+        }
+        if (e.getActionCommand().equals("export.xml")) {
+            circuitComponent.getModel().getUnit().setSelected(false);
+            JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+            fc.setDialogTitle("Export circuit");
+            fc.setAcceptAllFileFilterUsed(false);
+            fc.setSelectedFile(new File(circuitComponent.getModel().getFormatedFileName()));
+            fc.addChoosableFileFilter(new ImpexFileFilter(".xml"));
+            if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                ImpexProcessor impexProcessor = new ImpexProcessor(new XMLExporter());
+                try {
+                    Map<String,Object> context=new HashMap<String,Object>(1);
+                    if(fc.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".xml"))                                           {
+                        context.put("target.file",fc.getSelectedFile().getAbsolutePath());               
+                    }else{                            
+                        context.put("target.file",fc.getSelectedFile().getAbsolutePath()+".xml");                                             
+                    }
+                    
+                    impexProcessor.process(circuitComponent.getModel(), context);
+                } catch (IOException ioe) {
+                    ioe.printStackTrace(System.out);
+                }
+            }
+        }
+
         if (e.getSource()==RotateLeft || e.getSource()==RotateRight) {        
             Collection<Shape> shapes= circuitComponent.getModel().getUnit().getShapes();
             if(shapes.size()==0){

@@ -18,7 +18,7 @@ public abstract class ViaShape extends Shape implements ClearanceTarget,External
         THROUGH_HOLE
     }    
     public ViaShape() {
-        super((int)Grid.MM_TO_COORD(0.3),Layer.LAYER_ALL);
+        super((int)Grid.MM_TO_COORD(0.3),Layer.LAYER_FRONT|Layer.LAYER_BACK);
     }
     
     public abstract Circle getInner();
