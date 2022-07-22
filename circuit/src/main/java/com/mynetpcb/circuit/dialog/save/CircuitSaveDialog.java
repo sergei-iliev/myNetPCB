@@ -24,7 +24,7 @@ public class CircuitSaveDialog extends AbstractSaveDialog{
     @Override
     protected void doBody(){
       super.doBody();
-      libraryName.setText("Project");
+      libraryName.setText("Workspace");
       categoryName.setVisible(false);
       categoryCombo.setVisible(false);
     }

@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.event;
 
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.pin.CompositePinable;
 import com.mynetpcb.core.capi.shape.Mode;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
@@ -39,7 +40,12 @@ public class CursorEventHandle  <U extends UnitComponent,S extends Shape> extend
             getComponent().getModel().getUnit().add(shape);
             getComponent().getModel().getUnit().setSelected(false);
             shape.setSelected(true);
-            shape.alignToGrid((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE));
+            if(shape instanceof CompositePinable) {
+            	 if(((CompositePinable)shape).getPinsRect()!=null)
+                    shape.alignToGrid((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE));
+            }else {
+              shape.alignToGrid((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)); 	
+            }
     //            if(shape instanceof Textable&&getComponent().getModel().getUnit().getTextLayoutVisibility()){
     //               ((Textable)shape).getChipText().setTextLayoutVisible(true);
     //            }

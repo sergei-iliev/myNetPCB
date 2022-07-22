@@ -360,8 +360,12 @@ public class SCHSymbol extends Shape implements CompositeTextable,Typeable,Compo
               isPinnable=true;
             }
         }
-        r.setRect(x1, y1, x2 - x1, y2 - y1);
-        return r;         
+        if(isPinnable) {
+            r.setRect(x1, y1, x2 - x1, y2 - y1);
+            return r;   
+        }else {
+        	return null;
+        }
         
     }
     @Override
