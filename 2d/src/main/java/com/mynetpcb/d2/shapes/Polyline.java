@@ -117,7 +117,24 @@ public class Polyline<P extends Point> extends GeometricFigure{
 		 }
 		 return result;
 	   
- }
+    }
+    public boolean isPointOnSegment(Point pt,double diviation){    	       
+	   var segment=new Segment(0,0,0,0);	   
+       var prevPoint = this.points.get(0);        
+       for(var point : this.points){    	        	  
+           if(prevPoint.equals(point)){    	            	  
+         	  prevPoint = point;
+               continue;
+           }    	              
+           segment.set(prevPoint.x,prevPoint.y,point.x,point.y);
+           if(segment.isPointOn(pt,diviation)){
+               return true;
+           }
+           prevPoint = point;
+       }		
+       
+       return false;
+    }     
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         polyline.reset();

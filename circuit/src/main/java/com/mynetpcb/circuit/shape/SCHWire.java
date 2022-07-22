@@ -7,6 +7,7 @@ import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable.ResumeState;
+import com.mynetpcb.core.capi.pin.PinLineable.Pair;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -17,6 +18,9 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
+import com.mynetpcb.d2.shapes.Segment;
+import com.mynetpcb.d2.shapes.Utils;
+import com.mynetpcb.d2.shapes.Vector;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -87,6 +91,53 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
         // TODO Implement this method
         return Collections.emptySet();
     }
+    public boolean isSegmentClicked(Point pt){
+  	  if(this.isControlRectClicked(pt.x,pt.y)!=null)
+          return false;
+      if(this.polyline.isPointOnSegment(pt,this.selectionRectWidth/2)){
+	    return true;
+      }
+	  return false;
+    }
+	public Point[] getSegmentClicked(Point pt){
+	    var segment=new Segment(0,0,0,0);	   
+        var prevPoint = this.polyline.points.get(0);        
+        for(var point:this.polyline.points){    	        	  
+            if(prevPoint.equals(point)){    	            	  
+          	  prevPoint = point;
+              continue;
+            }    	              
+            segment.set(prevPoint.x,prevPoint.y,point.x,point.y);
+            if(segment.isPointOn(pt,this.selectionRectWidth)){
+            	
+                return  new Point[]{prevPoint,point};
+            }
+            prevPoint = point;
+        }			       	          
+     return null;
+    }
+    public void moveSegment(Point startPoint,Point endPoint,double x,double y){	
+	  var pt=new Point(x,y);
+	  var segment=new Segment(startPoint,endPoint);
+
+	  var projPt=segment.projectionPoint(pt);
+      var delta=projPt.distanceTo(pt);
+
+      if(Utils.EQ(delta,0)){  //flicker movement
+	    return;
+	  }
+      var v=new Vector(projPt,pt);   
+      var norm=v.normalize();
+	  
+      
+      double xx=startPoint.x +delta*norm.x;
+	  double yy=startPoint.y +delta*norm.y;
+      startPoint.set(xx,yy);
+
+      xx=endPoint.x +delta*norm.x;
+	  yy=endPoint.y +delta*norm.y;
+      endPoint.set(xx,yy);    
+    }    
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         Box rect = this.polyline.box();
