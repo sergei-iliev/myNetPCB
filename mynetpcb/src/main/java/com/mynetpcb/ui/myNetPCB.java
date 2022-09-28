@@ -32,11 +32,12 @@ public class myNetPCB extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
+        
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(inset, inset,
-                  screenSize.width  - inset*2,
-                  screenSize.height - inset*2);
+        setBounds(0, 0,
+                  screenSize.width,
+                  screenSize.height-inset);
         //Set up the GUI.
         JDesktopPane desktop = new JDesktopPane(); //a specialized layered pane        
         desktop.setLayout(new GridLayout(1, 1));
