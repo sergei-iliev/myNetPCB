@@ -564,8 +564,9 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if(e.getSource()==SelectionButton){
                 symbolComponent.setMode(Mode.COMPONENT_MODE);          
             }
-            if (e.getSource()==PositionToCenter) {      
-                symbolComponent.setScrollPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
+            if (e.getSource()==PositionToCenter) {
+            	symbolComponent.getModel().getUnit().getScalableTransformation().setScaleFactor(1);
+                symbolComponent.setViewportPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
                 symbolComponent.Repaint();
             }
             if (e.getSource()==SnapToGridButton) {
@@ -638,7 +639,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         }
         //position to symbol center
         com.mynetpcb.d2.shapes.Box r=symbolComponent.getModel().getUnit().getBoundingRect();
-        symbolComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+        symbolComponent.setViewportPosition(r.getCenter().x,r.getCenter().y);
 
         //remember state
         symbolComponent.getModel().registerInitialState();

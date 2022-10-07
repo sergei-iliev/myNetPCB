@@ -649,7 +649,8 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         }
         
         if (e.getSource()==PositionToCenter) {
-            boardComponent.setScrollPosition(boardComponent.getModel().getUnit().getWidth() / 2,
+        	boardComponent.getModel().getUnit().getScalableTransformation().setScaleFactor(this.boardComponent.getModel().getUnit().getScalableTransformation().getMaxScaleFactor());
+            boardComponent.setViewportPosition(boardComponent.getModel().getUnit().getWidth() / 2,
                                                  boardComponent.getModel().getUnit().getHeight() / 2);
             boardComponent.Repaint();
         }
@@ -787,7 +788,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
                                                                       UnitEvent.SELECT_UNIT));
             //position to symbol center
             Box r=boardComponent.getModel().getUnit().getBoundingRect();
-            boardComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+            boardComponent.setViewportPosition(r.getCenter().x,r.getCenter().y);
             boardComponent.Repaint();
         }
 

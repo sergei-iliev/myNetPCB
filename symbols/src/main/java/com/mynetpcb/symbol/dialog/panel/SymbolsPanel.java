@@ -90,7 +90,7 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
                                                                                    ShapeEvent.SELECT_SHAPE));
                 //***position on a symbol
                 Box symbolRect=symbolComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
-                symbolComponent.setScrollPosition((int)symbolRect.min.x, (int)symbolRect.min.y);
+                symbolComponent.setViewportPosition(symbolRect.min.x, symbolRect.min.y);
             } else { //click on unit
                 symbolComponent.getModel().getUnit().setScrollPositionValue((int)symbolComponent.getViewportWindow().getX(),(int)symbolComponent.getViewportWindow().getY());                 
 

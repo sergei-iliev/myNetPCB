@@ -330,7 +330,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
         viewportWindow.setY(y);
     }
 
-    public void setScrollPosition(int x, int y) {
+    public void setViewportPosition(double x, double y) {
         //final Point2D position = new Point2D.Double(x, y);
         //this.getModel().getUnit().getScalableTransformation().getCurrentTransformation().transform(position, position);
         //SwingUtilities.invokeLater(new Runnable() {
@@ -377,7 +377,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             rotation.transform(tmp, p);
         }
 
-        setScrollPosition(p.x, p.y);
+        setViewportPosition(p.x, p.y);
 
 
     }

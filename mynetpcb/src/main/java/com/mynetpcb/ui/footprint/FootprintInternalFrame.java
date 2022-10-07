@@ -487,7 +487,8 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         }
         
         if (e.getSource()==PositionToCenter) {
-            footprintComponent.setScrollPosition(footprintComponent.getModel().getUnit().getWidth() / 2,
+        	footprintComponent.getModel().getUnit().getScalableTransformation().setScaleFactor(footprintComponent.getModel().getUnit().getScalableTransformation().getMaxScaleFactor());
+            footprintComponent.setViewportPosition(footprintComponent.getModel().getUnit().getWidth() / 2,
                                                  footprintComponent.getModel().getUnit().getHeight() / 2);
             footprintComponent.Repaint();
         }
@@ -630,7 +631,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
             }
             //position to symbol center
             com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getBoundingRect();
-            footprintComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+            footprintComponent.setViewportPosition(r.getCenter().x,r.getCenter().y);
 
             //remember state
             footprintComponent.getModel().registerInitialState();

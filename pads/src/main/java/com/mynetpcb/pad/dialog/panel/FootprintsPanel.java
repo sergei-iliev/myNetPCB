@@ -91,7 +91,7 @@ public class FootprintsPanel extends JPanel  implements TreeSelectionListener,Un
                footprintInspector.selectShapeEvent(new ShapeEvent(footprintComponent.getModel().getUnit().getShape(data.getUUID()), ShapeEvent.SELECT_SHAPE));              
                 //***position on a symbol
                   Box symbolRect=footprintComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
-                  footprintComponent.setScrollPosition((int)symbolRect.min.x, (int)symbolRect.min.y);                                                                                                                                          
+                  footprintComponent.setViewportPosition(symbolRect.min.x, symbolRect.min.y);                                                                                                                                          
             }else{           //click on unit
                 footprintComponent.getModel().getUnit().setScrollPositionValue((int)footprintComponent.getViewportWindow().getX(),(int)footprintComponent.getViewportWindow().getY());                 
                 footprintComponent.getModel().setActiveUnit(data.getUUID());

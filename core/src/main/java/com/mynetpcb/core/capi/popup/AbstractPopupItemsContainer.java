@@ -645,7 +645,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             unitMgr.alignBlock(unit.getGrid(),unit.getShapes());
             unit.registerMemento(new CompositeMemento(MementoType.MOVE_MEMENTO).add(unit.getShapes())); 
             //scroll to center
-            getUnitComponent().setScrollPosition((unit.getWidth()/2), (unit.getHeight()/2));
+            getUnitComponent().setViewportPosition((unit.getWidth()/2), (unit.getHeight()/2));
             getUnitComponent().Repaint();
         } 
         
@@ -704,7 +704,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             
                         //position on center
             Box r=getUnitComponent().getModel().getUnit().getBoundingRect();
-            getUnitComponent().setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+            getUnitComponent().setViewportPosition(r.getCenter().x,r.getCenter().y);
             
             getUnitComponent().requestFocusInWindow(); //***for the cancel button  
             return;                        

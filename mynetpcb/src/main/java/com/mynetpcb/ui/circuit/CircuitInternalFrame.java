@@ -419,7 +419,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
                                                                   UnitEvent.SELECT_UNIT));
         //position to symbol center
         com.mynetpcb.d2.shapes.Box r=circuitComponent.getModel().getUnit().getBoundingRect();
-        circuitComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+        circuitComponent.setViewportPosition(r.getCenter().x,r.getCenter().y);
         circuitComponent.Repaint();
     }
     @Override
@@ -834,7 +834,8 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
             circuitComponent.setMode(Mode.DRAGHEAND_MODE);
         }
         if (e.getSource()==PositionToCenter) {
-            circuitComponent.setScrollPosition(circuitComponent.getModel().getUnit().getWidth() / 2,
+        	circuitComponent.getModel().getUnit().getScalableTransformation().setScaleFactor(1);
+            circuitComponent.setViewportPosition(circuitComponent.getModel().getUnit().getWidth() / 2,
                                                circuitComponent.getModel().getUnit().getHeight() / 2);
             circuitComponent.Repaint();
         }

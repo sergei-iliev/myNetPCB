@@ -371,7 +371,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                 this.componentResized(null);
                 Box r=this.getModel().getUnit().getBoundingRect();
                 Point center=r.getCenter();
-                this.setScrollPosition((int)center.x,(int)center.y);
+                this.setViewportPosition(center.x,center.y);
                 this.Repaint();
                 this.revalidate();     
         }

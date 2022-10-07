@@ -62,7 +62,9 @@ public class ScalableTransformation implements Cloneable{
     public int getScaleFactor(){
       return scaleFactor;  
     }
-    
+    public int getMaxScaleFactor() {
+      return maxScaleFactor;	
+    }
     public void setScaleFactor(int newScaleFactor){
         this.reset(scaleRatio,newScaleFactor,minScaleFactor,maxScaleFactor); 
     }

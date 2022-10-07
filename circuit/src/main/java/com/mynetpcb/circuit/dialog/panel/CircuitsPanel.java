@@ -101,20 +101,8 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
                circuitInspector.selectShapeEvent(new ShapeEvent(circuitComponent.getModel().getUnit().getShape(data.getUUID()),
                                                                                     ShapeEvent.SELECT_SHAPE));
                 //***position on a symbol
-                Box symbolRect=circuitComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
-                final Point2D position = new Point2D.Double(symbolRect.min.x, symbolRect.min.y);
-                circuitComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().transform(position,
-                                                                                                                       position);
-                //SwingUtilities.invokeLater(new Runnable() {
-                //    public void run() {
-                //        circuitComponent.getDialogFrame().getHorizontalScrollBar().setValue((int)position.getX() -
-                //                                                                            circuitComponent.getWidth() /
-                //                                                                            2);
-                //        circuitComponent.getDialogFrame().getVerticalScrollBar().setValue((int)position.getY() -
-                //                                                                          circuitComponent.getHeight() /
-                //                                                                          2);
-                //    }
-                //});
+                Box symbolRect=circuitComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();                     
+                circuitComponent.setViewportPosition(symbolRect.min.x, symbolRect.min.y);
             } else { //click on unit
                 //if (circuitComponent.getModel().getUnit() != null) {
                 //    circuitComponent.getModel().getUnit().setScrollPositionValue(circuitComponent.getDialogFrame().getHorizontalScrollBar().getValue(),

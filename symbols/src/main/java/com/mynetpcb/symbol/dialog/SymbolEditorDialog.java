@@ -389,7 +389,7 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
             symbolComponent.setMode(Mode.COMPONENT_MODE);          
         }
         if (e.getSource()==PositionToCenter) {      
-            symbolComponent.setScrollPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
+            symbolComponent.setViewportPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
         }
         if (e.getSource()==SnapToGridButton) {
             symbolComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());
@@ -465,7 +465,7 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         }
         
         com.mynetpcb.d2.shapes.Box r=symbolComponent.getModel().getUnit().getBoundingRect();
-        symbolComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+        symbolComponent.setViewportPosition((int)r.getCenter().x,(int)r.getCenter().y);
         
         symbolComponent.getModel().registerInitialState();
         symbolComponent.Repaint();

@@ -99,19 +99,7 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
                                                                                     ShapeEvent.SELECT_SHAPE));
                 //***position on a symbol
                 Box symbolRect=boardComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
-                final Point2D position = new Point2D.Double(symbolRect.min.x, symbolRect.min.y);
-                boardComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().transform(position,
-                                                                                                                       position);
-                //SwingUtilities.invokeLater(new Runnable() {
-                //    public void run() {
-                //        boardComponent.getDialogFrame().getHorizontalScrollBar().setValue((int)position.getX() -
-                //                                                                            boardComponent.getWidth() /
-                //                                                                            2);
-                //        boardComponent.getDialogFrame().getVerticalScrollBar().setValue((int)position.getY() -
-                //                                                                          boardComponent.getHeight() /
-                //                                                                          2);
-                //    }
-                //});
+                boardComponent.setViewportPosition(symbolRect.min.x, symbolRect.min.y);
             } else { //click on unit
                 //if (boardComponent.getModel().getUnit() != null) {
                 //    boardComponent.getModel().getUnit().setScrollPositionValue(boardComponent.getDialogFrame().getHorizontalScrollBar().getValue(),

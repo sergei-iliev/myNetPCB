@@ -452,7 +452,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
             }
             this.componentResized(null);
             Box r = this.getModel().getUnit().getBoundingRect();
-            this.setScrollPosition((int) r.getCenter().x, (int) r.getCenter().y);
+            this.setViewportPosition(r.getCenter().x,r.getCenter().y);
             this.Repaint();
             this.revalidate();
         }

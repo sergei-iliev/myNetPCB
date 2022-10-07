@@ -455,7 +455,7 @@ exit();
         }
         
         if (e.getSource()==PositionToCenter) {
-            footprintComponent.setScrollPosition(footprintComponent.getModel().getUnit().getWidth() / 2,
+            footprintComponent.setViewportPosition(footprintComponent.getModel().getUnit().getWidth() / 2,
                                                  footprintComponent.getModel().getUnit().getHeight() / 2);
         }
 
@@ -574,7 +574,7 @@ exit();
         }
         //position to symbol center
         com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getBoundingRect();
-        footprintComponent.setScrollPosition((int)r.getCenter().x,(int)r.getCenter().y);
+        footprintComponent.setViewportPosition(r.getCenter().x,r.getCenter().y);
 
         //remember state
         footprintComponent.getModel().registerInitialState();
