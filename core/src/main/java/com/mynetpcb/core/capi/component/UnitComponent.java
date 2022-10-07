@@ -120,8 +120,8 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
 
     public UnitComponent(DialogFrame dialogFrame) {
         this.dialogFrame = new WeakReference<DialogFrame>(dialogFrame);
-        dialogFrame.getHorizontalScrollBar().getModel().addChangeListener(this);
-        dialogFrame.getVerticalScrollBar().getModel().addChangeListener(this);
+        //dialogFrame.getHorizontalScrollBar().getModel().addChangeListener(this);
+        //dialogFrame.getVerticalScrollBar().getModel().addChangeListener(this);
         this.addMouseWheelListener(this);
         this.addComponentListener(this);
         this.addMouseMotionListener(this);
@@ -331,14 +331,22 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     }
 
     public void setScrollPosition(int x, int y) {
-        final Point2D position = new Point2D.Double(x, y);
-        this.getModel().getUnit().getScalableTransformation().getCurrentTransformation().transform(position, position);
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                getDialogFrame().getHorizontalScrollBar().setValue((int)position.getX() - getWidth() / 2);
-                getDialogFrame().getVerticalScrollBar().setValue((int)position.getY() - getHeight() / 2);
-            }
-        });
+        //final Point2D position = new Point2D.Double(x, y);
+        //this.getModel().getUnit().getScalableTransformation().getCurrentTransformation().transform(position, position);
+        //SwingUtilities.invokeLater(new Runnable() {
+        //    public void run() {
+        //        getDialogFrame().getHorizontalScrollBar().setValue((int)position.getX() - getWidth() / 2);
+        //        getDialogFrame().getVerticalScrollBar().setValue((int)position.getY() - getHeight() / 2);
+        //    }
+        //});
+        var xx=x*this.getModel().getUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        var yy=y*this.getModel().getUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        
+        xx=(xx-(this.getWidth()/2));
+        yy=(yy-(this.getHeight()/2));
+
+    	this.viewportWindow.setX(xx);
+        this.viewportWindow.setY(yy);
     }
 
     @Override
@@ -389,25 +397,25 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             eventMgr.getTargetEventHandle().resizingEvent();
         }
 
-        JScrollBar hbar = dialogFrame.get().getHorizontalScrollBar();
-        JScrollBar vbar = dialogFrame.get().getVerticalScrollBar();
-        hbar.getModel().removeChangeListener(this);
-        vbar.getModel().removeChangeListener(this);
+        //JScrollBar hbar = dialogFrame.get().getHorizontalScrollBar();
+        //JScrollBar vbar = dialogFrame.get().getVerticalScrollBar();
+        //hbar.getModel().removeChangeListener(this);
+        //vbar.getModel().removeChangeListener(this);
 
         //set new maximum
-        hbar.setMaximum((int)(this.model.getUnit().getWidth() *
-                              this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX()));
-        vbar.setMaximum((int)(this.model.getUnit().getHeight() *
-                              this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleY()));
+        //hbar.setMaximum((int)(this.model.getUnit().getWidth() *
+        //                      this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX()));
+        //vbar.setMaximum((int)(this.model.getUnit().getHeight() *
+        //                      this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleY()));
         //set visible amount
-        hbar.setVisibleAmount(this.getWidth());
-        vbar.setVisibleAmount(this.getHeight());
+        //hbar.setVisibleAmount(this.getWidth());
+        //vbar.setVisibleAmount(this.getHeight());
         //set new initial value        
-        hbar.setValue((int)this.getViewportWindow().getX());
-        vbar.setValue((int)this.getViewportWindow().getY());
+        //hbar.setValue((int)this.getViewportWindow().getX());
+        //vbar.setValue((int)this.getViewportWindow().getY());
         
-        hbar.getModel().addChangeListener(this);
-        vbar.getModel().addChangeListener(this);
+        //hbar.getModel().addChangeListener(this);
+        //vbar.getModel().addChangeListener(this);
         return true;
     }
 
@@ -426,37 +434,37 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
             eventMgr.getTargetEventHandle().resizingEvent();
         }
 
-        JScrollBar hbar = dialogFrame.get().getHorizontalScrollBar();
-        JScrollBar vbar = dialogFrame.get().getVerticalScrollBar();
-        hbar.getModel().removeChangeListener(this);
-        vbar.getModel().removeChangeListener(this);
+        //JScrollBar hbar = dialogFrame.get().getHorizontalScrollBar();
+        //JScrollBar vbar = dialogFrame.get().getVerticalScrollBar();
+        //hbar.getModel().removeChangeListener(this);
+        //vbar.getModel().removeChangeListener(this);
 
         //set new maximum
-        hbar.setMaximum((int)(this.model.getUnit().getWidth() *
-                              this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX()));
-        vbar.setMaximum((int)(this.model.getUnit().getHeight() *
-                              this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleY()));
+        //hbar.setMaximum((int)(this.model.getUnit().getWidth() *
+        //                      this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX()));
+        //vbar.setMaximum((int)(this.model.getUnit().getHeight() *
+        //                      this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleY()));
         //set visible amount
-        hbar.setVisibleAmount(this.getWidth());
-        vbar.setVisibleAmount(this.getHeight());
+        //hbar.setVisibleAmount(this.getWidth());
+        //vbar.setVisibleAmount(this.getHeight());
         //set new initial value
-        hbar.setValue((int)this.getViewportWindow().getX());
-        vbar.setValue((int)this.getViewportWindow().getY());
+        //hbar.setValue((int)this.getViewportWindow().getX());
+        //vbar.setValue((int)this.getViewportWindow().getY());
 
-        hbar.getModel().addChangeListener(this);
-        vbar.getModel().addChangeListener(this);
+        //hbar.getModel().addChangeListener(this);
+        //vbar.getModel().addChangeListener(this);
         return true;
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        if (e.getSource() == dialogFrame.get().getHorizontalScrollBar().getModel()) {
-            this.scrollX(dialogFrame.get().getHorizontalScrollBar().getValue());
-        }
+        //if (e.getSource() == dialogFrame.get().getHorizontalScrollBar().getModel()) {
+        //    this.scrollX(dialogFrame.get().getHorizontalScrollBar().getValue());
+        //}
 
-        if (e.getSource() == dialogFrame.get().getVerticalScrollBar().getModel()) {
-            this.scrollY(dialogFrame.get().getVerticalScrollBar().getValue());
-        }
+        //if (e.getSource() == dialogFrame.get().getVerticalScrollBar().getModel()) {
+        //    this.scrollY(dialogFrame.get().getVerticalScrollBar().getValue());
+        //}
         
         this.Repaint();
     }
@@ -465,33 +473,33 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     public void componentResized(ComponentEvent event) {
         if (this.model.getUnit() == null) {
             this.setSize(1, 1);
-            JScrollBar hbar = dialogFrame.get().getHorizontalScrollBar();
-            JScrollBar vbar = dialogFrame.get().getVerticalScrollBar();
-            hbar.setValues(0, 0, 0, 0);
-            vbar.setValues(0, 0, 0, 0);
+            //JScrollBar hbar = dialogFrame.get().getHorizontalScrollBar();
+            //JScrollBar vbar = dialogFrame.get().getVerticalScrollBar();
+            //hbar.setValues(0, 0, 0, 0);
+            //vbar.setValues(0, 0, 0, 0);
         } else {
             this.setSize(this.getWidth(), this.getHeight());
-            JScrollBar hbar = dialogFrame.get().getHorizontalScrollBar();
-            JScrollBar vbar = dialogFrame.get().getVerticalScrollBar();
+            //JScrollBar hbar = dialogFrame.get().getHorizontalScrollBar();
+            //JScrollBar vbar = dialogFrame.get().getVerticalScrollBar();
             
             
             //current value may exceed width/height then reset->flipping from one unit to smaller one.
-            int hCurrentValue = event==null?0:hbar.getValue();
-            int vCurrentValue = event==null?0:vbar.getValue();
+            //int hCurrentValue = event==null?0:hbar.getValue();
+            //int vCurrentValue = event==null?0:vbar.getValue();
             
             
-            hbar.setValues(hCurrentValue, (this.getWidth()), 0,
-                           (int)(this.model.getUnit().getWidth() * this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX()));
-            int unitIncrement=(int)(this.model.getUnit().getGrid().getGridPointToPoint() *
-                                        this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-            hbar.setUnitIncrement(unitIncrement<MIN_UNIT_INCREAMEN?MIN_UNIT_INCREAMEN:unitIncrement);
+            //hbar.setValues(hCurrentValue, (this.getWidth()), 0,
+            //               (int)(this.model.getUnit().getWidth() * this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX()));
+            //int unitIncrement=(int)(this.model.getUnit().getGrid().getGridPointToPoint() *
+            //                            this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+            //hbar.setUnitIncrement(unitIncrement<MIN_UNIT_INCREAMEN?MIN_UNIT_INCREAMEN:unitIncrement);
             
-            vbar.setValues(vCurrentValue, (this.getHeight()), 0,
-                           (int)(model.getUnit().getHeight() * this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX()));            
-            vbar.setUnitIncrement(unitIncrement<MIN_UNIT_INCREAMEN?MIN_UNIT_INCREAMEN:unitIncrement);
+            //vbar.setValues(vCurrentValue, (this.getHeight()), 0,
+            //               (int)(model.getUnit().getHeight() * this.model.getUnit().getScalableTransformation().getCurrentTransformation().getScaleX()));            
+            //vbar.setUnitIncrement(unitIncrement<MIN_UNIT_INCREAMEN?MIN_UNIT_INCREAMEN:unitIncrement);
             
-            hbar.setBlockIncrement(this.getWidth());
-            vbar.setBlockIncrement(this.getHeight());
+            //hbar.setBlockIncrement(this.getWidth());
+            //vbar.setBlockIncrement(this.getHeight());
             
             
         }
@@ -523,7 +531,8 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     
     protected boolean isMouseWheelRederect(MouseWheelEvent event){
         //***MOVE LEFT-RIGHT
-        if (event.getModifiersEx() != 0 && (event.getModifiers() == ActionEvent.CTRL_MASK)) {
+        /*
+    	if (event.getModifiersEx() != 0 && (event.getModifiers() == ActionEvent.CTRL_MASK)) {
             int x = getDialogFrame().getHorizontalScrollBar().getValue();
             int maxx = getDialogFrame().getHorizontalScrollBar().getMaximum();
             int deltax =
@@ -567,7 +576,8 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                 }
             }
             return true;
-        }        
+        }    
+        */    
         return false;
     }
     @Override

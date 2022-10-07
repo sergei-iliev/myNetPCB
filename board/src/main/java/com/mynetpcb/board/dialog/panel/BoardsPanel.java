@@ -86,8 +86,8 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
             if (node.getParent() != boardsTree.getModel().getRoot()) { //click on chip
                 TreeNodeData boardData = (TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
                 if (boardComponent.getModel().getUnit().getUUID().compareTo(boardData.getUUID()) != 0) {
-                    boardComponent.getModel().getUnit().setScrollPositionValue(boardComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                                                                                 boardComponent.getDialogFrame().getVerticalScrollBar().getValue());
+                    //boardComponent.getModel().getUnit().setScrollPositionValue(boardComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
+                    //                                                             boardComponent.getDialogFrame().getVerticalScrollBar().getValue());
                     boardComponent.getModel().setActiveUnit(boardData.getUUID());
                 }
 
@@ -102,29 +102,29 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
                 final Point2D position = new Point2D.Double(symbolRect.min.x, symbolRect.min.y);
                 boardComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().transform(position,
                                                                                                                        position);
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        boardComponent.getDialogFrame().getHorizontalScrollBar().setValue((int)position.getX() -
-                                                                                            boardComponent.getWidth() /
-                                                                                            2);
-                        boardComponent.getDialogFrame().getVerticalScrollBar().setValue((int)position.getY() -
-                                                                                          boardComponent.getHeight() /
-                                                                                          2);
-                    }
-                });
+                //SwingUtilities.invokeLater(new Runnable() {
+                //    public void run() {
+                //        boardComponent.getDialogFrame().getHorizontalScrollBar().setValue((int)position.getX() -
+                //                                                                            boardComponent.getWidth() /
+                //                                                                            2);
+                //        boardComponent.getDialogFrame().getVerticalScrollBar().setValue((int)position.getY() -
+                //                                                                          boardComponent.getHeight() /
+                //                                                                          2);
+                //    }
+                //});
             } else { //click on unit
-                if (boardComponent.getModel().getUnit() != null) {
-                    boardComponent.getModel().getUnit().setScrollPositionValue(boardComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                                                                                 boardComponent.getDialogFrame().getVerticalScrollBar().getValue());
-                }
+                //if (boardComponent.getModel().getUnit() != null) {
+                //    boardComponent.getModel().getUnit().setScrollPositionValue(boardComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
+                //                                                                 boardComponent.getDialogFrame().getVerticalScrollBar().getValue());
+                //}
                 boardComponent.getModel().setActiveUnit(data.getUUID());
                 boardComponent.getModel().getUnit().setSelected(false);
                 boardComponent.componentResized(null);
 
                 boardInspector.selectUnitEvent(new UnitEvent(boardComponent.getModel().getUnit(),
                                                                         UnitEvent.SELECT_UNIT));
-                boardComponent.getDialogFrame().getHorizontalScrollBar().setValue(boardComponent.getModel().getUnit().getScrollPositionXValue());
-                boardComponent.getDialogFrame().getVerticalScrollBar().setValue(boardComponent.getModel().getUnit().getScrollPositionYValue());                
+                //boardComponent.getDialogFrame().getHorizontalScrollBar().setValue(boardComponent.getModel().getUnit().getScrollPositionXValue());
+                //boardComponent.getDialogFrame().getVerticalScrollBar().setValue(boardComponent.getModel().getUnit().getScrollPositionYValue());                
             }
 
         } else {

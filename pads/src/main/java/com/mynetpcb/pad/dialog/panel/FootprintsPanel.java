@@ -80,7 +80,7 @@ public class FootprintsPanel extends JPanel  implements TreeSelectionListener,Un
             if(node.getParent()!=footprintsTree.getModel().getRoot()){   //click on chip
               TreeNodeData footprintData=(TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
               if(footprintComponent.getModel().getUnit().getUUID().compareTo(footprintData.getUUID())!=0){                  
-                  footprintComponent.getModel().getUnit().setScrollPositionValue(footprintComponent.getDialogFrame().getHorizontalScrollBar().getValue(),footprintComponent.getDialogFrame().getVerticalScrollBar().getValue());                                                                                     
+                  //footprintComponent.getModel().getUnit().setScrollPositionValue(footprintComponent.getDialogFrame().getHorizontalScrollBar().getValue(),footprintComponent.getDialogFrame().getVerticalScrollBar().getValue());                                                                                     
                   footprintComponent.getModel().setActiveUnit(footprintData.getUUID());
               }   
               
@@ -99,9 +99,9 @@ public class FootprintsPanel extends JPanel  implements TreeSelectionListener,Un
                 footprintComponent.componentResized(null);
                
                 footprintInspector.selectUnitEvent(new UnitEvent(footprintComponent.getModel().getUnit(), UnitEvent.SELECT_UNIT));                     
-                footprintComponent.getDialogFrame().getHorizontalScrollBar().setValue(footprintComponent.getModel().getUnit().getScrollPositionXValue());
-                footprintComponent.getDialogFrame().getVerticalScrollBar().setValue(footprintComponent.getModel().getUnit().getScrollPositionYValue());                           
-                footprintComponent.Repaint();
+                //footprintComponent.getDialogFrame().getHorizontalScrollBar().setValue(footprintComponent.getModel().getUnit().getScrollPositionXValue());
+                //footprintComponent.getDialogFrame().getVerticalScrollBar().setValue(footprintComponent.getModel().getUnit().getScrollPositionYValue());                           
+                
             }
         }else{
             //***Root select
@@ -109,7 +109,7 @@ public class FootprintsPanel extends JPanel  implements TreeSelectionListener,Un
            footprintInspector.selectContainerEvent(new ContainerEvent(null, ContainerEvent.SELECT_CONTAINER)); 
             return;
         }  
-    
+        footprintComponent.Repaint();
     }
 
     @Override

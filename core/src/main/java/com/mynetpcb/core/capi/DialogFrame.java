@@ -24,13 +24,13 @@ public interface DialogFrame {
      *Access to vertical scrollbar
      * @return
      */
-    public JScrollBar getVerticalScrollBar();
+    //public JScrollBar getVerticalScrollBar();
 
     /**
      *Access to horizontal scrollbar
      * @return hbar
      */
-    public JScrollBar getHorizontalScrollBar();
+    //public JScrollBar getHorizontalScrollBar();
 
     //***the circuit mode is changed - recap the toggle buttons group
     public void setButtonGroup(int requestedMode);

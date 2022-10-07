@@ -55,7 +55,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
 
 public class SymbolInternalFrame extends AbstractInternalFrame implements DialogFrame,CommandListener,ActionListener{
@@ -66,8 +65,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
     private SymbolsPanel symbolsPanel;
     private JPanel symbolBasePanel = new JPanel(new GridBagLayout());
     private GridBagConstraints gridBagConstraints = new GridBagConstraints();
-    private JScrollBar vbar = new JScrollBar(JScrollBar.VERTICAL);
-    private JScrollBar hbar = new JScrollBar(JScrollBar.HORIZONTAL);
+
 
     private JToggleButton RectButton = new JToggleButton();
     private JToggleButton EllipseButton = new JToggleButton();
@@ -133,24 +131,24 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         gridBagConstraints.weighty = 1;
         symbolBasePanel.add(symbolComponent, gridBagConstraints);
 
-        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.weightx = 0.001;
-        gridBagConstraints.weighty = 0.001;
-        symbolBasePanel.add(vbar, gridBagConstraints);
+        //gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        //gridBagConstraints.gridx = 1;
+        //gridBagConstraints.gridy = 0;
+        //gridBagConstraints.weightx = 0.001;
+        //gridBagConstraints.weighty = 0.001;
+        //symbolBasePanel.add(vbar, gridBagConstraints);
 
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.weightx = 0.001;
-        gridBagConstraints.weighty = 0.001;
-        symbolBasePanel.add(hbar, gridBagConstraints);
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx = 0;
+        //gridBagConstraints.gridy = 1;
+        //gridBagConstraints.weightx = 0.001;
+        //gridBagConstraints.weighty = 0.001;
+        //symbolBasePanel.add(hbar, gridBagConstraints);
 
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        symbolBasePanel.add(new JPanel(), gridBagConstraints);
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx = 1;
+        //gridBagConstraints.gridy = 1;
+        //symbolBasePanel.add(new JPanel(), gridBagConstraints);
         basePanel.add(symbolBasePanel, BorderLayout.CENTER);
 
         SelectionButton.addActionListener(this);
@@ -343,16 +341,6 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
     @Override
     public JFrame getParentFrame() {
         return  (JFrame)this.getDesktopPane().getRootPane().getParent();
-    }
-
-    @Override
-    public JScrollBar getVerticalScrollBar() {
-        return vbar;
-    }
-
-    @Override
-    public JScrollBar getHorizontalScrollBar() {        
-        return hbar;
     }
 
 
@@ -578,6 +566,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             }
             if (e.getSource()==PositionToCenter) {      
                 symbolComponent.setScrollPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
+                symbolComponent.Repaint();
             }
             if (e.getSource()==SnapToGridButton) {
                 symbolComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());

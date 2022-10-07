@@ -77,8 +77,8 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
             if (node.getParent() != symbolsTree.getModel().getRoot()) { //click on chip
                 TreeNodeData footprintData = (TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
                 if (symbolComponent.getModel().getUnit().getUUID().compareTo(footprintData.getUUID()) != 0) {
-                    symbolComponent.getModel().getUnit().setScrollPositionValue(symbolComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                                                                                symbolComponent.getDialogFrame().getVerticalScrollBar().getValue());
+                    //symbolComponent.getModel().getUnit().setScrollPositionValue(symbolComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
+                    //                                                            symbolComponent.getDialogFrame().getVerticalScrollBar().getValue());
                     symbolComponent.getModel().setActiveUnit(footprintData.getUUID());
                 }
 
@@ -100,16 +100,15 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
                 
                 symbolInspector.selectUnitEvent(new UnitEvent(symbolComponent.getModel().getUnit(),
                                                                        UnitEvent.SELECT_UNIT));
-                symbolComponent.getDialogFrame().getHorizontalScrollBar().setValue(symbolComponent.getModel().getUnit().getScrollPositionXValue());
-                symbolComponent.getDialogFrame().getVerticalScrollBar().setValue(symbolComponent.getModel().getUnit().getScrollPositionYValue());
-                symbolComponent.Repaint();
+                //symbolComponent.getDialogFrame().getHorizontalScrollBar().setValue(symbolComponent.getModel().getUnit().getScrollPositionXValue());
+                //symbolComponent.getDialogFrame().getVerticalScrollBar().setValue(symbolComponent.getModel().getUnit().getScrollPositionYValue());                
             }
         } else {
             //***Root select
             symbolInspector.selectContainerEvent(new ContainerEvent(null, ContainerEvent.SELECT_CONTAINER));
             return;
         }
-
+        symbolComponent.Repaint();
     }
 
     @Override

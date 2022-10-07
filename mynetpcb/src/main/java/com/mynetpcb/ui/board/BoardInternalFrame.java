@@ -71,7 +71,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 
@@ -81,8 +80,6 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
     private FootprintsPanel footprintsPanel;
     private LayersPanel layersPanel;
     
-    private JScrollBar vbar = new JScrollBar(JScrollBar.VERTICAL);
-    private JScrollBar hbar = new JScrollBar(JScrollBar.HORIZONTAL);
     private  GridBagLayout gridBagLayout=new GridBagLayout();    
     private JPanel moduleBasePanel=new JPanel(gridBagLayout);
     private GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -160,24 +157,24 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         gridBagConstraints.weighty=1;
         moduleBasePanel.add(boardComponent, gridBagConstraints);
         
-        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
-        gridBagConstraints.gridx=1;
-        gridBagConstraints.gridy=0;
-        gridBagConstraints.weightx=0.001;
-        gridBagConstraints.weighty=0.001;      
-        moduleBasePanel.add(vbar, gridBagConstraints);      
+        //gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        //gridBagConstraints.gridx=1;
+        //gridBagConstraints.gridy=0;
+        //gridBagConstraints.weightx=0.001;
+        //gridBagConstraints.weighty=0.001;      
+        //moduleBasePanel.add(vbar, gridBagConstraints);      
 
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx=0;
-        gridBagConstraints.gridy=1;
-        gridBagConstraints.weightx=0.001;
-        gridBagConstraints.weighty=0.001;
-        moduleBasePanel.add(hbar, gridBagConstraints);          
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx=0;
+        //gridBagConstraints.gridy=1;
+        //gridBagConstraints.weightx=0.001;
+        //gridBagConstraints.weighty=0.001;
+        //moduleBasePanel.add(hbar, gridBagConstraints);          
         
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx=1;
-        gridBagConstraints.gridy=1;
-        moduleBasePanel.add( new JPanel(),gridBagConstraints);                    
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx=1;
+        //gridBagConstraints.gridy=1;
+        //moduleBasePanel.add( new JPanel(),gridBagConstraints);                    
         basePanel.add(moduleBasePanel, BorderLayout.CENTER);    
 
         FootprintButton.addActionListener(this);
@@ -654,7 +651,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         if (e.getSource()==PositionToCenter) {
             boardComponent.setScrollPosition(boardComponent.getModel().getUnit().getWidth() / 2,
                                                  boardComponent.getModel().getUnit().getHeight() / 2);
-
+            boardComponent.Repaint();
         }
         if (e.getSource()==SelectionButton) {
             boardComponent.setMode(Mode.COMPONENT_MODE);
@@ -713,15 +710,6 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         return  (JFrame)this.getDesktopPane().getRootPane().getParent();
     }
 
-    @Override
-    public JScrollBar getVerticalScrollBar() {
-        return vbar;
-    }
-
-    @Override
-    public JScrollBar getHorizontalScrollBar() {
-        return hbar;
-    }
     @Override
     public void setButtonGroup(int requestedMode) {
             //***post operations

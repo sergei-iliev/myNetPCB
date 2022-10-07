@@ -42,7 +42,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
 
@@ -51,8 +50,6 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
     protected SymbolComponent symbolComponent;
     private SymbolsPanel symbolsPanel;
     
-    private JScrollBar vbar = new JScrollBar(JScrollBar.VERTICAL);
-    private JScrollBar hbar = new JScrollBar(JScrollBar.HORIZONTAL);
     private  GridBagLayout gridBagLayout=new GridBagLayout();    
     private JPanel moduleBasePanel=new JPanel(gridBagLayout);
     private GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -126,19 +123,19 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         gridBagConstraints.weighty=1;
         moduleBasePanel.add(symbolComponent, gridBagConstraints);
         
-        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
-        gridBagConstraints.gridx=1;
-        gridBagConstraints.gridy=0;
-        gridBagConstraints.weightx=0.001;
-        gridBagConstraints.weighty=0.001;      
-        moduleBasePanel.add(vbar, gridBagConstraints);      
+        //gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        //gridBagConstraints.gridx=1;
+        //gridBagConstraints.gridy=0;
+        //gridBagConstraints.weightx=0.001;
+        //gridBagConstraints.weighty=0.001;      
+        //moduleBasePanel.add(vbar, gridBagConstraints);      
 
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx=0;
-        gridBagConstraints.gridy=1;
-        gridBagConstraints.weightx=0.001;
-        gridBagConstraints.weighty=0.001;
-        moduleBasePanel.add(hbar, gridBagConstraints);          
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx=0;
+        //gridBagConstraints.gridy=1;
+        //gridBagConstraints.weightx=0.001;
+        //gridBagConstraints.weighty=0.001;
+        //moduleBasePanel.add(hbar, gridBagConstraints);          
         
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.gridx=1;
@@ -416,15 +413,6 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         return this;
     }
 
-    @Override
-    public JScrollBar getVerticalScrollBar() {
-        return vbar;
-    }
-
-    @Override
-    public JScrollBar getHorizontalScrollBar() {
-        return hbar;
-    }
     @Override
     public void setButtonGroup(int requestedMode) {
         if (requestedMode == Mode.COMPONENT_MODE) {

@@ -54,7 +54,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
 
 public class FootprintInternalFrame extends AbstractInternalFrame implements DialogFrame,CommandListener,ActionListener{
@@ -65,8 +64,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
     private com.mynetpcb.pad.dialog.panel.FootprintsPanel footprintsPanel;
     private JPanel footprintBasePanel = new JPanel(new GridBagLayout());
     private GridBagConstraints gridBagConstraints = new GridBagConstraints();
-    private JScrollBar vbar = new JScrollBar(JScrollBar.VERTICAL);
-    private JScrollBar hbar = new JScrollBar(JScrollBar.HORIZONTAL);
+
 
     private JToggleButton RectButton = new JToggleButton();
     private JToggleButton EllipseButton = new JToggleButton();
@@ -131,24 +129,24 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         gridBagConstraints.weighty = 1;
         footprintBasePanel.add(footprintComponent, gridBagConstraints);
 
-        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.weightx = 0.001;
-        gridBagConstraints.weighty = 0.001;
-        footprintBasePanel.add(vbar, gridBagConstraints);
+        //gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        //gridBagConstraints.gridx = 1;
+        //gridBagConstraints.gridy = 0;
+        //gridBagConstraints.weightx = 0.001;
+        //gridBagConstraints.weighty = 0.001;
+        //footprintBasePanel.add(vbar, gridBagConstraints);
 
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.weightx = 0.001;
-        gridBagConstraints.weighty = 0.001;
-        footprintBasePanel.add(hbar, gridBagConstraints);
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx = 0;
+        //gridBagConstraints.gridy = 1;
+        //gridBagConstraints.weightx = 0.001;
+        //gridBagConstraints.weighty = 0.001;
+        //footprintBasePanel.add(hbar, gridBagConstraints);
 
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        footprintBasePanel.add(new JPanel(), gridBagConstraints);
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx = 1;
+        //gridBagConstraints.gridy = 1;
+        //footprintBasePanel.add(new JPanel(), gridBagConstraints);
         basePanel.add(footprintBasePanel, BorderLayout.CENTER);
 
         SelectionButton.addActionListener(this);
@@ -491,6 +489,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         if (e.getSource()==PositionToCenter) {
             footprintComponent.setScrollPosition(footprintComponent.getModel().getUnit().getWidth() / 2,
                                                  footprintComponent.getModel().getUnit().getHeight() / 2);
+            footprintComponent.Repaint();
         }
 
         if (e.getSource()==RectButton) {
@@ -551,16 +550,6 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
     @Override
     public JFrame getParentFrame() {
         return  (JFrame)this.getDesktopPane().getRootPane().getParent();
-    }
-
-    @Override
-    public JScrollBar getVerticalScrollBar() {
-        return vbar;
-    }
-
-    @Override
-    public JScrollBar getHorizontalScrollBar() {
-        return hbar;
     }
 
     @Override

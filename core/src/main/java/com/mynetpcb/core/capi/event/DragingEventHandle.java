@@ -30,8 +30,8 @@ public class DragingEventHandle <U extends UnitComponent,S extends Shape> extend
 
         mx = e.getWindowX();
         my = e.getWindowY();
-        getComponent().getDialogFrame().getHorizontalScrollBar().getModel().removeChangeListener(getComponent());
-        getComponent().getDialogFrame().getVerticalScrollBar().getModel().removeChangeListener(getComponent());    
+        //getComponent().getDialogFrame().getHorizontalScrollBar().getModel().removeChangeListener(getComponent());
+        //getComponent().getDialogFrame().getVerticalScrollBar().getModel().removeChangeListener(getComponent());    
     }
 
     @Override
@@ -43,8 +43,8 @@ public class DragingEventHandle <U extends UnitComponent,S extends Shape> extend
                                                                          16),
                                                                "DragHeandOpen");
         getComponent().setCursor(cursor);  
-        getComponent().getDialogFrame().getHorizontalScrollBar().getModel().addChangeListener(getComponent());
-        getComponent().getDialogFrame().getVerticalScrollBar().getModel().addChangeListener(getComponent());
+        //getComponent().getDialogFrame().getHorizontalScrollBar().getModel().addChangeListener(getComponent());
+        //getComponent().getDialogFrame().getVerticalScrollBar().getModel().addChangeListener(getComponent());
     }
 
     @Override
@@ -54,8 +54,8 @@ public class DragingEventHandle <U extends UnitComponent,S extends Shape> extend
          
     
         getComponent().getViewportWindow().setLocation(newX,newY);
-        getComponent().getDialogFrame().getHorizontalScrollBar().setValue((int)newX);
-        getComponent().getDialogFrame().getVerticalScrollBar().setValue((int)newY);
+        //getComponent().getDialogFrame().getHorizontalScrollBar().setValue((int)newX);
+        //getComponent().getDialogFrame().getVerticalScrollBar().setValue((int)newY);
         
         mx = e.getWindowX();
         my = e.getWindowY();

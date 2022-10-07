@@ -89,8 +89,8 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
             if (node.getParent() != circuitsTree.getModel().getRoot()) { //click on chip
                 TreeNodeData circuitData = (TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
                 if (circuitComponent.getModel().getUnit().getUUID().compareTo(circuitData.getUUID()) != 0) {
-                    circuitComponent.getModel().getUnit().setScrollPositionValue(circuitComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                                                                                 circuitComponent.getDialogFrame().getVerticalScrollBar().getValue());
+                    //circuitComponent.getModel().getUnit().setScrollPositionValue(circuitComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
+                    //                                                             circuitComponent.getDialogFrame().getVerticalScrollBar().getValue());
                     circuitComponent.getModel().setActiveUnit(circuitData.getUUID());
                 }
 
@@ -105,29 +105,29 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
                 final Point2D position = new Point2D.Double(symbolRect.min.x, symbolRect.min.y);
                 circuitComponent.getModel().getUnit().getScalableTransformation().getCurrentTransformation().transform(position,
                                                                                                                        position);
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        circuitComponent.getDialogFrame().getHorizontalScrollBar().setValue((int)position.getX() -
-                                                                                            circuitComponent.getWidth() /
-                                                                                            2);
-                        circuitComponent.getDialogFrame().getVerticalScrollBar().setValue((int)position.getY() -
-                                                                                          circuitComponent.getHeight() /
-                                                                                          2);
-                    }
-                });
+                //SwingUtilities.invokeLater(new Runnable() {
+                //    public void run() {
+                //        circuitComponent.getDialogFrame().getHorizontalScrollBar().setValue((int)position.getX() -
+                //                                                                            circuitComponent.getWidth() /
+                //                                                                            2);
+                //        circuitComponent.getDialogFrame().getVerticalScrollBar().setValue((int)position.getY() -
+                //                                                                          circuitComponent.getHeight() /
+                //                                                                          2);
+                //    }
+                //});
             } else { //click on unit
-                if (circuitComponent.getModel().getUnit() != null) {
-                    circuitComponent.getModel().getUnit().setScrollPositionValue(circuitComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                                                                                 circuitComponent.getDialogFrame().getVerticalScrollBar().getValue());
-                }
+                //if (circuitComponent.getModel().getUnit() != null) {
+                //    circuitComponent.getModel().getUnit().setScrollPositionValue(circuitComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
+                //                                                                 circuitComponent.getDialogFrame().getVerticalScrollBar().getValue());
+                //}
                 circuitComponent.getModel().setActiveUnit(data.getUUID());
                 circuitComponent.getModel().getUnit().setSelected(false);
                 circuitComponent.componentResized(null);
 
                 circuitInspector.selectUnitEvent(new UnitEvent(circuitComponent.getModel().getUnit(),
                                                                         UnitEvent.SELECT_UNIT));
-                circuitComponent.getDialogFrame().getHorizontalScrollBar().setValue(circuitComponent.getModel().getUnit().getScrollPositionXValue());
-                circuitComponent.getDialogFrame().getVerticalScrollBar().setValue(circuitComponent.getModel().getUnit().getScrollPositionYValue());
+                //circuitComponent.getDialogFrame().getHorizontalScrollBar().setValue(circuitComponent.getModel().getUnit().getScrollPositionXValue());
+                //circuitComponent.getDialogFrame().getVerticalScrollBar().setValue(circuitComponent.getModel().getUnit().getScrollPositionYValue());
 
             }
 

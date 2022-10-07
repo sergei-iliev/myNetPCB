@@ -329,16 +329,6 @@ exit();
     }
 
     @Override
-    public JScrollBar getVerticalScrollBar() {
-        return vbar;
-    }
-
-    @Override
-    public JScrollBar getHorizontalScrollBar() {
-        return hbar;
-    }
-
-    @Override
     public void setButtonGroup(int requestedMode) {
         if (requestedMode == Mode.COMPONENT_MODE) {
             group.setSelected(SelectionButton.getModel(), true);
