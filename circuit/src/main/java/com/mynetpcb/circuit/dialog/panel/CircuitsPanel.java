@@ -89,8 +89,8 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
             if (node.getParent() != circuitsTree.getModel().getRoot()) { //click on chip
                 TreeNodeData circuitData = (TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
                 if (circuitComponent.getModel().getUnit().getUUID().compareTo(circuitData.getUUID()) != 0) {
-                    //circuitComponent.getModel().getUnit().setScrollPositionValue(circuitComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                    //                                                             circuitComponent.getDialogFrame().getVerticalScrollBar().getValue());
+                	circuitComponent.getModel().getUnit().setViewportPositionValue(circuitComponent.getViewportWindow().getX(),
+                			circuitComponent.getViewportWindow().getY());
                     circuitComponent.getModel().setActiveUnit(circuitData.getUUID());
                 }
 
@@ -104,18 +104,15 @@ public class CircuitsPanel extends JPanel implements TreeSelectionListener, Unit
                 Box symbolRect=circuitComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();                     
                 circuitComponent.setViewportPosition(symbolRect.min.x, symbolRect.min.y);
             } else { //click on unit
-                //if (circuitComponent.getModel().getUnit() != null) {
-                //    circuitComponent.getModel().getUnit().setScrollPositionValue(circuitComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                //                                                                 circuitComponent.getDialogFrame().getVerticalScrollBar().getValue());
-                //}
+            	circuitComponent.getModel().getUnit().setViewportPositionValue(circuitComponent.getViewportWindow().getX(),circuitComponent.getViewportWindow().getY());                 
                 circuitComponent.getModel().setActiveUnit(data.getUUID());
                 circuitComponent.getModel().getUnit().setSelected(false);
                 circuitComponent.componentResized(null);
 
                 circuitInspector.selectUnitEvent(new UnitEvent(circuitComponent.getModel().getUnit(),
                                                                         UnitEvent.SELECT_UNIT));
-                //circuitComponent.getDialogFrame().getHorizontalScrollBar().setValue(circuitComponent.getModel().getUnit().getScrollPositionXValue());
-                //circuitComponent.getDialogFrame().getVerticalScrollBar().setValue(circuitComponent.getModel().getUnit().getScrollPositionYValue());
+            	this.circuitComponent.getViewportWindow().setX(this.circuitComponent.getModel().getUnit().getViewportPositionX());
+            	this.circuitComponent.getViewportWindow().setY(this.circuitComponent.getModel().getUnit().getViewportPositionY());    			    	              
 
             }
 

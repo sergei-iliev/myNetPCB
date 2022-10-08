@@ -461,7 +461,7 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
             com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
             com.mynetpcb.d2.shapes.Point pt=r.min.clone();
             pt.scale(unit.getScalableTransformation().getCurrentTransformation().getScaleX());            
-            unit.setScrollPositionValue((int)pt.x,(int)pt.y);            
+            unit.setViewportPositionValue(pt.x,pt.y);            
         }
         
         com.mynetpcb.d2.shapes.Box r=symbolComponent.getModel().getUnit().getBoundingRect();

@@ -454,7 +454,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {  
             //rememeber current unit position
             if(boardComponent.getModel().getUnit()!=null){
-                boardComponent.getModel().getUnit().setScrollPositionValue((int)boardComponent.getViewportWindow().getX(),(int)boardComponent.getViewportWindow().getY());                      
+                boardComponent.getModel().getUnit().setViewportPositionValue(boardComponent.getViewportWindow().getX(),boardComponent.getViewportWindow().getY());                      
             }
             Board board  = new Board((int)Grid.MM_TO_COORD(100),(int)Grid.MM_TO_COORD(100));
             boardComponent.getModel().add(board);
@@ -786,6 +786,13 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
             boardComponent.fireContainerEvent(new ContainerEvent(null, ContainerEvent.RENAME_CONTAINER));
             boardComponent.getModel().fireUnitEvent(new UnitEvent(boardComponent.getModel().getUnit(),
                                                                       UnitEvent.SELECT_UNIT));
+            //position all to symbol center
+  		    for(var unit : this.boardComponent.getModel().getUnits()){			   
+  	            var r=unit.getBoundingRect();
+  	            var x=unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getX()-(this.boardComponent.getViewportWindow().getWidth()-unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getWidth())/2;
+  	            var y=unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getY()-(this.boardComponent.getViewportWindow().getHeight()-unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getHeight())/2;;
+  	            unit.setViewportPositionValue(x,y);            			  
+  		    }	            
             //position to symbol center
             Box r=boardComponent.getModel().getUnit().getBoundingRect();
             boardComponent.setViewportPosition(r.getCenter().x,r.getCenter().y);

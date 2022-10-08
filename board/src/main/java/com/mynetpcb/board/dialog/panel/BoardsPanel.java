@@ -86,8 +86,8 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
             if (node.getParent() != boardsTree.getModel().getRoot()) { //click on chip
                 TreeNodeData boardData = (TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
                 if (boardComponent.getModel().getUnit().getUUID().compareTo(boardData.getUUID()) != 0) {
-                    //boardComponent.getModel().getUnit().setScrollPositionValue(boardComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                    //                                                             boardComponent.getDialogFrame().getVerticalScrollBar().getValue());
+                	boardComponent.getModel().getUnit().setViewportPositionValue(boardComponent.getViewportWindow().getX(),
+                			boardComponent.getViewportWindow().getY());                                                                                
                     boardComponent.getModel().setActiveUnit(boardData.getUUID());
                 }
 
@@ -101,18 +101,15 @@ public class BoardsPanel extends JPanel implements TreeSelectionListener, UnitLi
                 Box symbolRect=boardComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
                 boardComponent.setViewportPosition(symbolRect.min.x, symbolRect.min.y);
             } else { //click on unit
-                //if (boardComponent.getModel().getUnit() != null) {
-                //    boardComponent.getModel().getUnit().setScrollPositionValue(boardComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                //                                                                 boardComponent.getDialogFrame().getVerticalScrollBar().getValue());
-                //}
+            	boardComponent.getModel().getUnit().setViewportPositionValue(boardComponent.getViewportWindow().getX(),boardComponent.getViewportWindow().getY());
                 boardComponent.getModel().setActiveUnit(data.getUUID());
                 boardComponent.getModel().getUnit().setSelected(false);
                 boardComponent.componentResized(null);
 
                 boardInspector.selectUnitEvent(new UnitEvent(boardComponent.getModel().getUnit(),
                                                                         UnitEvent.SELECT_UNIT));
-                //boardComponent.getDialogFrame().getHorizontalScrollBar().setValue(boardComponent.getModel().getUnit().getScrollPositionXValue());
-                //boardComponent.getDialogFrame().getVerticalScrollBar().setValue(boardComponent.getModel().getUnit().getScrollPositionYValue());                
+            	this.boardComponent.getViewportWindow().setX(this.boardComponent.getModel().getUnit().getViewportPositionX());
+            	this.boardComponent.getViewportWindow().setY(this.boardComponent.getModel().getUnit().getViewportPositionY());    			    	              
             }
 
         } else {

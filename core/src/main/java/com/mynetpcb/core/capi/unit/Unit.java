@@ -77,7 +77,7 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
 
     private EventListenerList shapeListeners;
 
-    private int scrollPositionXValue, scrollPositionYValue;
+    private double viewportPositionX, viewportPositionY;
 
     protected AbstractShapeFactory shapeFactory;
     
@@ -129,19 +129,18 @@ public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, Pri
       return copy;
     }
     
-    public void setScrollPositionValue(int scrollPositionXValue, int scrollPositionYValue) {
-        this.scrollPositionXValue = scrollPositionXValue;
-        this.scrollPositionYValue = scrollPositionYValue;
-    }
-
-    public int getScrollPositionXValue() {
-        return scrollPositionXValue;
-    }
-
-    public int getScrollPositionYValue() {
-        return scrollPositionYValue;
-    }
-
+    public void setViewportPositionValue(double viewportPositionX,double viewportPositionY) {
+        this.viewportPositionX = viewportPositionX;
+        this.viewportPositionY = viewportPositionY;
+       }
+    
+public double getViewportPositionX() {
+	return viewportPositionX;
+}
+public double getViewportPositionY() {
+	return viewportPositionY;
+}
+    
     public String getUnitName() {
         return unitName;
     }

@@ -389,7 +389,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
             if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {                
                 //rememeber current unit position
                 if(symbolComponent.getModel().getUnit()!=null){
-                    symbolComponent.getModel().getUnit().setScrollPositionValue((int)symbolComponent.getViewportWindow().getX(),(int)symbolComponent.getViewportWindow().getY());                      
+                    symbolComponent.getModel().getUnit().setViewportPositionValue(symbolComponent.getViewportWindow().getX(),symbolComponent.getViewportWindow().getY());                      
                 }
                 Symbol symbol  = new Symbol(500, 500);
                 symbolComponent.getModel().add(symbol);
@@ -416,9 +416,6 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
                             symbolLoadDialog=null;
                             setButtonGroup(Mode.COMPONENT_MODE);
                 
-                            //position on center
-                            //Rectangle r=symbolComponent.getModel().getUnit().getBoundingRect();
-                            //symbolComponent.setScrollPosition((int)r.getCenterX(),(int)r.getCenterY());
 
             }
         if (symbolComponent.getModel().getUnit() == null) {
@@ -565,7 +562,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
                 symbolComponent.setMode(Mode.COMPONENT_MODE);          
             }
             if (e.getSource()==PositionToCenter) {
-            	symbolComponent.getModel().getUnit().getScalableTransformation().setScaleFactor(1);
+            	symbolComponent.getModel().getUnit().getScalableTransformation().setScaleFactor(symbolComponent.getModel().getUnit().getScalableTransformation().getMinScaleFactor());
                 symbolComponent.setViewportPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
                 symbolComponent.Repaint();
             }
@@ -630,13 +627,15 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         symbolComponent.fireContainerEvent(new ContainerEvent(null, ContainerEvent.RENAME_CONTAINER));
         symbolComponent.getModel().fireUnitEvent(new UnitEvent(symbolComponent.getModel().getUnit(),
                                                                   UnitEvent.SELECT_UNIT));
+        
+        
         //position all to symbol center
-        for(Unit unit:symbolComponent.getModel().getUnits()){
-            com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
-            com.mynetpcb.d2.shapes.Point pt=r.min.clone();
-            pt.scale(unit.getScalableTransformation().getCurrentTransformation().getScaleX());            
-            unit.setScrollPositionValue((int)pt.x,(int)pt.y);            
-        }
+		  for(var unit : this.symbolComponent.getModel().getUnits()){			   
+	            var r=unit.getBoundingRect();
+	            var x=unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getX()-(this.symbolComponent.getViewportWindow().getWidth()-unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getWidth())/2;
+	            var y=unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getY()-(this.symbolComponent.getViewportWindow().getHeight()-unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getHeight())/2;;
+	            unit.setViewportPositionValue(x,y);            			  
+		  }	
         //position to symbol center
         com.mynetpcb.d2.shapes.Box r=symbolComponent.getModel().getUnit().getBoundingRect();
         symbolComponent.setViewportPosition(r.getCenter().x,r.getCenter().y);

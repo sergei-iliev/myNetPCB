@@ -357,7 +357,7 @@ exit();
         if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {  
             //rememeber current unit position
             if(footprintComponent.getModel().getUnit()!=null){
-                footprintComponent.getModel().getUnit().setScrollPositionValue((int)footprintComponent.getViewportWindow().getX(),(int)footprintComponent.getViewportWindow().getY());                      
+                footprintComponent.getModel().getUnit().setViewportPositionValue(footprintComponent.getViewportWindow().getX(),footprintComponent.getViewportWindow().getY());                      
             }
             Footprint footprint = new Footprint((int)Grid.MM_TO_COORD(50), (int)Grid.MM_TO_COORD(50));
             footprintComponent.getModel().add(footprint);
@@ -570,7 +570,7 @@ exit();
             com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
             com.mynetpcb.d2.shapes.Point pt=r.min.clone();
             pt.scale(unit.getScalableTransformation().getCurrentTransformation().getScaleX());            
-            unit.setScrollPositionValue((int)pt.x,(int)pt.y);            
+            unit.setViewportPositionValue(pt.x,pt.y);            
         }
         //position to symbol center
         com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getBoundingRect();

@@ -77,8 +77,8 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
             if (node.getParent() != symbolsTree.getModel().getRoot()) { //click on chip
                 TreeNodeData footprintData = (TreeNodeData)((DefaultMutableTreeNode)node.getParent()).getUserObject();
                 if (symbolComponent.getModel().getUnit().getUUID().compareTo(footprintData.getUUID()) != 0) {
-                    //symbolComponent.getModel().getUnit().setScrollPositionValue(symbolComponent.getDialogFrame().getHorizontalScrollBar().getValue(),
-                    //                                                            symbolComponent.getDialogFrame().getVerticalScrollBar().getValue());
+                    symbolComponent.getModel().getUnit().setViewportPositionValue(symbolComponent.getViewportWindow().getX(),
+                                                                                symbolComponent.getViewportWindow().getY());
                     symbolComponent.getModel().setActiveUnit(footprintData.getUUID());
                 }
 
@@ -92,7 +92,7 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
                 Box symbolRect=symbolComponent.getModel().getUnit().getShape(data.getUUID()).getBoundingShape();   
                 symbolComponent.setViewportPosition(symbolRect.min.x, symbolRect.min.y);
             } else { //click on unit
-                symbolComponent.getModel().getUnit().setScrollPositionValue((int)symbolComponent.getViewportWindow().getX(),(int)symbolComponent.getViewportWindow().getY());                 
+                symbolComponent.getModel().getUnit().setViewportPositionValue(symbolComponent.getViewportWindow().getX(),symbolComponent.getViewportWindow().getY());                 
 
                 symbolComponent.getModel().setActiveUnit(data.getUUID());
                 symbolComponent.getModel().getUnit().setSelected(false);
@@ -100,8 +100,8 @@ public class SymbolsPanel extends JPanel implements TreeSelectionListener, UnitL
                 
                 symbolInspector.selectUnitEvent(new UnitEvent(symbolComponent.getModel().getUnit(),
                                                                        UnitEvent.SELECT_UNIT));
-                //symbolComponent.getDialogFrame().getHorizontalScrollBar().setValue(symbolComponent.getModel().getUnit().getScrollPositionXValue());
-                //symbolComponent.getDialogFrame().getVerticalScrollBar().setValue(symbolComponent.getModel().getUnit().getScrollPositionYValue());                
+            	this.symbolComponent.getViewportWindow().setX(this.symbolComponent.getModel().getUnit().getViewportPositionX());
+            	this.symbolComponent.getViewportWindow().setY(this.symbolComponent.getModel().getUnit().getViewportPositionY());    			    	              
             }
         } else {
             //***Root select

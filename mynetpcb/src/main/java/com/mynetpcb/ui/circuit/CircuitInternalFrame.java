@@ -417,6 +417,14 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         circuitComponent.fireContainerEvent(new ContainerEvent(null, ContainerEvent.RENAME_CONTAINER));
         circuitComponent.getModel().fireUnitEvent(new UnitEvent(circuitComponent.getModel().getUnit(),
                                                                   UnitEvent.SELECT_UNIT));
+        
+		  //position all to circuit center
+		  for(var unit : this.circuitComponent.getModel().getUnits()){			   
+	            var r=unit.getBoundingRect();
+	            var x=unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getX()-(this.circuitComponent.getViewportWindow().getWidth()-unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getWidth())/2;
+	            var y=unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getY()-(this.circuitComponent.getViewportWindow().getHeight()-unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getHeight())/2;;
+	            unit.setViewportPositionValue(x,y);          
+		  }	
         //position to symbol center
         com.mynetpcb.d2.shapes.Box r=circuitComponent.getModel().getUnit().getBoundingRect();
         circuitComponent.setViewportPosition(r.getCenter().x,r.getCenter().y);
@@ -499,8 +507,8 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {
             //rememeber current unit position
             if (circuitComponent.getModel().getUnit() != null) {
-                circuitComponent.getModel().getUnit().setScrollPositionValue((int)circuitComponent.getViewportWindow().getX(),
-                                                                             (int)circuitComponent.getViewportWindow().getY());
+                circuitComponent.getModel().getUnit().setViewportPositionValue(circuitComponent.getViewportWindow().getX(),
+                                                                             circuitComponent.getViewportWindow().getY());
             }
             Circuit circuit = new Circuit(1000, 800);
             circuitComponent.getModel().add(circuit);

@@ -346,7 +346,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         if (e.getActionCommand().equals("Add")||e.getActionCommand().equals("Create")) {  
             //rememeber current unit position
             if(footprintComponent.getModel().getUnit()!=null){
-                footprintComponent.getModel().getUnit().setScrollPositionValue((int)footprintComponent.getViewportWindow().getX(),(int)footprintComponent.getViewportWindow().getY());                      
+                footprintComponent.getModel().getUnit().setViewportPositionValue(footprintComponent.getViewportWindow().getX(),footprintComponent.getViewportWindow().getY());                      
             }
             Footprint footprint = new Footprint((int)Grid.MM_TO_COORD(50), (int)Grid.MM_TO_COORD(50));
             footprintComponent.getModel().add(footprint);
@@ -624,10 +624,10 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
 
             //position all to symbol center
             for(Unit unit:footprintComponent.getModel().getUnits()){
-                com.mynetpcb.d2.shapes.Box r=unit.getBoundingRect();
-                com.mynetpcb.d2.shapes.Point pt=r.min.clone();
-                pt.scale(unit.getScalableTransformation().getCurrentTransformation().getScaleX());            
-                unit.setScrollPositionValue((int)pt.x,(int)pt.y);            
+	            var r=unit.getBoundingRect();
+	            var x=unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getX()-(this.footprintComponent.getViewportWindow().getWidth()-unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getWidth())/2;
+	            var y=unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getY()-(this.footprintComponent.getViewportWindow().getHeight()-unit.getScalableTransformation().getCurrentTransformation().getScaleX()*r.getHeight())/2;;
+	            unit.setViewportPositionValue(x,y);          
             }
             //position to symbol center
             com.mynetpcb.d2.shapes.Box r=footprintComponent.getModel().getUnit().getBoundingRect();
