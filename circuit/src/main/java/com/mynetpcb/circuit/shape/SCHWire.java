@@ -99,26 +99,26 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
       }
 	  return false;
     }
-	public Point[] getSegmentClicked(Point pt){
+	public Segment getSegmentClicked(Point pt){
 	    var segment=new Segment(0,0,0,0);	   
         var prevPoint = this.polyline.points.get(0);        
         for(var point:this.polyline.points){    	        	  
             if(prevPoint.equals(point)){    	            	  
           	  prevPoint = point;
               continue;
-            }    	              
-            segment.set(prevPoint.x,prevPoint.y,point.x,point.y);
+            }    	                         
+            segment.ps=prevPoint;
+            segment.pe=point;
             if(segment.isPointOn(pt,this.selectionRectWidth)){
             	
-                return  new Point[]{prevPoint,point};
+                return  segment;
             }
             prevPoint = point;
         }			       	          
      return null;
     }
-    public void moveSegment(Point startPoint,Point endPoint,double x,double y){	
-	  var pt=new Point(x,y);
-	  var segment=new Segment(startPoint,endPoint);
+    public void moveSegment(Segment segment,double x,double y){	
+	  var pt=new Point(x,y);	  
 
 	  var projPt=segment.projectionPoint(pt);
       var delta=projPt.distanceTo(pt);
@@ -129,14 +129,14 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
       var v=new Vector(projPt,pt);   
       var norm=v.normalize();
 	  
+      double xx=segment.ps.x +delta*norm.x;
+	  double yy=segment.ps.y +delta*norm.y;
+      segment.ps.set(xx,yy);
       
-      double xx=startPoint.x +delta*norm.x;
-	  double yy=startPoint.y +delta*norm.y;
-      startPoint.set(xx,yy);
-
-      xx=endPoint.x +delta*norm.x;
-	  yy=endPoint.y +delta*norm.y;
-      endPoint.set(xx,yy);    
+      xx=segment.pe.x +delta*norm.x;
+	  yy=segment.pe.y +delta*norm.y;
+	  segment.pe.set(xx,yy); 
+	  
     }    
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {

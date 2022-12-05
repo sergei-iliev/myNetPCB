@@ -14,10 +14,12 @@ import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Segment;
 
 public class MoveLineSegmentHandle extends EventHandle<CircuitComponent,Shape>{
-    private Point startPoint;
-    private Point endPoint;
+    //private Point startPoint;
+    //private Point endPoint;
+    private Segment segment;
     
     public MoveLineSegmentHandle(CircuitComponent component) {
         super(component);
@@ -35,9 +37,7 @@ public class MoveLineSegmentHandle extends EventHandle<CircuitComponent,Shape>{
         getComponent().getModel().getUnit().setSelected(false);
         getTarget().setSelected(true); 
 
-        var arr=((SCHWire)this.getTarget()).getSegmentClicked(e.getPoint());
-        this.startPoint=arr[0];
-        this.endPoint=arr[1];
+        this.segment=((SCHWire)this.getTarget()).getSegmentClicked(e.getPoint());
         
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint(); 
@@ -46,8 +46,8 @@ public class MoveLineSegmentHandle extends EventHandle<CircuitComponent,Shape>{
     @Override
     public void mouseScaledReleased(MouseScaledEvent e) {
 	  
-    	((SCHWire)this.getTarget()).alignResizingPointToGrid(this.startPoint);
-    	((SCHWire)this.getTarget()).alignResizingPointToGrid(this.endPoint);
+    	((SCHWire)this.getTarget()).alignResizingPointToGrid(this.segment.ps);
+    	((SCHWire)this.getTarget()).alignResizingPointToGrid(this.segment.pe);
     	getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
     	getComponent().Repaint();	 		         		  
     }
@@ -55,7 +55,7 @@ public class MoveLineSegmentHandle extends EventHandle<CircuitComponent,Shape>{
     @Override
     public void mouseScaledDragged(MouseScaledEvent e) {
 
-        ((SCHWire)this.getTarget()).moveSegment(this.startPoint,this.endPoint,e.getX(),e.getY());                
+        ((SCHWire)this.getTarget()).moveSegment(this.segment,e.getX(),e.getY());                
     	getComponent().Repaint();
     }
 
