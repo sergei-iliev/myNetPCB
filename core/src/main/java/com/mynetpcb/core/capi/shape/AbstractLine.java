@@ -142,14 +142,14 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
             count++;
             LinePoint point = i.next();
             
-            if (Utils.intersectLineLine(prevPoint, point, rect.min, rect.max)){
+            if (Utils.intersectLineRectangle(prevPoint, point, rect.min, rect.max)){
                 index=count;
                 break;
             }    
             prevPoint = point;
         }
         
-        if(count!=-1){
+        if(index!=-1){
            this.polyline.points.add(index, new LinePoint(x,y)); 
         }
          
