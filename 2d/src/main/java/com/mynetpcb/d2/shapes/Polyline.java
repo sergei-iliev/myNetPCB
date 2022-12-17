@@ -3,7 +3,7 @@ package com.mynetpcb.d2.shapes;
 
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -118,6 +118,24 @@ public class Polyline<P extends Point> extends GeometricFigure{
 		 return result;
 	   
     }
+    /**
+    *
+    * @return list of all constracting segments
+    */
+    public List<Segment> getSegments(){
+        List<Segment> list=new ArrayList<>();
+        Point prevPoint = this.points.get(0);        
+        for(Point point :this.points){                          
+            if(prevPoint.equals(point)){                        
+                prevPoint = point;
+                continue;
+            }                       
+            list.add(new Segment(prevPoint.x,prevPoint.y,point.x,point.y));
+            
+            prevPoint = point;
+        }
+        return list;         
+    }    
     public boolean isPointOnSegment(Point pt,double diviation){    	       
 	   var segment=new Segment(0,0,0,0);	   
        var prevPoint = this.points.get(0);        

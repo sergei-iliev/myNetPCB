@@ -117,9 +117,9 @@ public class PCBTrack extends TrackShape implements PCBShape{
             if(selectedShapes.contains(track.getUUID())){
                 continue;
             }            
-            for(Segment segment:this.getSegments()){
+            for(Segment segment:this.polyline.getSegments()){
               //is my segment crossing anyone elses's?
-                for(Segment other:track.getSegments()){
+                for(Segment other:track.polyline.getSegments()){
                     if(segment.intersect(other)){
                         net.add(track);
                         break;

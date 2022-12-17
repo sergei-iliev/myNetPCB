@@ -36,26 +36,7 @@ public interface Trackable<P extends Point> extends Drawable,Unitable<Unit>{
      * The basic building points of a track
      * @return the points the track consists of
      */
-     public List<P> getLinePoints();  
-     
-     /**
-     *
-     * @return list of all constracting segments
-     */
-     public  default List<Segment> getSegments(){
-         List<Segment> list=new ArrayList<>();
-         Point prevPoint = this.getLinePoints().get(0);        
-         for(Point point :this.getLinePoints()){                          
-             if(prevPoint.equals(point)){                        
-                 prevPoint = point;
-                 continue;
-             }                       
-             list.add(new Segment(prevPoint.x,prevPoint.y,point.x,point.y));
-             
-             prevPoint = point;
-         }
-         return list;         
-     }
+     public List<P> getLinePoints();       
     
 /**
      * Add new point to the track

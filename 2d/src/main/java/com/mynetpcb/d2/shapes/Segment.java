@@ -191,7 +191,9 @@ public class Segment extends GeometricFigure {
         
         
     }
-    
+	public boolean same(Segment that){
+	   return this.ps==that.ps&&this.pe==that.pe;
+	}
     @Override
     public void paint(Graphics2D g2, boolean fill) {
         cache.setLine(ps.x, ps.y, pe.x, pe.y);

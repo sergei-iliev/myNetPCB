@@ -107,7 +107,7 @@ public class Vector{
         Vector norm2 = v.normalize();
         double angle = Math.atan2(norm1.cross(norm2), norm1.dot(norm2));
         if (angle<0) angle += 2*Math.PI;
-        return angle;
+        return Utils.degrees(angle);
     }
     /**
      * Return vector projection of the current vector on another vector
