@@ -473,10 +473,13 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().setLineBendingProcessor(lineBendingProcessor);
             return;
         }
-        if (e.getActionCommand().equalsIgnoreCase("deleteline")) {
-              getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.DELETE_MEMENTO));
+        if (e.getActionCommand().equalsIgnoreCase("deleteline")) {                                     
+              if(((Trackable)getTarget()).getLinePoints().size()>1) {   
+            	  getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.DELETE_MEMENTO));            	                                      
+              }
               getUnitComponent().getEventMgr().resetEventHandle();
               getUnitComponent().getModel().getUnit().delete(getTarget().getUUID());
+                           
               getUnitComponent().Repaint();                    
         } 
         
@@ -491,15 +494,16 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
 
         }
         if (e.getActionCommand().equalsIgnoreCase("deletelastpoint")) {
-            Trackable line = (Trackable)getTarget();
-            line.deleteLastPoint();
-
-            if (((Trackable)getTarget()).getLinePoints().size() <= 1) {
-                getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.DELETE_MEMENTO));
+            Trackable line = (Trackable)getTarget();            
+            if(((Trackable)getTarget()).getLinePoints().size() ==2) {   
+            	getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.DELETE_MEMENTO));            	                        
                 getUnitComponent().getEventMgr().resetEventHandle();
                 getUnitComponent().getModel().getUnit().delete(getTarget().getUUID());
-            }
-            else{
+            }else if(((Trackable)getTarget()).getLinePoints().size()<2){
+                getUnitComponent().getEventMgr().resetEventHandle();
+                getUnitComponent().getModel().getUnit().delete(getTarget().getUUID());
+            }else {	
+            	line.deleteLastPoint();            
                 getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
             }
 

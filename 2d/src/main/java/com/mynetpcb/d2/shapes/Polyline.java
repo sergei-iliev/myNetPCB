@@ -129,13 +129,16 @@ public class Polyline<P extends Point> extends GeometricFigure{
             if(prevPoint.equals(point)){                        
                 prevPoint = point;
                 continue;
-            }                       
-            list.add(new Segment(prevPoint.x,prevPoint.y,point.x,point.y));
+            }   
+            var segment=new Segment();
+            segment.ps=prevPoint;
+            segment.pe=point;
+            list.add(segment);
             
             prevPoint = point;
         }
         return list;         
-    }    
+    }  	    
     public boolean isPointOnSegment(Point pt,double diviation){    	       
 	   var segment=new Segment(0,0,0,0);	   
        var prevPoint = this.points.get(0);        

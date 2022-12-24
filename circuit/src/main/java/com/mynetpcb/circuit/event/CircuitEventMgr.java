@@ -27,7 +27,7 @@ public class CircuitEventMgr extends EventMgr<CircuitComponent,Shape> {
           if(handle!=null){
              handle.setTarget(target); 
           //****generate event
-             if(eventKey.equals("move")||eventKey.equals("buspining")||eventKey.equals("symbol")||eventKey.equals("buspin")||eventKey.equals("texture")||eventKey.equals("resize")||eventKey.equals("connector")){
+             if(eventKey.equals("move.segment")||eventKey.equals("move")||eventKey.equals("buspining")||eventKey.equals("symbol")||eventKey.equals("buspin")||eventKey.equals("texture")||eventKey.equals("resize")||eventKey.equals("connector")){
                  handle.getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(target, ShapeEvent.SELECT_SHAPE));
              }else
                {    //***default handling - circuit event
@@ -53,6 +53,6 @@ public class CircuitEventMgr extends EventMgr<CircuitComponent,Shape> {
          hash.put("symbol",new SymbolEventHandle(component)); 
          hash.put("cursor",new CursorEventHandle<CircuitComponent,Shape>(component));        
          hash.put("dragheand",new DragingEventHandle<CircuitComponent,Shape>(component)); 
-         hash.put("move.segment",new MoveLineSegmentHandle(component));
+         hash.put("move.segment",new com.mynetpcb.core.capi.event.MoveLineSegmentHandle<CircuitComponent, Shape>(component));
         }
 }

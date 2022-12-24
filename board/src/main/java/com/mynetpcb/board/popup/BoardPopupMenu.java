@@ -63,7 +63,7 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
         trackMenu=new LinkedHashMap<String,Object>();
         
         JMenuItem item=new JMenuItem("Add Via"); item.setActionCommand("addvia");
-        trackMenu.put("AddVia",item); 
+        //trackMenu.put("AddVia",item); 
         
         Map<String,JMenuItem> submenu=new LinkedHashMap<String,JMenuItem>(); 
         //***Wire Bending

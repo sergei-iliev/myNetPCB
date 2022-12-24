@@ -47,7 +47,6 @@ public class ResizeEventHandle <U extends UnitComponent,S extends Shape> extends
 
     @Override
     public void mouseScaledReleased(MouseScaledEvent e) {
-       // System.out.println(((SquareResizableShape)getTarget()).getStartPoint());
         //***snap to grid
         if((Boolean)getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)==true){
          ((Resizeable)getTarget()).alignResizingPointToGrid(targetPoint);

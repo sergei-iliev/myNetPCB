@@ -350,6 +350,31 @@ public class PCBTrack extends TrackShape implements PCBShape{
     public void setNetName(String net){
         this.net=net;
     }
+    public boolean isSegmentClicked(Point pt){				     
+  	  if(this.isControlRectClicked(pt.x,pt.y)!=null) {
+            return false;
+      }if(this.polyline.isPointOnSegment(pt,this.thickness)){
+  	    return true;
+      }
+  	  return false;
+    }
+    public Segment getSegmentClicked(Point pt){
+  		      var segment=new Segment();	   
+  	          var prevPoint = this.polyline.points.get(0);        
+  	          for(var point : this.polyline.points){    	        	  
+  	              if(prevPoint.equals(point)){    	            	  
+  	            	  prevPoint = point;
+  	                  continue;
+  	              }    	              	              
+                    segment.ps=prevPoint;
+                    segment.pe=point;
+  	              if(segment.isPointOn(pt,this.thickness)){
+  	                  return segment;
+  	              }
+  	              prevPoint = point;
+  	          }			       	          
+  	       return null;
+    }    
     @Override
     public boolean isSublineSelected() {
         // TODO Implement this method

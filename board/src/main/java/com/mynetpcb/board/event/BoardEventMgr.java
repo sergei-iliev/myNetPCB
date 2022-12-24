@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.event.EventMgr;
 import com.mynetpcb.core.capi.event.LineEventHandle;
 import com.mynetpcb.core.capi.event.MeasureEventHandle;
 import com.mynetpcb.core.capi.event.MoveEventHandle;
+import com.mynetpcb.core.capi.event.MoveLineSegmentHandle;
 import com.mynetpcb.core.capi.event.OriginEventHandle;
 import com.mynetpcb.core.capi.event.ResizeEventHandle;
 import com.mynetpcb.core.capi.event.ShapeEvent;
@@ -35,7 +36,7 @@ public class BoardEventMgr extends EventMgr<BoardComponent,Shape> {
       if(handle!=null){
          handle.setTarget(target); 
       //****generate event
-         if(eventKey.equals("move")||eventKey.equals("copperarea")||eventKey.equals("track")||eventKey.equals("line")||eventKey.equals("texture")||eventKey.equals("symbol")||eventKey.equals("resize")||eventKey.equals("solidregion")){
+         if(eventKey.equals("move.segment")||eventKey.equals("move")||eventKey.equals("copperarea")||eventKey.equals("track")||eventKey.equals("line")||eventKey.equals("texture")||eventKey.equals("symbol")||eventKey.equals("resize")||eventKey.equals("solidregion")){
              handle.getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(target, ShapeEvent.SELECT_SHAPE));
          }
          if(eventKey.equals("component")||eventKey.equals("origin")){        
@@ -68,6 +69,7 @@ public class BoardEventMgr extends EventMgr<BoardComponent,Shape> {
      hash.put("cursor",new CursorEventHandle<BoardComponent,Shape>(component));        
      hash.put("dragheand",new DragingEventHandle<BoardComponent,Shape>(component)); 
      hash.put("measure",new MeasureEventHandle<BoardComponent,Shape>(component));
-     hash.put("solidregion",new SolidRegionEventHandle<BoardComponent,Shape>(component));     
+     hash.put("solidregion",new SolidRegionEventHandle<BoardComponent,Shape>(component)); 
+     hash.put("move.segment",new MoveLineSegmentHandle<BoardComponent,Shape>(component));	
     }
 }

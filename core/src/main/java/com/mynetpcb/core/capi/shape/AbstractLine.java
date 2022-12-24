@@ -3,6 +3,7 @@ package com.mynetpcb.core.capi.shape;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.line.LinePoint;
+import com.mynetpcb.core.capi.line.Segmentable;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.utils.Utilities;
@@ -10,6 +11,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
+import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.BasicStroke;
@@ -21,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractLine extends Shape implements Trackable<LinePoint>, Resizeable{
+public abstract class AbstractLine extends Shape implements Trackable<LinePoint>,Segmentable,Resizeable{
     protected Point floatingStartPoint; //***the last wire point
 
     protected Point floatingMidPoint; //***mid 90 degree forming
@@ -85,8 +87,41 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         else
             polyline.points.add(new LinePoint(x,y));        
     }
-    
-
+    @Override
+    public boolean isSegmentClicked(Point pt){				      
+  	  if(this.isControlRectClicked(pt.x,pt.y)!=null)
+            return false;
+      if(this.polyline.isPointOnSegment(pt,this.selectionRectWidth/2)){
+  	    return true;
+      }
+  	  return false;
+  	}
+    @Override
+    public boolean isSingleSegment(){
+    	   return this.polyline.points.size()==2;	
+    }
+    @Override
+    public List<Segment> getSegments() {    
+    	return this.polyline.getSegments();
+    }
+    @Override
+    public Segment getSegmentClicked(Point pt){
+  		      var segment=new Segment(0,0,0,0);	   
+  	          var prevPoint = this.polyline.points.get(0);        
+  	          for(var point:this.polyline.points){    	        	  
+  	              if(prevPoint.equals(point)){    	            	  
+  	            	  prevPoint = point;
+  	                  continue;
+  	              }    	              	              
+                    segment.ps=prevPoint;
+                    segment.pe=point;
+  	              if(segment.isPointOn(pt,this.selectionRectWidth)){
+  	                  return segment;
+  	              }
+  	              prevPoint = point;
+  	          }			       	          
+  	       return null;
+  }
     public long getClickableOrder(){
         return 2;
     }
@@ -325,9 +360,9 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
         super.setSelected(selection);
         if(!selection){
             resizingPoint=null;
-            for (LinePoint point : polyline.points) {
-                point.setSelected(selection);
-            }
+            //for (LinePoint point : polyline.points) {
+            //    point.setSelected(selection);
+            //}
         }
     }
     @Override

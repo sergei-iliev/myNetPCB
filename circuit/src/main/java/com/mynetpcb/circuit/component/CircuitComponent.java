@@ -176,8 +176,12 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                         else if(shape instanceof SCHSymbol)
                             getEventMgr().setEventHandle("symbol",shape);  
 				   		else if(shape instanceof SCHWire) {
-				   			if(((SCHWire)shape).isSegmentClicked(scaledEvent.getPoint()))
-				   			    this.getEventMgr().setEventHandle("move.segment",shape);				   		
+				   			if(((SCHWire)shape).isSegmentClicked(scaledEvent.getPoint())) 
+				   			 if(((SCHWire)shape).isSingleSegment()) {
+				   				this.getEventMgr().setEventHandle("move",shape);	
+				   			}else {
+				   				this.getEventMgr().setEventHandle("move.segment",shape);
+				   			}				   		  
 				   		}else    
                              getEventMgr().setEventHandle("move",shape);
                     }else{                    

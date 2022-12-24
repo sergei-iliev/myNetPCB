@@ -1,5 +1,16 @@
 package com.mynetpcb.board.component;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JOptionPane;
+
 import com.mynetpcb.board.container.BoardContainer;
 import com.mynetpcb.board.container.BoardContainerFactory;
 import com.mynetpcb.board.dialog.BoardLoadDialog;
@@ -50,19 +61,6 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.event.SolidRegionEventHandle;
-import com.mynetpcb.pad.shape.Arc;
-
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
-import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.JOptionPane;
 
 /**
  * The Board Component GUI
@@ -224,12 +222,18 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     } else if (shape instanceof PCBFootprint) {
                         getEventMgr().setEventHandle("symbol", shape);
                 
-                    }else
-                        getEventMgr().setEventHandle("move", shape);
-                } else {
+                    }else if(shape instanceof PCBTrack){				    
+                    	  if(((PCBTrack)shape).isSegmentClicked(scaledEvent.getPoint()))
+    						  if(((PCBTrack)shape).isSingleSegment()){
+    				             this.getEventMgr().setEventHandle("move",shape);
+    	                      }else{
+    	                         this.getEventMgr().setEventHandle("move.segment",shape);
+    						  }    						                   
+                          }else 
+                            getEventMgr().setEventHandle("move", shape);
+                    } else {
                     getEventMgr().setEventHandle("component", null);
-                }
-
+                  }               
                 break;
             case Mode.TRACK_MODE:
                 //***is this a new wire
