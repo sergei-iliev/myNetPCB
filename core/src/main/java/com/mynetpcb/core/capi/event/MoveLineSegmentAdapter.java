@@ -3,6 +3,7 @@ package com.mynetpcb.core.capi.event;
 import java.util.List;
 
 import com.mynetpcb.core.capi.line.Segmentable;
+import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Segment;
@@ -11,11 +12,12 @@ import com.mynetpcb.d2.shapes.Vector;
 
 public class MoveLineSegmentAdapter {
 	private final List<Segment> segments;
-	public final Segment segment;
+	public final Segment segment,copy;
 	
-	public MoveLineSegmentAdapter(Segmentable track,Segment segment) {
-	      this.segments=track.getSegments();
+	public MoveLineSegmentAdapter(Segmentable track,Segment segment) {		
+		  this.segments=track.getSegments();
 	      this.segment=segment;
+	      this.copy=segment.clone();
 	}
 	
 	public void moveSegment(Point p){	
@@ -36,6 +38,8 @@ public class MoveLineSegmentAdapter {
 		 if(segm==null){
 		   	segm=this.findNext();
 		 }
+		 	
+		 
 		 //find common point and end point on same segm
 	     var commonpoint=segm.pe; //common point between target segment and segm
 	     var endpoint1=segm.ps;   //distant point from common one		
@@ -187,7 +191,17 @@ public class MoveLineSegmentAdapter {
 	    
 	    prevpoint.set(x,y);	
 	}
-	
+	/*
+	Avoid loosing direction vectors by moving point to overlapping position
+	*/
+	public void validateNonZeroVector(){		
+		  for(var s:this.segments){				
+			  if((Double.isNaN(s.length()))||Utils.EQ(s.length(),0)){
+				this.segment.set(this.copy.ps.x,this.copy.ps.y,this.copy.pe.x,this.copy.pe.y);
+				break;
+			  }
+		  }		
+	}	
 	public boolean isSingleSegment(){
 		return this.segments.size()<2;
 	}	

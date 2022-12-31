@@ -40,10 +40,11 @@ public class MoveLineSegmentHandle <U extends UnitComponent,S extends Shape> ext
     public void mouseScaledReleased(MouseScaledEvent e) {
     	if(getComponent().getParameter("snaptogrid",Boolean.class,Boolean.FALSE)==Boolean.TRUE){
           ((Resizeable)getTarget()).alignResizingPointToGrid(this.adapter.segment.ps);
-          ((Resizeable)getTarget()).alignResizingPointToGrid(this.adapter.segment.pe);
-	      this.getComponent().Repaint();	 
+          ((Resizeable)getTarget()).alignResizingPointToGrid(this.adapter.segment.pe);	      
 		}
-    	 getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
+    	this.adapter.validateNonZeroVector();    	
+    	getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
+    	this.getComponent().Repaint();	 
     }
 
     @Override

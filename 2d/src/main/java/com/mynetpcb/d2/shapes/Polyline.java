@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -123,13 +124,13 @@ public class Polyline<P extends Point> extends GeometricFigure{
     * @return list of all constracting segments
     */
     public List<Segment> getSegments(){
+    	if(this.points.size()<2) {
+    		return Collections.EMPTY_LIST;
+    	}
         List<Segment> list=new ArrayList<>();
-        Point prevPoint = this.points.get(0);        
-        for(Point point :this.points){                          
-            if(prevPoint.equals(point)){                        
-                prevPoint = point;
-                continue;
-            }   
+        Point prevPoint = this.points.get(0);
+        for(int i=1;i<this.points.size();i++) {
+            var point=this.points.get(i);                          
             var segment=new Segment();
             segment.ps=prevPoint;
             segment.pe=point;
