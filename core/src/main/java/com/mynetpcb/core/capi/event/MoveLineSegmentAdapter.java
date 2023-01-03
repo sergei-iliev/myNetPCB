@@ -9,7 +9,10 @@ import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.d2.shapes.Vector;
-
+/*
+ * Used is 90 degree end segment movement instead
+ */
+@Deprecated
 public class MoveLineSegmentAdapter {
 	private final List<Segment> segments;
 	public final Segment segment,copy;
