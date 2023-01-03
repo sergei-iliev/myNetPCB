@@ -31,7 +31,7 @@ public class MoveLineSegmentHandle <U extends UnitComponent,S extends Shape> ext
         }         
         
         var segment=((Segmentable)this.getTarget()).getSegmentClicked(e.getPoint());        
-        this.adapter=new  MoveLineSegmentAdapter((Segmentable)this.getTarget(),segment);
+        this.adapter=new  End90DegreeMoveLineSegmentAdapter((Segmentable)this.getTarget(),segment);
         getComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
         
     }
