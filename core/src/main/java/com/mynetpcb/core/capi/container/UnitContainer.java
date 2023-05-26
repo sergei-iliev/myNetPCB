@@ -1,7 +1,6 @@
 package com.mynetpcb.core.capi.container;
 
 
-import com.mynetpcb.core.capi.Changeable;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.ShapeEventDispatcher;
@@ -11,6 +10,7 @@ import com.mynetpcb.core.capi.event.UnitEventDispatcher;
 import com.mynetpcb.core.capi.event.UnitListener;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
+import com.mynetpcb.core.capi.undo.Changeable;
 import com.mynetpcb.core.capi.undo.CompositeMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;

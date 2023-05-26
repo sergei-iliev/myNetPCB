@@ -17,7 +17,7 @@ public final class UndoProvider {
         currentIndex = 0;
     }
     
-    public List<AbstractMemento> getQueue(){
+    private List<AbstractMemento> getQueue(){
         return queue;
     }
     public int getQueueIndex(){
