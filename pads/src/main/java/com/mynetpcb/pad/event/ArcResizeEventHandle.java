@@ -24,8 +24,11 @@ public class ArcResizeEventHandle <U extends UnitComponent,S extends Shape>  ext
 	public void mouseScaledPressed(MouseScaledEvent e) {
 		this.mx=e.getX();
 		this.my=e.getY();
-		this.isStartPoint=((Arc)this.getTarget()).isStartAnglePointClicked(e.getX(), e.getY());
-	
+	    var arc=(Arc)getTarget();
+		this.isStartPoint=arc.isStartAnglePointClicked(e.getX(), e.getY());
+		arc.setResizingPoint(isStartPoint?arc.getStartPoint():arc.getEndPoint());
+		getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
+		this.getComponent().Repaint();
 	}
 
 	@Override

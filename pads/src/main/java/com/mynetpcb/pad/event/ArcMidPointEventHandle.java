@@ -20,7 +20,12 @@ public class ArcMidPointEventHandle<U extends UnitComponent,S extends Shape>  ex
     public void mouseScaledPressed(MouseScaledEvent e) {
     	((Arc)this.getTarget()).A=((Arc)this.getTarget()).getStartPoint().clone();
     	((Arc)this.getTarget()).B=((Arc)this.getTarget()).getEndPoint().clone();
-    	((Arc)this.getTarget()).M=((Arc)this.getTarget()).getMiddlePoint().clone();    	
+    	((Arc)this.getTarget()).M=((Arc)this.getTarget()).getMiddlePoint().clone(); 
+    	Arc arc=(Arc)this.getTarget();        
+    	arc.setResizingPoint(arc.getMiddlePoint());
+		getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
+		this.getComponent().Repaint();
+
     }
 
     @Override

@@ -30,17 +30,18 @@ public class CommandDrillProcessor implements Processor {
     public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
         if(layermask==Layer.NPTH_LAYER_DRILL){
            //non plated
-           processPads(board,board.getHeight());
+           processPads(board,board.getHeight(),false);
            processHoles(board,board.getHeight());
         }else{
             //plated
+           processPads(board,board.getHeight(),true); 
            processVias(board,board.getHeight()); 
             
         }
 
     }
     
-    private void processPads(Unit<? extends Shape> board,int height){
+    private void processPads(Unit<? extends Shape> board,int height,boolean plated){
         double lastX=-1,lastY=-1;
 
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
@@ -48,7 +49,10 @@ public class CommandDrillProcessor implements Processor {
             Collection<Pad> pads=(Collection<Pad>)footprint.getPads();
             for(Pad pad:pads){
                 if(pad.getType()==Pad.Type.THROUGH_HOLE || pad.getType()==Pad.Type.CONNECTOR){
-                    ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.ComponentDrill,pad.getDrill().getWidth());
+                    if(pad.getPlated()!=plated) {
+                    	continue;
+                    }
+                	ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.ComponentDrill,pad.getDrill().getWidth());
                     //set aperture if not same
                     context.resetAperture(aperture);
                     

@@ -29,22 +29,26 @@ public class ApertureDrillProcessor implements Processor{
     public void process(GerberServiceContext serviceContext,Unit<? extends Shape> board, int layermask) {
         if(layermask==Layer.NPTH_LAYER_DRILL){
            //non plated
-           processPads(board);
+           processPads(board,false);
            processHoles(board);
-        }else{
-            //plated
+        }else{           
+        	//plated
+           processPads(board,true);	
            processVias(board); 
             
         }
     }
     
-    private void processPads(Unit<? extends Shape> board ){
+    private void processPads(Unit<? extends Shape> board,boolean plated){
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
         for(FootprintShape footprint:footprints){
             Collection<Pad> pads=(Collection<Pad>)footprint.getPads();
             for(Pad pad:pads){
                 if(pad.getType()==Pad.Type.THROUGH_HOLE ||pad.getType()==Pad.Type.CONNECTOR){
-                    CircleAperture drill=new CircleAperture(); 
+                	if(pad.getPlated()!=plated) {
+                    	continue;
+                    }
+                	CircleAperture drill=new CircleAperture(); 
                     drill.setDiameter(pad.getDrill().getWidth());
                     drill.setAttribute(new ComponentDrillAttribute());
                     dictionary.add(drill);   

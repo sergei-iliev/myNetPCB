@@ -14,6 +14,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -24,12 +26,12 @@ import javax.swing.SwingConstants;
 public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
     private JTextField padNumber,padNetName;
         
-    private JComboBox padTypeCombo,padShapeCombo;
+    private JComboBox padTypeCombo,padShapeCombo,platedCombo;
     
     private JTextField drillWidth,drillOffsetX,drillOffsetY,numberSize,netvalueSize,numberX,numberY,netvalueX,netvalueY;
     
     public PadPanelBuilder(FootprintComponent component) {
-        super(component,new GridLayout(19,1));
+        super(component,new GridLayout(20,1));
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
         label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
         layerCombo=new JComboBox(Layer.PAD_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
@@ -71,6 +73,11 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         padShapeCombo=new JComboBox(com.mynetpcb.pad.shape.Pad.Shape.values());padShapeCombo.addActionListener(this);  panel.add(padShapeCombo,BorderLayout.CENTER);                
         layoutPanel.add(panel); 
 
+        panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+        label=new JLabel("Plated"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
+        platedCombo=new JComboBox(new Boolean[] {Boolean.TRUE,Boolean.FALSE});platedCombo.addActionListener(this);  panel.add(platedCombo,BorderLayout.CENTER);                
+        layoutPanel.add(panel); 
+        
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
         label=new JLabel("Drill Width"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
         drillWidth=new JTextField("");  drillWidth.addKeyListener(this);panel.add(drillWidth,BorderLayout.CENTER);
@@ -188,12 +195,14 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         setSelectedItem(layerCombo, pad.getCopper());
         setSelectedItem(padTypeCombo, pad.getType());
         setSelectedItem(padShapeCombo, pad.getShapeType());
+        setSelectedItem(platedCombo, pad.getPlated());
         
         drillWidth.setText(String.valueOf(Grid.COORD_TO_MM(pad.getDrill()==null?0:pad.getDrill().getWidth())));
         //drillOffsetX.setText(String.valueOf(Grid.COORD_TO_MM(pad.getOffset().x )));
         //drillOffsetY.setText(String.valueOf(Grid.COORD_TO_MM(pad.getOffset().y)));
      
         drillWidth.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD);
+        platedCombo.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD);
         //drillOffsetX.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD);
         //drillOffsetY.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD); 
 
@@ -212,7 +221,9 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
             pad.setType((Pad.Type)padTypeCombo.getSelectedItem());  
             updateUI();
         }
-        
+        if(e.getSource()==platedCombo){
+            pad.setPlated((Boolean)platedCombo.getSelectedItem());              
+        }        
         if(e.getSource()==layerCombo){
             //Layer.Copper copper=(Layer.Copper) layerCombo.getSelectedItem();
             //if(copper.isCopperLayer()){
@@ -221,8 +232,7 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
             //  setSelectedItem(layerCombo, pad.getCopper());   
             //}
         }
-        
-
+       
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint();
     }

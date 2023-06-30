@@ -44,6 +44,8 @@ public class Pad extends PadShape{
     
     private FontTexture number,netvalue; 
     
+    private boolean plated;
+    
     public Pad(double width,double height) { 
         this.width=width;
         this.height=height;
@@ -51,7 +53,7 @@ public class Pad extends PadShape{
         this.displayName="Pad";
         this.shape=new CircularShape(0,0,width,this);
         this.setType(PadShape.Type.THROUGH_HOLE);  
-        
+        this.plated=true;
         this.number=new FontTexture("1","number",0,0,4000,0);
         this.netvalue=new FontTexture("","netvalue",0,0,4000,0);  
     }
@@ -146,6 +148,13 @@ public class Pad extends PadShape{
             this.shape.rotate(this.rotate,this.shape.getCenter());
         }         
     }  
+    public boolean getPlated(){
+      return plated;	
+    }
+    public  void setPlated(boolean plated){
+      this.plated=plated;
+    }
+    
     public double getWidth(){
         return width;
     }
@@ -386,7 +395,7 @@ public class Pad extends PadShape{
     @Override
     public String toXML() {
         StringBuffer sb=new StringBuffer();
-        sb.append("<pad copper=\"" + getCopper().getName() + "\" type=\"" + getType() + "\" shape=\"" + getShapeType() +
+        sb.append("<pad copper=\"" + getCopper().getName() + "\" type=\"" + getType() + "\" shape=\"" + getShapeType() +"\" plt=\"" +(plated==true?1:0)   +
                       "\" x=\"" + Utilities.roundDouble(shape.getCenter().x) + "\" y=\"" + Utilities.roundDouble(shape.getCenter().y) + "\" width=\"" + getWidth() + "\" height=\"" +
                       getHeight() + "\" rt=\"" + this.rotate + "\">\r\n");
        // sb.append("<offset x=\"" + offset.x + "\" y=\"" + offset.y + "\" />\r\n");
@@ -420,6 +429,9 @@ public class Pad extends PadShape{
         
         if(element.getAttribute("rt").length()>0){
           this.rotate=Double.parseDouble(element.getAttribute("rt"));
+        }
+        if(element.getAttribute("plt").length()>0){
+            this.plated=(element.getAttribute("plt").equals("1"));
         }
         this.setShape(x,y,Pad.Shape.valueOf(element.getAttribute("shape")));
 
@@ -469,7 +481,8 @@ public class Pad extends PadShape{
         private double x, y, width, height,rotate;
 
         private int type;
-
+        //no need to be in state equality
+        private boolean plated;
     
  
 
@@ -489,7 +502,7 @@ public class Pad extends PadShape{
         @Override
         public void loadStateTo(Pad pad) {
             super.loadStateTo(pad);
-
+            pad.plated=plated;
             pad.width=width;
             pad.height=height;
             pad.rotate=rotate;
@@ -511,6 +524,7 @@ public class Pad extends PadShape{
             super.saveStateFrom(pad);
             x = pad.shape.getCenter().x;
             y = pad.shape.getCenter().y;
+            plated=pad.plated;
             width = pad.getWidth();
             height = pad.getHeight();
             rotate = pad.rotate;
