@@ -2,15 +2,18 @@ package com.mynetpcb.pad.shape.pad;
 
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -39,25 +42,43 @@ public class OvalShape implements PadDrawing {
       return obround;  
     }
     @Override
-    public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+    public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermaskId) {
         //check if outside of visible window
         Box rect = this.obround.box();
+        rect.grow(padRef.get().getSolderMaskExpansion());
         rect.scale(scale.getScaleX());
         if (!rect.intersects(viewportWindow)) {
             return false;
         }
-        g2.setColor(this.padRef
-                        .get()
-                        .isSelected() ? Color.GRAY : this.padRef
-                                                         .get()
-                                                         .getCopper()
-                                                         .getColor());
 
+        var o=(Obround)PadFactory.acquire(Obround.class);
+        try {
+            //draw solder mask	
+        if((((this.padRef.get().getCopper().getLayerMaskID()&Layer.LAYER_FRONT)!=0)&&((layermaskId&Layer.SOLDERMASK_LAYER_FRONT)!=0))||
+            	(((this.padRef.get().getCopper().getLayerMaskID()&Layer.LAYER_BACK)!=0)&&((layermaskId&Layer.SOLDERMASK_LAYER_BACK)!=0))) {        	
+        	o.assign(this.obround);                
+        	o.grow(padRef.get().getSolderMaskExpansion());
+        	o.scale(scale.getScaleX());
+        	o.move(-viewportWindow.getX(), -viewportWindow.getY());        
+        	g2.setColor(this.padRef
+                .get()
+                .isSelected() ? Color.GRAY : Layer.Copper.BMask.getColor());
 
-        Obround o = this.obround.clone();
-        o.scale(scale.getScaleX());
-        o.move(-viewportWindow.getX(), -viewportWindow.getY());
-        o.paint(g2, true);
+        	o.paint(g2, true);
+        }	  
+        //draw pad shape        
+        if(((this.padRef.get().getCopper().getLayerMaskID()&layermaskId)!=0)) {	        
+        	o.assign(this.obround);
+        	o.scale(scale.getScaleX());
+        	o.move(-viewportWindow.getX(), -viewportWindow.getY());
+            g2.setColor(this.padRef
+                    .get()
+                    .isSelected() ? Color.GRAY : this.padRef.get().getCopper().getColor());
+        	o.paint(g2, true);
+        }
+        }finally {
+        	PadFactory.release(o);	
+		}
         return true;
     }
 

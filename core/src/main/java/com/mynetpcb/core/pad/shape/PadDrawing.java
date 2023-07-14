@@ -15,7 +15,7 @@ import java.awt.geom.AffineTransform;
 
 public interface PadDrawing extends Printable {
 
-    public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale);
+    public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermaskId);
 
     public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
                               ClearanceSource source);

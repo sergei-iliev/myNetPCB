@@ -38,6 +38,14 @@ public class Hexagon extends Polygon {
         return copy;
     }
     @Override
+    public void assign(GeometricFigure drawing) {
+        this.pc.set(((Hexagon)drawing).pc);                        
+        this.width=(((Hexagon)drawing).width);
+        for(int i=0;i<this.points.size();i++) {
+        	this.points.get(i).set(((Hexagon)drawing).points.get(i));
+        }
+    }     
+    @Override
     public void mirror(Line line) {        
         super.mirror(line);
         this.pc.mirror(line);

@@ -23,7 +23,7 @@ import javax.swing.event.ChangeListener;
 public class LayersPanel extends JPanel implements ActionListener,ChangeListener{
     
     private final BoardComponent boardComponent;
-    private JCheckBox FCU,BCU,FSILKS,BSILKS,BMASK,BOUTLN;
+    private JCheckBox FCU,BCU,FSILKS,BSILKS,FMASK,BMASK,BOUTLN;
     private JComboBox layerCombo;
     
     public LayersPanel(BoardComponent boardComponent) {
@@ -37,10 +37,10 @@ public class LayersPanel extends JPanel implements ActionListener,ChangeListener
         FSILKS=new JCheckBox();FSILKS.addActionListener(this); FSILKS.setName(String.valueOf(Layer.SILKSCREEN_LAYER_FRONT)); FSILKS.setBackground(Color.cyan); panel.add(FSILKS,BorderLayout.EAST);
         basePanel.add(panel); 
         
-//        panel=new JPanel(); panel.setLayout(new BorderLayout()); panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
-//        label=new JLabel("Top Soldermask"); panel.add(label,BorderLayout.WEST);
-//        FMASK=new JCheckBox();FMASK.addActionListener(this); FMASK.setName(String.valueOf(Layer.SOLDERMASK_LAYER_FRONT));FMASK.setBackground(Color.magenta); panel.add(FMASK,BorderLayout.EAST);
-//        basePanel.add(panel); 
+        panel=new JPanel(); panel.setLayout(new BorderLayout()); panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
+        label=new JLabel("Top Soldermask"); panel.add(label,BorderLayout.WEST);
+        FMASK=new JCheckBox();FMASK.addActionListener(this); FMASK.setName(String.valueOf(Layer.SOLDERMASK_LAYER_FRONT));FMASK.setBackground(Layer.Copper.BMask.getColor()); panel.add(FMASK,BorderLayout.EAST);
+        basePanel.add(panel); 
         
         panel=new JPanel(); panel.setLayout(new BorderLayout()); panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
         label=new JLabel("Top Copper"); panel.add(label,BorderLayout.WEST);
@@ -51,6 +51,11 @@ public class LayersPanel extends JPanel implements ActionListener,ChangeListener
         label=new JLabel("Bottom Copper"); panel.add(label,BorderLayout.WEST);
         BCU=new JCheckBox();BCU.addActionListener(this); BCU.setName(String.valueOf(Layer.LAYER_BACK));BCU.setBackground(Color.green); panel.add(BCU,BorderLayout.EAST);
         basePanel.add(panel);         
+        
+        panel=new JPanel(); panel.setLayout(new BorderLayout()); panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
+        label=new JLabel("Bottom Soldermask"); panel.add(label,BorderLayout.WEST);
+        BMASK=new JCheckBox();BMASK.addActionListener(this); BMASK.setName(String.valueOf(Layer.SOLDERMASK_LAYER_BACK));BMASK.setBackground(Layer.Copper.BMask.getColor()); panel.add(BMASK,BorderLayout.EAST);
+        basePanel.add(panel); 
         
         panel=new JPanel(); panel.setLayout(new BorderLayout());panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8)); 
         label=new JLabel("Bottom Silkscreen"); panel.add(label,BorderLayout.WEST);
@@ -77,7 +82,8 @@ public class LayersPanel extends JPanel implements ActionListener,ChangeListener
        CompositeLayerable layerable=boardComponent.getModel().getUnit();
        
        FSILKS.setSelected(layerable.isLayerVisible(Layer.SILKSCREEN_LAYER_FRONT));    
-       //FMASK.setSelected(layerable.isLayerVisible(Layer.SOLDERMASK_LAYER_FRONT));    
+       FMASK.setSelected(layerable.isLayerVisible(Layer.SOLDERMASK_LAYER_FRONT));
+       BMASK.setSelected(layerable.isLayerVisible(Layer.SOLDERMASK_LAYER_BACK));
        FCU.setSelected(layerable.isLayerVisible(Layer.LAYER_FRONT));    
        BCU.setSelected(layerable.isLayerVisible(Layer.LAYER_BACK));    
        BOUTLN.setSelected(layerable.isLayerVisible(Layer.BOARD_OUTLINE_LAYER));    

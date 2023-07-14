@@ -112,9 +112,12 @@ public class GerberExportDialog extends BoardPrintDialog implements ActionListen
         GerberServiceContext context=buildServiceContext();
         gerber.build(context,path+"\\top.gbr",Layer.LAYER_FRONT);   
         gerber.build(context,path+"\\bottom.gbr",Layer.LAYER_BACK);  
-        gerber.build(context,path+"\\top_silk.gbr",Layer.SILKSCREEN_LAYER_FRONT);
-        gerber.build(context,path+"\\bottom_silk.gbr",Layer.SILKSCREEN_LAYER_BACK);
+        gerber.build(context,path+"\\top_silkscreen.gbr",Layer.SILKSCREEN_LAYER_FRONT);
+        gerber.build(context,path+"\\bottom_silkscreen.gbr",Layer.SILKSCREEN_LAYER_BACK);
         gerber.build(context,path+"\\board_outline.gbr",Layer.BOARD_OUTLINE_LAYER);
+        gerber.build(context,path+"\\bottom_soldermask.gbr",Layer.SOLDERMASK_LAYER_BACK);
+        gerber.build(context,path+"\\top_soldermask.gbr",Layer.SOLDERMASK_LAYER_FRONT);
+        
         Excelon drill=new Excelon(board);
         drill.build(context,path+"\\drill_npth.gbr", Layer.NPTH_LAYER_DRILL); 
         drill.build(context,path+"\\drill_pth.gbr", Layer.PTH_LAYER_DRILL);

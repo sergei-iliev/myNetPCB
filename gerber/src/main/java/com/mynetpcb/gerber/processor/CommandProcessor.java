@@ -12,6 +12,7 @@ import com.mynetpcb.gerber.processor.command.CommandLineProcessor;
 import com.mynetpcb.gerber.processor.command.CommandPadProcessor;
 import com.mynetpcb.gerber.processor.command.CommandRectProcessor;
 import com.mynetpcb.gerber.processor.command.CommandRegionProcessor;
+import com.mynetpcb.gerber.processor.command.CommandSolderMaskProcessor;
 import com.mynetpcb.gerber.processor.command.CommandTextProcessor;
 import com.mynetpcb.gerber.processor.command.CommandTrackProcessor;
 import com.mynetpcb.gerber.processor.command.CommandViaProcessor;
@@ -38,6 +39,7 @@ public class CommandProcessor implements Processor{
       this.processors.add(new CommandLineProcessor(context));
       this.processors.add(new CommandRectProcessor(context));
       this.processors.add(new CommandTextProcessor(context));
+      this.processors.add(new CommandSolderMaskProcessor(context));
    }
    
    

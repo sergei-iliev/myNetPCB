@@ -2,6 +2,7 @@ package com.mynetpcb.pad.shape.pad;
 
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
@@ -10,7 +11,9 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Hexagon;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -31,25 +34,45 @@ public class PolygonShape implements PadDrawing {
       return hexagon;  
     }
     @Override
-    public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+    public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermaskId) {
         //check if outside of visible window
         Box rect = this.hexagon.box();
+        rect.grow(this.padRef.get().getSolderMaskExpansion());
         rect.scale(scale.getScaleX());
         if (!rect.intersects(viewportWindow)) {
             return false;
         }
-        g2.setColor(this.padRef
-                        .get()
-                        .isSelected() ? Color.GRAY : this.padRef
-                                                         .get()
-                                                         .getCopper()
-                                                         .getColor());
 
+        var h=(Hexagon)PadFactory.acquire(Hexagon.class);
+        try {
+            //draw solder mask	
+        if((((this.padRef.get().getCopper().getLayerMaskID()&Layer.LAYER_FRONT)!=0)&&((layermaskId&Layer.SOLDERMASK_LAYER_FRONT)!=0))||
+            	(((this.padRef.get().getCopper().getLayerMaskID()&Layer.LAYER_BACK)!=0)&&((layermaskId&Layer.SOLDERMASK_LAYER_BACK)!=0))) {        	        	
+        	h.assign(this.hexagon);        
+        	h.grow(padRef.get().getSolderMaskExpansion());
+        	h.scale(scale.getScaleX());
+        	h.move(-viewportWindow.getX(), -viewportWindow.getY());        
+        	g2.setColor(this.padRef
+                .get()
+                .isSelected() ? Color.GRAY : Layer.Copper.BMask.getColor());
 
-        Hexagon h = this.hexagon.clone();
-        h.scale(scale.getScaleX());
-        h.move(-viewportWindow.getX(), -viewportWindow.getY());
-        h.paint(g2, true);
+        	h.paint(g2, true);
+        }
+        	  
+        //draw pad shape  
+        if(((this.padRef.get().getCopper().getLayerMaskID()&layermaskId)!=0)) {	 
+        	h.assign(this.hexagon);
+        	h.scale(scale.getScaleX());
+        	h.move(-viewportWindow.getX(), -viewportWindow.getY());
+        	g2.setColor(this.padRef
+                .get()
+                .isSelected() ? Color.GRAY : this.padRef.get().getCopper().getColor());
+        	h.paint(g2, true);
+        }
+        }finally {
+        	PadFactory.release(h);	
+		}
+        
         return true;
     }
 

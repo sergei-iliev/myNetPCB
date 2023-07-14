@@ -54,18 +54,20 @@ public class CommandCircleProcessor implements Processor {
        }
     }
     protected void processCircle(Circle circle,int height){
-        processCircle(circle,circle.getThickness(), height,null);
+        processCircle(circle,circle.getThickness(), height,null,false);
     }
     
-    protected void processCircle(ArcGerberable circle,double thickness,int height,AbstractAttribute.Type type){        
+    protected void processCircle(ArcGerberable circle,double thickness,int height,AbstractAttribute.Type type,boolean isRegionMode){        
         ApertureDefinition aperture;
         if(type==null){ 
            aperture = context.getApertureDictionary().findCircle(thickness);
         }else{
            aperture = context.getApertureDictionary().findCircle(type,thickness);  
-        }
+        }        
         //set aperture if not same
-        context.resetAperture(aperture);
+        if(!isRegionMode) {  //****no apperture change in region mode!
+          context.resetAperture(aperture);
+        }
         //set multi quadrant mode if not set
         context.resetCommand(AbstractCommand.Type.MULTI_QUADRENT_MODE);
                 

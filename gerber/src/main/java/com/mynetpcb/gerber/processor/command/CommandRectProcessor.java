@@ -55,19 +55,19 @@ public class CommandRectProcessor implements Processor {
            points.add(rect.getShape().points.get(0));
            //rect is 4 point line
            CommandLineProcessor lineProcessor=new CommandLineProcessor(context);          
-           lineProcessor.processLine(points,rect.getThickness(), height,null); 
+           lineProcessor.processLine(points,rect.getThickness(), height,null,false); 
         }else{
            CommandLineProcessor lineProcessor=new CommandLineProcessor(context);          
            CommandArcProcessor arcProcessor=new CommandArcProcessor(context);           
             
            arcProcessor.processArc(new ArcGerberableAdaptor(rect.getShape().arcs[0]),rect.getThickness(), height,null); 
-           lineProcessor.processLine(Arrays.asList(rect.getShape().segments[0].ps,rect.getShape().segments[0].pe),rect.getThickness(),height,null); 
+           lineProcessor.processLine(Arrays.asList(rect.getShape().segments[0].ps,rect.getShape().segments[0].pe),rect.getThickness(),height,null,false); 
            arcProcessor.processArc(new ArcGerberableAdaptor(rect.getShape().arcs[1]),rect.getThickness(), height,null);  
-           lineProcessor.processLine(Arrays.asList(rect.getShape().segments[1].ps,rect.getShape().segments[1].pe),rect.getThickness(),height,null);  
+           lineProcessor.processLine(Arrays.asList(rect.getShape().segments[1].ps,rect.getShape().segments[1].pe),rect.getThickness(),height,null,false);  
            arcProcessor.processArc(new ArcGerberableAdaptor(rect.getShape().arcs[2]),rect.getThickness(), height,null);   
-           lineProcessor.processLine(Arrays.asList(rect.getShape().segments[2].ps,rect.getShape().segments[2].pe),rect.getThickness(),height,null);  
+           lineProcessor.processLine(Arrays.asList(rect.getShape().segments[2].ps,rect.getShape().segments[2].pe),rect.getThickness(),height,null,false);  
            arcProcessor.processArc(new ArcGerberableAdaptor(rect.getShape().arcs[3]),rect.getThickness(), height,null);   
-           lineProcessor.processLine(Arrays.asList(rect.getShape().segments[3].ps,rect.getShape().segments[3].pe),rect.getThickness(),height,null);   
+           lineProcessor.processLine(Arrays.asList(rect.getShape().segments[3].ps,rect.getShape().segments[3].pe),rect.getThickness(),height,null,false);   
             
         }
         

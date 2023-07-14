@@ -40,11 +40,13 @@ public class Pad extends PadShape{
 
     private PadShape.Type type;
 
-    private double width,height;
+    private double width,height;    
     
     private FontTexture number,netvalue; 
     
     private boolean plated;
+    
+    private double solderMaskExpansion;
     
     public Pad(double width,double height) { 
         this.width=width;
@@ -54,6 +56,7 @@ public class Pad extends PadShape{
         this.shape=new CircularShape(0,0,width,this);
         this.setType(PadShape.Type.THROUGH_HOLE);  
         this.plated=true;
+        this.solderMaskExpansion=Grid.MM_TO_COORD(0.051);
         this.number=new FontTexture("1","number",0,0,4000,0);
         this.netvalue=new FontTexture("","netvalue",0,0,4000,0);  
     }
@@ -154,7 +157,12 @@ public class Pad extends PadShape{
     public  void setPlated(boolean plated){
       this.plated=plated;
     }
-    
+    public double getSolderMaskExpansion() {
+		return solderMaskExpansion;
+	}
+    public void setSolderMaskExpansion(double solderMaskExpansion) {
+		this.solderMaskExpansion = solderMaskExpansion;
+	}
     public double getWidth(){
         return width;
     }
@@ -304,21 +312,21 @@ public class Pad extends PadShape{
         }
     }
     @Override
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
-        if((this.getCopper().getLayerMaskID()&layermask)!=0) {
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermaskId) {    	
     	    switch(this.type){
             case THROUGH_HOLE:
-                if(this.shape.paint(g2, viewportWindow, scale)){
+                if(this.shape.paint(g2, viewportWindow, scale,layermaskId)){
                  if(this.drill!=null){
-                    this.drill.paint(g2, viewportWindow, scale,layermask);
+                    this.drill.paint(g2, viewportWindow, scale,layermaskId);
                  }
                 }
                 break;
             case SMD:
-                this.shape.paint(g2, viewportWindow, scale);
+                this.shape.paint(g2, viewportWindow, scale,layermaskId);
                 break;
             
             }
+    	if(((this.getCopper().getLayerMaskID()&layermaskId)!=0)) {    	    
             this.number.paint(g2, viewportWindow, scale,0);
             this.netvalue.paint(g2, viewportWindow, scale,0);    	    
         }
@@ -395,7 +403,7 @@ public class Pad extends PadShape{
     @Override
     public String toXML() {
         StringBuffer sb=new StringBuffer();
-        sb.append("<pad copper=\"" + getCopper().getName() + "\" type=\"" + getType() + "\" shape=\"" + getShapeType() +"\" plt=\"" +(plated==true?1:0)   +
+        sb.append("<pad copper=\"" + getCopper().getName() + "\" type=\"" + getType() + "\" shape=\"" + getShapeType() +"\" plt=\"" +(plated==true?1:0)   +"\" solder=\"" +Utilities.roundDouble(solderMaskExpansion)+ 
                       "\" x=\"" + Utilities.roundDouble(shape.getCenter().x) + "\" y=\"" + Utilities.roundDouble(shape.getCenter().y) + "\" width=\"" + getWidth() + "\" height=\"" +
                       getHeight() + "\" rt=\"" + this.rotate + "\">\r\n");
        // sb.append("<offset x=\"" + offset.x + "\" y=\"" + offset.y + "\" />\r\n");
@@ -433,6 +441,9 @@ public class Pad extends PadShape{
         if(element.getAttribute("plt").length()>0){
             this.plated=(element.getAttribute("plt").equals("1"));
         }
+        if(element.getAttribute("solder").length()>0){
+            this.solderMaskExpansion=Double.parseDouble(element.getAttribute("solder"));
+        }        
         this.setShape(x,y,Pad.Shape.valueOf(element.getAttribute("shape")));
 
         //Element offset = (Element) element.getElementsByTagName("offset").item(0);
@@ -483,6 +494,7 @@ public class Pad extends PadShape{
         private int type;
         //no need to be in state equality
         private boolean plated;
+        private double solderMaskExpansion;
     
  
 
@@ -503,6 +515,7 @@ public class Pad extends PadShape{
         public void loadStateTo(Pad pad) {
             super.loadStateTo(pad);
             pad.plated=plated;
+            pad.solderMaskExpansion=solderMaskExpansion;
             pad.width=width;
             pad.height=height;
             pad.rotate=rotate;
@@ -525,6 +538,7 @@ public class Pad extends PadShape{
             x = pad.shape.getCenter().x;
             y = pad.shape.getCenter().y;
             plated=pad.plated;
+            solderMaskExpansion=pad.solderMaskExpansion;
             width = pad.getWidth();
             height = pad.getHeight();
             rotate = pad.rotate;
@@ -558,7 +572,7 @@ public class Pad extends PadShape{
             Memento other = (Memento) obj;
             
             return super.equals(obj)&&
-                   Utils.EQ(x,other.x)&&Utils.EQ(y,other.y)&&Utils.EQ(width,other.width)&&Utils.EQ(height,other.height)&&
+                   Utils.EQ(x,other.x)&&Utils.EQ(y,other.y)&&Utils.EQ(width,other.width)&&Utils.EQ(height,other.height)&&Utils.EQ(solderMaskExpansion,other.solderMaskExpansion)&&
                    type==other.type&&getShape().ordinal()==other.getShape().ordinal()&&drill.equals(other.drill)&&number.equals(other.number)&&netvalue.equals(other.netvalue);
                    
 
@@ -567,7 +581,7 @@ public class Pad extends PadShape{
         @Override
         public int hashCode() {
             int hash = super.hashCode()+            
-            Double.hashCode(x)+Double.hashCode(y)+Double.hashCode(width)+Double.hashCode(height)+
+            Double.hashCode(x)+Double.hashCode(y)+Double.hashCode(width)+Double.hashCode(height)+Double.hashCode(solderMaskExpansion)+
             type+getShape().ordinal()+drill.hashCode()+number.hashCode()+netvalue.hashCode();    
             return hash;
         }

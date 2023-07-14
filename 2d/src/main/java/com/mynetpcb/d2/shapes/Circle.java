@@ -22,6 +22,11 @@ public class Circle extends GeometricFigure{
     public Circle clone() {    
         return new Circle(this.pc.clone(), this.r);         
     }
+    @Override
+    public void assign(GeometricFigure drawing) {
+    	this.pc.set(((Circle)drawing).pc);
+    	this.r=((Circle)drawing).r;
+    }
     public Box box(){
         return new Box(
             this.pc.x - this.r,

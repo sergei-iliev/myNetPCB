@@ -116,7 +116,7 @@ public class Layer {
 //            }
         },
         BMask() {
-            private Color c = new Color(128, 128, 0);
+            private Color c = new Color(144, 12, 63);
 
             public String toString() {
                 return "B.Mask";
@@ -133,12 +133,9 @@ public class Layer {
             public Color getColor() {
                 return c;
             }
-
-//            public Color getBoardColor() {
-//                return BOARD_COLOR_BACK;
-//            }
         },
         FMask() {
+        	private Color c = new Color(144, 12, 63);
             public String toString() {
                 return "F.Mask";
             }
@@ -152,12 +149,9 @@ public class Layer {
             }
 
             public Color getColor() {
-                return Color.magenta;
+                return c;
             }
 
-//            public Color getBoardColor() {
-//                return BOARD_COLOR_BACK;
-//            }
         },
         BOutln() {
            

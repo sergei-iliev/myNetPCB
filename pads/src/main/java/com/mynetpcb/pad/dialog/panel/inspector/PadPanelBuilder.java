@@ -24,14 +24,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
-    private JTextField padNumber,padNetName;
+    private JTextField padNumber,padNetName,solderMaskExpansion;
         
     private JComboBox padTypeCombo,padShapeCombo,platedCombo;
     
     private JTextField drillWidth,drillOffsetX,drillOffsetY,numberSize,netvalueSize,numberX,numberY,netvalueX,netvalueY;
     
     public PadPanelBuilder(FootprintComponent component) {
-        super(component,new GridLayout(20,1));
+        super(component,new GridLayout(21,1));
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
         label=new JLabel("Layer"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
         layerCombo=new JComboBox(Layer.PAD_LAYERS);layerCombo.addActionListener(this);  panel.add(layerCombo,BorderLayout.CENTER);                
@@ -77,6 +77,12 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         label=new JLabel("Plated"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
         platedCombo=new JComboBox(new Boolean[] {Boolean.TRUE,Boolean.FALSE});platedCombo.addActionListener(this);  panel.add(platedCombo,BorderLayout.CENTER);                
         layoutPanel.add(panel); 
+
+        panel=new JPanel(); panel.setLayout(new BorderLayout()); 
+        label=new JLabel("Solder Mask"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
+        solderMaskExpansion=new JTextField("");  solderMaskExpansion.addKeyListener(this); panel.add(solderMaskExpansion,BorderLayout.CENTER);
+        layoutPanel.add(panel);
+
         
         panel=new JPanel(); panel.setLayout(new BorderLayout()); 
         label=new JLabel("Drill Width"); label.setHorizontalAlignment(SwingConstants.CENTER); label.setPreferredSize(new Dimension(90,label.getHeight())); panel.add(label,BorderLayout.WEST);
@@ -203,6 +209,7 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
      
         drillWidth.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD);
         platedCombo.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD);
+        solderMaskExpansion.setText(String.valueOf(Grid.COORD_TO_MM(pad.getSolderMaskExpansion())));
         //drillOffsetX.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD);
         //drillOffsetY.setEnabled(pad.getType() != com.mynetpcb.pad.shape.Pad.Type.SMD); 
 
@@ -250,6 +257,9 @@ public class PadPanelBuilder extends AbstractPanelBuilder<Shape>{
         }        
         if(e.getSource()==this.heightField){
            pad.setHeight(Grid.MM_TO_COORD(Double.parseDouble(heightField.getText())));  
+        }
+        if(e.getSource()==this.solderMaskExpansion&&Double.parseDouble(solderMaskExpansion.getText())>=0){
+            pad.setSolderMaskExpansion(Grid.MM_TO_COORD(Double.parseDouble(solderMaskExpansion.getText())));  
         }
         
         if(e.getSource()==this.padNumber){

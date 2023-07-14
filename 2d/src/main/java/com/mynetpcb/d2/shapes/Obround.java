@@ -39,6 +39,13 @@ public class Obround extends GeometricFigure {
         copy.pe.y = this.pe.y;
         return copy;
     }
+    @Override
+    public void assign(GeometricFigure drawing) {
+        this.pc.set(((Obround)drawing).pc);                        
+        this.width=(((Obround)drawing).width);
+        this.height=(((Obround)drawing).height);
+        this.reset();
+    }    
     public Box box(){             
              
         double r=this.getDiameter()/2;

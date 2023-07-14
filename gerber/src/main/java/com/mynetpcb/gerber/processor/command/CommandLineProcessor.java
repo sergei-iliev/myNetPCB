@@ -49,10 +49,10 @@ public class CommandLineProcessor implements Processor{
 
         }
         protected void processLine(Line line,int height){
-          this.processLine(line.getLinePoints(),line.getThickness(),height,null);
+          this.processLine(line.getLinePoints(),line.getThickness(),height,null,false);
         }
         
-        protected void processLine(Collection<? extends Point> points,double thickness,int height,AbstractAttribute.Type attributeType){
+        protected void processLine(Collection<? extends Point> points,double thickness,int height,AbstractAttribute.Type attributeType,boolean isRegionMode){
             
                 double lastX=-1,lastY=-1;
                 boolean firstPoint=true;
@@ -66,8 +66,9 @@ public class CommandLineProcessor implements Processor{
                    aperture=context.getApertureDictionary().findCircle(attributeType,thickness);  
                 }
                 //set aperture if not same
-                context.resetAperture(aperture);
-                
+                if(!isRegionMode) {  //****no apperture change in region mode!
+                  context.resetAperture(aperture);
+                }
                 for(Point point:points){
                     StringBuffer commandLine=new StringBuffer();
                     if (!Utils.EQ(point.x ,lastX)){                   

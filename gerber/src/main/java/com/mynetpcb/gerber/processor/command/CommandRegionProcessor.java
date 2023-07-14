@@ -190,7 +190,8 @@ public class CommandRegionProcessor implements Processor {
         
         ApertureDefinition aperture=context.getApertureDictionary().get(10);        
         //set aperture if not same
-        context.resetAperture(aperture);
+        //No need to set apperture in REGION mode
+        //context.resetAperture(aperture);
         
         for(Point point:region){
             StringBuffer commandLine=new StringBuffer();

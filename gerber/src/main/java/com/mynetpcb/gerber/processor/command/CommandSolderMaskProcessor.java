@@ -1,7 +1,13 @@
 package com.mynetpcb.gerber.processor.command;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.shape.PadShape;
@@ -20,16 +26,14 @@ import com.mynetpcb.gerber.command.extended.LevelPolarityCommand;
 import com.mynetpcb.gerber.command.function.FunctionCommand;
 import com.mynetpcb.pad.shape.Pad;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-public class CommandPadProcessor implements Processor{
+/*
+ * Same as Pad command 
+ */
+public class CommandSolderMaskProcessor implements Processor{
     
     private final GraphicsStateContext context;
     
-    public CommandPadProcessor(GraphicsStateContext context) {
+    public CommandSolderMaskProcessor(GraphicsStateContext context) {
         this.context = context;
     }
 
@@ -42,36 +46,37 @@ public class CommandPadProcessor implements Processor{
         for(FootprintShape footprint:footprints){
             Collection<Pad> pads=(Collection<Pad>)footprint.getPads();
             for(Pad pad:pads){
-                if(!pad.isVisibleOnLayers(layermask)){  //a footprint may have pads on different layers
-                   continue;
-                }
+                //a footprint may have pads on different layers                
+                if((((pad.getCopper().getLayerMaskID()&Layer.LAYER_FRONT)!=0)&&((layermask&Layer.SOLDERMASK_LAYER_FRONT)!=0))||
+                    	(((pad.getCopper().getLayerMaskID()&Layer.LAYER_BACK)!=0)&&((layermask&Layer.SOLDERMASK_LAYER_BACK)!=0))) {                
                 
                 switch(pad.getShapeType()){
                 case CIRCULAR:
-                    processCircle((Circle)pad.getPadDrawing().getGeometricFigure(),pad.getType(),board.getHeight());  
+                    processCircle((Circle)pad.getPadDrawing().getGeometricFigure(),board.getHeight(),pad.getSolderMaskExpansion());  
                     break;
                 case RECTANGULAR:
-                    processRectangle((Rectangle)pad.getPadDrawing().getGeometricFigure(),board.getHeight());           
+                	var r=(Rectangle)pad.getPadDrawing().getGeometricFigure().clone();
+                	r.grow(pad.getSolderMaskExpansion());
+                    processRectangle(r,board.getHeight());           
                     break;
                 case OVAL:
-                    processOval((Obround)pad.getPadDrawing().getGeometricFigure(),pad.getType(),board.getHeight());
+                    processOval((Obround)pad.getPadDrawing().getGeometricFigure(),board.getHeight(),pad.getSolderMaskExpansion());
                     break;
                 case POLYGON:
-                    processPolygon( (Hexagon)pad.getPadDrawing().getGeometricFigure(),board.getHeight());  
+                    var h=(Hexagon)pad.getPadDrawing().getGeometricFigure().clone();
+                    h.grow(pad.getSolderMaskExpansion());
+                	processPolygon( h,board.getHeight());  
                     break;
+                }
                 }
             }
             
         }
     }
-    protected void processCircle(Circle shape,PadShape.Type type,int height){
+    protected void processCircle(Circle shape,int height,double solderMaskExtension){
         context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
-        ApertureDefinition aperture;
-        if(type!=null){
-           aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.resolvePad(type),shape.r*2);
-        }else{
-           aperture=context.getApertureDictionary().findCircle(shape.r*2); 
-        }
+        ApertureDefinition aperture=context.getApertureDictionary().findCircle(shape.r*2+2*solderMaskExtension); 
+        
         //set aperture if not same
         context.resetAperture(aperture);
         
@@ -122,10 +127,12 @@ public class CommandPadProcessor implements Processor{
         command=context.getCommandDictionary().get(AbstractCommand.Type.REGION_MODE_OFF, FunctionCommand.class);
         context.getOutput().append(command.print());  
     }
-    protected void processOval(Obround obround,PadShape.Type type,int height){
-        double diameter=obround.getDiameter();
+    
+    protected void processOval(Obround obround,int height,double solderMaskExtension){        
+        var o=obround.clone();
+        o.grow(solderMaskExtension);
         
         CommandLineProcessor lineProcessor=new CommandLineProcessor(context);
-        lineProcessor.processLine(Arrays.asList(obround.ps,obround.pe),diameter, height,type==null?null:AbstractAttribute.Type.resolvePad(type),false); 
+        lineProcessor.processLine(Arrays.asList(obround.ps,obround.pe),o.getDiameter(), height,null,false); 
     }
 }

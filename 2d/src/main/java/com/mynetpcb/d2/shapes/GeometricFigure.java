@@ -2,6 +2,7 @@ package com.mynetpcb.d2.shapes;
 
 import java.awt.Graphics2D;
 
+
 public abstract class GeometricFigure{
 
    public abstract GeometricFigure clone();
@@ -15,6 +16,8 @@ public abstract class GeometricFigure{
    public abstract void rotate(double angle,Point center);
    
    public abstract void rotate(double angle);
+   
+   public <G extends GeometricFigure> void assign(G drawing) {}
    
    /*
     * Test if point on shape contour

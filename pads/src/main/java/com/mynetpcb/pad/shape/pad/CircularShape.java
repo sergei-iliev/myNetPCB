@@ -2,6 +2,7 @@ package com.mynetpcb.pad.shape.pad;
 
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.board.Net;
@@ -12,6 +13,7 @@ import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -38,33 +40,51 @@ public class CircularShape implements PadDrawing {
         copy.circle.r = this.circle.r;
         return copy;
     }
-    
     @Override
     public GeometricFigure getGeometricFigure(){
       return circle;  
     }
     
     @Override
-    public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-
+    public boolean paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,int layermaskId) {               
         //check if outside of visible window
         Box rect = this.circle.box();
+        rect.grow(padRef.get().getSolderMaskExpansion());
         rect.scale(scale.getScaleX());
         if (!rect.intersects(viewportWindow)) {
             return false;
         }
-        g2.setColor(this.padRef
-                        .get()
-                        .isSelected() ? Color.GRAY : this.padRef
-                                                         .get()
-                                                         .getCopper()
-                                                         .getColor());
+        
 
+        var c=(Circle)PadFactory.acquire(Circle.class);
+        try {
+        //draw solder mask	
+        if((((this.padRef.get().getCopper().getLayerMaskID()&Layer.LAYER_FRONT)!=0)&&((layermaskId&Layer.SOLDERMASK_LAYER_FRONT)!=0))||
+        	(((this.padRef.get().getCopper().getLayerMaskID()&Layer.LAYER_BACK)!=0)&&((layermaskId&Layer.SOLDERMASK_LAYER_BACK)!=0))) {
+         c.assign(this.circle);                 
+         c.grow(padRef.get().getSolderMaskExpansion());
+         c.scale(scale.getScaleX());
+         c.move(-viewportWindow.getX(), -viewportWindow.getY());        
+         g2.setColor(this.padRef
+                .get()
+                .isSelected() ? Color.GRAY : Layer.Copper.BMask.getColor());
 
-        Circle c = this.circle.clone();
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(), -viewportWindow.getY());
-        c.paint(g2, true);
+         c.paint(g2, true);
+        }
+      //draw pad shape
+        if(((this.padRef.get().getCopper().getLayerMaskID()&layermaskId)!=0)) {	                           
+        	c.assign(this.circle);
+        	c.scale(scale.getScaleX());
+        	c.move(-viewportWindow.getX(), -viewportWindow.getY());
+            g2.setColor(this.padRef
+                    .get()
+                    .isSelected() ? Color.GRAY : this.padRef.get().getCopper().getColor());
+        	c.paint(g2, true);
+        }
+        }finally {
+        	PadFactory.release(c);	
+		}
+        
         return true;
     }
 

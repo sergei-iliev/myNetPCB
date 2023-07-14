@@ -12,6 +12,7 @@ import com.mynetpcb.gerber.processor.aperture.ApertureLineProcessor;
 import com.mynetpcb.gerber.processor.aperture.AperturePadProcessor;
 import com.mynetpcb.gerber.processor.aperture.ApertureRectProcessor;
 import com.mynetpcb.gerber.processor.aperture.ApertureRegionProcessor;
+import com.mynetpcb.gerber.processor.aperture.ApertureSolderMaskProcessor;
 import com.mynetpcb.gerber.processor.aperture.ApertureTextProcessor;
 import com.mynetpcb.gerber.processor.aperture.ApertureTrackProcessor;
 import com.mynetpcb.gerber.processor.aperture.ApertureViaProcessor;
@@ -41,6 +42,7 @@ public class ApertureProcessor implements Processor{
         processors.add(new ApertureLineProcessor(dictionary)); 
         processors.add(new ApertureRectProcessor(dictionary)); 
         processors.add(new ApertureTextProcessor(dictionary)); 
+        processors.add(new ApertureSolderMaskProcessor(dictionary));
     }
 
     @Override

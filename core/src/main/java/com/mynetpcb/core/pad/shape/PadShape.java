@@ -38,4 +38,6 @@ public abstract class PadShape extends Shape implements Pinable, Net, CompositeT
     public abstract PadShape.Shape getShapeType();
     
     public abstract PadShape.Type getType();
+    
+    public abstract double getSolderMaskExpansion();
 }

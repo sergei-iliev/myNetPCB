@@ -1,11 +1,12 @@
 package com.mynetpcb.gerber.processor.command;
 
+import java.util.List;
+
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
-import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.GraphicsStateContext;
 import com.mynetpcb.gerber.capi.Processor;
@@ -16,8 +17,6 @@ import com.mynetpcb.pad.shape.Arc;
 import com.mynetpcb.pad.shape.Circle;
 import com.mynetpcb.pad.shape.RoundRect;
 import com.mynetpcb.pad.shape.SolidRegion;
-
-import java.util.List;
 /*
  * Process all filed shapes as gerber countour region
  */
@@ -80,7 +79,7 @@ public class CommandFilledContourProcessor implements Processor{
     
     private void processCircle(Circle circle,int height){
         CommandCircleProcessor circleProcessor=new CommandCircleProcessor(context);
-        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null);
+        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null,true);
     }
     
     private void processArc(Arc arc,int height){        
@@ -112,21 +111,21 @@ public class CommandFilledContourProcessor implements Processor{
         CommandLineProcessor lineProcessor=new CommandLineProcessor(context);
         
         Circle circle=new  Circle(rect.getShape().arcs[0].pc.x,rect.getShape().arcs[0].pc.y,rect.getShape().arcs[0].r,rect.getThickness(),1);
-        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null);
+        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null,true);
         
         circle=new  Circle(rect.getShape().arcs[1].pc.x,rect.getShape().arcs[1].pc.y,rect.getShape().arcs[1].r,rect.getThickness(),1);
-        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null);
+        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null,true);
 
         circle=new  Circle(rect.getShape().arcs[2].pc.x,rect.getShape().arcs[2].pc.y,rect.getShape().arcs[2].r,rect.getThickness(),1);
-        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null);
+        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null,true);
 
         circle=new  Circle(rect.getShape().arcs[3].pc.x,rect.getShape().arcs[3].pc.y,rect.getShape().arcs[3].r,rect.getThickness(),1);
-        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null);
+        circleProcessor.processCircle(circle ,Grid.MM_TO_COORD(1),height,null,true);
         
         List<Point> vertices=rect.getShape().vertices();   
         vertices.add(vertices.get(0));
 
-        lineProcessor.processLine(vertices,Grid.MM_TO_COORD(1),height,null);                
+        lineProcessor.processLine(vertices,Grid.MM_TO_COORD(1),height,null,true);                
     }
     
 //    private void processRect(RoundRect rect,int height){
@@ -205,9 +204,10 @@ public class CommandFilledContourProcessor implements Processor{
         //set linear mode if not set
         context.resetCommand(AbstractCommand.Type.LENEAR_MODE_INTERPOLATION);
         
-        ApertureDefinition aperture=context.getApertureDictionary().get(10);        
+        //****No apperture selection in REGION mode!!!!!
+        //ApertureDefinition aperture=context.getApertureDictionary().get(10);        
         //set aperture if not same
-        context.resetAperture(aperture);
+        //context.resetAperture(aperture);
         
         for(Point point:solidRegion.getLinePoints()){
             StringBuffer commandLine=new StringBuffer();

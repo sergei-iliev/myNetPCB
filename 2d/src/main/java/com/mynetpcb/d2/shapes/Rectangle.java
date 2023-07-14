@@ -22,7 +22,13 @@ public class Rectangle extends Polygon {
         });  
         return copy;
     }
-
+    @Override
+    public void assign(GeometricFigure drawing) {
+        this.points.get(0).set(((Rectangle)drawing).points.get(0));                        
+        this.points.get(1).set(((Rectangle)drawing).points.get(1));
+        this.points.get(2).set(((Rectangle)drawing).points.get(2));
+        this.points.get(3).set(((Rectangle)drawing).points.get(3));                                                                       
+    }
     public void setRect(double x,double y,double width,double height){                                                
               this.points.get(0).set(x,y);                        
               this.points.get(1).set(x+width,y);
