@@ -47,7 +47,7 @@ public class CommandRegionProcessor implements Processor {
           
           processVias(board,region);    
           processTracks(board, region);
-          processPads(board, region); 
+          processPads(board, region,layermask); 
           //processText(board,region); 
             
           context.resetPolarity(LevelPolarityCommand.Polarity.DARK);
@@ -58,7 +58,7 @@ public class CommandRegionProcessor implements Processor {
 
     }
     
-    private void processPads(Unit<? extends Shape> board,CopperAreaShape source){
+    private void processPads(Unit<? extends Shape> board,CopperAreaShape source, int layermask){
         List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
         CommandPadProcessor commandPadProcessor=new CommandPadProcessor(context);
         
@@ -68,7 +68,10 @@ public class CommandRegionProcessor implements Processor {
                continue; 
             }
             Collection<Pad> pads=(Collection<Pad>)footprint.getPads();
-            for(Pad pad:pads){ 
+            for(Pad pad:pads){
+                if(!pad.isVisibleOnLayers(layermask)){  //a footprint may have pads on different layers
+                    continue;
+                }
                 if(pad.isSameNet(source)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
                     continue;
                 }
