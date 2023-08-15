@@ -1,21 +1,29 @@
 package com.mynetpcb.pad.shape.pad;
 
+import com.mynetpcb.core.board.Net;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.pad.shape.PadShape;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Hexagon;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Vector;
+import com.mynetpcb.pad.shape.Pad;
 import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -86,15 +94,78 @@ public class PolygonShape implements PadDrawing {
         h.move(-viewportWindow.getX(), -viewportWindow.getY());
         h.paint(g2, true);
         
-    }
+        //1. THERMAL makes sense if pad has copper on source layer
+        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+            return; //not on the same layer
+        }
+        
+        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	          	      	          	 
+            g2.setStroke(new BasicStroke((float)((this.hexagon.width/3)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
+            
+            Composite originalComposite = g2.getComposite();
+            AlphaComposite composite;
+            if(((CompositeLayerable)((Shape)source).getOwningUnit()).getActiveSide()==Layer.Side.resolve(source.getCopper().getLayerMaskID())) {
+                composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);                                                        	  
+            }else {
+                composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f);                                                        	           
+            }
+            g2.setComposite(composite);
 
+            drawLine(g2,h,0);
+            drawLine(g2,h,1);
+            drawLine(g2,h,2);
+
+            g2.setComposite(originalComposite);
+            
+            
+      }
+        
+    }
+    /**
+     * Utility to avoid repeat
+     */
+    private void drawLine(Graphics2D g2,Hexagon refHegagone,int refIndex){
+        //horizontal line
+        double r=refHegagone.width/2;
+        //first point on line
+        Vector v=new Vector(refHegagone.pc,refHegagone.points.get(refIndex));
+        v.rotate90CW();
+        Vector n=v.normalize();            
+        double a=refHegagone.pc.x +r*n.x;
+        double b=refHegagone.pc.y +r*n.y;
+        
+        //second point on line
+        n.invert();            
+        double c=refHegagone.pc.x +r*n.x;
+        double d=refHegagone.pc.y +r*n.y;  
+
+        Line line=(Line)PadFactory.acquire(Line.class);
+        line.setLine(a,b,c,d);            
+        line.paint(g2, true);
+        
+        PadFactory.release(line);
+    }
     @Override
     public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
         g2.setColor(printContext.getBackgroundColor());       
         Hexagon h = this.hexagon.clone();
         h.grow(source.getClearance());                
         h.paint(g2, true);
-
+        //1. THERMAL makes sense if pad has copper on source layer
+        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+            return; //not on the same layer
+        }
+        
+        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	          	      	          	 
+            g2.setStroke(new BasicStroke((float)((this.hexagon.width/3)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+        	g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:source.getCopper().getColor()); 
+            
+            drawLine(g2,h,0);
+            drawLine(g2,h,1);
+            drawLine(g2,h,2);
+   
+        }
     }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {

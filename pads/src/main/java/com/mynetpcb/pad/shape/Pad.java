@@ -247,10 +247,9 @@ public class Pad extends PadShape{
     public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
                                                           AffineTransform scale, T source) {
         
-        //is different layer and SMD -> no clearance
-    	
-        if ((source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {           
-               return; //not on the same layer
+        //is different layer and SMD -> no clearance    	
+        if ((this.type==Type.SMD)&&(source.getCopper().getLayerMaskID() & this.copper.getLayerMaskID()) == 0) {                      
+        	return; //not on the same layer
         }
         
         //no need to draw clearance if not on active side

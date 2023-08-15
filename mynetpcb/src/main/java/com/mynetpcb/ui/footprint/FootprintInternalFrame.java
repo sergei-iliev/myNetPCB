@@ -30,6 +30,7 @@ import com.mynetpcb.pad.dialog.FootprintLoadDialog;
 import com.mynetpcb.pad.dialog.save.FootprintSaveDialog;
 import com.mynetpcb.pad.unit.Footprint;
 import com.mynetpcb.pad.unit.FootprintMgr;
+import com.mynetpcb.symbol.component.SymbolComponent;
 import com.mynetpcb.ui.AbstractInternalFrame;
 
 import java.awt.BorderLayout;
@@ -210,7 +211,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         //AddFootprintButton.setToolTipText("Add footprint");
         AddFootprintButton.setPreferredSize(new Dimension(35, 35));
         AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "images/subject.png"));
-        AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
+        AddFootprintButton.addMenu("Create footprints bundle","Create").addMenu("Add footprint to bundle","Add").addSeparator().addMenu("Close","Close").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
                            addSeparator().addMenu("Export to Clipboard","clipboard.export").
                            addSeparator().addMenu("Exit","exit"); 
         
@@ -417,6 +418,9 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
                         }             
             }
         }
+        if(e.getActionCommand().equals("Close")) {
+        	super.Close();
+        }        
         if (e.getActionCommand().equals("SaveAs")) {            
             new FootprintSaveDialog(this.getParentFrame(), footprintComponent,Configuration.get().isIsOnline()).build();
             return;                                                    
@@ -649,7 +653,10 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         return true;
     }
 
-
+    @Override
+    public FootprintComponent getUnitComponent(){
+    	return footprintComponent;
+    }
     @Override
     public boolean isChanged() {
         return footprintComponent.getModel().isChanged();    

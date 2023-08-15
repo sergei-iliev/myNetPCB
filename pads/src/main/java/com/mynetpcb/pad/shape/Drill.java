@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.unit.Footprint;
@@ -38,7 +39,9 @@ public class Drill extends Shape implements Externalizable{
     public double getWidth(){
         return 2*this.circle.r;
     }
-    
+    public Circle getGeometricFigure() {
+    	return circle;
+    }
     public void setWidth(double width){
             this.circle.r=width/2;
     }

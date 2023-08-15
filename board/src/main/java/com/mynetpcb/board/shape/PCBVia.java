@@ -146,9 +146,27 @@ public class PCBVia extends ViaShape implements PCBShape{
     }
 
     @Override
-    public <T extends ClearanceSource> void printClearance(Graphics2D graphics2D, PrintContext printContext,
-                                                           T clearanceSource) {
-        // TODO Implement this method
+    public <T extends ClearanceSource> void printClearance(Graphics2D g2, PrintContext printContext,
+                                                           T source) {
+        if(isSameNet(source)){
+            return;
+        } 
+        Box rect=getBoundingShape();             
+        rect.grow(getClearance()!=0?getClearance():source.getClearance());
+
+        if(!source.getBoundingShape().intersects(rect)){
+           return; 
+        }
+        
+        FlyweightProvider ellipseProvider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
+        Ellipse2D ellipse = (Ellipse2D)ellipseProvider.getShape();
+        
+        ellipse.setFrame(rect.getX(), rect.getY(),rect.getWidth(), rect.getHeight());
+        
+        g2.setColor(printContext.getBackgroundColor());                
+        g2.fill(ellipse);
+
+        ellipseProvider.reset();        
 
     }
     public Circle getInner(){

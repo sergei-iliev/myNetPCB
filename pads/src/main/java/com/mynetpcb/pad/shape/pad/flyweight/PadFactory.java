@@ -7,11 +7,16 @@ import java.util.Map;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Hexagon;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Rectangle;
 
-
+/**
+ * 
+ * 2d package shape cache
+ *
+ */
 public class PadFactory {
 	 private static Map<Class<? extends GeometricFigure>,GeometricFigure> cache=new HashMap<>();
 	 static {
@@ -19,6 +24,7 @@ public class PadFactory {
 		 cache.put(Rectangle.class,new Rectangle(0, 0, 0, 0));
 		 cache.put(Obround.class,new Obround(0, 0, 0, 0));
 		 cache.put(Hexagon.class,new Hexagon(0, 0, 10));
+		 cache.put(Line.class, new Line(0,0,0,0));
 	 }
 	 public static  GeometricFigure acquire(Class<? extends GeometricFigure> clazz) {
 		 var pad=cache.get(clazz);

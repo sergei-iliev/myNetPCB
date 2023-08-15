@@ -44,7 +44,8 @@ public class Obround extends GeometricFigure {
         this.pc.set(((Obround)drawing).pc);                        
         this.width=(((Obround)drawing).width);
         this.height=(((Obround)drawing).height);
-        this.reset();
+        this.ps.set(((Obround)drawing).ps);
+        this.pe.set(((Obround)drawing).pe);
     }    
     public Box box(){             
              
@@ -179,13 +180,30 @@ public class Obround extends GeometricFigure {
         this.ps.move(offsetX, offsetY);
         this.pe.move(offsetX, offsetY);
     }
-
-    public void grow(double offset) {
-        if(Utils.GE(width,height)){
+    //rotate angle is lost with reset();
+    public void grow(double offset,double angle) {
+    	
+//        if(Utils.GE(width,height)){
             this.height +=  2*offset;
-        } else {
+//        } else {
             this.width +=  2*offset;
-        }
+//        }
+            this.reset();
+            this.rotate(angle);
+           //move points
+           //first point
+//           Vector v=new Vector(this.pe,this.ps);
+//           Vector n=v.normalize();
+//           double a=this.ps.x +offset*n.x;
+//           double b=this.ps.y +offset*n.y;   
+//           this.ps.set(a, b);
+//           //second point
+//           n.invert();
+//           a=this.pe.x +offset*n.x;
+//           b=this.pe.y +offset*n.y;   
+//           this.pe.set(a, b);
+           
+           
     }
     public double getDiameter(){
         if(Utils.GE(width,height))

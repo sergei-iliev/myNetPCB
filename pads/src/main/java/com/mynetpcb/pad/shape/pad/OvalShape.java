@@ -1,25 +1,29 @@
 package com.mynetpcb.pad.shape.pad;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.lang.ref.WeakReference;
+
+import com.mynetpcb.core.board.Net;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
-import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Vector;
 import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
-import java.lang.ref.WeakReference;
 
 public class OvalShape implements PadDrawing {
     private WeakReference<PadShape> padRef;
@@ -57,7 +61,7 @@ public class OvalShape implements PadDrawing {
         if((((this.padRef.get().getCopper().getLayerMaskID()&Layer.LAYER_FRONT)!=0)&&((layermaskId&Layer.SOLDERMASK_LAYER_FRONT)!=0))||
             	(((this.padRef.get().getCopper().getLayerMaskID()&Layer.LAYER_BACK)!=0)&&((layermaskId&Layer.SOLDERMASK_LAYER_BACK)!=0))) {        	
         	o.assign(this.obround);                
-        	o.grow(padRef.get().getSolderMaskExpansion());
+        	o.grow(padRef.get().getSolderMaskExpansion(),this.padRef.get().getRotate());
         	o.scale(scale.getScaleX());
         	o.move(-viewportWindow.getX(), -viewportWindow.getY());        
         	g2.setColor(this.padRef
@@ -88,20 +92,115 @@ public class OvalShape implements PadDrawing {
                                        
         g2.setColor(Color.BLACK);        
         Obround o=this.obround.clone();
-        o.grow(source.getClearance());
+        o.grow(source.getClearance(),this.padRef.get().getRotate());
 
         
         o.scale(scale.getScaleX());
         o.move(-viewportWindow.getX(), -viewportWindow.getY());
         o.paint(g2, true);
+        
+        //1. THERMAL makes sense if pad has copper on source layer
+        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+            return; //not on the same layer
+        }
+        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	        	          	              
+            g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
+            
+            Composite originalComposite = g2.getComposite();
+            AlphaComposite composite;
+            if(((CompositeLayerable)((Shape)source).getOwningUnit()).getActiveSide()==Layer.Side.resolve(source.getCopper().getLayerMaskID())) {
+                composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);                                                        	  
+            }else {
+                composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f);                                                        	           
+            }
+            g2.setComposite(composite );
+            //horizontal line
+            double r=o.getDiameter()/2;
+            //first point on line
+            Vector v=new Vector(o.pe,o.ps);
+            Vector n=v.normalize();
+            double a=o.ps.x +r*n.x;
+            double b=o.ps.y +r*n.y;  
+            //second point on line
+            v=new Vector(o.ps,o.pe);
+            n=v.normalize();
+            double c=o.pe.x +r*n.x;
+            double d=o.pe.y +r*n.y;  
+            g2.setStroke(new BasicStroke((float)((this.obround.getDiameter() /2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            Line line=(Line)PadFactory.acquire(Line.class); 
+            line.setLine(a,b,c,d);
+            line.paint(g2, true);                        
+            
+            //vertical line
+            v.rotate90CW();
+            n=v.normalize();
+            a=o.pc.x +r*n.x;
+            b=o.pc.y +r*n.y; 
+            
+            n.invert();
+            c=o.pc.x +r*n.x;
+            d=o.pc.y +r*n.y; 
+      	                          
+            g2.setStroke(new BasicStroke((float)(((this.obround.ps.distanceTo(this.obround.pe)+this.obround.getDiameter())/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            line.setLine(a,b,c,d);
+            line.paint(g2, true);
+            
+            
+            g2.setComposite(originalComposite);
+            PadFactory.release(line);
+            
+      }
+        
     }
 
     @Override
     public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
         Obround o=this.obround.clone();
         g2.setColor(printContext.getBackgroundColor());          
-        o.grow(source.getClearance());
+        o.grow(source.getClearance(),this.padRef.get().getRotate());
         o.paint(g2, true);
+        //1. THERMAL makes sense if pad has copper on source layer
+        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+            return; //not on the same layer
+        }
+        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	        	          	              
+        	g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:source.getCopper().getColor());          
+            //horizontal line
+            double r=o.getDiameter()/2;
+            //first point on line
+            Vector v=new Vector(o.pe,o.ps);
+            Vector n=v.normalize();
+            double a=o.ps.x +r*n.x;
+            double b=o.ps.y +r*n.y;  
+            //second point on line
+            v=new Vector(o.ps,o.pe);
+            n=v.normalize();
+            double c=o.pe.x +r*n.x;
+            double d=o.pe.y +r*n.y;  
+            g2.setStroke(new BasicStroke((float)((this.obround.getDiameter() /2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            Line line=(Line)PadFactory.acquire(Line.class); 
+            line.setLine(a,b,c,d);
+            line.paint(g2, true);                        
+            
+            //vertical line
+            v.rotate90CW();
+            n=v.normalize();
+            a=o.pc.x +r*n.x;
+            b=o.pc.y +r*n.y; 
+            
+            n.invert();
+            c=o.pc.x +r*n.x;
+            d=o.pc.y +r*n.y; 
+      	                          
+            g2.setStroke(new BasicStroke((float)(((this.obround.ps.distanceTo(this.obround.pe)+this.obround.getDiameter())/2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            line.setLine(a,b,c,d);
+            line.paint(g2, true);
+            
+
+            PadFactory.release(line);
+            
+      }
+        
     }
 
     @Override

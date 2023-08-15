@@ -5,6 +5,8 @@ import com.mynetpcb.symbol.dialog.SymbolEditorDialog;
 
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class SymbolInlineEditorDialog extends SymbolEditorDialog{
     
@@ -12,6 +14,16 @@ public class SymbolInlineEditorDialog extends SymbolEditorDialog{
     
     public SymbolInlineEditorDialog(Window window, String caption, SymbolContainer symbolContainer) {
         super(window, caption, symbolContainer);
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+          public void windowOpened(WindowEvent e) {
+                //position symbol to center
+                symbolComponent.setViewportPosition(symbolComponent.getModel().getUnit().getWidth() / 2,
+                		symbolComponent.getModel().getUnit().getHeight() / 2);  
+                symbolComponent.Repaint();
+          }
+          });        
     }
     public SymbolContainer getResult(){
        return result;    

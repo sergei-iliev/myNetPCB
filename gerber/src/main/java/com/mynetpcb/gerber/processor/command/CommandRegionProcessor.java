@@ -1,5 +1,10 @@
 package com.mynetpcb.gerber.processor.command;
 
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.board.shape.TrackShape;
@@ -11,10 +16,12 @@ import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Hexagon;
+import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Rectangle;
 import com.mynetpcb.d2.shapes.Utils;
+import com.mynetpcb.d2.shapes.Vector;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.GraphicsStateContext;
@@ -24,14 +31,14 @@ import com.mynetpcb.gerber.command.extended.LevelPolarityCommand;
 import com.mynetpcb.gerber.command.function.FunctionCommand;
 import com.mynetpcb.pad.shape.Pad;
 
-import java.util.Collection;
-import java.util.List;
 
 public class CommandRegionProcessor implements Processor {
     private final GraphicsStateContext context;
-
+    private final CommandLineProcessor lineProcessor;  
+    
     public CommandRegionProcessor(GraphicsStateContext context) {
         this.context = context;
+        this.lineProcessor=new CommandLineProcessor(context);
     }
 
     @Override
@@ -53,7 +60,7 @@ public class CommandRegionProcessor implements Processor {
           context.resetPolarity(LevelPolarityCommand.Polarity.DARK);
           
           //process THERMAL pads   
-          //processThermalPads(board,region);   
+          processThermalPads(board,region);   
         }
 
     }
@@ -69,20 +76,18 @@ public class CommandRegionProcessor implements Processor {
             }
             Collection<Pad> pads=(Collection<Pad>)footprint.getPads();
             for(Pad pad:pads){
-                if(!pad.isVisibleOnLayers(layermask)){  //a footprint may have pads on different layers
-                    continue;
-                }
-                if(pad.isSameNet(source)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
-                    continue;
-                }
                 // is pad  within copper area
                 Box rect = pad.getBoundingShape();
                 rect.grow(source.getClearance());
                 
                 if(!(source).getBoundingShape().intersects(rect)){
                    continue; 
+                }                
+                //if on the same net and DIRECT connection do nothing	
+                if(pad.isSameNet(source)&&source.getPadConnection()==PadShape.PadConnection.DIRECT){
+                    continue;
                 }
-            
+                if(pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){                                            
                 switch(pad.getShapeType()){
                 case CIRCULAR:
                     Circle circle=(Circle)pad.getPadDrawing().getGeometricFigure();
@@ -99,7 +104,7 @@ public class CommandRegionProcessor implements Processor {
                 case OVAL:
                     Obround obround=(Obround)pad.getPadDrawing().getGeometricFigure();
                     obround=obround.clone();
-                    obround.grow(source.getClearance());
+                    obround.grow(source.getClearance(),pad.getRotate());
                     commandPadProcessor.processOval(obround,null,board.getHeight());
                     break;
                 case POLYGON:
@@ -109,7 +114,17 @@ public class CommandRegionProcessor implements Processor {
                     commandPadProcessor.processPolygon(hexagon,board.getHeight());  
                     break;
                 }                
-                        
+              }else {
+                  //in case of DRILL hole and pad has no part in this layer, still clearance has to be provided  
+                  if(pad.getType()==PadShape.Type.THROUGH_HOLE){                      
+                      Circle c=pad.getDrill().getGeometricFigure().clone();
+                      c.grow(source.getClearance());                      
+                      commandPadProcessor.processCircle(c,null,board.getHeight()); 
+                  }            	  
+              }
+                
+                
+                
             }
         }
     }    
@@ -118,68 +133,234 @@ public class CommandRegionProcessor implements Processor {
      * draw cross hair to represent THERMAL pads connections
      */
     
-//    private void processThermalPads(Unit<? extends Shape> board,CopperAreaShape source){
-//        int height=board.getHeight();       
-//        CommandLineProcessor lineProcessor=new CommandLineProcessor(context); 
-//        
-//        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);                     
-//        for(FootprintShape footprint:footprints){  
-//            //check if footprint in copper area
-//            if(!source.getBoundingShape().intersects(footprint.getBoundingShape().getBounds())){
-//               continue; 
-//            }
-//            Collection<PadShape> pads=footprint.getPins();
-//            for(PadShape pad:pads){ 
-//                // is pad  within copper area
-//                Rectangle rect = pad.getBoundingShape().getBounds();
-//                rect.grow(source.getClearance(), source.getClearance());
-//                
-//                if(!(source).getBoundingShape().intersects(rect)){
-//                   continue; 
-//                }
-//                
-//                /*
-//                 * Both pad and copper must be on the same layer and copper pad connection
-//                 * registered as THERMAL                 
-//                 */
-//                if(Utilities.isSameNet(source,pad)&&source.getPadConnection()==PadShape.PadConnection.THERMAL){
-//                    //THERMAL pad -> draw crossing                     
-//                    switch(pad.getShape()){
-//                        case CIRCULAR:                            
-//                              
-//                            Line line =new Line(pad.getWidth()/2,0);
-//                            
-//                            line.add((int)(rect.getMinX()+(rect.getHeight()/2)), (int)rect.getMinY());
-//                            line.add((int)(rect.getMinX()+(rect.getHeight()/2)), (int)rect.getMaxY());            
-//                            lineProcessor.processLine(line, height); 
-//
-//                            
-//                            line.Clear();
-//                            line.add((int)rect.getMinX(),(int)(rect.getMinY()+(rect.getWidth()/2)));
-//                            line.add((int)rect.getMaxX(), (int)(rect.getMinY()+(rect.getWidth()/2)));            
-//                            lineProcessor.processLine(line, height);                         
-//                        break;
-//                    case OVAL:case RECTANGULAR:
-//                            line =new Line(pad.getWidth()/2,0);
-//                            line.add((int)(rect.getMinX()+(rect.getWidth()/2)), (int)rect.getMinY());
-//                            line.add((int)(rect.getMinX()+(rect.getWidth()/2)), (int)rect.getMaxY());            
-//                            lineProcessor.processLine(line, height);
-//                                                   
-//                            line.Clear();
-//                            line.setThickness(pad.getHeight()/2); 
-//                            line.add((int)rect.getMinX(), (int)(rect.getMinY()+(rect.getHeight()/2)));
-//                            line.add((int)rect.getMaxX(), (int)(rect.getMinY()+(rect.getHeight()/2)));                                    
-//                            lineProcessor.processLine(line, height);
-//                        break;
-//
-//                    }
-//                      
-//                    
-//                                    
-//               }
-//            }
-//        }
-//    }
+    private void processThermalPads(Unit<? extends Shape> board,CopperAreaShape source){    	 
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
+        for(FootprintShape footprint:footprints){
+            //check if footprint in copper area
+            if(!source.getBoundingShape().intersects(footprint.getBoundingShape())){
+               continue; 
+            }
+            Collection<Pad> pads=(Collection<Pad>)footprint.getPads();
+            for(Pad pad:pads){            
+                // is pad  within copper area
+                Box rect = pad.getBoundingShape();
+                rect.grow(source.getClearance());
+                
+                if(!(source).getBoundingShape().intersects(rect)){
+                   continue; 
+                }
+                                
+                if(pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){      //same layer                                 
+                    /*
+                     * GROUND and VCC net
+                     * Use region contour
+                     */
+                    //1. THERMAL makes sense if pad has copper on source layer                    
+                    if(source.isSameNet(pad) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){                  
+                      switch(pad.getShapeType()){
+                       case CIRCULAR:
+                    	   double r=((Circle)pad.getPadDrawing().getGeometricFigure()).r/2;
+                    	   var list=new ArrayList<Point>();
+                    	   rect.grow(Grid.MM_TO_COORD(0.1));
+                    	   list.add(new Point(rect.min.x+rect.getWidth()/2-r,rect.min.y));                    	   
+                    	   list.add(new Point(rect.min.x+rect.getWidth()/2+r,rect.min.y));                    	   
+                    	   list.add(new Point(rect.min.x+rect.getWidth()/2+r,rect.max.y));                    	   
+                    	   list.add(new Point(rect.min.x+rect.getWidth()/2-r,rect.max.y));                    	  
+                    	   processRegion(list,board.getHeight());
+                    	   list.clear();                    	   
+                    	   list.add(new Point(rect.min.x,rect.min.y+rect.getWidth()/2-r));
+                    	   list.add(new Point(rect.min.x,rect.min.y+rect.getWidth()/2+r));
+                    	   list.add(new Point(rect.max.x,rect.min.y+rect.getWidth()/2+r));                    	   
+                    	   list.add(new Point(rect.max.x,rect.min.y+rect.getWidth()/2-r));                    	  
+                    	   processRegion(list,board.getHeight());
+                    	                             
+                           break;
+                       case OVAL:
+                    	   list=new ArrayList<Point>();
+                           var oo=(Obround)pad.getPadDrawing().getGeometricFigure();
+                           var o=oo.clone();
+                           o.grow(source.getClearance()+Grid.MM_TO_COORD(0.1),pad.getRotate());
+                           //***horizontal
+                           r=o.getDiameter()/2;
+                           //first point on line
+                           Vector v=new Vector(o.pe,o.ps);
+                           Vector n=v.normalize();
+                           double a=o.ps.x +r*n.x;
+                           double b=o.ps.y +r*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();
+                           a=a +((oo.getDiameter() /4))*n.x;
+                           b=b +((oo.getDiameter() /4))*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();
+                           a=a +(o.ps.distanceTo(o.pe)+2*r)*n.x;
+                           b=b +(o.ps.distanceTo(o.pe)+2*r)*n.y;  
+                           list.add(new Point(a,b));
+
+                           n.rotate90CCW();
+                           a=a +((oo.getDiameter() /2))*n.x;
+                           b=b +((oo.getDiameter() /2))*n.y;                             
+                           list.add(new Point(a,b));
+
+                           n.rotate90CCW();
+                           a=a +(o.ps.distanceTo(o.pe)+2*r)*n.x;
+                           b=b +(o.ps.distanceTo(o.pe)+2*r)*n.y;  
+                           list.add(new Point(a,b));
+                           
+                           processRegion(list,board.getHeight());
+ 
+      
+                           //***vertical
+                           list.clear();
+                           v.rotate90CW();
+                           n=v.normalize();
+                           a=o.pc.x +r*n.x;
+                           b=o.pc.y +r*n.y;
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();
+                           double d=(((oo.ps.distanceTo(oo.pe)+oo.getDiameter())/2));
+                           a=a +(d/2)*n.x;
+                           b=b +(d/2)*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();
+                           a=a +2*r*n.x;
+                           b=b +2*r*n.y;
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();                    
+                           a=a +(d)*n.x;
+                           b=b +(d)*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();                    
+                           a=a +2*r*n.x;
+                           b=b +2*r*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           
+                           processRegion(list,board.getHeight());
+                           break;
+                       case RECTANGULAR:
+                    	   list=new ArrayList<Point>();
+                    	   var rr=((Rectangle)pad.getPadDrawing().getGeometricFigure());                    	   
+                           var rrr=rr.clone();
+                           rrr.grow(source.getClearance()+Grid.MM_TO_COORD(0.1));
+                           //first line	
+                           d=rrr.points.get(0).distanceTo(rrr.points.get(1));
+                           double w=rr.points.get(0).distanceTo(rr.points.get(1));
+                           
+                           v=new Vector(rrr.points.get(0),rrr.points.get(1));
+                           n=v.normalize();
+                           var p=rrr.points.get(0).middleOf(rrr.points.get(1));
+                           
+                           a=p.x +w/4*n.x;
+                           b=p.y +w/4*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();  
+                           a=a +rrr.points.get(1).distanceTo(rrr.points.get(2))*n.x;
+                           b=b +rrr.points.get(1).distanceTo(rrr.points.get(2))*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();
+                           a=a +w/2*n.x;
+                           b=b +w/2*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();  
+                           a=a +rrr.points.get(1).distanceTo(rrr.points.get(2))*n.x;
+                           b=b +rrr.points.get(1).distanceTo(rrr.points.get(2))*n.y;                             
+                           list.add(new Point(a,b));
+                                                      
+                           processRegion(list,board.getHeight());
+                           
+                           //second line
+                           list.clear();
+                           d=rrr.points.get(1).distanceTo(rrr.points.get(2));
+                           double hh=rr.points.get(1).distanceTo(rr.points.get(2));
+                           v=new Vector(rrr.points.get(1),rrr.points.get(2));
+                           n=v.normalize();
+                           p=rrr.points.get(1).middleOf(rrr.points.get(2));
+                           
+                           a=p.x +hh/4*n.x;
+                           b=p.y +hh/4*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();  
+                           a=a +rrr.points.get(2).distanceTo(rrr.points.get(3))*n.x;
+                           b=b +rrr.points.get(2).distanceTo(rrr.points.get(3))*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();
+                           a=a +hh/2*n.x;
+                           b=b +hh/2*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           n.rotate90CCW();  
+                           a=a +rrr.points.get(2).distanceTo(rrr.points.get(3))*n.x;
+                           b=b +rrr.points.get(2).distanceTo(rrr.points.get(3))*n.y;                             
+                           list.add(new Point(a,b));
+                           
+                           processRegion(list,board.getHeight());
+                          break;                           
+                       case POLYGON:
+                    	   var h=((Hexagon)pad.getPadDrawing().getGeometricFigure()).clone();
+                    	   d=h.width/3;
+                    	   
+                    	   h.grow(source.getClearance());
+                    	   drawLine(h, 0, d, board.getHeight());
+                    	   drawLine(h, 1, d, board.getHeight());
+                    	   drawLine(h, 2, d, board.getHeight());                    	                       	                       	   
+                    	   break;
+
+                       }                                    
+                    }                                 
+                }                                                   
+            }    
+     }
+    }
+    /**
+     * Utility to avoid repeat
+     */
+    private void drawLine(Hexagon refHegagone,int refIndex,double thickness,int height){    	
+    	var list=new ArrayList<Point>();
+        double r=refHegagone.width/2;
+        Vector v=new Vector(refHegagone.pc,refHegagone.points.get(refIndex));
+        
+        v.rotate90CW();
+        Vector n=v.normalize();            
+        double a=refHegagone.pc.x +r*n.x;
+        double b=refHegagone.pc.y +r*n.y;       
+        
+        n.rotate90CW();
+        a=a +thickness/2*n.x;
+        b=b +thickness/2*n.y;
+        list.add(new Point(a,b));
+        
+        n.rotate90CW();
+        a=a +2*r*n.x;
+        b=b +2*r*n.y;
+        list.add(new Point(a,b));
+
+        n.rotate90CW();
+        a=a +thickness*n.x;
+        b=b +thickness*n.y;
+        list.add(new Point(a,b));
+
+        n.rotate90CW();
+        a=a +2*r*n.x;
+        b=b +2*r*n.y;
+        list.add(new Point(a,b));
+
+        processRegion(list,height);
+
+        
+    }    	    	    
+    
     
     private void processRegion(List<? extends Point> region,int height){
         

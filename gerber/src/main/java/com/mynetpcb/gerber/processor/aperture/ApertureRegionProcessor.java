@@ -1,5 +1,6 @@
 package com.mynetpcb.gerber.processor.aperture;
 
+import com.mynetpcb.core.board.Net;
 import com.mynetpcb.core.board.shape.CopperAreaShape;
 import com.mynetpcb.core.board.shape.FootprintShape;
 import com.mynetpcb.core.board.shape.TrackShape;
@@ -9,7 +10,10 @@ import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.Hexagon;
 import com.mynetpcb.d2.shapes.Obround;
+import com.mynetpcb.d2.shapes.Rectangle;
 import com.mynetpcb.gerber.aperture.ApertureDictionary;
 import com.mynetpcb.gerber.aperture.type.ApertureDefinition;
 import com.mynetpcb.gerber.aperture.type.CircleAperture;
@@ -66,65 +70,88 @@ public class ApertureRegionProcessor implements Processor{
                 if(!(source).getBoundingShape().intersects(rect)){
                    continue; 
                 }
-
-//                if(pad.isSameNet(source)){
-//                    //is this THERMAL pad
-//                    if(source.getPadConnection()==PadShape.PadConnection.THERMAL){
-//                      //add drawing line    
-//                      switch(pad.getShape()){
-//                      case CIRCULAR: 
-//                         CircleAperture apperture=new CircleAperture();
-//                         apperture.setDiameter(pad.getWidth()/2);
-//                         dictionary.add(apperture);  
-//                      break;
-//                      case OVAL: case RECTANGULAR:
-//                         apperture=new CircleAperture();
-//                         apperture.setDiameter(pad.getWidth()/2);
-//                         dictionary.add(apperture); 
-//                          
-//                         apperture=new CircleAperture();
-//                         apperture.setDiameter(pad.getHeight()/2);
-//                         dictionary.add(apperture);                           
-//                       break;
-//                      }
-//                    }else{
-//                       //there is no clearence when both Copper area and Pad have the same Net value
-//                       continue;
-//                    }
-//                }
+                
                 ApertureDefinition apperture=null;
                 double diameter;
-                if(pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){                    
+                if(pad.isVisibleOnLayers(source.getCopper().getLayerMaskID())){      //same layer              
                     switch(pad.getShapeType()){
                     case CIRCULAR:                                                
                         apperture=new CircleAperture();
                         diameter=((CircularShape)pad.getPadDrawing()).getDiameter();
                         ((CircleAperture)apperture).setDiameter(diameter+(2*source.getClearance()));
+                        dictionary.add(apperture);
                         break;
                     case OVAL:                         
-                        apperture=new CircleAperture();  
-                        diameter=((Obround)pad.getPadDrawing().getGeometricFigure()).getDiameter();
-                        ((CircleAperture)apperture).setDiameter(diameter+(2*source.getClearance())); 
+                    	var o=((Obround)pad.getPadDrawing().getGeometricFigure()).clone();
+                    	o.grow(source.getClearance(),pad.getRotate());
+                    	apperture=new CircleAperture();                          
+                        ((CircleAperture)apperture).setDiameter(o.getDiameter());
+                        dictionary.add(apperture);
                         break;
                     case RECTANGULAR:case POLYGON:
                         //add default
-                        CircleAperture circle=new CircleAperture();
-                        circle.setDiameter(Grid.MM_TO_COORD(1));
-                        dictionary.add(circle);  
+                        apperture=new CircleAperture();
+                        ((CircleAperture)apperture).setDiameter(Grid.MM_TO_COORD(1));
+                        dictionary.add(apperture);  
                     }                    
-                                 
+                    /*
+                     * GROUND and VCC net
+                     * USE REGION!
+                     */
+                    
+                    //1. THERMAL makes sense if pad has copper on source layer                    
+                    /*
+                    if(source.isSameNet(pad) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){                  
+                      switch(pad.getShapeType()){
+                       case CIRCULAR:
+                    	   apperture=new CircleAperture();                    	                       	   
+                           ((CircleAperture)apperture).setDiameter(pad.getWidth()/2);
+                           dictionary.add(apperture);
+                    	   break;
+                       case OVAL:
+                           apperture=new CircleAperture();  
+                           ((CircleAperture)apperture).setDiameter(pad.getWidth()/2);                           
+                           dictionary.add(apperture);
+                           
+                           apperture=new CircleAperture();  
+                           ((CircleAperture)apperture).setDiameter(pad.getHeight()/2);                           
+                           dictionary.add(apperture);
+                           
+                    	   break;
+                       case RECTANGULAR:
+                    	   var r=((Rectangle)pad.getPadDrawing().getGeometricFigure());                    	   
+                    	   double d=r.points.get(0).distanceTo(r.points.get(1));
+                           apperture=new CircleAperture();  
+                           ((CircleAperture)apperture).setDiameter(d/2);                           
+                           dictionary.add(apperture);
+                           
+                    	   d=r.points.get(1).distanceTo(r.points.get(2));
+                           apperture=new CircleAperture();  
+                           ((CircleAperture)apperture).setDiameter(d/2);                           
+                           dictionary.add(apperture);
+                    	   
+                           break;                    	   
+                       case POLYGON:                    	   
+                    	   var h=((Hexagon)pad.getPadDrawing().getGeometricFigure());
+                    	   d=h.width/3;
+                           apperture=new CircleAperture();  
+                           ((CircleAperture)apperture).setDiameter(d);                           
+                           dictionary.add(apperture);                    	   
+                    	   break;
+                       }                                    
+                    } 
+                     */                              
                 }else{
                   //in case of DRILL hole and pad has no part in this layer, still clearance has to be provided  
-                    if(pad.getType()==PadShape.Type.THROUGH_HOLE){
+                    if(pad.getType()==PadShape.Type.THROUGH_HOLE){                        
+                        Circle c=pad.getDrill().getGeometricFigure().clone();
+                        c.grow(source.getClearance());  
                         apperture=new CircleAperture();
-                        ((CircleAperture)apperture).setDiameter(pad.getWidth()+(2*source.getClearance()));                     
+                        ((CircleAperture)apperture).setDiameter(2*c.r);
+                        dictionary.add(apperture);
                     }
-                }
-                
-                
-                if(apperture!=null){
-                   dictionary.add(apperture);
-                }
+                }                                      
+            
             }    
     }
     }

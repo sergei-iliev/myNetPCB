@@ -2,9 +2,17 @@ package com.mynetpcb.symbol.component;
 
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.config.Configuration;
 import com.mynetpcb.core.capi.event.LineEventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
+import com.mynetpcb.core.capi.event.ShapeEvent;
+import com.mynetpcb.core.capi.gui.panel.DisabledGlassPane;
+import com.mynetpcb.core.capi.impex.XMLImportTask;
+import com.mynetpcb.core.capi.io.Command;
+import com.mynetpcb.core.capi.io.CommandExecutor;
 import com.mynetpcb.core.capi.io.CommandListener;
+import com.mynetpcb.core.capi.io.FutureCommand;
+import com.mynetpcb.core.capi.io.ReadUnitLocal;
 import com.mynetpcb.core.capi.line.DefaultBendingProcessorFactory;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Mode;
@@ -39,6 +47,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JOptionPane;
 
 public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContainer> implements CommandListener{
     
@@ -312,7 +323,15 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
     }
     @Override
     public void reload() {
-        // TODO Implement this method
+        if(getModel().getFileName()==null){
+            return;   
+          }
+        Command reader =new ReadUnitLocal(this,Configuration.get().getSymbolsRoot(),
+                                                    getModel().getLibraryName(),
+                                                    getModel().getCategoryName(),
+                                                    getModel().getFileName(),
+                                                    Symbol.class);
+       CommandExecutor.INSTANCE.addTask("ReadUnitLocal", reader);  
     }
 
     @Override
@@ -321,23 +340,54 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
     }
 
     @Override
-    public void onStart(Class<?> clazz) {
-        // TODO Implement this method
+    public void onStart(Class<?> receiver) {
+    	DisabledGlassPane.block( this.getDialogFrame().getRootPane(),"Loading...");   
     }
 
     @Override
-    public void onRecive(String content, Class<?> clazz) {
-        // TODO Implement this method
+    public void onRecive(String result, Class<?> receiver) {
+        if(receiver==Symbol.class){         
+            getModel().getUnit().clear();             
+         try{  
+            getModel().parse(result,getModel().getActiveUnitIndex());                             
+            getModel().getUnit().setSelected(false); 
+            getModel().registerInitialState(); 
+         }catch(Exception ioe){ioe.printStackTrace(System.out);}                          
+            this.componentResized(null);
+            this.Repaint();
+            this.revalidate();     
+    }
 
     }
 
     @Override
-    public void onFinish(Class<?> clazz) {
-        // TODO Implement this method
+    public void onFinish(Class<?> receiver) {
+        DisabledGlassPane.unblock(this.getDialogFrame().getRootPane());   
+        if (receiver == XMLImportTask.class) {
+            FutureCommand task = CommandExecutor.INSTANCE.getTaskByName("import");
+            try{
+                SymbolContainer source = (SymbolContainer) task.get();                
+                    for (Symbol symbol : source.getUnits()) {
+                        try {
+                            Symbol copy = symbol.clone();
+                            this.getModel().add(copy);
+                            copy.notifyListeners(ShapeEvent.ADD_SHAPE);
+                        } catch (CloneNotSupportedException f) {
+                            f.printStackTrace(System.out);
+                        }
+                    }
+                    source.clear();
+                
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace(System.out);
+            }
+        } 
     }
 
     @Override
     public void onError(String error) {
-        // TODO Implement this method
+        DisabledGlassPane.unblock(getDialogFrame().getRootPane());  
+        JOptionPane.showMessageDialog(getDialogFrame().getParentFrame(), error, "Error",
+                                      JOptionPane.ERROR_MESSAGE); 
     }
 }

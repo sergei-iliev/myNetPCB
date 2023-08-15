@@ -1,24 +1,31 @@
 package com.mynetpcb.pad.shape.pad;
 
+import com.mynetpcb.core.board.Net;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.flyweight.FlyweightProvider;
 import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.pad.shape.PadShape;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Rectangle;
+import com.mynetpcb.d2.shapes.Vector;
 import com.mynetpcb.pad.shape.Pad;
 import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -92,8 +99,65 @@ public class RectangularShape implements PadDrawing {
         g2.setColor(Color.BLACK);
         r.paint(g2,true);
         
-        if(this.padRef.get().isSameNet(source)&&source.getPadConnection()==PadShape.PadConnection.THERMAL) {
-        	
+        //1. THERMAL makes sense if pad has copper on source layer
+        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+            return; //not on the same layer
+        }
+        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	  
+            //Utilities.drawCrosshair(g2, null,300,r.points.get(0));
+            //Utilities.drawCrosshair(g2, null,300,r.points.get(3));
+        	Pad pad=(Pad)padRef.get();        	          	              
+            g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
+            
+            Composite originalComposite = g2.getComposite();
+            AlphaComposite composite;
+            if(((CompositeLayerable)((Shape)source).getOwningUnit()).getActiveSide()==Layer.Side.resolve(source.getCopper().getLayerMaskID())) {
+                composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);                                                        	  
+            }else {
+                composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f);                                                        	           
+            }
+            g2.setComposite(composite );   
+            double d=this.rect.points.get(0).distanceTo(this.rect.points.get(1));
+            double distance=r.points.get(0).distanceTo(r.points.get(3));
+
+            //first point on line
+            Vector v=new Vector(r.points.get(0),r.points.get(1));
+            Vector n=v.normalize();
+            n.rotate90CCW();
+            
+            //first point
+            Point p=r.points.get(0).middleOf(r.points.get(1));            
+            //second point
+            double a=p.x +distance*n.x;
+            double b=p.y +distance*n.y;
+                        
+      	    Line line=(Line)PadFactory.acquire(Line.class);
+      	    g2.setStroke(new BasicStroke((float)((d/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+      	    line.setLine(p.x,p.y,a,b);            
+            line.paint(g2, true);
+            
+            //second line
+             d=this.rect.points.get(1).distanceTo(this.rect.points.get(2));
+             distance=r.points.get(0).distanceTo(r.points.get(1));
+            
+            v=new Vector(r.points.get(1),r.points.get(2));
+            n=v.normalize();
+            n.rotate90CCW();
+            
+            //first point
+            p=r.points.get(1).middleOf(r.points.get(2));            
+            //second point
+            a=p.x +distance*n.x;
+            b=p.y +distance*n.y;
+                        
+      	    
+      	    g2.setStroke(new BasicStroke((float)((d/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+      	    line.setLine(p.x,p.y,a,b);            
+            line.paint(g2, true);
+            
+            
+            g2.setComposite(originalComposite);
+            PadFactory.release(line);
         }
 
     }
@@ -101,9 +165,56 @@ public class RectangularShape implements PadDrawing {
     @Override
     public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
         g2.setColor(printContext.getBackgroundColor());  
-        Rectangle rect=this.rect.clone();
-        rect.grow(source.getClearance());                 
-        rect.paint(g2,true);
+        Rectangle r=this.rect.clone();
+        r.grow(source.getClearance());                 
+        r.paint(g2,true);
+        //1. THERMAL makes sense if pad has copper on source layer
+        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+            return; //not on the same layer
+        }
+        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	        	          	              
+        	g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:source.getCopper().getColor());              
+            double d=this.rect.points.get(0).distanceTo(this.rect.points.get(1));
+            double distance=r.points.get(0).distanceTo(r.points.get(3));
+
+            //first point on line
+            Vector v=new Vector(r.points.get(0),r.points.get(1));
+            Vector n=v.normalize();
+            n.rotate90CCW();
+            
+            //first point
+            Point p=r.points.get(0).middleOf(r.points.get(1));            
+            //second point
+            double a=p.x +distance*n.x;
+            double b=p.y +distance*n.y;
+                        
+      	    Line line=(Line)PadFactory.acquire(Line.class);
+      	    g2.setStroke(new BasicStroke((float)((d/2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+      	    line.setLine(p.x,p.y,a,b);            
+            line.paint(g2, true);
+            
+            //second line
+             d=this.rect.points.get(1).distanceTo(this.rect.points.get(2));
+             distance=r.points.get(0).distanceTo(r.points.get(1));
+            
+            v=new Vector(r.points.get(1),r.points.get(2));
+            n=v.normalize();
+            n.rotate90CCW();
+            
+            //first point
+            p=r.points.get(1).middleOf(r.points.get(2));            
+            //second point
+            a=p.x +distance*n.x;
+            b=p.y +distance*n.y;
+                        
+      	    
+      	    g2.setStroke(new BasicStroke((float)((d/2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+      	    line.setLine(p.x,p.y,a,b);            
+            line.paint(g2, true);
+            
+            PadFactory.release(line);
+        }
+        
     }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {

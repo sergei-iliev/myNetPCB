@@ -45,7 +45,7 @@ public class ApertureSolderMaskProcessor implements Processor{
                         apperture=new CircleAperture();  
                         Obround obround=((Obround)pad.getPadDrawing().getGeometricFigure());//.getDiameter()+2*pad.getSolderMaskExpansion();
                         var o=obround.clone();
-                        o.grow(pad.getSolderMaskExpansion());                        
+                        o.grow(pad.getSolderMaskExpansion(),pad.getRotate());                        
                         ((CircleAperture)apperture).setDiameter(o.getDiameter());                          
                         break;
                     case RECTANGULAR:case POLYGON:

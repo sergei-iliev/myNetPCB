@@ -1,11 +1,20 @@
 package com.mynetpcb.pad.shape.pad;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.lang.ref.WeakReference;
+
+import com.mynetpcb.core.board.Net;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
+import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.board.Net;
 import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.d2.shapes.Box;
@@ -13,13 +22,8 @@ import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.pad.shape.Pad;
 import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
-import java.lang.ref.WeakReference;
 
 public class CircularShape implements PadDrawing {
     private WeakReference<PadShape> padRef;
@@ -106,27 +110,37 @@ public class CircularShape implements PadDrawing {
             return; //not on the same layer
         }
 
-        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){
-           
-//           //draw thermal
-//            g2.setClip(ellipse);                              
-//            FlyweightProvider provider =ShapeFlyweightFactory.getProvider(Line2D.class);
-//            Line2D temporal=(Line2D)provider.getShape(); 
-//            //radius of outer whole
-//            g2.setStroke(new BasicStroke((float)((Pad.this.getWidth()/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));            
-//            g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
-//        
-//
-//            
-//            temporal.setLine((scaledRect.getMinX()+(scaledRect.getHeight()/2))-viewportWindow.x, scaledRect.getMinY()-viewportWindow.y,(scaledRect.getMinX()+(scaledRect.getHeight()/2))-viewportWindow.x, scaledRect.getMaxY()-viewportWindow.y);            
-//            g2.draw(temporal);
-//
-//            temporal.setLine(scaledRect.getMinX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getWidth()/2))-viewportWindow.y,scaledRect.getMaxX()-viewportWindow.x, (scaledRect.getMinY()+(scaledRect.getWidth()/2))-viewportWindow.y);            
-//            g2.draw(temporal);
-//        
-//            g2.setClip(null);
-//            
-//            provider.reset();
+        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	        	         	          	  
+        	  Pad pad=(Pad)padRef.get();        	          	  
+              g2.setStroke(new BasicStroke((float)((pad.getWidth()/2)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+              g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
+              
+              Composite originalComposite = g2.getComposite();
+              AlphaComposite composite;
+              if(((CompositeLayerable)((Shape)source).getOwningUnit()).getActiveSide()==Layer.Side.resolve(source.getCopper().getLayerMaskID())) {
+                  composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);                                                        	  
+              }else {
+                  composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f);                                                        	           
+              }
+              g2.setComposite(composite );
+              //g2.setClip(ellipse);
+              
+              
+              Line line=(Line)PadFactory.acquire(Line.class);
+              //1. vertical line
+              line.setLine(rect.min.x+rect.getWidth()/2, rect.min.y,rect.min.x+rect.getWidth()/2,rect.max.y);
+              line.scale(scale.getScaleX());
+              line.move(-viewportWindow.getX(), -viewportWindow.getY());
+              line.paint(g2, true);
+              //2. horizontal line
+              line.setLine(rect.min.x, rect.min.y+rect.getWidth()/2 ,rect.max.x,rect.min.y+rect.getWidth()/2);
+              line.scale(scale.getScaleX());
+              line.move(-viewportWindow.getX(), -viewportWindow.getY());
+              line.paint(g2, true);
+              
+              //g2.setClip(null);              
+              g2.setComposite(originalComposite);
+              PadFactory.release(line);
         }
         
     }
@@ -144,6 +158,26 @@ public class CircularShape implements PadDrawing {
         if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
             return; //not on the same layer
         }
+
+        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	        	         	          	 
+        	  Pad pad=(Pad)padRef.get();        	          	  
+              g2.setStroke(new BasicStroke((float)((pad.getWidth()/2)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+              g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:source.getCopper().getColor());
+                    
+              Box rect = getBoundingShape();
+              rect.grow(source.getClearance()); 
+              
+              Line line=(Line)PadFactory.acquire(Line.class);
+              //1. vertical line
+              line.setLine(rect.min.x+rect.getWidth()/2, rect.min.y,rect.min.x+rect.getWidth()/2,rect.max.y);
+              line.paint(g2, true);
+              //2. horizontal line
+              line.setLine(rect.min.x, rect.min.y+rect.getWidth()/2 ,rect.max.x,rect.min.y+rect.getWidth()/2);              
+              line.paint(g2, true);             
+              
+              PadFactory.release(line);
+        }
+
 
     }
 

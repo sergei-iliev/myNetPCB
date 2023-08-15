@@ -4,7 +4,9 @@ import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
+import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.config.Configuration;
+import com.mynetpcb.core.capi.container.UnitContainer;
 import com.mynetpcb.core.capi.event.ContainerEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.event.UnitEvent;
@@ -215,7 +217,7 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         //AddFootprintButton.setToolTipText("Add symbol");
         AddFootprintButton.setPreferredSize(new Dimension(35, 35));
         AddFootprintButton.setIcon(Utilities.loadImageIcon(this, "images/subject.png"));
-        AddFootprintButton.addMenu("Create symbols bundle","Create").addMenu("Add symbol to bundle","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
+        AddFootprintButton.addMenu("Create symbols bundle","Create").addMenu("Add symbol to bundle","Add").addSeparator().addMenu("Close","Close").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").
                            addSeparator().addMenu("Export to Clipboard","clipboard.export").
                            addSeparator().addMenu("Exit","exit"); 
         
@@ -333,6 +335,10 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
         content.add(basePanel); // Add components to the content        
     }
 
+    @Override
+    public SymbolComponent getUnitComponent(){
+    	return symbolComponent;
+    }
     @Override
     public boolean isChanged() {
         return symbolComponent.getModel().isChanged();    
@@ -455,7 +461,11 @@ public class SymbolInternalFrame extends AbstractInternalFrame implements Dialog
                 }
             return;
         }
+        if(e.getActionCommand().equals("Close")) {
+        	super.Close();
+        }
         if (e.getActionCommand().equals("SaveAs")) {
+        	
                 new SymbolSaveDialog(this.getParentFrame(), symbolComponent,Configuration.get().isIsOnline()).build();
                 return;                
        

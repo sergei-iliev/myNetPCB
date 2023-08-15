@@ -60,7 +60,7 @@ public class CommandSolderMaskProcessor implements Processor{
                     processRectangle(r,board.getHeight());           
                     break;
                 case OVAL:
-                    processOval((Obround)pad.getPadDrawing().getGeometricFigure(),board.getHeight(),pad.getSolderMaskExpansion());
+                    processOval((Obround)pad.getPadDrawing().getGeometricFigure(),board.getHeight(),pad.getSolderMaskExpansion(),pad.getRotate());
                     break;
                 case POLYGON:
                     var h=(Hexagon)pad.getPadDrawing().getGeometricFigure().clone();
@@ -128,9 +128,9 @@ public class CommandSolderMaskProcessor implements Processor{
         context.getOutput().append(command.print());  
     }
     
-    protected void processOval(Obround obround,int height,double solderMaskExtension){        
+    protected void processOval(Obround obround,int height,double solderMaskExtension,double rotation){        
         var o=obround.clone();
-        o.grow(solderMaskExtension);
+        o.grow(solderMaskExtension,rotation);
         
         CommandLineProcessor lineProcessor=new CommandLineProcessor(context);
         lineProcessor.processLine(Arrays.asList(obround.ps,obround.pe),o.getDiameter(), height,null,false); 

@@ -13,6 +13,7 @@ import com.mynetpcb.board.shape.BoardOutlineShapeFactory;
 import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.board.unit.BoardMgr;
+import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
@@ -261,7 +262,7 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         //AddBoardButton.setToolTipText("Add board");
         MainMenu.setPreferredSize(new Dimension(35, 35));
         MainMenu.setIcon(Utilities.loadImageIcon(this, "images/subject.png"));
-        MainMenu.addMenu("Create new boards project","Create").addMenu("Add board to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
+        MainMenu.addMenu("Create new boards project","Create").addMenu("Add board to project","Add").addSeparator().addMenu("Close","Close").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
             .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSubMenu("export","Gerber RS-274X/X2", "export.gerber").addSeparator().addMenu("Exit","exit");
     
         PrintButton.addActionListener(this);
@@ -558,6 +559,9 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
                 }
             return;
         }
+        if(e.getActionCommand().equals("Close")) {
+        	super.Close();
+        }         
         if (e.getActionCommand().equals("SaveAs")) {
             if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
                 User.showMessageDialog(boardComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
@@ -809,7 +813,10 @@ public class BoardInternalFrame extends AbstractInternalFrame implements DialogF
         this.dispose(); 
         return true;
     }
-
+    @Override
+    public BoardComponent getUnitComponent(){
+    	return boardComponent;
+    }
     @Override
     public boolean isChanged() {
         return boardComponent.getModel().isChanged();

@@ -1,5 +1,34 @@
 package com.mynetpcb.ui.circuit;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.security.AccessControlException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
+
 import com.mynetpcb.board.unit.BoardMgr;
 import com.mynetpcb.circuit.component.CircuitComponent;
 import com.mynetpcb.circuit.container.CircuitContainer;
@@ -40,41 +69,6 @@ import com.mynetpcb.symbol.container.SymbolContainer;
 import com.mynetpcb.symbol.dialog.SymbolLoadDialog;
 import com.mynetpcb.symbol.unit.Symbol;
 import com.mynetpcb.ui.AbstractInternalFrame;
-import com.mynetpcb.ui.myNetPCB;
-
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.security.AccessControlException;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JTabbedPane;
-import javax.swing.JToggleButton;
 
 public class CircuitInternalFrame extends AbstractInternalFrame implements DialogFrame,CommandListener,ActionListener{
     private CircuitComponent circuitComponent;
@@ -252,7 +246,7 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         //AddBoardButton.setToolTipText("Add Circuit");
         AddCircuitButton.setPreferredSize(new Dimension(35, 35));
         AddCircuitButton.setIcon(Utilities.loadImageIcon(this, "images/subject.png"));
-        AddCircuitButton.addMenu("Create new circuits project","Create").addMenu("Add circuit to project","Add").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
+        AddCircuitButton.addMenu("Create new circuits project","Create").addMenu("Add circuit to project","Add").addSeparator().addMenu("Close","Close").addSeparator().addMenu("Save","Save").addMenu("Save As","SaveAs").addSeparator().addRootMenu("Export", "export")
             .addSubMenu("export","Image","export.image").addSubMenu("export","XML", "export.xml").addSubMenu("export","Clipboard", "clipboard.export").addSeparator().addMenu("Exit","exit");
         
         PrintButton.addActionListener(this);
@@ -429,6 +423,10 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
         com.mynetpcb.d2.shapes.Box r=circuitComponent.getModel().getUnit().getBoundingRect();
         circuitComponent.setViewportPosition(r.getCenter().x,r.getCenter().y);
         circuitComponent.Repaint();
+    }
+    @Override
+    public CircuitComponent getUnitComponent(){
+    	return circuitComponent;
     }
     @Override
     public boolean isChanged() {
@@ -712,6 +710,9 @@ public class CircuitInternalFrame extends AbstractInternalFrame implements Dialo
                 }
             return;
         }
+        if(e.getActionCommand().equals("Close")) {
+        	super.Close();
+        }           
         if (e.getActionCommand().equals("SaveAs")) {
             if (Configuration.get().isIsOnline() && User.get().isAnonymous()) {
                 User.showMessageDialog(circuitComponent.getDialogFrame().getParentFrame(), "Anonymous access denied.");
