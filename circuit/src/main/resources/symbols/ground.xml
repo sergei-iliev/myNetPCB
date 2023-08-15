@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<modules identity="Module" type="GROUND" version="3.0">
+<modules identity="Module" type="GROUND" version="8.0">
 <module width="489" height="512">
-<footprint library="" category=""  filename="" name=""/>
 <name>Ground</name>
-<unit><label color="-16777216">GND,248,252,LEFT,PLAIN,8</label>
-</unit>
 <elements>
-<line>233,264,247,264,3</line>
-<pin type="0" style="0">
-<a>240,264, + false + ,0,0</a>
+<line  thickness="3">233.0,264.0,247.0,264.0,</line>
+<pin type="0"  style="0"   x="240.0" y="264.0" orientation="0">
 </pin>
 </elements>
 </module>
 <module width="489" height="512">
-<footprint library="" category=""  filename="" name=""/>
 <name>Analog Ground</name>
-<unit><label color="-16777216">AGND,240,253,LEFT,PLAIN,8</label>
-</unit>
 <elements>
-<line>227,267,237,267,1</line>
-<triangle>8,229,270,6,2,1,1</triangle>
-<line>225,264,239,264,3</line>
-<pin type="0" style="0">
-<a>232,264, + false + ,0,0</a>
+<line  thickness="1">227.0,267.0,237.0,267.0,</line>
+<triangle thickness="1" fill="1">232.0,272.0,229.0,270.0,235.0,270.0,</triangle>
+<line  thickness="3">225.0,264.0,239.0,264.0,</line>
+<pin type="0"  style="0"   x="232.0" y="264.0" orientation="0">
 </pin>
 </elements>
 </module>
