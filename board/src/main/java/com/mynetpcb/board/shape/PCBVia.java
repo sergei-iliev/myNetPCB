@@ -10,6 +10,7 @@ import com.mynetpcb.core.capi.flyweight.ShapeFlyweightFactory;
 import com.mynetpcb.core.capi.layer.ClearanceSource;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.font.FontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -41,20 +42,22 @@ public class PCBVia extends ViaShape implements PCBShape{
     private String net;
     private int clearance;    
     private Circle inner,outer;    
-    
+    private FontTexture text;
     
     public PCBVia() {        
         this.fillColor=Color.WHITE; 
         this.displayName="Via";        
         this.selectionRectWidth=3000;
-    
+        
         this.outer=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.8)); 
-        this.inner=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.4)); 
+        this.inner=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.4));
+        this.text=new FontTexture("","text",this.inner.pc.x,this.inner.pc.y,2000,0);
     }
 
     @Override
     public PCBVia clone() throws CloneNotSupportedException {
         PCBVia copy = (PCBVia)super.clone();
+        copy.text=this.text.clone();
         copy.inner=this.inner.clone();
         copy.outer=this.outer.clone();
         return copy;
@@ -68,7 +71,8 @@ public class PCBVia extends ViaShape implements PCBShape{
         if(isRequired){
             Point point=getOwningUnit().getGrid().positionOnGrid(inner.pc.x, inner.pc.y);
             inner.pc.set(point);            
-            outer.pc.set(point);            
+            outer.pc.set(point);    
+            this.text.getAnchorPoint().set(point);
             return null;                      
         }else{
           return null;
@@ -99,17 +103,20 @@ public class PCBVia extends ViaShape implements PCBShape{
     public void move(double xoffset,double yoffset) {
         this.inner.move(xoffset,yoffset);
         this.outer.move(xoffset,yoffset);
+        this.text.move(xoffset, yoffset);
     }
     @Override
     public void rotate(double angle, Point center) {
         this.inner.rotate(angle,center);
         this.outer.rotate(angle,center);
+        this.text.rotate(angle, center);
     }
     
     @Override
     public void mirror(Line line) {
         this.inner.mirror(line);
-        this.outer.mirror(line);        
+        this.outer.mirror(line);  
+        this.text.mirror(line);
     }
     @Override
     public <T extends ClearanceSource> void drawClearance(Graphics2D g2, ViewportWindow viewportWindow,
@@ -188,6 +195,7 @@ public class PCBVia extends ViaShape implements PCBShape{
     @Override
     public void setNetName(String net){
         this.net=net;
+        this.text.setText(net);
     }    
     @Override
     public void setClearance(int clearance) {
@@ -221,7 +229,10 @@ public class PCBVia extends ViaShape implements PCBShape{
         
         this.clearance=element.getAttribute("clearance").equals("")?0:Integer.parseInt(element.getAttribute("clearance"));        
         this.net=element.getAttribute("net").isEmpty()?null:element.getAttribute("net");  
-        
+        if(this.net!=null) {
+          this.text.setText(net);
+        }
+        this.text.getAnchorPoint().set(inner.pc);
     }
 
     @Override
@@ -238,7 +249,7 @@ public class PCBVia extends ViaShape implements PCBShape{
         c.scale(scale.getScaleX());
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
         c.paint(g2, true);
-        
+                       
         
         g2.setColor(Color.BLACK);
         c.r=inner.r;
@@ -247,6 +258,9 @@ public class PCBVia extends ViaShape implements PCBShape{
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
         c.paint(g2, true);        
 
+        g2.setColor(Color.WHITE);
+        this.text.paint(g2, viewportWindow, scale,0);
+        
     }
     
     @Override
@@ -269,10 +283,7 @@ public class PCBVia extends ViaShape implements PCBShape{
 
     static class Memento extends AbstractMemento<Board,PCBVia>{
         private double x,y;
-        private double rin,rout;
-        
-        
-        
+        private double rin,rout;                        
         
         
         public Memento(MementoType mementoType){
