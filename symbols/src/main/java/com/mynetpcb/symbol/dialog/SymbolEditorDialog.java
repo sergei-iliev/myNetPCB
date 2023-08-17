@@ -137,10 +137,10 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         //gridBagConstraints.weighty=0.001;
         //moduleBasePanel.add(hbar, gridBagConstraints);          
         
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx=1;
-        gridBagConstraints.gridy=1;
-        moduleBasePanel.add( new JPanel(),gridBagConstraints);                    
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx=1;
+        //gridBagConstraints.gridy=1;
+        //moduleBasePanel.add( new JPanel(),gridBagConstraints);                    
         basePanel.add(moduleBasePanel, BorderLayout.CENTER);    
 
         //***add action listeners
@@ -390,6 +390,9 @@ public class SymbolEditorDialog extends JDialog implements DialogFrame,ActionLis
         }
         if (e.getSource()==PositionToCenter) {      
             symbolComponent.setViewportPosition(symbolComponent.getModel().getUnit().getWidth()/2,symbolComponent.getModel().getUnit().getHeight()/2);
+            symbolComponent.setViewportPosition(symbolComponent.getModel().getUnit().getWidth() / 2,
+            		symbolComponent.getModel().getUnit().getHeight() / 2);
+            symbolComponent.Repaint();
         }
         if (e.getSource()==SnapToGridButton) {
             symbolComponent.setParameter("snaptogrid", ((JToggleButton)e.getSource()).getModel().isSelected());

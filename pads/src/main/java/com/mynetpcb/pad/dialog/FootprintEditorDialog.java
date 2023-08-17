@@ -70,8 +70,8 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame,Comman
     private FootprintsPanel footprintsPanel;
     private JPanel footprintBasePanel = new JPanel(new GridBagLayout());
     private GridBagConstraints gridBagConstraints = new GridBagConstraints();
-    private JScrollBar vbar = new JScrollBar(JScrollBar.VERTICAL);
-    private JScrollBar hbar = new JScrollBar(JScrollBar.HORIZONTAL);
+    //private JScrollBar vbar = new JScrollBar(JScrollBar.VERTICAL);
+    //private JScrollBar hbar = new JScrollBar(JScrollBar.HORIZONTAL);
 
     private JToggleButton RectButton = new JToggleButton();
     private JToggleButton EllipseButton = new JToggleButton();
@@ -139,24 +139,24 @@ public class FootprintEditorDialog extends JDialog implements DialogFrame,Comman
         gridBagConstraints.weighty = 1;
         footprintBasePanel.add(footprintComponent, gridBagConstraints);
 
-        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.weightx = 0.001;
-        gridBagConstraints.weighty = 0.001;
-        footprintBasePanel.add(vbar, gridBagConstraints);
+        //gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        //gridBagConstraints.gridx = 1;
+        //gridBagConstraints.gridy = 0;
+        //gridBagConstraints.weightx = 0.001;
+        //gridBagConstraints.weighty = 0.001;
+        //footprintBasePanel.add(vbar, gridBagConstraints);
 
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.weightx = 0.001;
-        gridBagConstraints.weighty = 0.001;
-        footprintBasePanel.add(hbar, gridBagConstraints);
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx = 0;
+        //gridBagConstraints.gridy = 1;
+        //gridBagConstraints.weightx = 0.001;
+        //gridBagConstraints.weighty = 0.001;
+        //footprintBasePanel.add(hbar, gridBagConstraints);
 
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        footprintBasePanel.add(new JPanel(), gridBagConstraints);
+        //gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //gridBagConstraints.gridx = 1;
+        //gridBagConstraints.gridy = 1;
+        //footprintBasePanel.add(new JPanel(), gridBagConstraints);
         basePanel.add(footprintBasePanel, BorderLayout.CENTER);
 
         SelectionButton.addActionListener(this);
@@ -457,6 +457,9 @@ exit();
         if (e.getSource()==PositionToCenter) {
             footprintComponent.setViewportPosition(footprintComponent.getModel().getUnit().getWidth() / 2,
                                                  footprintComponent.getModel().getUnit().getHeight() / 2);
+            footprintComponent.setViewportPosition(footprintComponent.getModel().getUnit().getWidth() / 2,
+            		footprintComponent.getModel().getUnit().getHeight() / 2);
+            footprintComponent.Repaint();            
         }
 
         if (e.getSource()==RectButton) {
