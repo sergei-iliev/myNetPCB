@@ -13,9 +13,11 @@ import com.mynetpcb.core.capi.text.font.SymbolFontTexture;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.pad.shape.PadDrawing;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Segment;
@@ -313,6 +315,9 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
     public Point getCenter(){
        return this.segment.ps;
     }
+    public Segment getPinDrawing(){
+        return segment;
+    }    
     @Override
     public void setSelected (boolean selection) {
             super.setSelected(selection);
