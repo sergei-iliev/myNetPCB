@@ -35,6 +35,7 @@ https://github.com/sergei-iliev/myNetPCB/releases
 ![Footprints](/screenshots/footprints.png)
 ![Circuit](/screenshots/circuit.png)
 ![Board](/screenshots/board.png)
+![PCB](/screenshots/pcb_2.png)
 ![PCB](/screenshots/pcb.png)
 ![PCB](/screenshots/pcb_1.png)
 
