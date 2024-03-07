@@ -19,5 +19,7 @@ public abstract class FootprintShape extends Shape implements ClearanceTarget,Co
     
     public abstract Collection<? extends Shape> getShapes();
     
+    public abstract <P extends PadShape> P isPadClicked(double x, double y);
+    
 }
 

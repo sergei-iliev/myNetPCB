@@ -7,6 +7,9 @@ public abstract class GeometricFigure{
 
    public abstract GeometricFigure clone();
    
+   public abstract void scale(double alpha);
+   public abstract void move(double offsetX,double offsetY);
+   
    public boolean contains(Point pt){return false;}   
    
    public boolean contains(double x,double y){return false;}  

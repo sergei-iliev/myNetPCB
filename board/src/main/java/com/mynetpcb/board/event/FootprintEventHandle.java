@@ -2,6 +2,7 @@ package com.mynetpcb.board.event;
 
 
 import com.mynetpcb.board.component.BoardComponent;
+import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
 import com.mynetpcb.core.capi.event.ShapeEvent;
@@ -22,10 +23,6 @@ public class FootprintEventHandle extends EventHandle<BoardComponent,Shape>{
         super(component);
     }
     
-    @Override
-    public void attach() {
-        super.attach();      
-    }
     
     public void mouseScaledPressed(MouseScaledEvent e) {
         if (SwingUtilities.isRightMouseButton(e.getMouseEvent())) {                       
@@ -94,5 +91,8 @@ public class FootprintEventHandle extends EventHandle<BoardComponent,Shape>{
     
     @Override
     protected void clear(){
+      ((PCBFootprint)getTarget()).setSelectedPad(null);	
     }
+
+    
 }

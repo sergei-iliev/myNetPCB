@@ -73,7 +73,7 @@ public abstract class AbstractPanelBuilder<S extends Shape> extends KeyAdapter i
        return target.get();  
     }
     
-    protected void setTarget(S _target){
+    public void setTarget(S _target){
         if(target!=null){
            target.clear(); 
         }

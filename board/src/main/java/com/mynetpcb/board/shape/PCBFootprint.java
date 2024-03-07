@@ -29,10 +29,11 @@ import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.shape.FootprintShapeFactory;
 import com.mynetpcb.pad.shape.Pad;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,6 +64,8 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
     private double val;
     
     private int clearance;
+    
+    private WeakReference<Pad> selectedPadRef;  //show pad properties in 
     
     public PCBFootprint(int layermask) {
         super(layermask);
@@ -190,6 +193,16 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         }
         return false;   
     }
+    
+    @Override
+    public Pad isPadClicked(double x, double y) {
+    	for(PadShape pad:getPads()) {
+    		if(pad.isClicked(x, y))
+    			return (Pad)pad;
+    	}
+    	return null;
+    }
+    
     @Override
     public boolean isClicked(double x, double y) {
         Box r=this.getBoundingShape();
@@ -349,7 +362,20 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         }
 
     }
-
+    public void setSelectedPad(Pad pad) {
+    	if(this.selectedPadRef!=null) {
+    		this.selectedPadRef.clear();
+    		this.selectedPadRef=null;
+    	}
+    	if (pad!=null){    	
+		   this.selectedPadRef = new WeakReference<Pad>(pad);
+    	}
+	}
+    
+    public Pad getSelectedPad() {
+		return selectedPadRef==null?null:selectedPadRef.get();
+	}
+    
     @Override
     public void setClearance(int clearance) {
         this.clearance=clearance;
@@ -461,7 +487,15 @@ public class PCBFootprint extends FootprintShape implements PCBShape{
         }
                 
         for(Shape shape:this.shapes){   
-          shape.paint(g2,viewportWindow,scale,layersmask);  
+          shape.paint(g2,viewportWindow,scale,layersmask); 
+          if(isSelected()&& shape instanceof Pad && shape==getSelectedPad()) {        	
+        	var box=((Pad)shape).getBoundingShape().clone();        	
+            box.scale(scale.getScaleX());
+            box.move(-viewportWindow.getX(), -viewportWindow.getY());                 
+            g2.setStroke(new BasicStroke(1, 1, 1));
+            g2.setColor(Color.WHITE);
+            box.paint(g2, false);            
+          }
         }
         
         if((value.getLayermaskId()&layersmask)!=0) {

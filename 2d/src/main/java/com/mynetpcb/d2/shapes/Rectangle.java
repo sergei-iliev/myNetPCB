@@ -1,8 +1,5 @@
 package com.mynetpcb.d2.shapes;
 
-import java.awt.Graphics2D;
-
-
 public class Rectangle extends Polygon {
 
     public Rectangle(double x,double y,double width,double height) {        
@@ -203,9 +200,6 @@ public class Rectangle extends Polygon {
     public double area(){
             return (this.points.get(0).distanceTo(this.points.get(1)))*(this.points.get(1).distanceTo(this.points.get(2)));
     }
-    @Override
-    public void paint(Graphics2D g2, boolean fill) {
-        super.paint(g2, fill);
-    }
+
 
 }

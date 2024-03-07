@@ -220,8 +220,10 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                                                                                    scaledEvent.getY()) != null)) {
                         getEventMgr().setEventHandle("texture", shape);
                     } else if (shape instanceof PCBFootprint) {
-                        getEventMgr().setEventHandle("symbol", shape);
-                
+                    	//is this pad click?
+                    	var pad=((PCBFootprint)shape).isPadClicked(scaledEvent.getX(), scaledEvent.getY());                    	                   	
+                        getEventMgr().setEventHandle("symbol", shape);                    	
+                        ((PCBFootprint)shape).setSelectedPad(pad); 
                     }else if(shape instanceof PCBTrack){				    
                     	  if(((PCBTrack)shape).isSegmentClicked(scaledEvent.getPoint()))
     						  if(((PCBTrack)shape).isSingleSegment()){
