@@ -152,7 +152,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
                  }
                 }                                
                 
-                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
+                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY(),getViewportWindow());
                 //***is control rect clicked
                 if (shape != null) {
                     if(shape instanceof Arc){

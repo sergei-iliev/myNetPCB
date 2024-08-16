@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedInputStream;
@@ -250,7 +251,25 @@ public final class Utilities {
         transformer.transform(source, result);
         return result.getWriter().toString();
     }
-    
+    public static void drawCircle(Graphics2D g2,
+            Point resizingPoint, int length, Point... points) {
+    	FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
+    	var circle = (Ellipse2D) provider.getShape();
+    	g2.setStroke(new BasicStroke(1));
+        for (Point point : points) {
+            if (resizingPoint != null && resizingPoint.equals(point))
+                g2.setColor(Color.YELLOW);
+            else
+                g2.setColor(Color.BLUE);
+            
+            circle.setFrame(point.x- length/2, point.y-length/2, length, length); 
+            g2.fill(circle);
+        }
+        provider.reset();
+    	
+    	
+    	
+    }
     public static void drawCrosshair(Graphics2D g2,
                                      Point resizingPoint, int length, Point... points) {
 

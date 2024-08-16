@@ -2,12 +2,15 @@ package com.mynetpcb.symbol.unit;
 
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ScalableTransformation;
 import com.mynetpcb.core.capi.Typeable;
+import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.CompositeTextable;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.symbol.shape.Ellipse;
 import com.mynetpcb.symbol.shape.FontLabel;
 import com.mynetpcb.symbol.shape.Pin;
 import com.mynetpcb.symbol.shape.SymbolShapeFactory;
@@ -79,6 +82,23 @@ public class Symbol extends Unit<Shape> implements Typeable{
         this.context = new WeakReference<>(context);     
     }
     
+    public Shape isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+        /*
+         * if two symbols overlap and one is selected
+         * then the selected should be checked for control rect click first
+         */
+        {
+            Shape shape = getShape(getSelected());
+            if (shape != null && shape instanceof Resizeable && ((Resizeable)shape).isControlRectClicked(x, y,viewportWindow) != null)
+                return shape;
+        }
+        //for (S shape : getShapes()) {
+        //    if (shape instanceof Resizeable && ((Resizeable)shape).isControlRectClicked(x, y) != null) {
+        //        return shape;
+        //    }
+       // }
+        return null;
+    }
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
         Graphics2D g2 = (Graphics2D) graphics;
 

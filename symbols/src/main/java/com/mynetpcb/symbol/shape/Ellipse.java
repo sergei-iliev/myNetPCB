@@ -1,12 +1,21 @@
 package com.mynetpcb.symbol.shape;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.util.StringTokenizer;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
@@ -14,20 +23,8 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-import com.mynetpcb.d2.shapes.RoundRectangle;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.symbol.unit.Symbol;
-
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
-import java.util.StringTokenizer;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class Ellipse extends Shape implements Resizeable, Externalizable{
     private  com.mynetpcb.d2.shapes.Ellipse ellipse;
@@ -37,7 +34,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
                     super(thickness,Layer.LAYER_ALL);
                     this.setDisplayName("Ellipse");         
                     this.ellipse=new com.mynetpcb.d2.shapes.Ellipse(0,0,20,10);
-                    this.selectionRectWidth=2;
+                    this.selectionRectWidth=8;
                     this.fillColor=Color.BLACK;
                     
     }
@@ -71,14 +68,31 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
     @Override
     public Point isControlRectClicked(double x, double y) {
         Point pt=new Point(x,y);        
-        for(Point v:this.ellipse.vertices()){
-            if(Utils.LE(pt.distanceTo(v),this.selectionRectWidth)){
+        for(Point v:this.ellipse.vertices()){        	
+            if(Utils.LE(pt.distanceTo(v),selectionRectWidth/2)){            	
               return v;
             }                        
         };
         return null;
     }
-
+    @Override
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+        Point pt=new Point(x,y);
+		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+        
+        for(Point v:this.ellipse.vertices()){
+        	var tmp=v.clone();
+        		tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        		tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+        	//System.out.println(pt+"::"+tmp+"::"+pt.distanceTo(tmp));
+            if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+            	//System.out.println(333);
+              return v;
+            }                        
+        };
+        return null;
+    }
     @Override
     public Point getResizingPoint() {
         return resizingPoint;
@@ -126,7 +140,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
         if (!rect.intersects(viewportWindow)) {
                 return;
         }
-
+        System.out.println(scale.getScaleX());
         g2.setColor(isSelected() ? Color.GRAY : this.fillColor);
         
         com.mynetpcb.d2.shapes.Ellipse e=this.ellipse.clone();   
@@ -159,7 +173,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
                 pt.move(-viewportWindow.getX(),- viewportWindow.getY());
             }
             for(Point p:e.vertices()){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
+              Utilities.drawCircle(g2,  pt,(int)(selectionRectWidth),p); 
             }
         }        
     }
