@@ -156,7 +156,7 @@ public class Point extends GeometricFigure{
     
     @Override
     public void paint(Graphics2D g2,boolean fill) {
-        Utils.drawCrosshair(g2,4,this); 
+        //Utils.drawCrosshair(g2,4,this); 
     }
     
     @Override

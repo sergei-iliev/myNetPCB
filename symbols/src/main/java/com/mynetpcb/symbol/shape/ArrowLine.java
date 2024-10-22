@@ -4,6 +4,7 @@ import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -37,7 +38,6 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
     public ArrowLine(int thickness) {
             super(thickness,Layer.LAYER_ALL);
 	    this.setDisplayName("Arrow");		
-	    this.selectionRectWidth=4;
 	    this.resizingPoint = null;	
 	    this.line=new Segment();
             this.line.set(0,0,20,20);
@@ -76,17 +76,63 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
         this.arrow.rotate(deg,this.line.pe);
     }
    
+//    @Override
+//    public Point isControlRectClicked(double x, double y) {
+//        Box rect = Box.fromRect(x-this.selectionRectWidth / 2, y - this.selectionRectWidth/ 2, this.selectionRectWidth, this.selectionRectWidth);        
+//        if (rect.contains(this.line.ps)){
+//           return this.line.ps;  
+//        }else if(rect.contains(this.line.pe)) {                                 
+//           return this.line.pe;
+//        }else{
+//           return null;
+//        }
+//    }
+   
     @Override
-    public Point isControlRectClicked(double x, double y) {
-        Box rect = Box.fromRect(x-this.selectionRectWidth / 2, y - this.selectionRectWidth/ 2, this.selectionRectWidth, this.selectionRectWidth);        
-        if (rect.contains(this.line.ps)){
-           return this.line.ps;  
-        }else if(rect.contains(this.line.pe)) {                                 
-           return this.line.pe;
-        }else{
-           return null;
-        }
+    public boolean isClicked(double x, double y) {
+    	Point pt=new Point(x,y);
+    	if (this.arrow.contains(pt)){
+    		return true;
+    	}else {        
+        Point projectionPoint = line.projectionPoint(pt);
+        
+        if(projectionPoint.distanceTo(pt)>(this.thickness/2<1?1:this.thickness/2)){
+            return false;
+        }    
+        double a = (projectionPoint.x - line.ps.x) / ((line.pe.x - line.ps.x) == 0 ? 1 : line.pe.x - line.ps.x);
+        double b = (projectionPoint.y - line.ps.y) / ((line.pe.y - line.ps.y) == 0 ? 1 : line.pe.y - line.ps.y);
+
+        if (0 <= a && a <= 1 && 0 <= b && b <= 1) { //is projection between start and end point                                                    
+                    return true;
+        }             
+        return false;   
+    	}
     }
+    
+    @Override
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+        Point pt=new Point(x,y);
+		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+               
+        var tmp=this.line.ps.clone();
+        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return this.line.ps;
+        }                        
+        
+        tmp=this.line.pe.clone();
+        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return this.line.pe;
+        }                        
+               
+        return null;
+    }    
     @Override
     public Box getBoundingShape(){
         return this.line.box();           
@@ -179,7 +225,7 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
                 pt.scale(scale.getScaleX());
                 pt.move(-viewportWindow.getX(),- viewportWindow.getY());
             }
-            Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),l.ps,a.points.get(0));             
+            Utilities.drawCircle(g2,  pt,l.ps,a.points.get(0));             
         }
     }
     @Override

@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.popup;
 
 
+import com.mynetpcb.core.capi.Resizeable;
 //import com.mynetpcb.core.capi.line.LineBendingProcessor;
 import com.mynetpcb.core.capi.clipboard.ClipboardMgr;
 import com.mynetpcb.core.capi.clipboard.Clipboardable;
@@ -298,8 +299,9 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         initializePopupMenu(e, target, lineSelectMenu);
 
         Trackable trackable = (Trackable)target;
+        
         //***insert logic behind menu options availability
-        if (trackable.isBendingPointClicked(e.getX(), e.getY())!= null) {
+        if (((Resizeable)trackable).isControlRectClicked(e.getX(), e.getY(),getUnitComponent().getViewportWindow())!= null) {
             //***is this an end point
             if (trackable.isEndPoint(e.getX(), e.getY())) {
                 this.setEnabled(lineSelectMenu, "Resume", true);
@@ -313,7 +315,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             this.setEnabled(lineSelectMenu, "AddBendingPoint", true);
             this.setEnabled(lineSelectMenu, "DeleteBendingPoint", false);
         }
-
+        //((Trackable)getTarget()).removePoint(e.getX(), e.getY());
         this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
 
     }
@@ -653,18 +655,16 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
             getUnitComponent().Repaint();
         } 
         
-        if (e.getActionCommand().equalsIgnoreCase("DeleteBendingPoint")) {
-            if (((Trackable)getTarget()).getLinePoints().size() == 2){
+        if (e.getActionCommand().equalsIgnoreCase("DeleteBendingPoint")) {                      
+            //***delete wire or region if one point remains only
+            if (((Trackable)getTarget()).isShapeDeletable()) {
                 //remeber last 2 points to restore
                 getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.DELETE_MEMENTO));
-            }else{
-                getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
-            }
-            ((Trackable)getTarget()).removePoint(x,y);
-            //***delete wire if one point remains only
-            if (((Trackable)getTarget()).getLinePoints().size() == 1) {
                 getUnitComponent().getEventMgr().resetEventHandle();
                 getUnitComponent().getModel().getUnit().delete(getTarget().getUUID());
+            }else {
+                getUnitComponent().getModel().getUnit().registerMemento(getTarget().getState(MementoType.MOVE_MEMENTO));
+                ((Trackable)getTarget()).removePoint(x,y,getTarget().getBendingPointDistance());
             }
             getUnitComponent().Repaint();
         }

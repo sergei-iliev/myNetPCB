@@ -1,6 +1,7 @@
 package com.mynetpcb.core.capi.shape;
 
 import com.mynetpcb.core.capi.Resizeable;
+import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
@@ -65,28 +66,47 @@ public abstract class ResizableShape extends Shape implements Resizeable {
     }
     
     @Override
-    public Point isControlRectClicked(double x, double y) {        
-        Point p = new Point(x, y);
-  
-        if(Utils.LE(upperLeft.distanceTo(p),this.selectionRectWidth/2)){                                  
-                     return upperLeft;
-        }  
-        
-        if(Utils.LE(upperRight.distanceTo(p),this.selectionRectWidth/2)){                                  
-                     return upperRight;
-        }  
-        
-        if(Utils.LE(bottomLeft.distanceTo(p),this.selectionRectWidth/2)){                                  
-                     return bottomLeft;
-        }  
-        
-        if(Utils.LE(bottomRight.distanceTo(p),this.selectionRectWidth/2)){                                  
-                    return bottomRight;
-        }
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {        
+        Point pt = new Point(x, y);
+		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+		
+		var tmp=upperLeft.clone();
+        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
 
+        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return upperLeft;
+        }	
+
+
+	    tmp=upperRight.clone();
+        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return upperRight;
+        }	
+
+	    tmp=bottomLeft.clone();
+        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return bottomLeft;
+        }	
+        
+	    tmp=bottomRight.clone();
+        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return bottomRight;
+        }     
 
         return null;
     }
+    
     @Override
     public void move(double xoffset, double yoffset) {
         upperLeft.move(xoffset, yoffset);

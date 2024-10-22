@@ -5,6 +5,7 @@ import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.gerber.Fillable;
 import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -18,6 +19,7 @@ import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.RoundRectangle;
+import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.unit.Footprint;
 
 import java.awt.AlphaComposite;
@@ -41,14 +43,14 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
     private Point floatingEndPoint;
     private Point resizingPoint;    
     
-    public SolidRegion(int layermaskId) {
-        
+    public SolidRegion(int layermaskId) {        
         super(0,layermaskId);
+        this.bendingPointDistance=Utilities.DISTANCE;
         this.displayName = "Solid Region";
         this.floatingStartPoint=new Point();
         this.floatingEndPoint=new Point();                 
-        this.selectionRectWidth = 3000;
-        this.polygon=new Polygon();        
+        this.polygon=new Polygon();
+
     }
     @Override    
     public SolidRegion clone()throws CloneNotSupportedException{
@@ -85,10 +87,25 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
     public boolean isClicked(double x,double y){
        return this.polygon.contains(x,y);
     }
-    
     @Override
-    public Point isControlRectClicked(double x, double y) {
-        return this.isBendingPointClicked(x, y);
+    public  boolean isShapeDeletable() {
+   	 return getLinePoints().size()==3; 
+    }
+    @Override
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+        Point pt=new Point(x,y);
+		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		pt.move(-viewportWindow.getX(),- viewportWindow.getY());                    
+                  
+        for(Point p:this.polygon.points){
+  		  var tmp=p.clone();
+  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
+            if(Utils.LE(pt.distanceTo(tmp),this.selectionRectWidth/2)){                                  
+               return p;
+            }
+        }
+        return null;        
     }
 
     @Override
@@ -151,7 +168,7 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
             r.scale(scale.getScaleX());
             r.move(-viewportWindow.getX(),- viewportWindow.getY());
             for(var p:r.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+              Utilities.drawCircle(g2,  pt,(Point)p); 
             }                                               
     }
 
@@ -241,19 +258,18 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
 
     }
 
-    @Override
-    public Point isBendingPointClicked(double x, double y) {
-        Box rect = Box.fromRect(x
-                        - this.selectionRectWidth / 2, y - this.selectionRectWidth
-                        / 2, this.selectionRectWidth, this.selectionRectWidth);
 
-        
-        Optional<Point> opt= this.polygon.points.stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                  
-                  
-        
-        return opt.orElse(null);
-
-    }
+//    protected Point getBendingPointClicked(double x,double y){
+//        Box rect = Box.fromRect(x
+//                        - Utilities.DISTANCE / 2, y - Utilities.DISTANCE
+//                        / 2, Utilities.DISTANCE, Utilities.DISTANCE);
+//
+//        
+//        Optional<Point> opt= this.polygon.points.stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                  
+//                  
+//        
+//        return opt.orElse(null);
+//    }
 
     @Override
     public void reset(Point p) {
@@ -297,11 +313,15 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
         // TODO Implement this method
     }
 
-    @Override
-    public void removePoint(double x, double y) {
-        // TODO Implement this method
-
-    }
+//    @Override
+//    public void removePoint(double x, double y,int distance) {
+//        Point point=getBendingPointClicked(x, y,bendingPointDistance);
+//        if(point!=null){
+//          this.polygon.points.remove(point);
+//          point = null;
+//        } 
+//
+//    }
 
     @Override
     public boolean isEndPoint(double x, double y) {

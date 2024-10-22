@@ -38,7 +38,6 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
     public Circle(double x,double y,double r,int thickness,int layermaskId) {
 		super( thickness,layermaskId);
         this.displayName="Circle";
-		this.selectionRectWidth=3000;
 		this.resizingPoint=null;
 		this.circle=new com.mynetpcb.d2.shapes.Circle(new Point(x,y),r);
 	}
@@ -151,19 +150,22 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
     public boolean isClockwise() {
         return true;
     }
-
     @Override
-    public Point isControlRectClicked(double x, double y) {
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
         Point pt=new Point(x,y);
-                       
-        for(Point p:this.circle.vertices()){
-            if(Utils.LE(pt.distanceTo(p),this.selectionRectWidth/2)){                                  
-                return p;
-             }
-        }
-        return null;               
+		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+        
+        for(Point v:this.circle.vertices()){
+        	var tmp=v.clone();
+        		tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        		tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+            if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return v;
+            }                        
+        };
+        return null;
     }
-
     @Override
     public Point getResizingPoint() {       
         return resizingPoint;
@@ -175,28 +177,8 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
     }
 
     @Override
-    public void resize(double xoffset, double yoffset, Point point) {
-        
-        double radius=this.circle.r;
-
-        if(Utils.EQ(point.x,this.circle.pc.x)){
-          if(point.y>this.circle.pc.y){
-                  radius+=yoffset;
-          }else{
-                  radius-=yoffset;  
-          }     
-        }
-        if(Utils.EQ(point.y,this.circle.pc.y)){
-            if(point.x>this.circle.pc.x){
-                  radius+=xoffset;
-            }else{
-                  radius-=xoffset;  
-            }   
-        }
-        if(radius>0){ 
-          this.circle.r=radius;
-        }        
-
+    public void resize(double xoffset, double yoffset, Point point) {    	
+    	this.resizingPoint=this.circle.resize(xoffset, yoffset,point);     
     }
 
     @Override
@@ -279,7 +261,7 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
         c.move(-viewportWindow.getX(),- viewportWindow.getY());
 
         for(Point p:c.vertices()){
-            Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p);
+            Utilities.drawCircle(g2,  pt,p);
         }                    
     }
     

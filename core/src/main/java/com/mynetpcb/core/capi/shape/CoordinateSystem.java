@@ -3,6 +3,7 @@ package com.mynetpcb.core.capi.shape;
 
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
@@ -28,7 +29,7 @@ public class CoordinateSystem extends Shape {
         this.origin=new Point(0,0);
         this.line=new Line(0, 0, 0, 0);
         setOwningUnit(owningUnit);
-        this.selectionRectWidth=3000;
+        this.selectionRectWidth=Utilities.DISTANCE;
     }
     public CoordinateSystem(Unit owningUnit,int selectionRectWidth) {
         this(owningUnit);

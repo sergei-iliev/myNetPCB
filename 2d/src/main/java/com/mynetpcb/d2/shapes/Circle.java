@@ -12,7 +12,7 @@ public class Circle extends GeometricFigure{
     public Point pc;
     public double r;
     private Ellipse2D cache=new Ellipse2D.Double();
-    
+    protected Point vert[]={new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0)};
     public Circle(Point pc,double r) {
         this.pc=pc;
         this.r=r;
@@ -42,7 +42,15 @@ public class Circle extends GeometricFigure{
         return pc;
     }
     public Point[] vertices() {
-        return new Point[]{new Point(this.pc.x-this.r,this.pc.y),new Point(this.pc.x,this.pc.y-this.r),new Point(this.pc.x+this.r,this.pc.y),new Point(this.pc.x,this.pc.y+this.r)};
+        vert[0].x=this.pc.x-this.r;
+        vert[0].y=this.pc.y;
+        vert[1].x=this.pc.x;
+        vert[1].y=this.pc.y-this.r;
+        vert[2].x=this.pc.x+this.r;
+        vert[2].y=this.pc.y;
+        vert[3].x=this.pc.x;
+        vert[3].y=this.pc.y+this.r;
+        return vert;
     }
     public boolean contains(Point pt){
         return Utils.LE(pt.distanceTo(this), this.r);        
@@ -64,7 +72,33 @@ public class Circle extends GeometricFigure{
     public void mirror(Line line){
         this.pc.mirror(line);
     }
-    
+    public Point resize(double xoffset, double yoffset, Point point) {
+        double radius=this.r;
+
+        if(Utils.EQ(point.x,this.pc.x)){
+          if(point.y>this.pc.y){
+                  radius+=yoffset;
+          }else{
+                  radius-=yoffset;  
+          }     
+        }
+        if(Utils.EQ(point.y,this.pc.y)){
+            if(point.x>this.pc.x){
+                  radius+=xoffset;
+            }else{
+                  radius-=xoffset;  
+            }   
+        }
+        if(radius>0){ 
+          this.r=radius;
+        }       
+        for(Point p:this.vertices()){
+        	if(point==p) {
+        		return p;
+        	}
+        }
+        return null;
+    }    
     public void scale(double alpha){
         this.pc.scale(alpha);
         this.r*=alpha;

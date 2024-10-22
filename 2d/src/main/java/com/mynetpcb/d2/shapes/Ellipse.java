@@ -8,6 +8,7 @@ public class Ellipse extends GeometricFigure {
     public double width,height;
     public Point pc;
     public double rotate;
+    
     protected Point vert[]={new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0)};
 
 

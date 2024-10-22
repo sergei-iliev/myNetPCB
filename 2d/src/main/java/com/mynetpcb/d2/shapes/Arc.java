@@ -11,6 +11,7 @@ public class Arc  extends GeometricFigure{
     public double r ;
     public double startAngle ;
     public double endAngle; 
+    private Point vert[]={new Point(0,0),new Point(0,0),new Point(0,0)};//start,middle,end
     
     private Arc2D cache=new Arc2D.Double();
     
@@ -57,30 +58,33 @@ public class Arc  extends GeometricFigure{
             return this.pc;
     }
     public Point  getStart() {
-        Point p0 = new Point(this.pc.x + this.r, this.pc.y);
-        p0.rotate(this.startAngle, this.pc);
-        return p0;
+    	vert[0].x=this.pc.x + this.r;
+    	vert[0].y=this.pc.y;        
+        vert[0].rotate(this.startAngle, this.pc);
+        return vert[0];
     }
             
     public Point getMiddle() {
         double angle = this.endAngle>0 ? this.startAngle + this.getSweep()/2 : this.startAngle - this.getSweep()/2;
-        Point p0 = new Point(this.pc.x + this.r, this.pc.y);
-        p0.rotate(angle, this.pc);
-        return p0;
+        vert[1].x=this.pc.x + this.r;
+        vert[1].y=this.pc.y;        
+        vert[1].rotate(angle, this.pc);
+        return vert[1];
     }
     
     public Point getEnd() {
-        Point p0 = new Point(this.pc.x + this.r, this.pc.y);
-        p0.rotate((this.startAngle+this.endAngle), this.pc);
-        return p0;
+        vert[2].x=this.pc.x + this.r;
+        vert[2].y=this.pc.y;    	
+        vert[2].rotate((this.startAngle+this.endAngle), this.pc);
+        return vert[2];
     }
     
     public double getSweep(){
             return Math.abs(this.endAngle);
     }
 
-    public Point[] vertices() {
-        return new Point[]{getStart(),getCenter(),getMiddle()};
+    public Point[] vertices() {    	
+    	return vert;        
     }
     @Override
     public boolean contains(double x,double y){

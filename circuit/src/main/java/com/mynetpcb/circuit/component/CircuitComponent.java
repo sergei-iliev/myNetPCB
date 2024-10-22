@@ -171,7 +171,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                     break;
                 }
                 }
-                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
+                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY(),getViewportWindow());
                 if(shape !=null){
                     getEventMgr().setEventHandle("resize", shape);   
                 }else{
@@ -187,7 +187,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                         else if(shape instanceof SCHSymbol)
                             getEventMgr().setEventHandle("symbol",shape);  
 				   		else if(shape instanceof SCHWire) {
-				   			if(((SCHWire)shape).isSegmentClicked(scaledEvent.getPoint())) 
+				   			if(((SCHWire)shape).isSegmentClicked(scaledEvent.getPoint(),getViewportWindow())) 
 				   			 if(((SCHWire)shape).isSingleSegment()) {
 				   				this.getEventMgr().setEventHandle("move",shape);	
 				   			}else {

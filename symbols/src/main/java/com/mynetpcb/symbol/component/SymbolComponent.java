@@ -156,7 +156,7 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
                 //***is control rect clicked
                 if (shape != null) {
                     if(shape instanceof Arc){
-                    	Point pt=((Arc) shape).isControlRectClicked(scaledEvent.getX() , scaledEvent.getY());
+                    	Point pt=((Arc) shape).isControlRectClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow());
                         if(pt.equals(((Arc)shape).getShape().getStart())){ 
                         	this.getEventMgr().setEventHandle("arc.start.angle",shape);                    
                         }else if(pt.equals(((Arc)shape).getShape().getEnd())){

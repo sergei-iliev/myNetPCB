@@ -15,9 +15,11 @@ import java.awt.geom.Arc2D;
 public class Arcellipse extends Ellipse{    
     public double startAngle,endAngle;
     private Arc2D cache=new Arc2D.Double();
+
     
     public Arcellipse(double x,double y,double width,double height) {
-    	super(x,y,width,height);	
+    	super(x,y,width,height);
+        this.vert=new Point[]{new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0),new Point(0,0)};
         this.startAngle = 45;
         this.endAngle = 100;
     }
@@ -102,65 +104,6 @@ public class Arcellipse extends Ellipse{
                 this.startAngle=360-this.startAngle; 
         }                        
     }  
-    
-//    public Point resize(double offX,double offY,Point pt){      
-//      if(pt.equals(vert[0])){
-//                    Point point=vert[0];
-//                    point.move(offX,offY);
-//
-//                    Vector v1=new Vector(pt,point);
-//                    Vector v2=new Vector(this.pc,pt);
-//    
-//                    Vector v=v1.projectionOn(v2);
-//    //translate point
-//                    double x=pt.x +v.x;                    
-//                    if(this.pc.x>x){
-//                      this.width=this.pc.x-x;
-//                    }
-//      }else if(pt.equals(vert[1])){
-//                    Point point=vert[1];
-//                    point.move(offX,offY);
-//
-//                    Vector v1=new Vector(pt,point);
-//                    Vector v2=new Vector(this.pc,pt);
-//    
-//                    Vector v=v1.projectionOn(v2);
-//    //translate point
-//                    //let x=pt.x +v.x;
-//                    double y=pt.y + v.y;
-//                    if(this.pc.y>y){
-//                      this.height=this.pc.y-y;
-//                    }
-//      }else if(pt.equals(vert[2])){
-//                    Point point=vert[2];
-//                    point.move(offX,offY);
-//
-//                    Vector v1=new Vector(pt,point);
-//                    Vector v2=new Vector(this.pc,pt);
-//    
-//                    Vector v=v1.projectionOn(v2);
-//    //translate point
-//                    double x=pt.x +v.x;
-//                    //let y=pt.y + v.y;
-//                    if(x>this.pc.x){
-//                       this.width=x-this.pc.x;
-//                    }
-//      }else{
-//                    Point point=vert[3];
-//                    point.move(offX,offY);
-//
-//                    Vector v1=new Vector(pt,point);
-//                    Vector v2=new Vector(this.pc,pt);
-//    
-//                    Vector v=v1.projectionOn(v2);
-//    //translate point
-//                    
-//                    double y=pt.y + v.y;
-//                    if(y>this.pc.y){
-//                       this.height=y-this.pc.y;
-//                    }
-//      }
-//    }
     /*
      * 
      */

@@ -58,7 +58,7 @@ public class GlyphTexture implements Texture {
         this.glyphs = new ArrayList<>();
         this.thickness = (int)Grid.MM_TO_COORD(0.2);
         
-        this.selectionRectWidth=3000;
+        this.selectionRectWidth=6;
         this.text = text;
         this.height=0;
         this.width=0;
@@ -379,7 +379,7 @@ public class GlyphTexture implements Texture {
             Point p=anchorPoint.clone();
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());
-            Utilities.drawCrosshair(g2, null, (int)(selectionRectWidth*scale.getScaleX()),p);
+            Utilities.drawCircle(g2, null,p);
         }  
     }
     public void print(Graphics2D g2,PrintContext printContext,int layermask){

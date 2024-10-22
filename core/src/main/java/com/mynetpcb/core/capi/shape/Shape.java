@@ -70,6 +70,8 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
     
     protected int selectionRectWidth;
     
+    protected int bendingPointDistance;
+    
     protected String displayName;
     
     protected Layer.Copper copper;
@@ -83,7 +85,8 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
       this.thickness=thickness;
       this.fill=Fill.EMPTY;
       this.copper=Layer.Copper.resolve(layermask);
-      this.selectionRectWidth=4;
+      this.selectionRectWidth=6;
+      this.bendingPointDistance=6;
       this.fillColor=Color.BLACK;
     }
     /**
@@ -121,9 +124,9 @@ public abstract class Shape implements Moveable,Printable,Stateable,Unitable<Uni
         owningUnit=null;
     }
     
-    public void setSelectionRectWidth(int selectionRectWidth) {
-        this.selectionRectWidth = selectionRectWidth;
-    }
+    public int getBendingPointDistance() {
+		return bendingPointDistance;
+	}
     
     @Override
     public Shape clone()throws CloneNotSupportedException{

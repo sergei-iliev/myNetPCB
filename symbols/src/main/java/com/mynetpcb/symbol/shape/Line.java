@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 import org.w3c.dom.Element;
@@ -31,7 +32,6 @@ public class Line  extends AbstractLine implements Externalizable {
 
     public Line(int thickness) {
         super(thickness, Layer.LAYER_NONE);
-        this.selectionRectWidth=2;
         this.fillColor=Color.BLACK;
     }
     
@@ -54,6 +54,18 @@ public class Line  extends AbstractLine implements Externalizable {
     }
     return null;
     }
+//    @Override
+//    public  Point getBendingPointClicked(double x,double y){
+//        Box rect = Box.fromRect(x
+//                        - this.selectionRectWidth / 2, y - this.selectionRectWidth
+//                        / 2, this.selectionRectWidth,this.selectionRectWidth);
+//
+//        
+//        Optional<LinePoint> opt= this.polyline.points.stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                  
+//                  
+//        
+//        return opt.orElse(null);
+//    }
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
 
@@ -88,17 +100,17 @@ public class Line  extends AbstractLine implements Externalizable {
         //transparent rect
         r.paint(g2, false);
         
-        if (this.isSelected()&&isControlPointVisible) {
-            Point pt=null;
-            if(resizingPoint!=null){
-                pt=resizingPoint.clone();
-                pt.scale(scale.getScaleX());
-                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-            }
-            for(Object p:r.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
-            }
-        }        
+        //if (this.isSelected()&&isControlPointVisible) {
+            //Point pt=null;
+            //if(resizingPoint!=null){
+            //    pt=resizingPoint.clone();
+            //    pt.scale(scale.getScaleX());
+            //    pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            //}
+            //for(Object p:r.points){
+            //  Utilities.drawCircle(g2,  pt,(int)(selectionRectWidth),(Point)p); 
+            //}
+        //}        
         
     }
     @Override

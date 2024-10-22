@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -52,6 +53,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
     
     public PCBTrack(int thickness,int layermaskId){
         super(thickness,layermaskId);
+        this.bendingPointDistance=Utilities.DISTANCE;
         this.displayName="Track"; 
     }
     
@@ -318,7 +320,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
             r.move(-viewportWindow.getX(),- viewportWindow.getY());
             
             for(Object p:r.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+              Utilities.drawCircle(g2,  pt,(Point)p); 
             }
         }        
     }
@@ -350,10 +352,10 @@ public class PCBTrack extends TrackShape implements PCBShape{
     public void setNetName(String net){
         this.net=net;
     }
-    public boolean isSegmentClicked(Point pt){				     
-  	  if(this.isControlRectClicked(pt.x,pt.y)!=null) {
+    public boolean isSegmentClicked(Point pt,ViewportWindow viewportWindow){				     
+  	  if(this.isControlRectClicked(pt.x,pt.y,viewportWindow)!=null)
             return false;
-      }if(this.polyline.isPointOnSegment(pt,this.thickness)){
+      if(this.polyline.isPointOnSegment(pt,this.thickness)){
   	    return true;
       }
   	  return false;
@@ -374,7 +376,19 @@ public class PCBTrack extends TrackShape implements PCBShape{
   	              prevPoint = point;
   	          }			       	          
   	       return null;
-    }    
+    }
+//    @Override
+//    protected Point getBendingPointClicked(double x,double y){
+//        Box rect = Box.fromRect(x
+//                        - Utilities.DISTANCE / 2, y - Utilities.DISTANCE
+//                        / 2, Utilities.DISTANCE, Utilities.DISTANCE);
+//
+//        
+//        Optional<LinePoint> opt= this.polyline.points.stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                  
+//                  
+//        
+//        return opt.orElse(null);
+//    }    
     @Override
     public boolean isSublineSelected() {
         // TODO Implement this method

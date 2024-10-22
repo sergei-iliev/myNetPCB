@@ -15,6 +15,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
+import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.symbol.unit.Symbol;
 
 import java.awt.BasicStroke;
@@ -36,8 +37,7 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
     
     public Triangle(int thickness) {
         super(thickness,Layer.LAYER_ALL);
-        this.setDisplayName("Triangle");                
-        this.selectionRectWidth=2;       
+        this.setDisplayName("Triangle");                   
         this.shape=new Polygon();        
         this.shape.points.add(new Point(0,0));
         this.shape.points.add(new Point(20,20));
@@ -81,16 +81,23 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
       }
     }
     @Override
-    public Point isControlRectClicked(double x, double y) {
-        Box rect = Box.fromRect(x
-                        - this.selectionRectWidth / 2, y - this.selectionRectWidth
-                        / 2, this.selectionRectWidth, this.selectionRectWidth);
-
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+        Point pt = new Point(x, y);
+		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
         
-        Optional<Point> opt= this.shape.points.stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                  
+        for(var v: this.shape.points) {
+    		var tmp=v.clone();
+            tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+            tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+            if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+                  return v;
+            }	        	
+        }
                   
         
-        return opt.orElse(null);
+        return null;
     }
 
     @Override
@@ -189,7 +196,7 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
                 pt.move(-viewportWindow.getX(),- viewportWindow.getY());
             }
             for(Point p:a.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
+              Utilities.drawCircle(g2,  pt,p); 
             }            
         }
 

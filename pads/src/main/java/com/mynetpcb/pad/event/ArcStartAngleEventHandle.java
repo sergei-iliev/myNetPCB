@@ -1,5 +1,6 @@
 package com.mynetpcb.pad.event;
 
+import com.mynetpcb.core.capi.Resizeable;
 import com.mynetpcb.core.capi.component.UnitComponent;
 import com.mynetpcb.core.capi.event.EventHandle;
 import com.mynetpcb.core.capi.event.MouseScaledEvent;
@@ -22,6 +23,10 @@ public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape> 
         Arc arc=(Arc)this.getTarget();
         centerX=arc.getCenter().x;
         centerY=arc.getCenter().y;      
+        arc.setResizingPoint(arc.getStartPoint());
+        //***update PropertiesPanel           
+        getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));                
+        getComponent().Repaint();
     }
 
     @Override
@@ -68,7 +73,7 @@ public class ArcStartAngleEventHandle <U extends UnitComponent,S extends Shape> 
 
     @Override
     protected void clear() {
-
+    	((Resizeable)getTarget()).setResizingPoint(null);
     }
 }
 

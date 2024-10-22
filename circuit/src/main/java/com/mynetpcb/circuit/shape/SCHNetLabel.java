@@ -46,7 +46,7 @@ public class SCHNetLabel extends Shape implements  Label,Externalizable{
     
     public SCHNetLabel() {
         super( 1,Layer.LAYER_ALL); 
-        this.setSelectionRectWidth(3);
+        this.selectionRectWidth=3;
         this.texture=new SymbolFontTexture("netLabel","name",-4,2,Texture.Alignment.RIGHT.ordinal(),8,Font.PLAIN); 
         this.selectionRectWidth=2;
         this.point=new Point();

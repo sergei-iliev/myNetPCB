@@ -37,11 +37,9 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
     public RoundRect(double x,double y,double width,double height,int arc,int thickness,int layermaskid) {
         super(thickness,layermaskid);
         this.displayName="Rect";
-        this.selectionRectWidth=3000;
         this.resizingPoint = null;
         this.rotate=0;  
         this.roundRect=new RoundRectangle(x,y,width,height,arc);   
-        //this.roundRect.rotate(30, this.roundRect.box().getCenter());
     }
     public RoundRect() {
         this(0, 0, 0, 0, 0, 0, Layer.SILKSCREEN_LAYER_FRONT);
@@ -61,14 +59,20 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
             return (long)this.roundRect.area(); 
     }
     @Override
-    public Point isControlRectClicked(double x, double y) {
-                    Point pt=new Point(x,y);                    
-                    for(Point p:this.roundRect.points){
-                        if(Utils.LE(pt.distanceTo(p),this.selectionRectWidth/2)){                                  
-                            return p;
-                         }
-                    }
-                    return null;
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+          Point pt=new Point(x,y);
+		  pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		  pt.move(-viewportWindow.getX(),- viewportWindow.getY());                    
+                    
+          for(Point p:this.roundRect.points){
+    		  var tmp=p.clone();
+    		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+    		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
+              if(Utils.LE(pt.distanceTo(tmp),this.selectionRectWidth/2)){                                  
+                 return p;
+              }
+          }
+          return null;
     }
     
     public RoundRectangle getShape(){
@@ -125,7 +129,7 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
             r.move(-viewportWindow.getX(),- viewportWindow.getY());
 
             for(var p:r.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+              Utilities.drawCircle(g2,  pt,(Point)p); 
             }        
         
     }

@@ -172,15 +172,15 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     break;
                 }
                 }
-                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
+                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY(),getViewportWindow());
 
                 if (shape != null) {                    
                     if(shape instanceof PCBArc){
-                        if(((PCBArc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
+                        if(((PCBArc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){ 
                           getEventMgr().setEventHandle("arc.start.angle",shape);                    
-                        }else if(((PCBArc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                        }else if(((PCBArc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){
                           getEventMgr().setEventHandle("arc.extend.angle",shape); 
-                        }else if(((PCBArc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                        }else if(((PCBArc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){
                             getEventMgr().setEventHandle("arc.mid.point",shape);                        
                         }else{
                           getEventMgr().setEventHandle("resize",shape);    
@@ -191,16 +191,16 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     
                     if(shape instanceof PCBArc){
                         if(((PCBArc)shape).getArcType()==ArcType.CENTER_POINT_ARC) {
-                          if(((PCBArc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
+                          if(((PCBArc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){ 
                             getEventMgr().setEventHandle("arc.start.angle",shape);                    
-                          }else if(((PCBArc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                          }else if(((PCBArc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){
                             getEventMgr().setEventHandle("arc.extend.angle",shape);      
-                          }else if(((PCBArc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                          }else if(((PCBArc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){
                             getEventMgr().setEventHandle("arc.mid.point",shape);
                           }
                           
                          }else{
-                            if(((PCBArc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                            if(((PCBArc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){
                           	  getEventMgr().setEventHandle("arc.mid.point",shape);	  
                             }else {
                           	  getEventMgr().setEventHandle("arc.resize",shape);
@@ -225,7 +225,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                         getEventMgr().setEventHandle("symbol", shape);                    	
                         ((PCBFootprint)shape).setSelectedPad(pad); 
                     }else if(shape instanceof PCBTrack){				    
-                    	  if(((PCBTrack)shape).isSegmentClicked(scaledEvent.getPoint()))
+                    	  if(((PCBTrack)shape).isSegmentClicked(scaledEvent.getPoint(),getViewportWindow()))
     						  if(((PCBTrack)shape).isSingleSegment()){
     				             this.getEventMgr().setEventHandle("move",shape);
     	                      }else{

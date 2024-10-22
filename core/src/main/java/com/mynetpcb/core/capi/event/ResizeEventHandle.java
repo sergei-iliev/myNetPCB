@@ -37,7 +37,7 @@ public class ResizeEventHandle <U extends UnitComponent,S extends Shape> extends
         mx = e.getX();
         my = e.getY();
         
-        targetPoint=(((Resizeable)getTarget()).isControlRectClicked(e.getX(),e.getY()));
+        targetPoint=(((Resizeable)getTarget()).isControlRectClicked(e.getX(),e.getY(),getComponent().getViewportWindow()));
         ((Resizeable)getTarget()).setResizingPoint(targetPoint);
         //***update PropertiesPanel  X,Y         
         getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));

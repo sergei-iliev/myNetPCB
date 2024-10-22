@@ -21,6 +21,7 @@ import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
+import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -44,7 +45,7 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
     public SCHBusPin() {
         super(1,Layer.LAYER_ALL);  
         this.fillColor=Color.BLACK;
-        this.selectionRectWidth=2;
+        //this.selectionRectWidth=2;
         this.polyline.points.add(new LinePoint(0, 0));
         this.polyline.points.add(new LinePoint(-8, -8));
         this.texture=new SymbolFontTexture("???","name",4,0,Texture.Alignment.LEFT.ordinal(),8,Font.PLAIN);
@@ -101,14 +102,20 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
         this.texture.setSelected(selection);
     }
     @Override
-    public Point isControlRectClicked(double x, double y) {
-        Box rect = Box.fromRect(x-this.selectionRectWidth / 2, y - this.selectionRectWidth/ 2, this.selectionRectWidth, this.selectionRectWidth);
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+        Point pt=new Point(x,y);
+		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+		 
+        
+		var tmp=this.polyline.points.get(1).clone();
+        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
 
-        if(rect.contains(this.polyline.points.get(1))){
-           return this.polyline.points.get(1); 
-        }else{
-           return null;
-        }                
+        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return this.polyline.points.get(1);
+        }
+        return null;
     }
     @Override
     public void move(double xoffset, double yoffset) {        

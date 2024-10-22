@@ -12,6 +12,8 @@ import com.mynetpcb.circuit.shape.SCHSymbol;
 import com.mynetpcb.circuit.shape.SCHWire;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.Resizeable;
+import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -61,7 +63,7 @@ public class Circuit extends Unit<Shape>{
         Circuit copy = (Circuit) super.clone();
         this.shapeFactory = new CircuitShapeFactory();   
         return copy; 
-    }
+    }    
     @Override
     public StringBuffer format() {        
         StringBuffer xml = new StringBuffer();

@@ -25,7 +25,7 @@ public class ArcResizeEventHandle <U extends UnitComponent,S extends Shape>  ext
 		this.mx=e.getX();
 		this.my=e.getY();
 	    var arc=(Arc)getTarget();
-		this.isStartPoint=arc.isStartAnglePointClicked(e.getX(), e.getY());
+		this.isStartPoint=arc.isStartAnglePointClicked(e.getX(), e.getY(),getComponent().getViewportWindow());
 		arc.setResizingPoint(isStartPoint?arc.getStartPoint():arc.getEndPoint());
 		getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.PROPERTY_CHANGE));
 		this.getComponent().Repaint();

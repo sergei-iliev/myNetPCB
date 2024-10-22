@@ -36,7 +36,6 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
         super(thickness,Layer.LAYER_ALL);
         this.setDisplayName("Arc");         
         this.arc=new Arcellipse(0,0,20,10);
-        this.selectionRectWidth=2;
         this.fillColor=Color.BLACK;
     }
     @Override
@@ -65,16 +64,35 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     	  return this.arc.contains(x, y);	
     	}
     }
+    
+//    @Override
+//    public Point isControlRectClicked(double x, double y) {
+//        Point pt=new Point(x,y);
+//        for(Point v:this.arc.vertices()){           	
+//        	if(Utils.LE(pt.distanceTo(v),this.selectionRectWidth/2)){
+//        		return v;
+//            }
+//        };
+//        return null;
+//    }
+    
     @Override
-    public Point isControlRectClicked(double x, double y) {
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
         Point pt=new Point(x,y);
-        for(Point v:this.arc.vertices()){           	
-        	if(Utils.LE(pt.distanceTo(v),this.selectionRectWidth)){
-        		return v;
-            }
+		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+        
+        for(Point v:this.arc.vertices()){
+        	var tmp=v.clone();
+        		tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+        		tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+            if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return v;
+            }                        
         };
         return null;
-    }
+    }  
+    
     public void setExtendAngle(double extendAngle){
         this.arc.endAngle=extendAngle;
     }
@@ -234,7 +252,7 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
                     pt.move(-viewportWindow.getX(),- viewportWindow.getY());
                 }
                 for(Point p:e.vertices()){
-                  Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
+                  Utilities.drawCircle(g2,  pt,p); 
                 }                      
         }
 

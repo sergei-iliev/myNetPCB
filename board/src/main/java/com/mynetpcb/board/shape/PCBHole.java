@@ -39,7 +39,7 @@ public class PCBHole extends HoleShape implements PCBShape{
         this.fillColor=Color.WHITE; 
         this.displayName="Hole";
         this.thickness=2000;
-        this.selectionRectWidth=3000;
+        this.selectionRectWidth=Utilities.DISTANCE;
         this.circle=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.8));
     }
     @Override

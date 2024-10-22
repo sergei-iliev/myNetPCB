@@ -100,6 +100,9 @@ public class BoardShapeFactory implements AbstractShapeFactory{
         if(memento instanceof PCBCopperArea.Memento){
              shape=new PCBCopperArea(0);
         }
+        if(memento instanceof PCBSolidRegion.Memento){
+            shape=new PCBSolidRegion(0);
+       }        
         if(shape!=null){
             shape.setState(memento);
         }

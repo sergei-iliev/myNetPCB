@@ -16,8 +16,21 @@ public interface Resizeable {
      *Check if shapes'control rect/spot is clicked
      * @return the clicked point
      */
-  public Point isControlRectClicked(double x, double y);
+  public default Point isControlRectClicked(double x, double y) {
+	  throw new IllegalAccessError("TODO"); 
+  }
   
+  /**
+   *  Check if shapes'control rect/spot is clicked in current zoom/scaled window
+   *  It is needed for precise mouse click point over circle click
+   * @param x
+   * @param y
+   * @param viewportWindow
+   * @return
+   */
+  public default Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+	  throw new IllegalAccessError("TODO");
+  }
   /**
      * There is always a point under the mouse pointer,which is being moved/dragged
      * @return the ppoint which is directly controled by the mouse pointer

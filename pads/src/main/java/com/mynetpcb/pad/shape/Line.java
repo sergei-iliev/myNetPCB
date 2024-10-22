@@ -27,6 +27,7 @@ import org.w3c.dom.Node;
 public class Line extends AbstractLine implements Externalizable{
     public Line(int thickness,int layermaskId) {
         super(thickness, layermaskId);
+        this.bendingPointDistance=Utilities.DISTANCE;
     }
 
     public Line clone() throws CloneNotSupportedException {

@@ -38,7 +38,6 @@ public class RoundRect extends ResizableShape implements Externalizable{
     public RoundRect() {
             super();
             this.setDisplayName("Rect");            
-            this.selectionRectWidth=2;
             this.fillColor=Color.BLACK;
             this.roundRectCache=new RoundRectangle2D.Double();
             this.rounding=0;
@@ -129,7 +128,7 @@ public class RoundRect extends ResizableShape implements Externalizable{
         g2.setTransform(old);
 
         if(this.isSelected()){
-            this.drawControlShape(g2,viewportWindow,scale);
+            //this.drawControlShape(g2,viewportWindow,scale);
             Point pt=null;
             if(resizingPoint!=null){
                pt=resizingPoint.clone();
@@ -139,22 +138,22 @@ public class RoundRect extends ResizableShape implements Externalizable{
             Point p=new Point(roundRectCache.getMinX(),roundRectCache.getMinY());     
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());              
-            Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
+            Utilities.drawCircle(g2,  pt,p); 
 
             p.set(roundRectCache.getMinX()+roundRectCache.getWidth(),roundRectCache.getMinY());     
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());              
-            Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p); 
+            Utilities.drawCircle(g2,  pt,p); 
 
             p.set(roundRectCache.getMinX(),roundRectCache.getMinY()+roundRectCache.getHeight());     
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());              
-            Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p);
+            Utilities.drawCircle(g2,  pt,p);
 
             p.set(roundRectCache.getMinX()+roundRectCache.getWidth(),roundRectCache.getMinY()+roundRectCache.getHeight());     
             p.scale(scale.getScaleX());
             p.move(-viewportWindow.getX(),- viewportWindow.getY());              
-            Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),p);            
+            Utilities.drawCircle(g2,  pt,p);            
         } 
 
     }

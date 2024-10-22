@@ -91,21 +91,21 @@ public class Utils{
 //        }
 //        return ip;
 //    }
-    public static void drawCrosshair(Graphics2D g2,int length, Point... points) {
-
-        Line2D line = new Line2D.Double();
-
-        g2.setStroke(new BasicStroke(1));
-
-        for (Point point : points) {
-            g2.setColor(Color.BLUE);
-            line.setLine(point.x - length, point.y, point.x + length, point.y);
-            g2.draw(line);
-
-            line.setLine(point.x, point.y - length, point.x, point.y + length);
-            g2.draw(line);
-        }
-    }
+//    public static void drawCrosshair(Graphics2D g2,int length, Point... points) {
+//
+//        Line2D line = new Line2D.Double();
+//
+//        g2.setStroke(new BasicStroke(1));
+//
+//        for (Point point : points) {
+//            g2.setColor(Color.BLUE);
+//            line.setLine(point.x - length, point.y, point.x + length, point.y);
+//            g2.draw(line);
+//
+//            line.setLine(point.x, point.y - length, point.x, point.y + length);
+//            g2.draw(line);
+//        }
+//    }
     
     public static boolean GT(double x,double y) {
          return ( (x)-(y) >  DP_TOL );

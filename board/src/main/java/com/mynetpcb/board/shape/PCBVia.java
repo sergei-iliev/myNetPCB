@@ -47,7 +47,7 @@ public class PCBVia extends ViaShape implements PCBShape{
     public PCBVia() {        
         this.fillColor=Color.WHITE; 
         this.displayName="Via";        
-        this.selectionRectWidth=3000;
+        this.selectionRectWidth=Utilities.DISTANCE;
         
         this.outer=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.8)); 
         this.inner=new Circle(new Point(0,0),Grid.MM_TO_COORD(0.4));

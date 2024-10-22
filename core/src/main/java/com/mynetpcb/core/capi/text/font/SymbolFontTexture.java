@@ -231,7 +231,7 @@ public class SymbolFontTexture implements Texture{
         }
         if(this.isSelected){
             g2.setColor(Color.BLUE);
-            t.anchorPoint.paint(g2,false);            
+            Utilities.drawCircle(g2,  null,t.anchorPoint);            
         }
 
     }

@@ -18,6 +18,7 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
+import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -51,12 +52,12 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     
     public PCBCopperArea(int layermaskId) {
         super(layermaskId);
+        this.bendingPointDistance=Utilities.DISTANCE;
         this.displayName = "Copper Area";
         this.clearance=(int)Grid.MM_TO_COORD(0.2); 
         floatingStartPoint=new Point();
         floatingEndPoint=new Point();
         this.polygon = new Polygon(); 
-        this.selectionRectWidth=3000;
         this.padConnection=PadShape.PadConnection.DIRECT;
         this.fill=Fill.FILLED;
     }
@@ -123,7 +124,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
                     line.setLine(prevPoint, point);
                     Point projectionPoint = line.projectionPoint(pt);
 
-                    if(projectionPoint.distanceTo(pt)>this.selectionRectWidth){
+                    if(projectionPoint.distanceTo(pt)>Utilities.DISTANCE){
                         prevPoint = point;
                         continue;
                     }
@@ -139,21 +140,37 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
                 
             return false;
     } 
+    
+//    private Point getBendingPointClicked(double x,double y){
+//        Box rect = Box.fromRect(x
+//                        - this.selectionRectWidth / 2, y - this.selectionRectWidth
+//                        / 2, this.selectionRectWidth, this.selectionRectWidth);
+//
+//        
+//        Optional<Point> opt= this.polygon.points.stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                                    
+//        
+//        return opt.orElse(null);
+//    }
     @Override
-    public Point isBendingPointClicked(double x,double y){
-        Box rect = Box.fromRect(x
-                        - this.selectionRectWidth / 2, y - this.selectionRectWidth
-                        / 2, this.selectionRectWidth, this.selectionRectWidth);
-
-        
-        Optional<Point> opt= this.polygon.points.stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                                    
-        
-        return opt.orElse(null);
+    public  boolean isShapeDeletable() {
+   	 return getLinePoints().size()==3; 
     }
-
     @Override
-    public Point isControlRectClicked(double x, double y) {
-        return this.isBendingPointClicked(x, y);
+    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+        Point pt=new Point(x,y);
+		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		pt.move(-viewportWindow.getX(),- viewportWindow.getY());                    
+                  
+        for(Point p:this.polygon.points){
+  		  var tmp=p.clone();
+  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
+          
+  		  if(Utils.LE(pt.distanceTo(tmp),this.selectionRectWidth/2)){                                  
+             return p;
+          }
+        }
+        return null;         
     }
 
     @Override
@@ -163,7 +180,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
 
     @Override
     public void reset(double x, double y) {
-        Point p=isBendingPointClicked(x, y);
+        Point p=getBendingPointClicked(x, y,Utilities.DISTANCE);
         floatingStartPoint.set(p==null?x:p.x,p==null?y:p.y);
         floatingEndPoint.set(p==null?x:p.x,p==null?y:p.y);         
     }
@@ -198,14 +215,18 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         // TODO Implement this method
     }
 
-    @Override
-    public void removePoint(double d, double d2) {
-        // TODO Implement this method
+//    @Override
+//    public void removePoint(double x, double y,int distance) {
+//        Point point=getBendingPointClicked(x, y,bendingPointDistance);
+//        if(point!=null){
+//          this.polygon.points.remove(point);
+//          point = null;
+//        } 
+//
+//    }
 
-    }
-
     @Override
-    public boolean isEndPoint(double d, double d2) {
+    public boolean isEndPoint(double x, double y) {
         // TODO Implement this method
         return false;
     }
@@ -312,7 +333,7 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
             r.move(-viewportWindow.getX(),- viewportWindow.getY());
             
             for(Object p:r.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+              Utilities.drawCircle(g2,  pt,(Point)p); 
             }
         } 
     }

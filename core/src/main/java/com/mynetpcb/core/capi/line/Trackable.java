@@ -2,13 +2,17 @@ package com.mynetpcb.core.capi.line;
 
 
 import com.mynetpcb.core.capi.Drawable;
+import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.capi.unit.Unitable;
+import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Segment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -36,7 +40,17 @@ public interface Trackable<P extends Point> extends Drawable,Unitable<Unit>{
      * The basic building points of a track
      * @return the points the track consists of
      */
-     public List<P> getLinePoints();       
+     public List<P> getLinePoints();   
+     
+     /**
+      * When deleting point by point there is no need to keep the shape when less the 2 points for a line or 
+      * 3 points for region 
+      * 
+      * @return
+      */
+     public default boolean isShapeDeletable() {
+    	 return getLinePoints().size()==2;  //line must hold more then 2 points
+     }
     
 /**
      * Add new point to the track
@@ -56,11 +70,23 @@ public interface Trackable<P extends Point> extends Drawable,Unitable<Unit>{
      *Check if given coordinate overlaps with a bending track point
      * @param x
      * @param y
+     * @param viewportWindow
      * @return
      * Use isControlPointClicked instead
      */
-     public Point isBendingPointClicked(double x,double y);
-     
+     //public Point isBendingPointClicked(double x,double y,ViewportWindow viewportWindow);
+    public default Point getBendingPointClicked(double x,double y,int distance){
+        Box rect = Box.fromRect(x
+                        - distance / 2, y - distance
+                        / 2, distance, distance);
+
+        
+        Optional<P> opt= this.getLinePoints().stream().filter(( wirePoint)->rect.contains(wirePoint)).findFirst();                  
+                  
+        
+        return opt.orElse(null);
+    }
+    
     /**
      *Equalize the initial state of the drawing point of the subline
      * @param point to equalize to
@@ -106,7 +132,13 @@ public interface Trackable<P extends Point> extends Drawable,Unitable<Unit>{
     /*
      * remove point
      */
-    public void removePoint(double x,double y);
+    public default void removePoint(double x,double y,int distance) {
+      Point point=getBendingPointClicked(x, y,distance);
+      if(point!=null){
+        this.getLinePoints().remove(point);
+        point = null;
+      }     	
+    }
      /*
       * is this point overlaps with end wire point ->first or last 
       */   

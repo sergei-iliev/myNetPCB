@@ -34,7 +34,7 @@ public class SCHNoConnector extends Shape implements Externalizable{
     public SCHNoConnector() {
         super( 1,Layer.LAYER_ALL); 
         this.fillColor=Color.black;
-        this.setSelectionRectWidth(3);
+        this.selectionRectWidth=3;
         this.point=new Point();
     }
     

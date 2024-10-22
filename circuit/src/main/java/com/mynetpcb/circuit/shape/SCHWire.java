@@ -47,7 +47,7 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
         super(1,Layer.LAYER_NONE);  
         this.fillColor=Color.BLACK;
         this.displayName="Wire";
-        this.selectionRectWidth=2;
+        //this.selectionRectWidth=2;
         
     }
     public SCHWire clone()throws CloneNotSupportedException{
@@ -91,32 +91,35 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
         // TODO Implement this method
         return Collections.emptySet();
     }
-    public boolean isSegmentClicked(Point pt){
-  	  if(this.isControlRectClicked(pt.x,pt.y)!=null)
-          return false;
-      if(this.polyline.isPointOnSegment(pt,this.selectionRectWidth/2)){
-	    return true;
-      }
-	  return false;
-    }
-	public Segment getSegmentClicked(Point pt){
-	    var segment=new Segment(0,0,0,0);	   
-        var prevPoint = this.polyline.points.get(0);        
-        for(var point:this.polyline.points){    	        	  
-            if(prevPoint.equals(point)){    	            	  
-          	  prevPoint = point;
-              continue;
-            }    	                         
-            segment.ps=prevPoint;
-            segment.pe=point;
-            if(segment.isPointOn(pt,this.selectionRectWidth)){
-            	
-                return  segment;
-            }
-            prevPoint = point;
-        }			       	          
-     return null;
-    }
+    
+//    @Override
+//    public boolean isSegmentClicked(Point pt){
+//  	  if(this.isControlRectClicked(pt.x,pt.y)!=null)
+//          return false;
+//      if(this.polyline.isPointOnSegment(pt,this.selectionRectWidth/2)){
+//	    return true;
+//      }
+//	  return false;
+//    }
+//	@Override
+//    public Segment getSegmentClicked(Point pt){
+//	    var segment=new Segment(0,0,0,0);	   
+//        var prevPoint = this.polyline.points.get(0);        
+//        for(var point:this.polyline.points){    	        	  
+//            if(prevPoint.equals(point)){    	            	  
+//          	  prevPoint = point;
+//              continue;
+//            }    	                         
+//            segment.ps=prevPoint;
+//            segment.pe=point;
+//            if(segment.isPointOn(pt,this.selectionRectWidth)){
+//            	
+//                return  segment;
+//            }
+//            prevPoint = point;
+//        }			       	          
+//     return null;
+//    }
     public void moveSegment(Segment segment,double x,double y){	
 	  var pt=new Point(x,y);	  
 
@@ -186,7 +189,7 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
                 pt.move(-viewportWindow.getX(),- viewportWindow.getY());
             }
             for(Object p:r.points){
-              Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),(Point)p); 
+              Utilities.drawCircle(g2,  pt,(Point)p); 
             }
         }       
         

@@ -151,21 +151,21 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     break;
                  }
                 }
-                Shape shape=getModel().getUnit().isControlRectClicked(scaledEvent.getX() , scaledEvent.getY());
+                Shape shape=getModel().getUnit().isControlRectClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow());
                 
                 if(shape!=null){
                     if(shape instanceof Arc){
                       if(((Arc)shape).getArcType()==ArcType.CENTER_POINT_ARC) {
-                        if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){ 
+                        if(((Arc)shape).isStartAnglePointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){ 
                           getEventMgr().setEventHandle("arc.start.angle",shape);                    
-                        }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                        }else if(((Arc)shape).isExtendAnglePointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){
                           getEventMgr().setEventHandle("arc.extend.angle",shape);      
-                        }else if(((Arc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                        }else if(((Arc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){
                           getEventMgr().setEventHandle("arc.mid.point",shape);
                         }
                         
                        }else{
-                          if(((Arc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY())){
+                          if(((Arc)shape).isMidPointClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow())){
                         	  getEventMgr().setEventHandle("arc.mid.point",shape);	  
                           }else {
                         	  getEventMgr().setEventHandle("arc.resize",shape);

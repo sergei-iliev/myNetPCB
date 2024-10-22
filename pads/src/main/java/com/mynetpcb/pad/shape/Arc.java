@@ -43,7 +43,6 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         super(thickness,layermaskid);
         this.displayName="Arc";
         this.arc=new com.mynetpcb.d2.shapes.Arc(new Point(x,y),r,startAngle,endAngle); 
-        this.selectionRectWidth=3000;
         this.arcType=ArcType.CENTER_POINT_ARC;
     }
     @Override
@@ -57,14 +56,15 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {        
         Point pt=null;
         if(resizingPoint!=null){
-            pt=resizingPoint.clone();
+        	pt=resizingPoint.clone();
             pt.scale(scale.getScaleX());
             pt.move(-viewportWindow.getX(),- viewportWindow.getY());
         }        
         com.mynetpcb.d2.shapes.Arc a=this.arc.clone();
         a.scale(scale.getScaleX());
-        a.move(-viewportWindow.getX(),- viewportWindow.getY());        
-        Utilities.drawCrosshair(g2,  pt,(int)(selectionRectWidth*scale.getScaleX()),a.getStart(),a.getEnd(),a.getMiddle(),a.getCenter());
+        a.move(-viewportWindow.getX(),- viewportWindow.getY());
+        
+        Utilities.drawCircle(g2,  pt,a.getStart(),a.getEnd(),a.getMiddle(),a.getCenter());
                             
     }
     
@@ -178,44 +178,79 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         return arc.endAngle <0;
     }
 
-    public Point isControlRectClicked(double x,double y) {
-          Point a=new Point(x,y);
-          if(Utils.LT( a.distanceTo(this.arc.getStart()),selectionRectWidth/2)){
-              return this.arc.getStart();
+    public Point isControlRectClicked(double x,double y,ViewportWindow viewportWindow) {
+          
+          Point pt=new Point(x,y);
+  		  pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+  		  pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+  		  
+  		  Point p=this.arc.getStart();
+  		  var tmp=p.clone();
+  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY());  		  
+          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return p;
           }                     
-          if(Utils.LT(a.distanceTo(this.arc.getEnd()),selectionRectWidth/2)){
-              return this.arc.getEnd();
-          }
-          if(Utils.LT(a.distanceTo(this.arc.getMiddle()),selectionRectWidth/2)){
-              return this.arc.getMiddle();      
+
+          p=this.arc.getEnd();
+          tmp=p.clone();
+  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY());          
+          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return p;
+          }          
+          p=this.arc.getMiddle();
+          tmp=p.clone();
+  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY());                    
+          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
+              return p;      
           }
           return null;
     }
-    public boolean isStartAnglePointClicked(double x,double y){  
-        Point a=new Point(x,y);
-        if(Utils.LT(a.distanceTo(this.arc.getStart()),selectionRectWidth/2)){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    public boolean isMidPointClicked(double x,double y){
-        Point a=new Point(x,y);
-        if(Utils.LT(a.distanceTo(this.arc.getMiddle()),selectionRectWidth/2)){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    public boolean isExtendAnglePointClicked(double x,double y){
-        Point a=new Point(x,y);
-        if(Utils.LT(a.distanceTo(this.arc.getEnd()),selectionRectWidth/2)){
-            return true;
-        }else{
-            return false;
-        }
-    }    
     
+    public boolean isStartAnglePointClicked(double x,double y,ViewportWindow viewportWindow){  
+          Point pt=new Point(x,y);
+		  pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		  pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+		  
+		  var tmp=this.arc.getStart().clone();
+		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
+          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
+            return true;
+          }else{
+            return false;
+          }
+    }
+    public boolean isMidPointClicked(double x,double y,ViewportWindow viewportWindow){
+          Point pt=new Point(x,y);
+		  pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		  pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+		  
+		  var tmp=this.arc.getMiddle().clone();
+		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
+          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
+            return true;
+          }else{
+            return false;
+        }
+    }
+    public boolean isExtendAnglePointClicked(double x,double y,ViewportWindow viewportWindow){
+          Point pt=new Point(x,y);
+		  pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		  pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+		  
+		  var tmp=this.arc.getEnd().clone();
+		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY());         
+          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
+            return true;
+          }else{
+            return false;
+         }
+    }        
     @Override
     public boolean isClicked(double x,double y) {
     	if(this.fill==Fill.EMPTY) {
@@ -257,7 +292,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     }
     @Override
     public void resizeStartEndPoint(double xoffset, double yoffset, boolean isStartPoint) {
-   	    Point A=this.arc.getStart().clone();
+    	Point A=this.arc.getStart().clone();
    	    Point B=this.arc.getEnd().clone();
    	    Point M=this.arc.getMiddle().clone();
    	    Point O=new Point();
@@ -396,73 +431,7 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     	
         this.resizingPoint=this.arc.getMiddle();
     }
-/*    
-    @Override
-    public void resize(double xoffset, double yoffset, Point point) {        
-         
-          this.resizingPoint=this.calculateResizingMidPoint(xoffset,yoffset);
-            
-          //old middle point on arc
-          Point a1=this.arc.getMiddle();  
-          //mid point on line
-          Point m=new Point((this.arc.getStart().x+this.arc.getEnd().x)/2,(this.arc.getStart().y+this.arc.getEnd().y)/2);
-          //new middle point on arc
-          Point a2=this.resizingPoint;  //new middle
-        	
-        	//do they belong to the same plane in regard to m 
-          Vector vec = new Vector(m, a2);
-          Vector linevec=new Vector(m,a1);
-          boolean samePlane = Utils.GT(vec.dot(linevec.normalize()), 0);           
-            
-          //which plane            
-          if(!samePlane){
-              return;
-          }
 
-          Point C=this.resizingPoint;  //projection
-          Point C1=m;
-          
-          double x=C1.distanceTo(this.arc.getStart());
-          double y=C1.distanceTo(C);
-
-            
-          double l=(x*x)/y;
-          double lambda=(l-y)/2;
-
-          Vector v=new Vector(C,C1);
-          Vector norm=v.normalize();			  
-        	
-          double a=C1.x +lambda*norm.x;
-          double b=C1.y + lambda*norm.y;
-          Point center=new Point(a,b);
-            
-            
-          double startAngle =new Vector(center,this.arc.getStart()).slope();
-          double endAngle = new Vector(center, this.arc.getEnd()).slope();
-            
-          double r = center.distanceTo(this.arc.getStart());
-
-          double start = 360 - startAngle;		
-          double end= (360-endAngle)-start;		
-        		
-          if(this.arc.endAngle<0){  //negative extend
-        	if(end>0){			  
-        	  end=end-360;
-        	}
-          }else{		//positive extend			
-        	if(end<0){ 					   
-        	  end=360-Math.abs(end);
-        	}			
-       	  }
-
-        	
-          this.arc.getCenter().set(center.x,center.y);
-          this.arc.r=r;
-          this.arc.startAngle=start;
-          this.arc.endAngle=end;
-   
-    }
-*/
     private Point calculateResizingMidPoint(double x, double y){
             //Line line=new Line(this.arc.getCenter(),this.arc.getMiddle());
             //return line.projectionPoint(new Point(x,y));

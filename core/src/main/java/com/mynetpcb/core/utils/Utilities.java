@@ -67,7 +67,11 @@ public final class Utilities {
     public static final int ROTATION_LEFT = 0x01;
 
     public static final int ROTATION_RIGHT = 0x02;
-
+    
+    public static final int DISTANCE = 3000;
+    
+    public static final int CIRCLE_DIAMETER = 6;
+    
     public static String toHex(Color color){
         return null;
     }
@@ -252,7 +256,7 @@ public final class Utilities {
         return result.getWriter().toString();
     }
     public static void drawCircle(Graphics2D g2,
-            Point resizingPoint, int length, Point... points) {
+            Point resizingPoint, Point... points) {
     	FlyweightProvider provider = ShapeFlyweightFactory.getProvider(Ellipse2D.class);
     	var circle = (Ellipse2D) provider.getShape();
     	g2.setStroke(new BasicStroke(1));
@@ -262,7 +266,7 @@ public final class Utilities {
             else
                 g2.setColor(Color.BLUE);
             
-            circle.setFrame(point.x- length/2, point.y-length/2, length, length); 
+            circle.setFrame(point.x- CIRCLE_DIAMETER/2, point.y-CIRCLE_DIAMETER/2, CIRCLE_DIAMETER, CIRCLE_DIAMETER); 
             g2.fill(circle);
         }
         provider.reset();

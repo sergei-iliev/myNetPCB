@@ -34,7 +34,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
                     super(thickness,Layer.LAYER_ALL);
                     this.setDisplayName("Ellipse");         
                     this.ellipse=new com.mynetpcb.d2.shapes.Ellipse(0,0,20,10);
-                    this.selectionRectWidth=8;
+                    //this.selectionRectWidth=8;
                     this.fillColor=Color.BLACK;
                     
     }
@@ -65,16 +65,16 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
     public com.mynetpcb.d2.shapes.Ellipse getShape(){
         return ellipse;
     }
-    @Override
-    public Point isControlRectClicked(double x, double y) {
-        Point pt=new Point(x,y);        
-        for(Point v:this.ellipse.vertices()){        	
-            if(Utils.LE(pt.distanceTo(v),selectionRectWidth/2)){            	
-              return v;
-            }                        
-        };
-        return null;
-    }
+//    @Override
+//    public Point isControlRectClicked(double x, double y) {
+//        Point pt=new Point(x,y);        
+//        for(Point v:this.ellipse.vertices()){        	
+//            if(Utils.LE(pt.distanceTo(v),selectionRectWidth/2)){            	
+//              return v;
+//            }                        
+//        };
+//        return null;
+//    }
     @Override
     public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
         Point pt=new Point(x,y);
@@ -85,9 +85,8 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
         	var tmp=v.clone();
         		tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
         		tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
-        	//System.out.println(pt+"::"+tmp+"::"+pt.distanceTo(tmp));
+
             if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-            	//System.out.println(333);
               return v;
             }                        
         };
@@ -140,7 +139,6 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
         if (!rect.intersects(viewportWindow)) {
                 return;
         }
-        System.out.println(scale.getScaleX());
         g2.setColor(isSelected() ? Color.GRAY : this.fillColor);
         
         com.mynetpcb.d2.shapes.Ellipse e=this.ellipse.clone();   
@@ -173,7 +171,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
                 pt.move(-viewportWindow.getX(),- viewportWindow.getY());
             }
             for(Point p:e.vertices()){
-              Utilities.drawCircle(g2,  pt,(int)(selectionRectWidth),p); 
+              Utilities.drawCircle(g2,  pt,p); 
             }
         }        
     }
