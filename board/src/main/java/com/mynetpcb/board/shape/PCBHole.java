@@ -197,11 +197,9 @@ public class PCBHole extends HoleShape implements PCBShape{
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {    
         g2.setStroke(new BasicStroke(thickness));     
-        g2.setColor(printContext.getBackgroundColor()==Color.BLACK?Color.WHITE:Color.BLACK);                
-        this.circle.paint(g2, true); 
+        g2.setColor(printContext.getBackgroundColor()==Color.BLACK?Color.WHITE:Color.BLACK);                        
+        this.circle.paint(g2, false); 
         
-        g2.setColor(printContext.getBackgroundColor());  
-        this.circle.paint(g2, true);
     }
     @Override
     public AbstractMemento getState(MementoType operationType) {
