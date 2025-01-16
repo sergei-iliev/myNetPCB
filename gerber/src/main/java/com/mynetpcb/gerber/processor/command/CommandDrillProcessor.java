@@ -32,6 +32,7 @@ public class CommandDrillProcessor implements Processor {
            //non plated
            processPads(board,board.getHeight(),false);
            processHoles(board,board.getHeight());
+           processFootprintHoles(board,board.getHeight());
         }else{
             //plated
            processPads(board,board.getHeight(),true); 
@@ -73,7 +74,36 @@ public class CommandDrillProcessor implements Processor {
             }
         }
     }    
-    
+    private void processFootprintHoles(Unit<? extends Shape>  board,int height){
+        double lastX=-1,lastY=-1;
+
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
+        for(FootprintShape footprint:footprints){       
+          for(var shape:footprint.getShapes()){                             
+            if(shape instanceof HoleShape){ 
+             var hole=(HoleShape)shape;	            
+             ApertureDefinition aperture=context.getApertureDictionary().findCircle(AbstractAttribute.Type.MechanicalDrill,hole.getInner().r*2);
+                    //set aperture if not same
+             context.resetAperture(aperture);
+                    
+                    //flash the drill hole!!!
+             StringBuffer commandLine=new StringBuffer();
+             if (!Utils.EQ(hole.getCenter().x,lastX)){                   
+                   lastX = hole.getCenter().x;
+                   commandLine.append("X"+context.getFormatter().format(Grid.COORD_TO_MM(hole.getCenter().x)*100000));
+             }
+             if (!Utils.EQ(hole.getCenter().y ,lastY))
+             {                   
+                        lastY = hole.getCenter().y;
+                        commandLine.append("Y"+context.getFormatter().format(Grid.COORD_TO_MM(height-hole.getCenter().y)*100000));
+             }
+             commandLine.append("D03*");                               
+             context.getOutput().append(commandLine);
+           }
+       }
+        
+      } 
+    }
     private void processHoles(Unit<? extends Shape>  board,int height){
         double lastX=-1,lastY=-1;
 

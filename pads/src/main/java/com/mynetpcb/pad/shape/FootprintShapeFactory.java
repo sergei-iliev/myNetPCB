@@ -52,6 +52,11 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
                 label.fromXML(node);
                 return label;   
             }
+            if(element.getTagName().equals("hole")){
+                Hole hole = new Hole();
+                hole.fromXML(node);
+                return hole;   
+            }
             throw new IllegalStateException("Unkown node "+element.getTagName());
         }
 
@@ -92,6 +97,12 @@ public class FootprintShapeFactory implements AbstractShapeFactory{
                 roundRect.setState(memento);
                 return roundRect;             
             }
+            if(memento instanceof Hole.Memento){
+                Hole hole=new Hole();  
+                hole.setState(memento);
+                return hole;             
+            }
+            
             throw new IllegalStateException("Unknown memento type: "+memento.getClass().getCanonicalName()); 
         
     }

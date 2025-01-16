@@ -73,6 +73,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
     private JToggleButton SelectionButton = new JToggleButton();
     private JToggleButton LineButton = new JToggleButton();
     private JToggleButton PadButton = new JToggleButton();
+    private JToggleButton HoleButton = new JToggleButton();
     private JToggleButton LabelButton = new JToggleButton();
     private JToggleButton SnapToGridButton = new JToggleButton();
     private JToggleButton CoordButton = new JToggleButton();
@@ -186,6 +187,11 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         PadButton.setIcon(Utilities.loadImageIcon(this, "images/pad.png"));
         PadButton.setPreferredSize(new Dimension(35, 35));
 
+        HoleButton.addActionListener(this);
+        HoleButton.setToolTipText("Add Hole");
+        HoleButton.setIcon(Utilities.loadImageIcon(this, "images/hole.png"));
+        HoleButton.setPreferredSize(new Dimension(35, 35));
+        
         LabelButton.addActionListener(this);
         LabelButton.setToolTipText("Add Label");
         LabelButton.setIcon(Utilities.loadImageIcon(this, "images/label.png"));
@@ -282,6 +288,7 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         group.add(RectButton);    
         group.add(SolidRegionButton);    
         group.add(PadButton);
+        group.add(HoleButton);
         group.add(LabelButton);
         group.add(DragHeand);
         group.add(MeasureButton);
@@ -312,6 +319,8 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         leftButtonGroupPanel.add(SolidRegionButton);                
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(PadButton);
+        leftButtonGroupPanel.add(javax.swing.Box.createRigidArea(new Dimension(5, 5)));
+        leftButtonGroupPanel.add(HoleButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
         leftButtonGroupPanel.add(LabelButton);
         leftButtonGroupPanel.add(Box.createRigidArea(new Dimension(5, 5)));
@@ -516,7 +525,9 @@ public class FootprintInternalFrame extends AbstractInternalFrame implements Dia
         if (e.getSource()==PadButton) {
             footprintComponent.setMode(Mode.PAD_MODE);
         }
-        
+        if (e.getSource()==HoleButton) {
+        	footprintComponent.setMode(Mode.HOLE_MODE);
+        }
         if (e.getSource()==LabelButton) {
             footprintComponent.setMode(Mode.LABEL_MODE);
         }
