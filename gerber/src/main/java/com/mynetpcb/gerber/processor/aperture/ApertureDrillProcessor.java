@@ -13,6 +13,7 @@ import com.mynetpcb.gerber.attribute.drill.MechanicalDrillAttribute;
 import com.mynetpcb.gerber.attribute.drill.ViaDrillAttribute;
 import com.mynetpcb.gerber.capi.GerberServiceContext;
 import com.mynetpcb.gerber.capi.Processor;
+import com.mynetpcb.pad.shape.Hole;
 import com.mynetpcb.pad.shape.Pad;
 
 import java.util.Collection;
@@ -31,6 +32,7 @@ public class ApertureDrillProcessor implements Processor{
            //non plated
            processPads(board,false);
            processHoles(board);
+           processFootprintHoles(board);
         }else{           
         	//plated
            processPads(board,true);	
@@ -56,7 +58,20 @@ public class ApertureDrillProcessor implements Processor{
             }
         }
     }
-    
+    private void processFootprintHoles (Unit<? extends Shape> board){
+        List<FootprintShape> footprints= board.getShapes(FootprintShape.class);              
+        for(FootprintShape footprint:footprints){
+       
+            for(var shape:footprint.getShapes()){
+                if(shape instanceof HoleShape){                
+                    CircleAperture drill=new CircleAperture(); 
+                    drill.setDiameter(((HoleShape)shape).getInner().r*2);
+                    drill.setAttribute(new MechanicalDrillAttribute());
+                    dictionary.add(drill);   
+                }
+            }
+        }
+    }    
     private void processHoles(Unit<? extends Shape> board ){
         List<HoleShape> holes= board.getShapes(HoleShape.class);              
         for(HoleShape hole:holes){

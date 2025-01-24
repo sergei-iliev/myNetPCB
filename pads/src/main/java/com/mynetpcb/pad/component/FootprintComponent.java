@@ -1,6 +1,17 @@
 package com.mynetpcb.pad.component;
 
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JOptionPane;
+
 import com.mynetpcb.core.capi.DialogFrame;
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.component.UnitComponent;
@@ -39,23 +50,12 @@ import com.mynetpcb.pad.popup.FootprintPopupMenu;
 import com.mynetpcb.pad.shape.Arc;
 import com.mynetpcb.pad.shape.Circle;
 import com.mynetpcb.pad.shape.GlyphLabel;
+import com.mynetpcb.pad.shape.Hole;
 import com.mynetpcb.pad.shape.Line;
 import com.mynetpcb.pad.shape.RoundRect;
 import com.mynetpcb.pad.shape.SolidRegion;
 import com.mynetpcb.pad.unit.Footprint;
 import com.mynetpcb.pad.unit.FootprintMgr;
-
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
-import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.JOptionPane;
 
 
 public class FootprintComponent extends UnitComponent<Footprint, Shape, FootprintContainer> implements CommandListener{    
@@ -109,6 +109,11 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
              setContainerCursor(shape);               
              getEventMgr().setEventHandle("cursor",shape);   
              break;
+            case Mode.HOLE_MODE:
+                shape = new Hole();
+                setContainerCursor(shape);
+                getEventMgr().setEventHandle("cursor", shape);
+                break;             
             case Mode.ORIGIN_SHIFT_MODE:  
              
              getEventMgr().setEventHandle("origin",null);   

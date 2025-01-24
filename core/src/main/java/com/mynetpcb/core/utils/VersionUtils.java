@@ -5,7 +5,7 @@ public class VersionUtils {
 
     public static final String MYNETPCB_NAME="myNetPCB";
     
-    public static final double MYNETPCB_VERSION=9.2;
+    public static final String MYNETPCB_VERSION="9.2.1";
 
     /*
      * 6.0.1
