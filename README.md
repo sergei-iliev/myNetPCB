@@ -17,7 +17,7 @@ PCB Layout and Schematic capture tool for Win/Linux/Mac</br></br>
 
 
 
-**How to run as standalone self sufficient application**
+**How to run as standalone self-sufficient application**
 1. Download myNetPCB_x.x.x_win_x64.zip(Windows users) or myNetPCB_x.x.x_linux_x64.zip(Linux users) and unzip in a folder of your choice
 2. Windows users - double click myNetPCB.bat
 3. Linux users - make myNetPCB.sh executable with the command: **chmod 755 myNetPCB.sh** and then execute command: **./myNetPCB.sh**
