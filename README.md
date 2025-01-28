@@ -15,21 +15,23 @@ PCB Layout and Schematic capture tool for Win/Linux/Mac</br></br>
 * Export circuit/pcb board to image file for online sharing
 * Export to Gerber RS-274X/X2
 
-**Download**
 
 
-Download myNetPCB application at
-https://github.com/sergei-iliev/myNetPCB/releases
+**How to run as standalone self sufficient application**
+1. Download myNetPCB_x.x.x_win_x64.zip(Windows users) or myNetPCB_x.x.x_linux_x64.zip(Linux users) and unzip in a folder of your choice
+2. Windows users - double click myNetPCB.bat
+3. Linux users - make myNetPCB.sh executable with the command: **chmod 755 myNetPCB.sh** and then execute command: **./myNetPCB.sh**
 
-
-**How to run**
-1. Unzip myNetPCB.zip in a folder of your choice
+**How to run with JRE preinstalled**
+1. Download myNetPCB_x.x.x.zip and unzip in a folder of your choice
 2. Run with JDK version 11 or above - make sure the version is grater or equal by running 'java -version' command!
 3. Windows users - double click myNetPCB.bat
 4. Linux users - make myNetPCB.sh executable with the command: **chmod 755 myNetPCB.sh** and then execute command: **./myNetPCB.sh**
-4. Set library/workspace folder at Preferences->Workspace/Library folder(Default one is selected with my workings)
+5. Set library/workspace folder at Preferences->Workspace/Library folder(Default one is selected with my workings)
 
 
+
+   
 ![myNetPCB](/screenshots/mynetpcb.png)
 ![Symbols](/screenshots/symbols.png)
 ![Footprints](/screenshots/footprints.png)
