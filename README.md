@@ -37,6 +37,7 @@ PCB Layout and Schematic capture tool for Win/Linux/Mac</br></br>
 ![Footprints](/screenshots/footprints.png)
 ![Circuit](/screenshots/circuit.png)
 ![Board](/screenshots/board.png)
+![PCB](/screenshots/pcb_3.png)
 ![PCB](/screenshots/pcb_2.png)
 ![PCB](/screenshots/pcb.png)
 ![PCB](/screenshots/pcb_1.png)
