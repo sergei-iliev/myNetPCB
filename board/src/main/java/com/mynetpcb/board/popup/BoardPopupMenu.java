@@ -68,7 +68,7 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
         Map<String,JMenuItem> submenu=new LinkedHashMap<String,JMenuItem>(); 
         //***Wire Bending
         ButtonGroup group = new ButtonGroup();
-        JMenuItem radioItem = new JRadioButtonMenuItem("Line Slope Bending");radioItem.setActionCommand("lineslopebend");
+        JMenuItem radioItem = new JRadioButtonMenuItem("Line Slope Bending");radioItem.setActionCommand("lineslopebend");radioItem.setSelected(true);
         group.add(radioItem);
         submenu.put("lineslopebend",radioItem);
 
@@ -76,7 +76,7 @@ public class BoardPopupMenu extends AbstractPopupItemsContainer<BoardComponent>{
         group.add(radioItem);
         submenu.put("slopelinebend",radioItem);
         
-        radioItem = new JRadioButtonMenuItem("Default Bending");radioItem.setActionCommand("defaultbend"); radioItem.setSelected(true);
+        radioItem = new JRadioButtonMenuItem("Default Bending");radioItem.setActionCommand("defaultbend");
         group.add(radioItem);
         submenu.put("defaultbend",radioItem);
          

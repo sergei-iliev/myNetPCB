@@ -3,6 +3,7 @@ package com.mynetpcb.board.dialog.panel.inspector;
 import com.mynetpcb.board.component.BoardComponent;
 import com.mynetpcb.board.shape.PCBFootprint;
 import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.event.ShapeEvent;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.panel.AbstractPanelBuilder;
 import com.mynetpcb.core.capi.shape.Shape;
@@ -141,22 +142,24 @@ public class FootprintPanelBuilder  extends AbstractPanelBuilder<Shape> {
         }
         if(e.getSource()==this.nameField){
            symbol.setDisplayName(nameField.getText()); 
+   	       getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(getTarget(), ShapeEvent.RENAME_SHAPE));
         }        
         if (e.getSource() == valueField) {
              Texture texture=symbol.getTextureByTag("value");   
-             boolean empty=texture.isEmpty();
+     	     if(texture.getText()==null||texture.getText().isBlank()) {
+     			 var center=symbol.getCenter();
+     			 texture.set(center.x, center.y);	     
+     		 }                                  
              texture.setText(valueField.getText());  
-            if(empty){
-                texture.move(symbol.getCenter().x, symbol.getCenter().y);
-            }
+           
         }
         if (e.getSource() == referenceField) {
-             Texture texture=symbol.getTextureByTag("reference");                       
-             boolean empty=texture.isEmpty();
-             texture.setText(referenceField.getText());  
-             if(empty){
-                 texture.move(symbol.getCenter().x, symbol.getCenter().y);
-             }
+             Texture texture=symbol.getTextureByTag("reference");
+     	     if(texture.getText()==null||texture.getText().isBlank()) {
+     			 var center=symbol.getCenter();
+     			 texture.set(center.x, center.y);	     
+     	     }                                                          
+             texture.setText(referenceField.getText());               
         }
         getComponent().getModel().getUnit().registerMemento( getTarget().getState(MementoType.MOVE_MEMENTO));
         getComponent().Repaint();

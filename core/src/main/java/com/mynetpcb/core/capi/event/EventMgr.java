@@ -2,6 +2,7 @@ package com.mynetpcb.core.capi.event;
 
 
 import com.mynetpcb.core.capi.component.UnitComponent;
+import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.shape.Shape;
 
 import java.util.HashMap;
@@ -49,6 +50,13 @@ public abstract class EventMgr<C extends UnitComponent,S extends Shape>{
      */
     public void nullifyEventHandle(String eventKey){
         hash.put(eventKey, null);
+    }
+    /**
+     * Investigate if Event Handler Target is Line or Track or Wire
+     * @return
+     */
+    public boolean isTrackableEventHandler() {
+    	return (targetEventHandle!=null)&&(targetEventHandle.getTarget() instanceof Trackable);
     }
 }
 

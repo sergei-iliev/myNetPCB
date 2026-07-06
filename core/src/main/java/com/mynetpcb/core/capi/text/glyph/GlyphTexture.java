@@ -169,7 +169,7 @@ public class GlyphTexture implements Texture {
     }
     @Override
     public void set(double x, double y) {        
-
+    	this.anchorPoint.set(x, y);
     }
     public int getSize() {
         return size;

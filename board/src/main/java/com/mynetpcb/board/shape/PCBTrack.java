@@ -21,6 +21,7 @@ import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
 import com.mynetpcb.d2.shapes.Segment;
+import com.mynetpcb.d2.shapes.Utils;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -453,7 +454,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
 
         private int clearance;
         
-        private ResumeState resumeState;
+        //private ResumeState resumeState;
         
         public Memento(MementoType mementoType) {
             super(mementoType);
@@ -468,7 +469,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
                 shape.getLinePoints().add(new LinePoint(Ax[i], Ay[i]));
             }
             shape.clearance=clearance;
-            shape.resumeState=resumeState;
+            //shape.resumeState=resumeState;
             //***reset floating start point
             if (shape.polyline.points.size() > 0) {
                 if(shape.getResumeState()==ResumeState.ADD_AT_END){
@@ -490,7 +491,7 @@ public class PCBTrack extends TrackShape implements PCBShape{
                 Ay[i] = (shape.polyline.points.get(i)).y;
             }            
             this.clearance=shape.clearance;
-            this.resumeState=shape.resumeState;
+            //this.resumeState=shape.resumeState;
         }
 
         @Override
@@ -510,14 +511,14 @@ public class PCBTrack extends TrackShape implements PCBShape{
             }
             Memento other = (Memento)obj;
             
-            return (super.equals(obj)&&this.clearance==other.clearance&&Objects.equals(this.resumeState, other.resumeState)&&
-                    Arrays.equals(Ax, other.Ax) && Arrays.equals(Ay, other.Ay));
+            return (super.equals(obj)&&this.clearance==other.clearance&&/*Objects.equals(this.resumeState, other.resumeState)&&*/
+                   Utils.equals(Ax, other.Ax) && Utils.equals(Ay, other.Ay));
 
         }
 
         @Override
         public int hashCode() {
-            int  hash = super.hashCode()+this.clearance+Objects.hashCode(resumeState);
+            int  hash = super.hashCode()+this.clearance/*+Objects.hashCode(resumeState)*/;
             hash += Arrays.hashCode(Ax);
             hash += Arrays.hashCode(Ay);            
             return hash;

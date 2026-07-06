@@ -124,4 +124,16 @@ public class Utils{
          return ( (x)-(y) <  DP_TOL );
     }
    
+    public static boolean equals(double[] a, double[] b) {
+        if (a == b) return true;
+        if (a == null || b == null) return false;
+        if (a.length != b.length) return false;
+        
+        for (int i = 0; i < a.length; i++) {
+            if (Math.abs(a[i] - b[i]) > DP_TOL) {
+                return false;
+            }
+        }
+        return true;
+    }    
 }

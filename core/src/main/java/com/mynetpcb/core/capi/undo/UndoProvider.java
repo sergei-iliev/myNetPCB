@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public final class UndoProvider {
-    private static final int QUEUE_DEPTH = 17;
+    private static final int QUEUE_DEPTH = 50;
 
     private List<AbstractMemento> queue;
 

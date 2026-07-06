@@ -80,7 +80,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
         this.loadDialogBuilder = new BoardLoadDialog.Builder();
         popup = new BoardPopupMenu(this);
         bendingProcessorFactory = new BoardBendingProcessorFactory();
-        setLineBendingProcessor(bendingProcessorFactory.resolve("defaultbend", null));
+        setLineBendingProcessor(bendingProcessorFactory.resolve("lineslopebend", null));
     }
 
     public void setMode(int mode) {

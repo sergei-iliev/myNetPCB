@@ -77,11 +77,11 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
         group.add(radioItem);
         submenu.put("rightbend",radioItem);
 
-        radioItem = new JRadioButtonMenuItem("Horizontal To Vertical Bending");radioItem.setActionCommand("hvbend");
+        radioItem = new JRadioButtonMenuItem("Horizontal To Vertical Bending");radioItem.setActionCommand("hvbend");radioItem.setSelected(true);
         group.add(radioItem);                                                        
         submenu.put("topbend",radioItem);
         
-         radioItem = new JRadioButtonMenuItem("Default Bending");radioItem.setActionCommand("defaultbend"); radioItem.setSelected(true);    
+         radioItem = new JRadioButtonMenuItem("Default Bending");radioItem.setActionCommand("defaultbend");     
          group.add(radioItem);                                                            
          submenu.put("defaultbend",radioItem);
          

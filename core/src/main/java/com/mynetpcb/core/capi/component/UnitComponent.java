@@ -714,7 +714,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
     protected boolean defaultKeyPress(KeyEvent e) {
                 if (getModel().getUnit() != null) {
                     if (e.getModifiersEx() != 0 && (e.getModifiers() == ActionEvent.CTRL_MASK)) {
-                        if (e.getKeyCode() == KeyEvent.VK_Z) {
+                        if ((e.getKeyCode() == KeyEvent.VK_Z)&&(!getEventMgr().isTrackableEventHandler())) {//avoid undo during Tracking a line
                             if (getModel().getUnit().undo(getEventMgr().getTargetEventHandle())) {
                                 Repaint();
                                 revalidate();
@@ -723,7 +723,7 @@ public abstract class UnitComponent<U extends Unit, S extends Shape, M extends U
                             }
                             return true;
                         }
-                        if (e.getKeyCode() == KeyEvent.VK_Y) {
+                        if ((e.getKeyCode() == KeyEvent.VK_Y)&&(!getEventMgr().isTrackableEventHandler())) {//avoid redo during tracking a line
                             if (getModel().getUnit().redo()) {
                                 Repaint();
                                 revalidate();

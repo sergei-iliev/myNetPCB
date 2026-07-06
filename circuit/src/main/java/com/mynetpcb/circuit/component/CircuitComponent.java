@@ -72,7 +72,7 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
         this.loadDialogBuilder = new CircuitLoadDialog.Builder();
         popup = new CircuitPopupMenu(this);
         bendingProcessorFactory = new CircuitBendingProcessorFactory();
-        setLineBendingProcessor(bendingProcessorFactory.resolve("vhbend", null));
+        setLineBendingProcessor(bendingProcessorFactory.resolve("hvbend", null));
         getLineBendingProcessor().setGridAlignable(true);
     }
 

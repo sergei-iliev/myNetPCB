@@ -16,7 +16,7 @@ public class Arc  extends GeometricFigure{
     private Arc2D cache=new Arc2D.Double();
     
     public Arc(){
-        
+        pc=new Point();
     }
     public Arc(Point pc,double  r,double startAngle,double endAngle) {
       this.pc = pc;

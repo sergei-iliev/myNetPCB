@@ -189,13 +189,21 @@ public class SymbolPanelBuilder extends AbstractPanelBuilder<Shape> {
         SCHSymbol symbol=(SCHSymbol)getTarget();
 	//****chip handling
 	if (e.getSource() == chipUnitField) {
-	    Texture texture=symbol.getTextureByTag("unit");                     
-	    texture.setText(chipUnitField.getText());
+	    Texture texture=symbol.getTextureByTag("unit"); 	    
+	    if(texture.getText()==null||texture.getText().isBlank()) {
+	      var box=symbol.getBoundingShape();
+	      texture.set(box.getX(), box.getY());	     
+	    }
+	      texture.setText(chipUnitField.getText());
             
 	    getComponent().Repaint();
 	}
 	if (e.getSource() == chipReferenceField) {
-	    Texture texture=symbol.getTextureByTag("reference");                      
+	    Texture texture=symbol.getTextureByTag("reference");   
+	    if(texture.getText()==null||texture.getText().isBlank()) {
+		 var box=symbol.getBoundingShape();
+		 texture.set(box.getX(), box.getY());	     
+		}	    
 	    texture.setText(chipReferenceField.getText());          
 	    getComponent().Repaint();
 	}

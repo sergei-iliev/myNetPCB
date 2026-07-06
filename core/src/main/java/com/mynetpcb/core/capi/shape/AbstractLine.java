@@ -243,10 +243,13 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
             this.resumeState=ResumeState.ADD_AT_END;
         }        
         
-        if(resumeState==ResumeState.ADD_AT_FRONT)
-           reset(this.polyline.points.get(0));
-        else
+        if(resumeState==ResumeState.ADD_AT_FRONT) {
+            this.deleteLastPoint();
+        	reset(this.polyline.points.get(0));
+        }else {
+        	this.deleteLastPoint();
            reset(this.polyline.points.get(this.polyline.points.size()-1));
+        }
     }
     
 //    @Override
