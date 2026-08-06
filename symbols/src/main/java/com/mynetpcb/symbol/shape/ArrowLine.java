@@ -110,27 +110,16 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
     }
     
     @Override
-    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
-        Point pt=new Point(x,y);
-		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-               
-        var tmp=this.line.ps.clone();
-        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
 
-        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return this.line.ps;
-        }                        
-        
-        tmp=this.line.pe.clone();
-        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
-
-        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return this.line.pe;
-        }                        
-               
+        if (Utils.LE(this.line.ps.distanceTo(x, y), hitRadius)) {
+            return this.line.ps;
+        }
+        if (Utils.LE(this.line.pe.distanceTo(x, y), hitRadius)) {
+            return this.line.pe;
+        }
         return null;
     }    
     @Override
