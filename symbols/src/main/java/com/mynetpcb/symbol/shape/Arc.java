@@ -77,19 +77,15 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
 //    }
     
     @Override
-    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
-        Point pt=new Point(x,y);
-		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        for(Point v:this.arc.vertices()){
-        	var tmp=v.clone();
-        		tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-        		tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
-            if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return v;
-            }                        
-        };
+    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
+
+        for (Point v : this.arc.vertices()) {
+            if (Utils.LE(v.distanceTo(x, y), hitRadius)) {
+                return v;
+            }
+        }
         return null;
     }  
     
