@@ -81,22 +81,15 @@ public class Triangle extends Shape implements Resizeable, Externalizable{
       }
     }
     @Override
-    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
-        Point pt = new Point(x, y);
-		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        for(var v: this.shape.points) {
-    		var tmp=v.clone();
-            tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-            tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
 
-            if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-                  return v;
-            }	        	
+        for (Point v : this.shape.points) {
+            if (Utils.LE(v.distanceTo(x, y), hitRadius)) {
+                return v;
+            }
         }
-                  
-        
         return null;
     }
 
