@@ -66,44 +66,22 @@ public abstract class ResizableShape extends Shape implements Resizeable {
     }
     
     @Override
-    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {        
-        Point pt = new Point(x, y);
-		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-		
-		var tmp=upperLeft.clone();
-        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
 
-        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return upperLeft;
-        }	
-
-
-	    tmp=upperRight.clone();
-        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
-
-        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return upperRight;
-        }	
-
-	    tmp=bottomLeft.clone();
-        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
-
-        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return bottomLeft;
-        }	
-        
-	    tmp=bottomRight.clone();
-        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
-
-        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return bottomRight;
-        }     
-
+        if (Utils.LE(upperLeft.distanceTo(x, y), hitRadius)) {
+            return upperLeft;
+        }
+        if (Utils.LE(upperRight.distanceTo(x, y), hitRadius)) {
+            return upperRight;
+        }
+        if (Utils.LE(bottomLeft.distanceTo(x, y), hitRadius)) {
+            return bottomLeft;
+        }
+        if (Utils.LE(bottomRight.distanceTo(x, y), hitRadius)) {
+            return bottomRight;
+        }
         return null;
     }
     
