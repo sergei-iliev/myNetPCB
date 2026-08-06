@@ -65,16 +65,7 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
     public com.mynetpcb.d2.shapes.Ellipse getShape(){
         return ellipse;
     }
-//    @Override
-//    public Point isControlRectClicked(double x, double y) {
-//        Point pt=new Point(x,y);        
-//        for(Point v:this.ellipse.vertices()){        	
-//            if(Utils.LE(pt.distanceTo(v),selectionRectWidth/2)){            	
-//              return v;
-//            }                        
-//        };
-//        return null;
-//    }
+
     @Override
     public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
         double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();

@@ -65,16 +65,6 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
     	}
     }
     
-//    @Override
-//    public Point isControlRectClicked(double x, double y) {
-//        Point pt=new Point(x,y);
-//        for(Point v:this.arc.vertices()){           	
-//        	if(Utils.LE(pt.distanceTo(v),this.selectionRectWidth/2)){
-//        		return v;
-//            }
-//        };
-//        return null;
-//    }
     
     @Override
     public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
