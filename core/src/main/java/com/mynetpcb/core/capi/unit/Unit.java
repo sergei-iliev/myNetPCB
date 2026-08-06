@@ -205,7 +205,7 @@ public double getViewportPositionY() {
         Iterator<S> i = shapes.iterator();
         while (i.hasNext()) {
             Shape shape = i.next();
-            if (shape.getUUID().compareTo(uuid) == 0) {
+            if (uuid.equals(shape.getUUID())) {
                 //***delete from list
                 shapes.remove(shape);
                 this.fireShapeEvent(new ShapeEvent(shape, ShapeEvent.DELETE_SHAPE));

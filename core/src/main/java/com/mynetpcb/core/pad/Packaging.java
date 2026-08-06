@@ -35,19 +35,19 @@ public class Packaging{
     }
     
     public void setFootprintLibrary(String name){
-        this.footprintLibrary=(name==""?null:name);
+        this.footprintLibrary=(name.equals("")?null:name);
     }
     
     public void setFootprintCategory(String name){
-       this.footprintCategory=(name==""?null:name); 
+       this.footprintCategory=(name.equals("")?null:name); 
     }
     
     public void setFootprintFileName(String name){
-       this.footprintFileName=(name==""?null:name); 
+       this.footprintFileName=(name.equals("")?null:name); 
     }
     
     public void setFootprintName(String name){
-      this.footprintName=(name==""?null:name);
+      this.footprintName=(name.equals("")?null:name);
     }
     
     @Override

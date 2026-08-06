@@ -1,12 +1,12 @@
 package com.mynetpcb.core.capi.undo;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.unit.Unit;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 public  class CompositeMemento<U extends Unit,S extends Shape> extends AbstractMemento<U,S> implements MementoContainer<CompositeMemento,S>{
       
@@ -14,7 +14,7 @@ public  class CompositeMemento<U extends Unit,S extends Shape> extends AbstractM
         
       public CompositeMemento(MementoType mementoType){
             super(mementoType);
-            mementoList=new LinkedList<AbstractMemento>();  
+            mementoList=new ArrayList<AbstractMemento>();  
       } 
       @Override  
       public CompositeMemento add(Collection<S> shapes){

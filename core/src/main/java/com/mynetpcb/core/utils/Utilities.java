@@ -102,12 +102,8 @@ public final class Utilities {
             InputStream in = o.getClass().getClassLoader().getResource(filename).openStream();
             // buffering -> more efficient
             BufferedInputStream bufIn = new BufferedInputStream(in);
-            // the byte array that will contain the image
-            byte bytes[] = new byte[10000];
-            // read the image
-            int count = bufIn.read(bytes, 0, 10000);
-            // create the image from the byte array
-            image = Toolkit.getDefaultToolkit().createImage(bytes, 0, count);
+            byte[] bytes= bufIn.readAllBytes();
+            image = Toolkit.getDefaultToolkit().createImage(bytes, 0,bytes.length);
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }

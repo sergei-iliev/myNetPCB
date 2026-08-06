@@ -171,7 +171,7 @@ public class UnitSelectionGrid {
               unit.setSelected(false);           
               UnitSelectionCell element = map.get(unit.getUUID());
               g2.setFont(textFont);
-              g2.setPaint(textColor);
+              g2.setPaint(Color.GRAY);
               g2.drawString(unit.getUnitName(),
                           element.nameRect.x,
                           element.nameRect.y +

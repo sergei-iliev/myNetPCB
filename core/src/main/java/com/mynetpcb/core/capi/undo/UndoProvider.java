@@ -51,16 +51,21 @@ public final class UndoProvider {
 
     public void registerMemento(AbstractMemento memento) {
         //***1.Skip add if same memento as last one on the stack
-        for(int i=queue.size()-1;i>0;i--){
-            AbstractMemento prevMemento=queue.get(i);
-                if(prevMemento.equals(memento)){ 
+//        for(int i=queue.size()-1;i>0;i--){
+//            AbstractMemento prevMemento=queue.get(i);
+//                if(prevMemento.equals(memento)){ 
+//                  memento.clear();
+//                  return;  
+//                }              
+//            break;
+//        }   
+    	if(queue.size()>0) {  //AI optimized
+    	AbstractMemento prevMemento=queue.get(queue.size()-1);    
+    			if(prevMemento.equals(memento)){ 
                   memento.clear();
                   return;  
-                }              
-            break;
-        }   
-     
-        
+                }
+    	}
         if (currentIndex >= QUEUE_DEPTH) {
             AbstractMemento _memento = queue.remove(0);
             _memento.clear();
@@ -69,10 +74,14 @@ public final class UndoProvider {
         
         if (queue.size() == 0 || currentIndex == queue.size() - 1) {
         } else {
-             for (int j = currentIndex + 1; currentIndex < queue.size() - 1; ) {            
-                AbstractMemento _memento = queue.remove(j);
-                _memento.clear();
-             }
+        	while(queue.size()>currentIndex+1) {
+        		AbstractMemento _memento = queue.remove(queue.size()-1);
+        		  _memento.clear();        		
+        	}
+//             for (int j = currentIndex + 1; currentIndex < queue.size() - 1; ) {            
+//                AbstractMemento _memento = queue.remove(j);
+//                _memento.clear();
+//             }
         }
 
         queue.add(memento);  
