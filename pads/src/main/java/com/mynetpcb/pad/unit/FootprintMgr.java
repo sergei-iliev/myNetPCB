@@ -27,38 +27,43 @@ public final class FootprintMgr extends UnitMgr<Footprint,Shape> {
         footprintMgr=new FootprintMgr();
       return footprintMgr;
     }   
-    public void bringToFront(List<Shape> shapes,Shape target){
-        
-        Box box=target.getBoundingShape();
-        int max=Integer.MIN_VALUE;
-        for(Shape shape:shapes){
-            if(shape==target){
+    public void bringToFront(List<Shape> shapes, Shape target) {
+        Box box = target.getBoundingShape();
+        int targetIdx = shapes.indexOf(target);
+        if (targetIdx < 0) {
+            return;
+        }
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < shapes.size(); i++) {
+            if (i == targetIdx) {
                 continue;
             }
-            
-            if(box.intersects(shape.getBoundingShape()) ){  //could be crossing
-               max=Math.max(max,shapes.indexOf(shape));               
+            if (box.intersects(shapes.get(i).getBoundingShape())) {
+                max = Math.max(max, i);
             }
         }
-        if(max>Integer.MIN_VALUE){
-            Collections.swap(shapes, max, shapes.indexOf(target));
+        if (max > Integer.MIN_VALUE) {
+            Collections.swap(shapes, max, targetIdx);
         }
     }
-    public void sendToBack(List<Shape> shapes,Shape target){
-        
-        Box box=target.getBoundingShape();
-        int min=Integer.MAX_VALUE;
-        for(Shape shape:shapes){
-            if(shape==target){
+
+    public void sendToBack(List<Shape> shapes, Shape target) {
+        Box box = target.getBoundingShape();
+        int targetIdx = shapes.indexOf(target);
+        if (targetIdx < 0) {
+            return;
+        }
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < shapes.size(); i++) {
+            if (i == targetIdx) {
                 continue;
             }
-            
-            if(box.intersects(shape.getBoundingShape()) ){  //could be crossing
-               min=Math.min(min,shapes.indexOf(shape));               
+            if (box.intersects(shapes.get(i).getBoundingShape())) {
+                min = Math.min(min, i);
             }
         }
-        if(min<Integer.MAX_VALUE){
-            Collections.swap(shapes, min, shapes.indexOf(target));
+        if (min < Integer.MAX_VALUE) {
+            Collections.swap(shapes, min, targetIdx);
         }
     }
     public Pad createPad(Footprint footprint){
