@@ -1,30 +1,12 @@
 package com.mynetpcb.symbol.unit;
 
-import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Resizeable;
-import com.mynetpcb.core.capi.ScalableTransformation;
-import com.mynetpcb.core.capi.Typeable;
-import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.text.CompositeTextable;
-import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.symbol.shape.Ellipse;
-import com.mynetpcb.symbol.shape.FontLabel;
-import com.mynetpcb.symbol.shape.Pin;
-import com.mynetpcb.symbol.shape.SymbolShapeFactory;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
 import java.lang.ref.WeakReference;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,8 +21,19 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.SAXException;
+
+import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.ScalableTransformation;
+import com.mynetpcb.core.capi.Typeable;
+import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.text.CompositeTextable;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.symbol.shape.FontLabel;
+import com.mynetpcb.symbol.shape.Pin;
+import com.mynetpcb.symbol.shape.SymbolShapeFactory;
 
 public class Symbol extends Unit<Shape> implements Typeable{
     private boolean isTextLayoutVisible;
@@ -64,14 +57,6 @@ public class Symbol extends Unit<Shape> implements Typeable{
         Symbol copy = (Symbol) super.clone();
         copy.shapeFactory = new SymbolShapeFactory();
         return copy;
-    }
-
-    @Override
-    public void add(Shape shape) {
-        super.add(shape);
-//        if (shape instanceof Textable) {
-//            ((Textable) shape).getChipText().setTextLayoutVisible(isTextLayoutVisible);
-//        }
     }
 
     private WeakReference<PrintContext> context;
@@ -145,12 +130,6 @@ public class Symbol extends Unit<Shape> implements Typeable{
     public StringBuffer format() {
         StringBuffer xml = new StringBuffer();
         xml.append("<module width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\">\r\n");
-//        xml.append("<footprint library=\"" +
-//                   (packaging.getFootprintLibrary() == null ? "" : packaging.getFootprintLibrary()) + "\" category=\"" +
-//                   (packaging.getFootprintCategory() == null ? "" : packaging.getFootprintCategory()) +
-//                   "\"  filename=\"" +
-//                   (packaging.getFootprintFileName() == null ? "" : packaging.getFootprintFileName()) + "\" name=\"" +
-//                   (packaging.getFootprintName() == null ? "" : packaging.getFootprintName()) + "\"/>\r\n");
         xml.append("<name>" + this.unitName + "</name>\r\n");
         //***reference
         FontLabel text = (FontLabel)SymbolMgr.getInstance().getLabelByTag(this,"reference");

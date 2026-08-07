@@ -1,32 +1,23 @@
 package com.mynetpcb.core.capi.unit;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+
 import com.mynetpcb.core.capi.Grid;
 import com.mynetpcb.core.capi.Moveable;
-import com.mynetpcb.core.capi.Ownerable;
-import com.mynetpcb.core.capi.pin.PinLineable;
-import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
 import com.mynetpcb.core.capi.line.Trackable;
 import com.mynetpcb.core.capi.pin.CompositePinable;
+import com.mynetpcb.core.capi.pin.Pinable;
 import com.mynetpcb.core.capi.shape.Label;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.text.Texture;
-
-
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Point;
-
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /*
  * LOOKS LIKE A SINGLETON BUT IS NOT
@@ -224,9 +215,9 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         int count = 0;
         Collection<T> shapes = unit.getShapes();
         for (T shape : shapes) {
-            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
-                continue;
-            }
+//            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() != null) {
+//                continue;
+//            }
             if (shape.isSelected()) {
                 count++;
             } else {
@@ -238,24 +229,6 @@ public class UnitMgr<U extends Unit, T extends Shape> {
         return count > 1;
     }
 
-//    public Collection<T> getChildrenByParent(Collection<T> childrenSet, Shape parent) {
-//        Collection<T> children = new HashSet<T>(50);
-//        for (T shape : childrenSet) {
-//            if (shape instanceof Ownerable && ((Ownerable) shape).getOwner() == parent)
-//                children.add(shape);
-//        }
-//        return children;
-//    }
-
-    /*
-     * Normalize the pin text when chip is rotated or mirrored
-     * Rule 1:Horizontal Pin-Text alignment:Anchor Point must be above Pin line
-     * Rule 2:Horizontal Pin-Text alignment:Anchor Point must be left most to Pin line
-     */
-
-//    public Texture getTextureByTag(U unit, String tag) {
-//        return this.getTextureByTag(tag, unit.getShapes());
-//    }
 
     public T getLabelByTag(U unit, String tag) {
         Collection<T> shapes = unit.getShapes(Label.class);
@@ -280,7 +253,7 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 //    }
 
 
-    private void normalizePinText(PinLineable pin) {
+//    private void normalizePinText(PinLineable pin) {
 //        for (Texture text : pin.getPinText()) {
 //            switch (pin.getOrientation()) {
 //            case WEST:
@@ -299,7 +272,7 @@ public class UnitMgr<U extends Unit, T extends Shape> {
 //                break;
 //            }
 //        }
-    }
+//    }
 
 //    public void normalizePinText(Shape shape) {
 //        if (shape instanceof PinLineable) {

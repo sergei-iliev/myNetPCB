@@ -127,26 +127,26 @@ public class Arc  extends Shape implements Resizeable, Externalizable{
                
         
     }
-    public boolean isStartAnglePointClicked(double x,double y){  
-        Point p=this.arc.getStart();
-        Box box=Box.fromRect(p.x - this.selectionRectWidth / 2, p.y - this.selectionRectWidth / 2,
-                     this.selectionRectWidth, this.selectionRectWidth);
-        if (box.contains((int)x,(int)y)) {
-            return true;
-        }else{                   
-            return false;
-            }
-    }       
-    public boolean isExtendAnglePointClicked(double x,double y){
-        Point p=this.arc.getEnd();
-        Box box=Box.fromRect(p.x - this.selectionRectWidth / 2, p.y - this.selectionRectWidth / 2,
-                     this.selectionRectWidth, this.selectionRectWidth);
-        if (box.contains((int)x,(int)y)) {
-            return true;
-        }else{                   
-            return false;
-            }
-    }       
+//    public boolean isStartAnglePointClicked(double x,double y){  
+//        Point p=this.arc.getStart();
+//        Box box=Box.fromRect(p.x - this.selectionRectWidth / 2, p.y - this.selectionRectWidth / 2,
+//                     this.selectionRectWidth, this.selectionRectWidth);
+//        if (box.contains((int)x,(int)y)) {
+//            return true;
+//        }else{                   
+//            return false;
+//            }
+//    }       
+//    public boolean isExtendAnglePointClicked(double x,double y){
+//        Point p=this.arc.getEnd();
+//        Box box=Box.fromRect(p.x - this.selectionRectWidth / 2, p.y - this.selectionRectWidth / 2,
+//                     this.selectionRectWidth, this.selectionRectWidth);
+//        if (box.contains((int)x,(int)y)) {
+//            return true;
+//        }else{                   
+//            return false;
+//            }
+//    }       
     @Override
     public String toXML() {
         return "<arc  x=\""+Utilities.roundDouble(this.arc.pc.x,1)+"\" y=\""+Utilities.roundDouble(this.arc.pc.y,1)+"\" width=\""+Utilities.roundDouble(this.arc.width,1)+"\" height=\""+Utilities.roundDouble(this.arc.height,1)+ "\"  thickness=\""+this.thickness+"\" start=\""+Utilities.roundDouble(this.arc.startAngle,1)+"\" extend=\""+Utilities.roundDouble(this.arc.endAngle,1)+"\" fill=\""+this.getFill().index+"\"/>\r\n";

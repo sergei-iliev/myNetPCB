@@ -1,6 +1,31 @@
 package com.mynetpcb.core.capi.unit;
 
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.swing.event.EventListenerList;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
 import com.mynetpcb.core.capi.Drawable;
 import com.mynetpcb.core.capi.Frameable;
 import com.mynetpcb.core.capi.Grid;
@@ -17,7 +42,6 @@ import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.DefaultOrderedList;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.layer.OrderedList;
-import com.mynetpcb.core.capi.pin.PinLineable;
 import com.mynetpcb.core.capi.print.PrintCallable;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractShapeFactory;
@@ -31,35 +55,6 @@ import com.mynetpcb.core.capi.undo.UndoCallback;
 import com.mynetpcb.core.capi.undo.UndoProvider;
 import com.mynetpcb.core.capi.undo.Undoable;
 import com.mynetpcb.d2.shapes.Box;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.swing.event.EventListenerList;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.w3c.dom.Node;
-
-import org.xml.sax.SAXException;
 
 
 public abstract class Unit<S extends Shape> implements ShapeEventDispatcher, PrintCallable,Undoable, Cloneable,Clipboardable {
@@ -387,9 +382,9 @@ public double getViewportPositionY() {
             }
 
             //isolate simple pin text/SIMPLE_TEXT
-            if(shape instanceof PinLineable){
-                 continue;
-            }
+//            if(shape instanceof PinLineable){
+//                 continue;
+//            }
            
 //            if (shape instanceof Textable) {
 //                tmp = ((Textable)shape).getChipText().getBoundingShape();

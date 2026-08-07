@@ -31,7 +31,6 @@ public class SymbolEventMgr extends EventMgr<SymbolComponent,Shape> {
         hash.put("cursor",new CursorEventHandle<SymbolComponent,Shape>(component));
         hash.put("resize",new ResizeEventHandle<SymbolComponent,Shape>(component));
         hash.put("texture",new TextureEventHandle<SymbolComponent,Shape>(component));
-//        hash.put("reshape",new ReshapeEventHandle(component));
         hash.put("dragheand",new DragingEventHandle<SymbolComponent,Shape>(component)); 
         hash.put("arc.start.angle",new ArcStartAngleEventHandle<SymbolComponent,Shape>(component));
         hash.put("arc.extend.angle",new ArcExtendAngleEventHandler<SymbolComponent,Shape>(component));        
@@ -44,7 +43,7 @@ public class SymbolEventMgr extends EventMgr<SymbolComponent,Shape> {
         if(handle!=null){
            handle.setTarget(target);
             //****generate event
-            if(eventKey.equals("line")||eventKey.equals("texture")||eventKey.equals("move")||(eventKey.equals("resize"))||eventKey.equals("reshape")){             
+            if(eventKey.equals("line")||eventKey.equals("texture")||eventKey.equals("move")||(eventKey.equals("resize"))){             
                handle.getComponent().getModel().getUnit().fireShapeEvent(new ShapeEvent(target, ShapeEvent.SELECT_SHAPE));
             }              
             if(eventKey.equals("component")||eventKey.equals("origin")){

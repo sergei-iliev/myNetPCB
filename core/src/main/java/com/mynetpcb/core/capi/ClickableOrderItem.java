@@ -1,6 +1,6 @@
 package com.mynetpcb.core.capi;
 
-
+@Deprecated
 public final class ClickableOrderItem{
       private final int elementIndex; 
       private final long orderWeight;

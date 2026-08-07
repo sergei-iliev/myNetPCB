@@ -49,8 +49,7 @@ public class Pin extends Shape implements Pinable,CompositeTextable,Externalizab
         INPUT_LOW,
         CLOCK_LOW,
         OUTPUT_LOW,
-        FALLING_EDGE_CLOCK,
-        NON_LOGIC                
+        FALLING_EDGE_CLOCK                 
     }
     
     public enum Position{            

@@ -1,13 +1,28 @@
 package com.mynetpcb.circuit.shape;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import com.mynetpcb.circuit.unit.Circuit;
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.line.LinePoint;
 import com.mynetpcb.core.capi.line.Sublineable;
-import com.mynetpcb.core.capi.line.Trackable.ResumeState;
-import com.mynetpcb.core.capi.pin.PinLineable.Pair;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.AbstractLine;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -21,24 +36,6 @@ import com.mynetpcb.d2.shapes.Rectangle;
 import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.d2.shapes.Vector;
-
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class SCHWire extends AbstractLine implements Sublineable,Externalizable {
     
