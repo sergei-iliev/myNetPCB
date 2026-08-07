@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,43 +52,24 @@ public class Polygon extends GeometricFigure{
     }
     
     public boolean contains(double xx,double yy){
-      double x=xx;
-      double y=yy;
+        int n = points.size();
+        if (n < 3) {
+            return false;
+        }
 
-          
-      boolean inside = false;
-      // use some raycasting to test hits
-      // https://github.com/substack/point-in-polygon/blob/master/index.js
-      
-      //flat out points
-      List<Double> p = new ArrayList<>();
+        boolean inside = false;
+        for (int i = 0, j = n - 1; i < n; j = i++) {
+            double xi = points.get(i).x;
+            double yi = points.get(i).y;
+            double xj = points.get(j).x;
+            double yj = points.get(j).y;
 
-      for (int i = 0, il = this.points.size(); i < il; i++)
-      {
-          p.add(this.points.get(i).x);
-          p.add(this.points.get(i).y);
-      }
-
-      
-        int length = (p.size() / 2);
-
-        for (int i = 0, j = length - 1; i < length; j = i++)
-        {
-            double xi = p.get(i * 2);
-            double yi = p.get((i * 2) + 1);
-            double xj = p.get(j * 2);
-            double yj = p.get((j * 2) + 1);
-            
-            boolean intersect = ((yi > y) != (yj > y)) && (x < ((xj - xi) * ((y - yi) / (yj - yi))) + xi);
-
-            if (intersect)
-            {
+            if (((yi > yy) != (yj > yy))
+                    && (xx < ((xj - xi) * ((yy - yi) / (yj - yi))) + xi)) {
                 inside = !inside;
             }
         }
-      
-
-      return inside;           
+        return inside;
     }
     public void move(double offsetX,double offsetY){
         this.points.forEach(point->{
