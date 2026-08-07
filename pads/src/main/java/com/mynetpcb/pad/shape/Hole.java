@@ -27,6 +27,7 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.unit.Footprint;
@@ -176,27 +177,29 @@ public class Hole extends HoleShape implements Externalizable{
     }
 
     @Override
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {        
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         Box rect = this.circle.box();
         rect.scale(scale.getScaleX());
         if (!rect.intersects(viewportWindow)) {
-                return;
-        }        
-        
-        Circle  c=this.circle.clone();        
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(),- viewportWindow.getY());                  
-        g2.setColor(isSelected() ? Color.GRAY : fillColor);        
-        c.paint(g2,true);
-                
-        c.grow(-this.thickness*scale.getScaleX());               
-        g2.setColor(Color.BLACK);
-        c.paint(g2,true);
+            return;
+        }
 
-        
-        Utilities.drawCrosshair(g2,  null,(int)(selectionRectWidth*scale.getScaleX()),c.getCenter());
-        
+        var c = (Circle) PadFactory.acquire(Circle.class);
+        try {
+            c.assign(this.circle);
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(), -viewportWindow.getY());
+            g2.setColor(isSelected() ? Color.GRAY : fillColor);
+            c.paint(g2, true);
 
+            c.grow(-this.thickness * scale.getScaleX());
+            g2.setColor(Color.BLACK);
+            c.paint(g2, true);
+
+            Utilities.drawCrosshair(g2, null, (int) (selectionRectWidth * scale.getScaleX()), c.getCenter());
+        } finally {
+            PadFactory.release(c);
+        }
     }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {    
