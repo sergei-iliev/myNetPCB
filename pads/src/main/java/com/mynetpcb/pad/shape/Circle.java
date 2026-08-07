@@ -24,6 +24,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.unit.Footprint;
@@ -226,23 +227,28 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
                 return;
         }
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
-        
-        com.mynetpcb.d2.shapes.Circle  c=this.circle.clone();
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        if (fill == Fill.EMPTY) { //framed
-            double wireWidth = thickness * scale.getScaleX();
-            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-            //transparent rect
-            c.paint(g2, false);
-        } else { //filled
-            AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
-            Composite originalComposite = g2.getComposite();                     
-            g2.setComposite(composite );             
-            c.paint(g2,true);
-            g2.setComposite(originalComposite);
-        }                
+
+        var c = (com.mynetpcb.d2.shapes.Circle) PadFactory.acquire(com.mynetpcb.d2.shapes.Circle.class);
+        try {
+            c.assign(this.circle);
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(), -viewportWindow.getY());
+
+            if (fill == Fill.EMPTY) { //framed
+                double wireWidth = thickness * scale.getScaleX();
+                g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+                //transparent rect
+                c.paint(g2, false);
+            } else { //filled
+                AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);
+                Composite originalComposite = g2.getComposite();
+                g2.setComposite(composite);
+                c.paint(g2, true);
+                g2.setComposite(originalComposite);
+            }
+        } finally {
+            PadFactory.release(c);
+        }
 
     }
     
