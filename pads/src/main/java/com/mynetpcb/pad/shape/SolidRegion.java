@@ -27,6 +27,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Utils;
@@ -179,32 +180,36 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
         }
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
 
-        Polygon r=this.polygon.clone();   
-    
-        // draw floating point
-        if (this.isFloating()) {
-            Point p = this.floatingEndPoint.clone();                              
-            r.points.add(p); 
-        }
-    
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-    
-        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
-        Composite originalComposite = g2.getComposite();                     
-        g2.setComposite(composite ); 
-        
-        g2.setStroke(new BasicStroke());
+        var r = (Polygon) PadFactory.acquire(Polygon.class);
+        try {
+            r.assign(this.polygon);
 
-        //transparent rect
-        if (this.isFloating()) {
-          r.paint(g2, false);
-        }else{
-          r.paint(g2, true);  
+            // draw floating point
+            if (this.isFloating()) {
+                r.points.add(this.floatingEndPoint.clone());
+            }
+
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(), -viewportWindow.getY());
+
+            AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);
+            Composite originalComposite = g2.getComposite();
+            g2.setComposite(composite);
+
+            g2.setStroke(new BasicStroke());
+
+            //transparent rect
+            if (this.isFloating()) {
+                r.paint(g2, false);
+            } else {
+                r.paint(g2, true);
+            }
+
+            g2.setComposite(originalComposite);
+        } finally {
+            PadFactory.release(r);
         }
-        
-        g2.setComposite(originalComposite);
-                
+
     }
     @Override
     public void print(Graphics2D g2,PrintContext printContext,int layermask) {

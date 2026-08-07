@@ -22,6 +22,12 @@ public class Polygon extends GeometricFigure{
         });  
         return copy;
     }
+    @Override
+    public void assign(GeometricFigure drawing) {
+        Polygon src = (Polygon) drawing;
+        this.points.clear();
+        src.points.forEach(point -> this.points.add(point.clone()));
+    }
     
     public Box box(){
       return new Box(this.points);       
