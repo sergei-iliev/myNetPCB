@@ -259,9 +259,15 @@ public class RoundRectangle extends Rectangle {
             g2.fill(polygon);             
             
             if(rounding!=0){
-                for (Arc arc : this.arcs) {
-                   Circle circle=new Circle(arc.pc,arc.r);
-                   circle.paint(g2, true); 
+                var c = (Circle) PadFactory.acquire(Circle.class);
+                try {
+                    for (Arc arc : this.arcs) {
+                        c.pc.set(arc.pc);
+                        c.r = arc.r;
+                        c.paint(g2, true);
+                    }
+                } finally {
+                    PadFactory.release(c);
                 }
             }                        
         }else{
