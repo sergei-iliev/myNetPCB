@@ -41,12 +41,22 @@ public class Ellipse extends GeometricFigure {
 
         return (tdx * tdx) / (this.width * this.width) + (tdy * tdy) / (this.height * this.height) <= 1;
     }    
-    public Box box(){
-        Point topleft=this.pc.clone();
-        topleft.move(-this.width,-this.height);
-        Rectangle rect=new Rectangle(topleft.x,topleft.y,2*this.width,2*this.height);
-        rect.rotate(this.rotate,this.pc);
-        return rect.box();
+    public Box box() {
+        if (Utils.EQ(this.rotate, 0)) {
+            return new Box(
+                this.pc.x - this.width, this.pc.y - this.height,
+                this.pc.x + this.width, this.pc.y + this.height
+            );
+        }
+        double rad = Utils.radians(this.rotate);
+        double cos = Math.abs(Math.cos(rad));
+        double sin = Math.abs(Math.sin(rad));
+        double halfW = this.width * cos + this.height * sin;
+        double halfH = this.width * sin + this.height * cos;
+        return new Box(
+            this.pc.x - halfW, this.pc.y - halfH,
+            this.pc.x + halfW, this.pc.y + halfH
+        );
     }      
     
     public void move(double offsetX,double offsetY){
