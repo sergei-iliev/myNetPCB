@@ -25,6 +25,12 @@ public class Polyline<P extends Point> extends GeometricFigure{
         });  
         return copy;
     }
+    @Override
+    public void assign(GeometricFigure drawing) {
+        Polyline<?> src = (Polyline<?>) drawing;
+        this.points.clear();
+        src.points.forEach(point -> this.points.add(point.clone()));
+    }
     public void remove(double x,double y){
         Point item=new Point(x,y);
         points.removeIf(p->p.equals(item));       

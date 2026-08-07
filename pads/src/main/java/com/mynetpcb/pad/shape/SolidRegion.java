@@ -148,20 +148,24 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
                 this.polygon.rotate(angle,origin);
     }
     @Override
-    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {                               
-            Point pt=null;
-            if(resizingPoint!=null){
-                pt=resizingPoint.clone();
-                pt.scale(scale.getScaleX());
-                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-            }
-           
-            Polygon r=this.polygon.clone();   
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+        Point pt = null;
+        if (resizingPoint != null) {
+            pt = resizingPoint.clone();
+            pt.scale(scale.getScaleX());
+            pt.move(-viewportWindow.getX(), -viewportWindow.getY());
+        }
+        var r = (Polygon) PadFactory.acquire(Polygon.class);
+        try {
+            r.assign(this.polygon);
             r.scale(scale.getScaleX());
-            r.move(-viewportWindow.getX(),- viewportWindow.getY());
-            for(var p:r.points){
-              Utilities.drawCircle(g2,  pt,(Point)p); 
-            }                                               
+            r.move(-viewportWindow.getX(), -viewportWindow.getY());
+            for (var p : r.points) {
+                Utilities.drawCircle(g2, pt, (Point) p);
+            }
+        } finally {
+            PadFactory.release(r);
+        }
     }
 
     @Override

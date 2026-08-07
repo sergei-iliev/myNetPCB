@@ -96,15 +96,20 @@ public class CircularShape implements PadDrawing {
     public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
                               ClearanceSource source) {
         Box rect = getBoundingShape();
-        rect.grow(source.getClearance());                                  
-        
-        g2.setColor(Color.BLACK);        
-        Circle c = this.circle.clone();
-        c.r=rect.getWidth()/2;
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(), -viewportWindow.getY());
-        c.paint(g2, true);
-        
+        rect.grow(source.getClearance());
+
+        g2.setColor(Color.BLACK);
+        var c = (Circle) PadFactory.acquire(Circle.class);
+        try {
+            c.assign(this.circle);
+            c.r = rect.getWidth() / 2;
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(), -viewportWindow.getY());
+            c.paint(g2, true);
+        } finally {
+            PadFactory.release(c);
+        }
+
         //1. THERMAL makes sense if pad has copper on source layer
         if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
             return; //not on the same layer
@@ -149,11 +154,16 @@ public class CircularShape implements PadDrawing {
     public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
                                
         
-        g2.setColor(printContext.getBackgroundColor());      
-        Circle c=circle.clone();
-        c.grow(source.getClearance());                
-        c.paint(g2, true);
-        
+        g2.setColor(printContext.getBackgroundColor());
+        var c = (Circle) PadFactory.acquire(Circle.class);
+        try {
+            c.assign(circle);
+            c.grow(source.getClearance());
+            c.paint(g2, true);
+        } finally {
+            PadFactory.release(c);
+        }
+
         //1. THERMAL makes sense if pad has copper on source layer
         if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
             return; //not on the same layer

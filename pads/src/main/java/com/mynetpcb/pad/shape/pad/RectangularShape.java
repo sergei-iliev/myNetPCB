@@ -92,18 +92,20 @@ public class RectangularShape implements PadDrawing {
     @Override
     public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
                               ClearanceSource source) {
-        Rectangle r=this.rect.clone();
-        r.grow(source.getClearance());         
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-        g2.setColor(Color.BLACK);
-        r.paint(g2,true);
-        
-        //1. THERMAL makes sense if pad has copper on source layer
-        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
-            return; //not on the same layer
-        }
-        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	  
+        var r = (Rectangle) PadFactory.acquire(Rectangle.class);
+        try {
+            r.assign(this.rect);
+            r.grow(source.getClearance());
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(), -viewportWindow.getY());
+            g2.setColor(Color.BLACK);
+            r.paint(g2, true);
+
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	  
             //Utilities.drawCrosshair(g2, null,300,r.points.get(0));
             //Utilities.drawCrosshair(g2, null,300,r.points.get(3));
         	Pad pad=(Pad)padRef.get();        	          	              
@@ -159,20 +161,26 @@ public class RectangularShape implements PadDrawing {
             g2.setComposite(originalComposite);
             PadFactory.release(line);
         }
+        } finally {
+            PadFactory.release(r);
+        }
 
     }
 
     @Override
     public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
-        g2.setColor(printContext.getBackgroundColor());  
-        Rectangle r=this.rect.clone();
-        r.grow(source.getClearance());                 
-        r.paint(g2,true);
-        //1. THERMAL makes sense if pad has copper on source layer
-        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
-            return; //not on the same layer
-        }
-        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	        	          	              
+        g2.setColor(printContext.getBackgroundColor());
+        var r = (Rectangle) PadFactory.acquire(Rectangle.class);
+        try {
+            r.assign(this.rect);
+            r.grow(source.getClearance());
+            r.paint(g2, true);
+
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	        	          	              
         	g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:source.getCopper().getColor());              
             double d=this.rect.points.get(0).distanceTo(this.rect.points.get(1));
             double distance=r.points.get(0).distanceTo(r.points.get(3));
@@ -214,7 +222,10 @@ public class RectangularShape implements PadDrawing {
             
             PadFactory.release(line);
         }
-        
+        } finally {
+            PadFactory.release(r);
+        }
+
     }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {

@@ -16,6 +16,7 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.unit.Footprint;
@@ -60,12 +61,17 @@ public class Drill extends Shape implements Externalizable{
      this.circle.rotate(alpha,pt);        
     }
     @Override
-    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermaskId) {      
+    public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermaskId) {
         g2.setColor(fillColor);
-        Circle c=this.circle.clone();
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(),- viewportWindow.getY());
-        c.paint(g2,true);                       
+        var c = (Circle) PadFactory.acquire(Circle.class);
+        try {
+            c.assign(this.circle);
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(), -viewportWindow.getY());
+            c.paint(g2, true);
+        } finally {
+            PadFactory.release(c);
+        }
     }
     
     @Override

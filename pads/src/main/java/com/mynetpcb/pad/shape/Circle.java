@@ -249,20 +249,24 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
     }
     
     @Override
-    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {        
-        Point pt=null;
-        if(resizingPoint!=null){
-            pt=resizingPoint.clone();
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+        Point pt = null;
+        if (resizingPoint != null) {
+            pt = resizingPoint.clone();
             pt.scale(scale.getScaleX());
-            pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-        }        
-        com.mynetpcb.d2.shapes.Circle c=this.circle.clone();
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(),- viewportWindow.getY());
-
-        for(Point p:c.vertices()){
-            Utilities.drawCircle(g2,  pt,p);
-        }                    
+            pt.move(-viewportWindow.getX(), -viewportWindow.getY());
+        }
+        var c = (com.mynetpcb.d2.shapes.Circle) PadFactory.acquire(com.mynetpcb.d2.shapes.Circle.class);
+        try {
+            c.assign(this.circle);
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(), -viewportWindow.getY());
+            for (Point p : c.vertices()) {
+                Utilities.drawCircle(g2, pt, p);
+            }
+        } finally {
+            PadFactory.release(c);
+        }
     }
     
     @Override

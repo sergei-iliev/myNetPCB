@@ -54,19 +54,22 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         return copy;
     }
     @Override
-    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {        
-        Point pt=null;
-        if(resizingPoint!=null){
-        	pt=resizingPoint.clone();
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+        Point pt = null;
+        if (resizingPoint != null) {
+            pt = resizingPoint.clone();
             pt.scale(scale.getScaleX());
-            pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-        }        
-        com.mynetpcb.d2.shapes.Arc a=this.arc.clone();
-        a.scale(scale.getScaleX());
-        a.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        Utilities.drawCircle(g2,  pt,a.getStart(),a.getEnd(),a.getMiddle(),a.getCenter());
-                            
+            pt.move(-viewportWindow.getX(), -viewportWindow.getY());
+        }
+        var a = (com.mynetpcb.d2.shapes.Arc) PadFactory.acquire(com.mynetpcb.d2.shapes.Arc.class);
+        try {
+            a.assign(this.arc);
+            a.scale(scale.getScaleX());
+            a.move(-viewportWindow.getX(), -viewportWindow.getY());
+            Utilities.drawCircle(g2, pt, a.getStart(), a.getEnd(), a.getMiddle(), a.getCenter());
+        } finally {
+            PadFactory.release(a);
+        }
     }
     
     @Override

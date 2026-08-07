@@ -114,21 +114,24 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
         this.roundRect.mirror(line);        
     }
     @Override
-    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {                               
-            Point pt=null;
-            if(resizingPoint!=null){
-                pt=resizingPoint.clone();
-                pt.scale(scale.getScaleX());
-                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-            }
-            RoundRectangle r=this.roundRect.clone();   
+    public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
+        Point pt = null;
+        if (resizingPoint != null) {
+            pt = resizingPoint.clone();
+            pt.scale(scale.getScaleX());
+            pt.move(-viewportWindow.getX(), -viewportWindow.getY());
+        }
+        var r = (RoundRectangle) PadFactory.acquire(RoundRectangle.class);
+        try {
+            r.assign(this.roundRect);
             r.scale(scale.getScaleX());
-            r.move(-viewportWindow.getX(),- viewportWindow.getY());
-
-            for(var p:r.points){
-              Utilities.drawCircle(g2,  pt,(Point)p); 
-            }        
-        
+            r.move(-viewportWindow.getX(), -viewportWindow.getY());
+            for (var p : r.points) {
+                Utilities.drawCircle(g2, pt, (Point) p);
+            }
+        } finally {
+            PadFactory.release(r);
+        }
     }
     
     @Override

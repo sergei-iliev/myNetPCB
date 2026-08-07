@@ -87,19 +87,21 @@ public class PolygonShape implements PadDrawing {
     @Override
     public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
                               ClearanceSource source) {
-        g2.setColor(Color.BLACK); 
-        Hexagon h = this.hexagon.clone();
-        h.grow(source.getClearance());
-        h.scale(scale.getScaleX());
-        h.move(-viewportWindow.getX(), -viewportWindow.getY());
-        h.paint(g2, true);
-        
-        //1. THERMAL makes sense if pad has copper on source layer
-        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
-            return; //not on the same layer
-        }
-        
-        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	          	      	          	 
+        g2.setColor(Color.BLACK);
+        var h = (Hexagon) PadFactory.acquire(Hexagon.class);
+        try {
+            h.assign(this.hexagon);
+            h.grow(source.getClearance());
+            h.scale(scale.getScaleX());
+            h.move(-viewportWindow.getX(), -viewportWindow.getY());
+            h.paint(g2, true);
+
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+
+            if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	          	      	          	 
             g2.setStroke(new BasicStroke((float)((this.hexagon.width/3)*scale.getScaleX()),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
             g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
             
@@ -117,10 +119,13 @@ public class PolygonShape implements PadDrawing {
             drawLine(g2,h,2);
 
             g2.setComposite(originalComposite);
-            
-            
-      }
-        
+
+
+        }
+        } finally {
+            PadFactory.release(h);
+        }
+
     }
     /**
      * Utility to avoid repeat
@@ -148,23 +153,28 @@ public class PolygonShape implements PadDrawing {
     }
     @Override
     public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
-        g2.setColor(printContext.getBackgroundColor());       
-        Hexagon h = this.hexagon.clone();
-        h.grow(source.getClearance());                
-        h.paint(g2, true);
-        //1. THERMAL makes sense if pad has copper on source layer
-        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
-            return; //not on the same layer
-        }
-        
-        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	          	      	          	 
+        g2.setColor(printContext.getBackgroundColor());
+        var h = (Hexagon) PadFactory.acquire(Hexagon.class);
+        try {
+            h.assign(this.hexagon);
+            h.grow(source.getClearance());
+            h.paint(g2, true);
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+
+            if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	          	      	          	 
             g2.setStroke(new BasicStroke((float)((this.hexagon.width/3)),BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
         	g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:source.getCopper().getColor()); 
             
             drawLine(g2,h,0);
             drawLine(g2,h,1);
             drawLine(g2,h,2);
-   
+
+        }
+        } finally {
+            PadFactory.release(h);
         }
     }
     @Override

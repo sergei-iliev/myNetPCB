@@ -89,21 +89,20 @@ public class OvalShape implements PadDrawing {
     @Override
     public void drawClearance(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale,
                               ClearanceSource source) {
-                                       
-        g2.setColor(Color.BLACK);        
-        Obround o=this.obround.clone();
-        o.grow(source.getClearance(),this.padRef.get().getRotate());
+        g2.setColor(Color.BLACK);
+        var o = (Obround) PadFactory.acquire(Obround.class);
+        try {
+            o.assign(this.obround);
+            o.grow(source.getClearance(), this.padRef.get().getRotate());
+            o.scale(scale.getScaleX());
+            o.move(-viewportWindow.getX(), -viewportWindow.getY());
+            o.paint(g2, true);
 
-        
-        o.scale(scale.getScaleX());
-        o.move(-viewportWindow.getX(), -viewportWindow.getY());
-        o.paint(g2, true);
-        
-        //1. THERMAL makes sense if pad has copper on source layer
-        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
-            return; //not on the same layer
-        }
-        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	        	          	              
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	        	          	              
             g2.setColor(source.isSelected()? Color.GRAY :source.getCopper().getColor());
             
             Composite originalComposite = g2.getComposite();
@@ -148,22 +147,27 @@ public class OvalShape implements PadDrawing {
             
             g2.setComposite(originalComposite);
             PadFactory.release(line);
-            
-      }
-        
+
+        }
+        } finally {
+            PadFactory.release(o);
+        }
+
     }
 
     @Override
     public void printClearance(Graphics2D g2, PrintContext printContext, ClearanceSource source) {
-        Obround o=this.obround.clone();
-        g2.setColor(printContext.getBackgroundColor());          
-        o.grow(source.getClearance(),this.padRef.get().getRotate());
-        o.paint(g2, true);
-        //1. THERMAL makes sense if pad has copper on source layer
-        if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
-            return; //not on the same layer
-        }
-        if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	        	          	              
+        var o = (Obround) PadFactory.acquire(Obround.class);
+        try {
+            g2.setColor(printContext.getBackgroundColor());
+            o.assign(this.obround);
+            o.grow(source.getClearance(), this.padRef.get().getRotate());
+            o.paint(g2, true);
+            //1. THERMAL makes sense if pad has copper on source layer
+            if ((source.getCopper().getLayerMaskID() & padRef.get().getCopper().getLayerMaskID()) == 0) {
+                return; //not on the same layer
+            }
+            if(source.isSameNet((Net)padRef.get()) &&source.getPadConnection()==PadShape.PadConnection.THERMAL){        	           	      	        	       	        	          	              
         	g2.setColor(printContext.isBlackAndWhite()?Color.BLACK:source.getCopper().getColor());          
             //horizontal line
             double r=o.getDiameter()/2;
@@ -198,9 +202,12 @@ public class OvalShape implements PadDrawing {
             
 
             PadFactory.release(line);
-            
-      }
-        
+
+        }
+        } finally {
+            PadFactory.release(o);
+        }
+
     }
 
     @Override

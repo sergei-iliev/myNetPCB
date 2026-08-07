@@ -9,6 +9,7 @@ import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Segment;
@@ -420,43 +421,50 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
                 return;
         }
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
-        
-        Polyline r=this.polyline.clone();   
-        
-        // draw floating point
-        if (this.isFloating()) {                                                    
-            if(this.getResumeState()==ResumeState.ADD_AT_FRONT){                
-                Point p = this.floatingEndPoint.clone();
-                r.points.add(0,p);                
-            }else{
-                            
-                Point p = this.floatingEndPoint.clone();
-                r.add(p);                                
-            }            
+
+        var r = (Polyline) PadFactory.acquire(Polyline.class);
+        try {
+            r.assign(this.polyline);
+
+            // draw floating point
+            if (this.isFloating()) {
+                if (this.getResumeState() == ResumeState.ADD_AT_FRONT) {
+                    r.points.add(0, this.floatingEndPoint.clone());
+                } else {
+                    r.add(this.floatingEndPoint.clone());
+                }
+            }
+
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(), -viewportWindow.getY());
+
+            double wireWidth = thickness * scale.getScaleX();
+            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+
+            r.paint(g2, false);
+        } finally {
+            PadFactory.release(r);
         }
-        
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        double wireWidth = thickness * scale.getScaleX();
-        g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-       
-        r.paint(g2, false);              
     }
     @Override
     public void drawControlShape(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale) {
-        Point pt=null;
-        if(resizingPoint!=null){
-            pt=resizingPoint.clone();
+        Point pt = null;
+        if (resizingPoint != null) {
+            pt = resizingPoint.clone();
             pt.scale(scale.getScaleX());
-            pt.move(-viewportWindow.getX(),- viewportWindow.getY());
+            pt.move(-viewportWindow.getX(), -viewportWindow.getY());
         }
-        Polyline r=this.polyline.clone(); 
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-        for(Object p:r.points){
-          Utilities.drawCircle(g2,  pt,(Point)p); 
-        }        
+        var r = (Polyline) PadFactory.acquire(Polyline.class);
+        try {
+            r.assign(this.polyline);
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(), -viewportWindow.getY());
+            for (Object p : r.points) {
+                Utilities.drawCircle(g2, pt, (Point) p);
+            }
+        } finally {
+            PadFactory.release(r);
+        }
     }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {
