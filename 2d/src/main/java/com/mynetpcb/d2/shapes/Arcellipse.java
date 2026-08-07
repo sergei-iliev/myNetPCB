@@ -33,6 +33,13 @@ public class Arcellipse extends Ellipse{
         return copy;        
         
     }
+    @Override
+    public void assign(GeometricFigure drawing) {
+        super.assign(drawing);
+        Arcellipse src = (Arcellipse) drawing;
+        this.startAngle = src.startAngle;
+        this.endAngle = src.endAngle;
+    }
     public double getSweep(){
         return Math.abs(this.endAngle);
 }

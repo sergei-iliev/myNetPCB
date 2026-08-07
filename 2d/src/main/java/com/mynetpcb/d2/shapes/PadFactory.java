@@ -20,6 +20,8 @@ public class PadFactory {
 		 cache.put(Arc.class, new Arc(new Point(), 0, 0, 0));
 		 cache.put(Polygon.class, new Polygon());
 		 cache.put(Polyline.class, new Polyline());
+		 cache.put(Ellipse.class, new Ellipse(0, 0, 0, 0));
+		 cache.put(Arcellipse.class, new Arcellipse(0, 0, 0, 0));
 	 }
 	 public static  GeometricFigure acquire(Class<? extends GeometricFigure> clazz) {
 		 var pad=cache.get(clazz);

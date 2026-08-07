@@ -27,6 +27,14 @@ public class Ellipse extends GeometricFigure {
         return copy;
     }
     @Override
+    public void assign(GeometricFigure drawing) {
+        Ellipse src = (Ellipse) drawing;
+        this.pc.set(src.pc);
+        this.width = src.width;
+        this.height = src.height;
+        this.rotate = src.rotate;
+    }
+    @Override
     public boolean contains(Point pt) {            
       return this.contains(pt.x, pt.y);
     }

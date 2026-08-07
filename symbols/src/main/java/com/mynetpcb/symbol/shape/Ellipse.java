@@ -22,6 +22,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.symbol.unit.Symbol;
@@ -126,40 +127,45 @@ public class Ellipse extends Shape implements Resizeable, Externalizable{
                 return;
         }
         g2.setColor(isSelected() ? Color.GRAY : this.fillColor);
-        
-        com.mynetpcb.d2.shapes.Ellipse e=this.ellipse.clone();   
-        e.scale(scale.getScaleX());
-        e.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        if (fill == Fill.EMPTY) { //framed
-            double wireWidth = thickness * scale.getScaleX();
-            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-            //transparent rect
-            e.paint(g2, false);
-        }else if(fill==Fill.GRADIENT){ 
-            GradientPaint gp = 
-                new GradientPaint((float)e.box().getX(), (float)e.box().getY(), 
-                                  Color.white, (float)e.box().getX(), 
-                                  (float)(e.box().getY()+e.box().getHeight()), Color.gray, true);
-            g2.setPaint(gp);
-            e.paint(g2,true);
-            g2.setColor(Color.black);
-            e.paint(g2,false);
-        }else { //filled
-            e.paint(g2,true);
+
+        var e = (com.mynetpcb.d2.shapes.Ellipse) PadFactory.acquire(com.mynetpcb.d2.shapes.Ellipse.class);
+        try {
+            e.assign(this.ellipse);
+            e.scale(scale.getScaleX());
+            e.move(-viewportWindow.getX(), -viewportWindow.getY());
+
+            if (fill == Fill.EMPTY) { //framed
+                double wireWidth = thickness * scale.getScaleX();
+                g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+                //transparent rect
+                e.paint(g2, false);
+            } else if (fill == Fill.GRADIENT) {
+                GradientPaint gp =
+                    new GradientPaint((float) e.box().getX(), (float) e.box().getY(),
+                            Color.white, (float) e.box().getX(),
+                            (float) (e.box().getY() + e.box().getHeight()), Color.gray, true);
+                g2.setPaint(gp);
+                e.paint(g2, true);
+                g2.setColor(Color.black);
+                e.paint(g2, false);
+            } else { //filled
+                e.paint(g2, true);
+            }
+
+            if (this.isSelected()) {
+                Point pt = null;
+                if (resizingPoint != null) {
+                    pt = resizingPoint.clone();
+                    pt.scale(scale.getScaleX());
+                    pt.move(-viewportWindow.getX(), -viewportWindow.getY());
+                }
+                for (Point p : e.vertices()) {
+                    Utilities.drawCircle(g2, pt, p);
+                }
+            }
+        } finally {
+            PadFactory.release(e);
         }
-        
-        if (this.isSelected()) {
-            Point pt=null;
-            if(resizingPoint!=null){
-                pt=resizingPoint.clone();
-                pt.scale(scale.getScaleX());
-                pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-            }
-            for(Point p:e.vertices()){
-              Utilities.drawCircle(g2,  pt,p); 
-            }
-        }        
     }
     @Override
     public void print(Graphics2D g2, PrintContext printContext, int layermask) {
