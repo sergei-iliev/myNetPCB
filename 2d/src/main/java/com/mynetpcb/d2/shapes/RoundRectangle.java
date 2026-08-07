@@ -35,6 +35,16 @@ public class RoundRectangle extends Rectangle {
         return copy;
                
     }
+    @Override
+    public void assign(GeometricFigure drawing) {
+        RoundRectangle src = (RoundRectangle) drawing;
+        this.points.get(0).set(src.points.get(0));
+        this.points.get(1).set(src.points.get(1));
+        this.points.get(2).set(src.points.get(2));
+        this.points.get(3).set(src.points.get(3));
+        this.rounding = src.rounding;
+        this.reset();
+    }
 
 //    /**
 //     * Create specific rounding arc 90 degrees long

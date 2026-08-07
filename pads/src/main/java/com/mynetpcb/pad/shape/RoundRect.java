@@ -14,6 +14,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.RoundRectangle;
 import com.mynetpcb.d2.shapes.Utils;
@@ -147,21 +148,24 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
         }
         
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
-        
-        RoundRectangle r=this.roundRect.clone();   
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        if (fill == Fill.EMPTY) { //framed
-            double wireWidth = thickness * scale.getScaleX();
-            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));           
-            r.paint(g2, false);
-        } else { //filled            
-            r.paint(g2,true);
-            
+
+        var r = (RoundRectangle) PadFactory.acquire(RoundRectangle.class);
+        try {
+            r.assign(this.roundRect);
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(), -viewportWindow.getY());
+
+            if (fill == Fill.EMPTY) { //framed
+                double wireWidth = thickness * scale.getScaleX();
+                g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+                r.paint(g2, false);
+            } else { //filled
+                r.paint(g2, true);
+            }
+        } finally {
+            PadFactory.release(r);
         }
 
-        
     }
 
     @Override

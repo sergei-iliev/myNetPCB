@@ -13,6 +13,7 @@ public class PadFactory {
 	 static {
 		 cache.put(Circle.class,new Circle(new Point(), 0));
 		 cache.put(Rectangle.class,new Rectangle(0, 0, 0, 0));
+		 cache.put(RoundRectangle.class, new RoundRectangle(0, 0, 0, 0, 0));
 		 cache.put(Obround.class,new Obround(0, 0, 0, 0));
 		 cache.put(Hexagon.class,new Hexagon(0, 0, 10));
 		 cache.put(Line.class, new Line(0,0,0,0));
