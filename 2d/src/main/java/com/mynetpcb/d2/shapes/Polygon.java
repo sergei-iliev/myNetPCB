@@ -24,8 +24,14 @@ public class Polygon extends GeometricFigure{
     @Override
     public void assign(GeometricFigure drawing) {
         Polygon src = (Polygon) drawing;
-        this.points.clear();
-        src.points.forEach(point -> this.points.add(point.clone()));
+        if (this.points.size() == src.points.size()) {
+            for (int i = 0; i < src.points.size(); i++) {
+                this.points.get(i).set(src.points.get(i));
+            }
+        } else {
+            this.points.clear();
+            src.points.forEach(point -> this.points.add(point.clone()));
+        }
     }
     
     public Box box(){
