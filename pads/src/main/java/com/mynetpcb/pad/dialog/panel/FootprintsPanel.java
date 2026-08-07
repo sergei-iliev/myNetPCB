@@ -1,21 +1,7 @@
 package com.mynetpcb.pad.dialog.panel;
 
 
-import com.mynetpcb.core.capi.tree.TreeNodeData;
-import com.mynetpcb.core.capi.event.ContainerEvent;
-import com.mynetpcb.core.capi.event.ContainerListener;
-import com.mynetpcb.core.capi.event.ShapeEvent;
-import com.mynetpcb.core.capi.event.ShapeListener;
-import com.mynetpcb.core.capi.event.UnitEvent;
-import com.mynetpcb.core.capi.event.UnitListener;
-import com.mynetpcb.core.capi.tree.UnitTreeCellRenderer;
-import com.mynetpcb.core.utils.Utilities;
-import com.mynetpcb.d2.shapes.Box;
-import com.mynetpcb.pad.component.FootprintComponent;
-
 import java.awt.BorderLayout;
-import java.awt.Rectangle;
-
 import java.util.UUID;
 
 import javax.swing.JPanel;
@@ -27,6 +13,18 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
+import com.mynetpcb.core.capi.event.ContainerEvent;
+import com.mynetpcb.core.capi.event.ContainerListener;
+import com.mynetpcb.core.capi.event.ShapeEvent;
+import com.mynetpcb.core.capi.event.ShapeListener;
+import com.mynetpcb.core.capi.event.UnitEvent;
+import com.mynetpcb.core.capi.event.UnitListener;
+import com.mynetpcb.core.capi.tree.TreeNodeData;
+import com.mynetpcb.core.capi.tree.UnitTreeCellRenderer;
+import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.pad.component.FootprintComponent;
 
 
 public class FootprintsPanel extends JPanel  implements TreeSelectionListener,UnitListener,ShapeListener,ContainerListener{

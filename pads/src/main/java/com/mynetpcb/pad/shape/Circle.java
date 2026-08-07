@@ -1,25 +1,5 @@
 package com.mynetpcb.pad.shape;
 
-import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Resizeable;
-import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.gerber.ArcGerberable;
-import com.mynetpcb.core.capi.gerber.Fillable;
-import com.mynetpcb.core.capi.layer.Layer;
-import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.shape.Shape.Fill;
-import com.mynetpcb.core.capi.undo.AbstractMemento;
-import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.core.utils.Utilities;
-import com.mynetpcb.d2.shapes.Box;
-import com.mynetpcb.d2.shapes.Line;
-import com.mynetpcb.d2.shapes.Point;
-import com.mynetpcb.d2.shapes.Polyline;
-import com.mynetpcb.d2.shapes.Utils;
-import com.mynetpcb.pad.unit.Footprint;
-
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -29,6 +9,24 @@ import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.core.capi.Resizeable;
+import com.mynetpcb.core.capi.ViewportWindow;
+import com.mynetpcb.core.capi.gerber.ArcGerberable;
+import com.mynetpcb.core.capi.gerber.Fillable;
+import com.mynetpcb.core.capi.layer.Layer;
+import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.undo.AbstractMemento;
+import com.mynetpcb.core.capi.undo.MementoType;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.core.utils.Utilities;
+import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.Utils;
+import com.mynetpcb.pad.unit.Footprint;
 
 public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,Externalizable{
     

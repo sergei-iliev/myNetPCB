@@ -1,8 +1,14 @@
 package com.mynetpcb.pad.shape;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import com.mynetpcb.core.capi.Externalizable;
 import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.print.PrintContext;
 import com.mynetpcb.core.capi.shape.Shape;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
@@ -10,17 +16,9 @@ import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Circle;
-import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Utils;
 import com.mynetpcb.pad.unit.Footprint;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class Drill extends Shape implements Externalizable{
     private Circle circle;    

@@ -1,16 +1,7 @@
-package com.mynetpcb.pad.shape.pad.flyweight;
+package com.mynetpcb.d2.shapes;
 
 import java.util.HashMap;
 import java.util.Map;
-
-
-import com.mynetpcb.d2.shapes.Circle;
-import com.mynetpcb.d2.shapes.GeometricFigure;
-import com.mynetpcb.d2.shapes.Hexagon;
-import com.mynetpcb.d2.shapes.Line;
-import com.mynetpcb.d2.shapes.Obround;
-import com.mynetpcb.d2.shapes.Point;
-import com.mynetpcb.d2.shapes.Rectangle;
 
 /**
  * 

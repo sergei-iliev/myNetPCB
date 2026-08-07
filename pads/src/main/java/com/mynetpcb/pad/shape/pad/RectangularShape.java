@@ -16,11 +16,11 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Rectangle;
 import com.mynetpcb.d2.shapes.Vector;
 import com.mynetpcb.pad.shape.Pad;
-import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;

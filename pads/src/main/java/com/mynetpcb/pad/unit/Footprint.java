@@ -1,37 +1,18 @@
 package com.mynetpcb.pad.unit;
 
 
-import com.mynetpcb.core.capi.Externalizable;
-import com.mynetpcb.core.capi.Grid;
-import com.mynetpcb.core.capi.Resizeable;
-import com.mynetpcb.core.capi.ViewportWindow;
-import com.mynetpcb.core.capi.layer.Layer;
-import com.mynetpcb.core.capi.print.PrintContext;
-import com.mynetpcb.core.capi.shape.Label;
-import com.mynetpcb.core.capi.shape.Shape;
-import com.mynetpcb.core.capi.unit.Unit;
-import com.mynetpcb.pad.shape.FootprintShapeFactory;
-import com.mynetpcb.pad.shape.GlyphLabel;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
-
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-
 import java.lang.ref.WeakReference;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -42,8 +23,16 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.SAXException;
+
+import com.mynetpcb.core.capi.Externalizable;
+import com.mynetpcb.core.capi.Grid;
+import com.mynetpcb.core.capi.print.PrintContext;
+import com.mynetpcb.core.capi.shape.Label;
+import com.mynetpcb.core.capi.shape.Shape;
+import com.mynetpcb.core.capi.unit.Unit;
+import com.mynetpcb.pad.shape.FootprintShapeFactory;
+import com.mynetpcb.pad.shape.GlyphLabel;
 
 
 public class Footprint extends Unit<Shape> {

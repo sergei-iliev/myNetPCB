@@ -21,9 +21,9 @@ import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.pad.shape.Pad;
-import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
 
 public class CircularShape implements PadDrawing {
     private WeakReference<PadShape> padRef;

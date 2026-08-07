@@ -15,10 +15,10 @@ import com.mynetpcb.d2.shapes.GeometricFigure;
 import com.mynetpcb.d2.shapes.Hexagon;
 import com.mynetpcb.d2.shapes.Line;
 import com.mynetpcb.d2.shapes.Obround;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Vector;
 import com.mynetpcb.pad.shape.Pad;
-import com.mynetpcb.pad.shape.pad.flyweight.PadFactory;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;

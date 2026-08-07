@@ -188,11 +188,8 @@ public class Hole extends HoleShape implements Externalizable{
         c.move(-viewportWindow.getX(),- viewportWindow.getY());                  
         g2.setColor(isSelected() ? Color.GRAY : fillColor);        
         c.paint(g2,true);
-        
-        c=this.circle.clone();
-        c.grow(-this.thickness);
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(),- viewportWindow.getY());        
+                
+        c.grow(-this.thickness*scale.getScaleX());               
         g2.setColor(Color.BLACK);
         c.paint(g2,true);
 

@@ -4,10 +4,6 @@ package com.mynetpcb.d2.shapes;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 public class Circle extends GeometricFigure{
     public Point pc;
     public double r;
