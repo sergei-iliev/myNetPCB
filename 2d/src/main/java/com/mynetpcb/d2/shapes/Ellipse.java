@@ -41,6 +41,7 @@ public class Ellipse extends GeometricFigure {
 
         return (tdx * tdx) / (this.width * this.width) + (tdy * tdy) / (this.height * this.height) <= 1;
     }    
+    /*AI gen analytic rotated AABB*/
     public Box box() {
         if (Utils.EQ(this.rotate, 0)) {
             return new Box(
