@@ -16,6 +16,7 @@ public class PadFactory {
 		 cache.put(Obround.class,new Obround(0, 0, 0, 0));
 		 cache.put(Hexagon.class,new Hexagon(0, 0, 10));
 		 cache.put(Line.class, new Line(0,0,0,0));
+		 cache.put(Arc.class, new Arc(new Point(), 0, 0, 0));
 	 }
 	 public static  GeometricFigure acquire(Class<? extends GeometricFigure> clazz) {
 		 var pad=cache.get(clazz);

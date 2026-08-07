@@ -15,6 +15,7 @@ import com.mynetpcb.core.capi.unit.Unit;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
@@ -499,21 +500,26 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
                 return;
         }
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
-        com.mynetpcb.d2.shapes.Arc  a=this.arc.clone();
-        a.scale(scale.getScaleX());
-        a.move(-viewportWindow.getX(),- viewportWindow.getY());
-        if (fill == Fill.EMPTY) { //framed
-            double wireWidth = thickness * scale.getScaleX();
-            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-            //transparent rect
-            a.paint(g2, false);
-        } else { //filled
-            AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);   
-            Composite originalComposite = g2.getComposite();                     
-            g2.setComposite(composite ); 
-            a.paint(g2,true);
-            g2.setComposite(originalComposite); 
-        }            	
+        var a = (com.mynetpcb.d2.shapes.Arc) PadFactory.acquire(com.mynetpcb.d2.shapes.Arc.class);
+        try {
+            a.assign(this.arc);
+            a.scale(scale.getScaleX());
+            a.move(-viewportWindow.getX(), -viewportWindow.getY());
+            if (fill == Fill.EMPTY) { //framed
+                double wireWidth = thickness * scale.getScaleX();
+                g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+                //transparent rect
+                a.paint(g2, false);
+            } else { //filled
+                AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);
+                Composite originalComposite = g2.getComposite();
+                g2.setComposite(composite);
+                a.paint(g2, true);
+                g2.setComposite(originalComposite);
+            }
+        } finally {
+            PadFactory.release(a);
+        }
     }
     @Override
     public void print(Graphics2D g2,PrintContext printContext,int layermask) {

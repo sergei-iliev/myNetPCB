@@ -29,6 +29,14 @@ public class Arc  extends GeometricFigure{
     public Arc clone() {        
         return new Arc(this.pc.clone(),this.r,this.startAngle,this.endAngle); 
     }
+    @Override
+    public void assign(GeometricFigure drawing) {
+        Arc src = (Arc) drawing;
+        this.pc.set(src.pc);
+        this.r = src.r;
+        this.startAngle = src.startAngle;
+        this.endAngle = src.endAngle;
+    }
     public Box box(){
         List<Point> points=new ArrayList<>();        
         Point p1=this.pc.clone();p1.translate(this.r, 0);
