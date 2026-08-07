@@ -128,9 +128,9 @@ public class Box extends GeometricFigure {
         return !this.not_intersects(other);              
     }
     
-    public Point[] getVertices() {
-        return new Point[]{this.min,new Point(this.max.x,this.min.y),this.max,new Point(this.min.x,this.max.y)};    
-    }
+//    public Point[] getVertices() {
+//        return new Point[]{this.min,new Point(this.max.x,this.min.y),this.max,new Point(this.min.x,this.max.y)};    
+//    }
     @Override
     public void rotate(double angle, Point center) {
         // TODO Implement this method
