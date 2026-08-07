@@ -29,7 +29,7 @@ public class Polyline<P extends Point> extends GeometricFigure{
     public void assign(GeometricFigure drawing) {
         Polyline<?> src = (Polyline<?>) drawing;
         this.points.clear();
-        src.points.forEach(point -> this.points.add(point.clone()));
+        src.points.forEach(point -> this.points.add((P)point.clone()));
     }
     public void remove(double x,double y){
         Point item=new Point(x,y);
