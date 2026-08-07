@@ -179,79 +179,35 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
         return arc.endAngle <0;
     }
 
-    public Point isControlRectClicked(double x,double y,ViewportWindow viewportWindow) {
-          
-          Point pt=new Point(x,y);
-  		  pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-  		  pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-  		  
-  		  Point p=this.arc.getStart();
-  		  var tmp=p.clone();
-  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY());  		  
-          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return p;
-          }                     
+    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
 
-          p=this.arc.getEnd();
-          tmp=p.clone();
-  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY());          
-          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return p;
-          }          
-          p=this.arc.getMiddle();
-          tmp=p.clone();
-  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY());                    
-          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return p;      
-          }
-          return null;
-    }
-    
-    public boolean isStartAnglePointClicked(double x,double y,ViewportWindow viewportWindow){  
-          Point pt=new Point(x,y);
-		  pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		  pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-		  
-		  var tmp=this.arc.getStart().clone();
-		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
-          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
-            return true;
-          }else{
-            return false;
-          }
-    }
-    public boolean isMidPointClicked(double x,double y,ViewportWindow viewportWindow){
-          Point pt=new Point(x,y);
-		  pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		  pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-		  
-		  var tmp=this.arc.getMiddle().clone();
-		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
-          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
-            return true;
-          }else{
-            return false;
+        for (Point v : this.arc.vertices()) {
+            if (Utils.LE(v.distanceTo(x, y), hitRadius)) {
+                return v;
+            }
         }
+        return null;
     }
-    public boolean isExtendAnglePointClicked(double x,double y,ViewportWindow viewportWindow){
-          Point pt=new Point(x,y);
-		  pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		  pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-		  
-		  var tmp=this.arc.getEnd().clone();
-		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY());         
-          if(Utils.LT(pt.distanceTo(tmp),selectionRectWidth/2)){
-            return true;
-          }else{
-            return false;
-         }
-    }        
+
+    private boolean isVertexClicked(double x, double y, Point vertex) {
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
+        return Utils.LE(vertex.distanceTo(x, y), hitRadius);
+    }
+
+    public boolean isStartAnglePointClicked(double x, double y, ViewportWindow viewportWindow) {
+        return isVertexClicked(x, y, this.arc.getStart());
+    }
+
+    public boolean isMidPointClicked(double x, double y, ViewportWindow viewportWindow) {
+        return isVertexClicked(x, y, this.arc.getMiddle());
+    }
+
+    public boolean isExtendAnglePointClicked(double x, double y, ViewportWindow viewportWindow) {
+        return isVertexClicked(x, y, this.arc.getEnd());
+    }
     @Override
     public boolean isClicked(double x,double y) {
     	if(this.fill==Fill.EMPTY) {

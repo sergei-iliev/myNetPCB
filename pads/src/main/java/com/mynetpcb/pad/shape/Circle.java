@@ -150,19 +150,15 @@ public class Circle  extends Shape implements ArcGerberable,Fillable,Resizeable,
         return true;
     }
     @Override
-    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
-        Point pt=new Point(x,y);
-		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        for(Point v:this.circle.vertices()){
-        	var tmp=v.clone();
-        		tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-        		tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
-            if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return v;
-            }                        
-        };
+    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
+
+        for (Point v : this.circle.vertices()) {
+            if (Utils.LE(v.distanceTo(x, y), hitRadius)) {
+                return v;
+            }
+        }
         return null;
     }
     @Override

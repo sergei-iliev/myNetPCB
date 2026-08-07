@@ -88,20 +88,16 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
    	 return getLinePoints().size()==3; 
     }
     @Override
-    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
-        Point pt=new Point(x,y);
-		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		pt.move(-viewportWindow.getX(),- viewportWindow.getY());                    
-                  
-        for(Point p:this.polygon.points){
-  		  var tmp=p.clone();
-  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
-            if(Utils.LE(pt.distanceTo(tmp),this.selectionRectWidth/2)){                                  
-               return p;
+    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
+
+        for (Point p : this.polygon.points) {
+            if (Utils.LE(p.distanceTo(x, y), hitRadius)) {
+                return p;
             }
         }
-        return null;        
+        return null;
     }
 
     @Override
