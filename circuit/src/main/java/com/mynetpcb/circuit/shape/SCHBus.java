@@ -43,18 +43,18 @@ public class SCHBus extends SCHWire{
     @Override
     public void fromXML(Node node)throws XPathExpressionException, ParserConfigurationException {
         Element element=(Element)node;
-        if(element.hasAttribute("thickness")){
+        //if(element.hasAttribute("thickness")){
             super.fromXML(node);            
-        }else{
-            Node n=element.getElementsByTagName("wire").item(0);
-            super.fromXML(n);
-        }
+        //}else{
+        //    Node n=element.getElementsByTagName("wire").item(0);
+        //    super.fromXML(n);
+        //}
     }
     
     @Override
     public String toXML() {            
         StringBuffer sb=new StringBuffer();
-        sb.append("<bus thickness=\""+this.getThickness()+"\">");
+        sb.append("<bus>");
         sb.append("<wirepoints>");
         for (Point point : this.polyline.points) {            
             sb.append(Utilities.roundDouble(point.x,1) + "," + Utilities.roundDouble(point.y,1) + "|");

@@ -205,7 +205,7 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
             return "";
         }
         StringBuffer sb=new StringBuffer();
-        sb.append("<wire thickness=\""+this.getThickness()+"\">");
+        sb.append("<wire>");
         sb.append("<wirepoints>");
         for (Point point : this.polyline.points) {            
             sb.append(Utilities.roundDouble(point.x,1) + "," + Utilities.roundDouble(point.y,1) + "|");
