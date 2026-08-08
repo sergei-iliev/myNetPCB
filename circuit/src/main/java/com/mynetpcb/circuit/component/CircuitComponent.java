@@ -51,6 +51,7 @@ import java.awt.event.MouseWheelEvent;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import javax.swing.JOptionPane;
 
@@ -201,74 +202,10 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                 }
                     break;
             case Mode.WIRE_MODE:
-                //getModel().getUnit().setSelected(false);
-                //***is this a new wire
-                if ((getEventMgr().getTargetEventHandle() == null) ||
-                    !(getEventMgr().getTargetEventHandle() instanceof WireEventHandle)) {
-                    //***handle popup when no active wire
-                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
-                        return; //***right button click
-                    }
-                    shape =
-                            getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
-                                                  true);
-                    if ((shape == null)||(!(shape instanceof SCHWire))) {
-                        shape = new SCHWire();
-                        getModel().getUnit().add(shape);
-                    } 
-                    else {
-                        /*Click on a wire
-                                    *1.Click at begin or end point - resume
-                                    *2.Click in between - new Wire
-                                    */
-                        Trackable wire = (Trackable)shape;
-                        if (wire.isEndPoint(scaledEvent.getX(),
-                                            scaledEvent.getY())) {
-                            //***do we need to reorder
-                        //    wire.reverse(scaledEvent.getX(),scaledEvent.getY());
-                        } else {
-                            shape = new SCHWire();                        
-                            getModel().getUnit().add(shape);
-                        }
-                    }
-                    getEventMgr().setEventHandle("wire", shape);
-                }
-                //****KEEP THE HANDLE between clicks, if wiring
+                startOrResumeTrack(event, scaledEvent, SCHWire.class, SCHWire::new, false);
                 break;
             case Mode.BUS_MODE:
-                getModel().getUnit().setSelected(false);
-                //***is this a new wire
-                if ((getEventMgr().getTargetEventHandle() == null) ||
-                    !(getEventMgr().getTargetEventHandle() instanceof WireEventHandle)) {
-                    //***handle popup when no active wire
-                    if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
-                        return; //***right button click
-                    }
-                    shape =
-                            getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(),
-                                                  true);
-                    if ((shape == null) ||(!(shape instanceof SCHBus))) {
-                        shape = new SCHBus();
-                        getModel().getUnit().add(shape);
-                    } 
-                    else {
-                        /*Click on a wire
-                                    *1.Click at begin or end point - resume
-                                    *2.Click in between - new Wire
-                                    */
-                        Trackable bus = (Trackable)shape;
-                        if (bus.isEndPoint(scaledEvent.getX(),
-                                            scaledEvent.getY())) {
-                            //***do we need to reorder
-                            //bus.reverse(scaledEvent.getX(),scaledEvent.getY());
-                        } else {
-                            shape = new SCHBus();                        
-                            getModel().getUnit().add(shape);
-                        }
-                    }
-                    getEventMgr().setEventHandle("wire", shape);
-                }
-                //****KEEP THE HANDLE between clicks, if wiring
+                startOrResumeTrack(event, scaledEvent, SCHBus.class, SCHBus::new, true);
                 break;
             case Mode.DRAGHEAND_MODE:
                 getEventMgr().setEventHandle("dragheand", null);
@@ -277,7 +214,38 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
         }
 
         super.mousePressed(event);
-    }   
+    }
+
+    private void startOrResumeTrack(MouseEvent event, MouseScaledEvent scaledEvent,
+                                    Class<? extends Shape> trackType, Supplier<Shape> factory,
+                                    boolean clearSelection) {
+        if (getEventMgr().getTargetEventHandle() != null
+                && getEventMgr().getTargetEventHandle() instanceof WireEventHandle) {
+            return; // keep handle between clicks
+        }
+        if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
+            return;
+        }
+        if (clearSelection) {
+            getModel().getUnit().setSelected(false);
+        }
+
+        Shape shape = getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true);
+
+        if (shape == null || !trackType.isInstance(shape)) {
+            shape = factory.get();
+            getModel().getUnit().add(shape);
+        } else {
+            // end point → resume; mid-segment → start a new track
+            Trackable track = (Trackable) shape;
+            if (!track.isEndPoint(scaledEvent.getX(), scaledEvent.getY())) {
+                shape = factory.get();
+                getModel().getUnit().add(shape);
+            }
+        }
+        getEventMgr().setEventHandle("wire", shape);
+    }
+
     @Override
     protected boolean defaultKeyPress(KeyEvent e) {
         if (super.defaultKeyPress(e)) {
