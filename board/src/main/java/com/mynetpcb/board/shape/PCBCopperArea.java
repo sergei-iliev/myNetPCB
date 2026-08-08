@@ -16,6 +16,7 @@ import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Utils;
@@ -276,18 +277,6 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         }
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
 
-        Polygon r=this.polygon.clone();   
-        
-        // draw floating point
-        if (this.isFloating()) {
-            Point p = this.floatingEndPoint.clone();                              
-            r.points.add(p); 
-        }
-        
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        
         g2.setStroke(new BasicStroke());
 
         Composite originalComposite = g2.getComposite();
@@ -300,11 +289,27 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
         g2.setComposite(composite );
         
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
-        
-        if (this.isFloating()) {
-          r.paint(g2, false);
-        }else{
-          r.paint(g2, true);  
+
+        Polygon r=(Polygon)PadFactory.acquire(Polygon.class);
+        try {
+            r.assign(this.polygon);
+            
+            // draw floating point
+            if (this.isFloating()) {
+                Point p = this.floatingEndPoint.clone();                              
+                r.points.add(p); 
+            }
+            
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(),- viewportWindow.getY());
+            
+            if (this.isFloating()) {
+              r.paint(g2, false);
+            }else{
+              r.paint(g2, true);  
+            }
+        } finally {
+            PadFactory.release(r);
         }
         g2.setComposite(originalComposite);
         if(this.fill==Fill.FILLED){
@@ -328,12 +333,17 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
                 pt.scale(scale.getScaleX());
                 pt.move(-viewportWindow.getX(),- viewportWindow.getY());
             }
-            Polygon r=this.polygon.clone();   
-            r.scale(scale.getScaleX());
-            r.move(-viewportWindow.getX(),- viewportWindow.getY());
-            
-            for(Object p:r.points){
-              Utilities.drawCircle(g2,  pt,(Point)p); 
+            Polygon r=(Polygon)PadFactory.acquire(Polygon.class);
+            try {
+                r.assign(this.polygon);   
+                r.scale(scale.getScaleX());
+                r.move(-viewportWindow.getX(),- viewportWindow.getY());
+                
+                for(Object p:r.points){
+                  Utilities.drawCircle(g2,  pt,(Point)p); 
+                }
+            } finally {
+                PadFactory.release(r);
             }
         } 
     }

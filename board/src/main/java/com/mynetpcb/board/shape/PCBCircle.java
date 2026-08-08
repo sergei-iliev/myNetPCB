@@ -14,9 +14,8 @@ import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
-import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.pad.shape.Circle;
 
 public class PCBCircle extends Circle implements PCBShape{
@@ -50,10 +49,6 @@ public class PCBCircle extends Circle implements PCBShape{
         }
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
         
-        com.mynetpcb.d2.shapes.Circle  c=this.circle.clone();
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
         Composite originalComposite = g2.getComposite();
         AlphaComposite composite;
         if(((CompositeLayerable)this.getOwningUnit()!=null)&&(((CompositeLayerable)this.getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID()))) {
@@ -63,15 +58,23 @@ public class PCBCircle extends Circle implements PCBShape{
         }                                               
         g2.setComposite(composite );             
 
-        
-        if (fill == Fill.EMPTY) { //framed
-            double wireWidth = thickness * scale.getScaleX();
-            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));            
-            c.paint(g2, false);
+        com.mynetpcb.d2.shapes.Circle c=(com.mynetpcb.d2.shapes.Circle)PadFactory.acquire(com.mynetpcb.d2.shapes.Circle.class);
+        try {
+            c.assign(this.circle);
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(),- viewportWindow.getY());
 
-        } else { //filled
-            c.paint(g2,true);
-        }                
+            if (fill == Fill.EMPTY) { //framed
+                double wireWidth = thickness * scale.getScaleX();
+                g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));            
+                c.paint(g2, false);
+
+            } else { //filled
+                c.paint(g2,true);
+            }
+        } finally {
+            PadFactory.release(c);
+        }
         g2.setComposite(originalComposite);
 
     }

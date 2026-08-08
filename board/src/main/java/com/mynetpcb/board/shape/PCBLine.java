@@ -15,6 +15,7 @@ import com.mynetpcb.core.capi.line.Trackable.ResumeState;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.pad.shape.Line;
@@ -61,27 +62,32 @@ public class PCBLine extends Line implements PCBShape{
         
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
         
-        Polyline r=this.polyline.clone();   
-        
-        // draw floating point
-        if (this.isFloating()) {                                                    
-            if(this.getResumeState()==ResumeState.ADD_AT_FRONT){                
-                Point p = this.floatingEndPoint.clone();
-                r.points.add(0,p);                
-            }else{
-                            
-                Point p = this.floatingEndPoint.clone();
-                r.add(p);                                
-            }            
+        Polyline r=(Polyline)PadFactory.acquire(Polyline.class);
+        try {
+            r.assign(this.polyline);
+            
+            // draw floating point
+            if (this.isFloating()) {                                                    
+                if(this.getResumeState()==ResumeState.ADD_AT_FRONT){                
+                    Point p = this.floatingEndPoint.clone();
+                    r.points.add(0,p);                
+                }else{
+                                
+                    Point p = this.floatingEndPoint.clone();
+                    r.add(p);                                
+                }            
+            }
+            
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(),- viewportWindow.getY());
+            
+            double wireWidth = thickness * scale.getScaleX();
+            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+           
+            r.paint(g2, false);
+        } finally {
+            PadFactory.release(r);
         }
-        
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        double wireWidth = thickness * scale.getScaleX();
-        g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-       
-        r.paint(g2, false);    
         g2.setComposite(originalComposite);
     }
 

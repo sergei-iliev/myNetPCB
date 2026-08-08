@@ -17,6 +17,7 @@ import com.mynetpcb.core.pad.shape.PadShape;
 import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
@@ -221,19 +222,22 @@ public class PCBTrack extends TrackShape implements PCBShape{
                 
         double lineThickness=(thickness+2*(this.clearance!=0?this.getClearance():source.getClearance())) *scale.getScaleX();            
         
-        Polyline polyline=this.polyline.clone();   
-        
-        
-        polyline.scale(scale.getScaleX());
-        polyline.move(-viewportWindow.getX(),- viewportWindow.getY());
+        Polyline polyline=(Polyline)PadFactory.acquire(Polyline.class);
+        try {
+            polyline.assign(this.polyline);
+            polyline.scale(scale.getScaleX());
+            polyline.move(-viewportWindow.getX(),- viewportWindow.getY());
 
-        g2.setStroke(new BasicStroke((float) lineThickness, 1, 1));
+            g2.setStroke(new BasicStroke((float) lineThickness, 1, 1));
 
-        g2.setColor(Color.BLACK);        
-         
-        g2.setClip(source.getClippingRegion());
-        polyline.paint(g2, false);
-        g2.setClip(null);
+            g2.setColor(Color.BLACK);        
+             
+            g2.setClip(source.getClippingRegion());
+            polyline.paint(g2, false);
+            g2.setClip(null);
+        } finally {
+            PadFactory.release(polyline);
+        }
 
 
     }
@@ -277,33 +281,38 @@ public class PCBTrack extends TrackShape implements PCBShape{
         
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
         
-        Polyline r=this.polyline.clone();   
-        
-        // draw floating point
-        if (this.isFloating()) {            
-            //front
-            if(this.getResumeState()==ResumeState.ADD_AT_FRONT){
-                Point p = this.floatingMidPoint.clone();                              
-                r.points.add(0,p); 
-                
-                p = this.floatingEndPoint.clone();
-                r.points.add(0,p);                
-            }else{
-                Point p = this.floatingMidPoint.clone();                              
-                r.add(p); 
-                            
-                p = this.floatingEndPoint.clone();
-                r.add(p);                                
-            }            
-        }
-        
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
-        double wireWidth = thickness * scale.getScaleX();
-        g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+        Polyline r=(Polyline)PadFactory.acquire(Polyline.class);
+        try {
+            r.assign(this.polyline);
+            
+            // draw floating point
+            if (this.isFloating()) {            
+                //front
+                if(this.getResumeState()==ResumeState.ADD_AT_FRONT){
+                    Point p = this.floatingMidPoint.clone();                              
+                    r.points.add(0,p); 
+                    
+                    p = this.floatingEndPoint.clone();
+                    r.points.add(0,p);                
+                }else{
+                    Point p = this.floatingMidPoint.clone();                              
+                    r.add(p); 
+                                
+                    p = this.floatingEndPoint.clone();
+                    r.add(p);                                
+                }            
+            }
+            
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(),- viewportWindow.getY());
+            
+            double wireWidth = thickness * scale.getScaleX();
+            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
 
-        r.paint(g2, false);
+            r.paint(g2, false);
+        } finally {
+            PadFactory.release(r);
+        }
         g2.setComposite(originalComposite);
     }
     
@@ -316,12 +325,17 @@ public class PCBTrack extends TrackShape implements PCBShape{
                 pt.scale(scale.getScaleX());
                 pt.move(-viewportWindow.getX(),- viewportWindow.getY());
             }
-            Polyline r=this.polyline.clone();                                       
-            r.scale(scale.getScaleX());
-            r.move(-viewportWindow.getX(),- viewportWindow.getY());
-            
-            for(Object p:r.points){
-              Utilities.drawCircle(g2,  pt,(Point)p); 
+            Polyline r=(Polyline)PadFactory.acquire(Polyline.class);
+            try {
+                r.assign(this.polyline);                                       
+                r.scale(scale.getScaleX());
+                r.move(-viewportWindow.getX(),- viewportWindow.getY());
+                
+                for(Object p:r.points){
+                  Utilities.drawCircle(g2,  pt,(Point)p); 
+                }
+            } finally {
+                PadFactory.release(r);
             }
         }        
     }

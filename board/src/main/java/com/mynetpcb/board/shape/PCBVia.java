@@ -18,6 +18,7 @@ import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
 import com.mynetpcb.d2.shapes.Circle;
 import com.mynetpcb.d2.shapes.Line;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Utils;
@@ -244,19 +245,22 @@ public class PCBVia extends ViaShape implements PCBShape{
         }
         g2.setColor(isSelected() ? Color.GRAY : fillColor);
         
-        Circle  c=this.outer.clone();
+        Circle c=(Circle)PadFactory.acquire(Circle.class);
+        try {
+            c.assign(this.outer);
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(),- viewportWindow.getY());
+            c.paint(g2, true);
+                           
             
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(),- viewportWindow.getY());
-        c.paint(g2, true);
-                       
-        
-        g2.setColor(Color.BLACK);
-        c.r=inner.r;
-        c.pc.set(inner.pc.x, inner.pc.y);
-        c.scale(scale.getScaleX());
-        c.move(-viewportWindow.getX(),- viewportWindow.getY());
-        c.paint(g2, true);        
+            g2.setColor(Color.BLACK);
+            c.assign(this.inner);
+            c.scale(scale.getScaleX());
+            c.move(-viewportWindow.getX(),- viewportWindow.getY());
+            c.paint(g2, true);
+        } finally {
+            PadFactory.release(c);
+        }
 
         g2.setColor(Color.WHITE);
         this.text.paint(g2, viewportWindow, scale,0);

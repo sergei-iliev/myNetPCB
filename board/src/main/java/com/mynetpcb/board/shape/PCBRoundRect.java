@@ -15,6 +15,7 @@ import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.RoundRectangle;
 import com.mynetpcb.pad.shape.RoundRect;
 
@@ -41,10 +42,6 @@ public class PCBRoundRect extends RoundRect implements PCBShape{
         
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
         
-        RoundRectangle r=this.roundRect.clone();   
-        r.scale(scale.getScaleX());
-        r.move(-viewportWindow.getX(),- viewportWindow.getY());
-        
         Composite originalComposite = g2.getComposite();
         AlphaComposite composite;
         if(((CompositeLayerable)this.getOwningUnit()!=null)&&(((CompositeLayerable)this.getOwningUnit()).getActiveSide()==Layer.Side.resolve(this.copper.getLayerMaskID()))) {
@@ -54,13 +51,21 @@ public class PCBRoundRect extends RoundRect implements PCBShape{
         }                                               
         g2.setComposite(composite );             
 
-        
-        if (fill == Fill.EMPTY) { //framed
-            double wireWidth = thickness * scale.getScaleX();
-            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));           
-            r.paint(g2, false);
-        } else { //filled            
-            r.paint(g2,true);            
+        RoundRectangle r=(RoundRectangle)PadFactory.acquire(RoundRectangle.class);
+        try {
+            r.assign(this.roundRect);   
+            r.scale(scale.getScaleX());
+            r.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+            if (fill == Fill.EMPTY) { //framed
+                double wireWidth = thickness * scale.getScaleX();
+                g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));           
+                r.paint(g2, false);
+            } else { //filled            
+                r.paint(g2,true);            
+            }
+        } finally {
+            PadFactory.release(r);
         }
         
         g2.setComposite(originalComposite);

@@ -14,9 +14,8 @@ import com.mynetpcb.core.capi.layer.Layer;
 import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
-import com.mynetpcb.core.utils.Utilities;
 import com.mynetpcb.d2.shapes.Box;
-import com.mynetpcb.d2.shapes.Point;
+import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.pad.shape.Arc;
 
 public class PCBArc extends Arc implements PCBShape{
@@ -50,9 +49,6 @@ public class PCBArc extends Arc implements PCBShape{
                 return;
         }
         g2.setColor(isSelected() ? Color.GRAY : copper.getColor());
-        com.mynetpcb.d2.shapes.Arc  a=this.arc.clone();
-        a.scale(scale.getScaleX());
-        a.move(-viewportWindow.getX(),- viewportWindow.getY());
 
         Composite originalComposite = g2.getComposite();
         AlphaComposite composite;
@@ -63,13 +59,22 @@ public class PCBArc extends Arc implements PCBShape{
         }                                               
         g2.setComposite(composite );             
         
-        if (fill == Fill.EMPTY) { //framed
-            double wireWidth = thickness * scale.getScaleX();
-            g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
-            //transparent rect
-            a.paint(g2, false);
-        } else { //filled
-            a.paint(g2,true);
+        com.mynetpcb.d2.shapes.Arc a=(com.mynetpcb.d2.shapes.Arc)PadFactory.acquire(com.mynetpcb.d2.shapes.Arc.class);
+        try {
+            a.assign(this.arc);
+            a.scale(scale.getScaleX());
+            a.move(-viewportWindow.getX(),- viewportWindow.getY());
+
+            if (fill == Fill.EMPTY) { //framed
+                double wireWidth = thickness * scale.getScaleX();
+                g2.setStroke(new BasicStroke((float) wireWidth, 1, 1));
+                //transparent rect
+                a.paint(g2, false);
+            } else { //filled
+                a.paint(g2,true);
+            }
+        } finally {
+            PadFactory.release(a);
         }
         g2.setComposite(originalComposite);              
     	
