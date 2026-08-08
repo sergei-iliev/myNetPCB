@@ -76,84 +76,50 @@ public class Circuit extends Unit<Shape>{
 
     @Override
     protected StringBuffer format(Collection<Shape> shapes) {
+        StringBuilder chips = new StringBuilder();
+        StringBuilder busses = new StringBuilder();
+        StringBuilder buspins = new StringBuilder();
+        StringBuilder wires = new StringBuilder();
+        StringBuilder junctions = new StringBuilder();
+        StringBuilder labels = new StringBuilder();
+        StringBuilder connectors = new StringBuilder();
+        StringBuilder noconnectors = new StringBuilder();
+        StringBuilder netlabels = new StringBuilder();
+
+        for (Shape shape : shapes) {
+            // order matters: SCHBus extends SCHWire
+            if (shape instanceof SCHSymbol) {
+                chips.append(((Externalizable) shape).toXML());
+            } else if (shape instanceof SCHBus) {
+                busses.append(((Externalizable) shape).toXML());
+            } else if (shape instanceof SCHBusPin) {
+                buspins.append(((Externalizable) shape).toXML());
+            } else if (shape instanceof SCHWire) {
+                wires.append(((Externalizable) shape).toXML());
+            } else if (shape instanceof SCHJunction) {
+                junctions.append(((Externalizable) shape).toXML());
+            } else if (shape instanceof SCHLabel) {
+                labels.append(((Externalizable) shape).toXML());
+            } else if (shape instanceof SCHConnector) {
+                connectors.append(((Externalizable) shape).toXML());
+            } else if (shape instanceof SCHNoConnector) {
+                noconnectors.append(((Externalizable) shape).toXML());
+            } else if (shape instanceof SCHNetLabel) {
+                netlabels.append(((Externalizable) shape).toXML());
+            }
+        }
+
         StringBuffer xml = new StringBuffer();
-
         xml.append("<symbols>\r\n");
-        //***   Chip symbols
-        xml.append("<chips>\r\n");
-        for (Shape shape : shapes) {
-            if (shape instanceof SCHSymbol)
-                xml.append(((Externalizable) shape).toXML());
-        }
-        xml.append("</chips>\r\n");
-
-        //***   Bus symbols
-        xml.append("<busses>\r\n");
-        for (Shape shape : shapes) {
-            if (shape instanceof SCHBus)
-                xml.append(((Externalizable) shape).toXML());
-        }
-        xml.append("</busses>\r\n");
-
-        //***  BusPins
-        xml.append("<buspins>\r\n");
-        for (Shape shape : shapes) {
-            if (shape instanceof SCHBusPin)
-                xml.append(((Externalizable) shape).toXML());
-        }
-        xml.append("</buspins>\r\n");
-
-        //***   Wire symbols
-        xml.append("<wires>\r\n");
-        for (Shape shape : shapes) {
-            if ((shape instanceof SCHWire) && !(shape instanceof SCHBus) && !(shape instanceof SCHBusPin))
-                xml.append(((Externalizable) shape).toXML());
-        }
-        xml.append("</wires>\r\n");
-
-        //***   Junction symbols
-        xml.append("<junctions>\r\n");
-        for (Shape shape : shapes) {
-            if (shape instanceof SCHJunction)
-                xml.append(((Externalizable) shape).toXML());
-        }
-        xml.append("</junctions>\r\n");
-
-        //***  Labels without parent
-        xml.append("<labels>\r\n");
-        for (Shape shape : shapes) {
-            if (shape instanceof SCHLabel) {
-                xml.append(((Externalizable) shape).toXML());
-            }
-        }
-        xml.append("</labels>\r\n");
-
-        //***  Connections without parent
-        xml.append("<connectors>\r\n");
-        for (Shape shape : shapes) {
-            if (shape instanceof SCHConnector) {
-                xml.append(((Externalizable) shape).toXML());
-            }
-        }
-        xml.append("</connectors>\r\n");
-
-        //noconnectors ending
-        xml.append("<noconnectors>\r\n");
-        for (Shape shape : shapes) {
-            if (shape instanceof SCHNoConnector) {
-                xml.append(((Externalizable) shape).toXML());
-            }
-        }
-        xml.append("</noconnectors>\r\n");
-        
-        xml.append("<netlabels>\r\n");
-        for (Shape shape : shapes) {
-            if (shape instanceof SCHNetLabel) {
-                xml.append(((Externalizable) shape).toXML());
-            }
-        }
-        xml.append("</netlabels>\r\n");
-        
+        xml.append("<chips>\r\n").append(chips).append("</chips>\r\n");
+        xml.append("<busses>\r\n").append(busses).append("</busses>\r\n");
+        xml.append("<buspins>\r\n").append(buspins).append("</buspins>\r\n");
+        xml.append("<wires>\r\n").append(wires).append("</wires>\r\n");
+        xml.append("<junctions>\r\n").append(junctions).append("</junctions>\r\n");
+        xml.append("<labels>\r\n").append(labels).append("</labels>\r\n");
+        xml.append("<connectors>\r\n").append(connectors).append("</connectors>\r\n");
+        xml.append("<noconnectors>\r\n").append(noconnectors).append("</noconnectors>\r\n");
+        xml.append("<netlabels>\r\n").append(netlabels).append("</netlabels>\r\n");
         xml.append("</symbols>\r\n");
         return xml;
     }
