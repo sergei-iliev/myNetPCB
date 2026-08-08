@@ -61,7 +61,7 @@ public class Circuit extends Unit<Shape>{
     @Override
     public Circuit clone() throws CloneNotSupportedException {
         Circuit copy = (Circuit) super.clone();
-        this.shapeFactory = new CircuitShapeFactory();   
+        copy.shapeFactory = new CircuitShapeFactory();   
         return copy; 
     }    
     @Override
