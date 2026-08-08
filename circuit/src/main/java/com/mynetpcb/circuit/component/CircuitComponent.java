@@ -202,10 +202,10 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
                 }
                     break;
             case Mode.WIRE_MODE:
-                startOrResumeTrack(event, scaledEvent, SCHWire.class, SCHWire::new, false);
+                startOrResumeTrack(event, scaledEvent, SCHWire.class, SCHWire::new);
                 break;
             case Mode.BUS_MODE:
-                startOrResumeTrack(event, scaledEvent, SCHBus.class, SCHBus::new, true);
+                startOrResumeTrack(event, scaledEvent, SCHBus.class, SCHBus::new);
                 break;
             case Mode.DRAGHEAND_MODE:
                 getEventMgr().setEventHandle("dragheand", null);
@@ -217,19 +217,14 @@ public class CircuitComponent extends UnitComponent<Circuit, Shape, CircuitConta
     }
 
     private void startOrResumeTrack(MouseEvent event, MouseScaledEvent scaledEvent,
-                                    Class<? extends Shape> trackType, Supplier<Shape> factory,
-                                    boolean clearSelection) {
+                                    Class<? extends Shape> trackType, Supplier<Shape> factory){
         if (getEventMgr().getTargetEventHandle() != null
                 && getEventMgr().getTargetEventHandle() instanceof WireEventHandle) {
             return; // keep handle between clicks
         }
         if (event.getModifiers() == InputEvent.BUTTON3_MASK) {
             return;
-        }
-        if (clearSelection) {
-            getModel().getUnit().setSelected(false);
-        }
-
+        }        
         Shape shape = getModel().getUnit().getClickedShape(scaledEvent.getX(), scaledEvent.getY(), true);
 
         if (shape == null || !trackType.isInstance(shape)) {
