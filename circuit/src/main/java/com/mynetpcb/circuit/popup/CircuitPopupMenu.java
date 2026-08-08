@@ -27,10 +27,10 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
         super(component);
     }
 
-    public void registerBasicPopup(MouseScaledEvent e, Shape target) {
-        initializePopupMenu(e, target, basicMenu);
-        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
-    }
+//    public void registerBasicPopup(MouseScaledEvent e, Shape target) {
+//        initializePopupMenu(e, target, basicMenu);
+//        this.show(e.getMouseEvent().getComponent(), e.getWindowX(), e.getWindowY());
+//    }
 
     @Override
     public void registerLineSelectPopup(MouseScaledEvent e, Shape target) {
@@ -40,9 +40,9 @@ public class CircuitPopupMenu extends AbstractPopupItemsContainer<CircuitCompone
             super.registerLineSelectPopup(e, target); 
         //}
     }
-    public void registerTextureMethod(MouseScaledEvent e, Shape target){
-        registerShapePopup(e, target);
-    }
+//    public void registerTextureMethod(MouseScaledEvent e, Shape target){
+//        registerShapePopup(e, target);
+//    }
     public void registerChipPopup(MouseScaledEvent e, Shape target) {
         initializePopupMenu(e, target, chipMenu);
         //this.setEnabled(chipMenu, "Paste", false);

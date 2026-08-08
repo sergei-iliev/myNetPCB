@@ -117,27 +117,27 @@ public class SCHWire extends AbstractLine implements Sublineable,Externalizable 
 //        }			       	          
 //     return null;
 //    }
-    public void moveSegment(Segment segment,double x,double y){	
-	  var pt=new Point(x,y);	  
-
-	  var projPt=segment.projectionPoint(pt);
-      var delta=projPt.distanceTo(pt);
-
-      if(Utils.EQ(delta,0)){  //flicker movement
-	    return;
-	  }
-      var v=new Vector(projPt,pt);   
-      var norm=v.normalize();
-	  
-      double xx=segment.ps.x +delta*norm.x;
-	  double yy=segment.ps.y +delta*norm.y;
-      segment.ps.set(xx,yy);
-      
-      xx=segment.pe.x +delta*norm.x;
-	  yy=segment.pe.y +delta*norm.y;
-	  segment.pe.set(xx,yy); 
-	  
-    }    
+//    public void moveSegment(Segment segment,double x,double y){	
+//	  var pt=new Point(x,y);	  
+//
+//	  var projPt=segment.projectionPoint(pt);
+//      var delta=projPt.distanceTo(pt);
+//
+//      if(Utils.EQ(delta,0)){  //flicker movement
+//	    return;
+//	  }
+//      var v=new Vector(projPt,pt);   
+//      var norm=v.normalize();
+//	  
+//      double xx=segment.ps.x +delta*norm.x;
+//	  double yy=segment.ps.y +delta*norm.y;
+//      segment.ps.set(xx,yy);
+//      
+//      xx=segment.pe.x +delta*norm.x;
+//	  yy=segment.pe.y +delta*norm.y;
+//	  segment.pe.set(xx,yy); 
+//	  
+//    }    
     @Override
     public void paint(Graphics2D g2, ViewportWindow viewportWindow, AffineTransform scale, int layermask) {
         Box rect = this.polyline.box();
