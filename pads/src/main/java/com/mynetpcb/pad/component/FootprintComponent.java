@@ -156,7 +156,7 @@ public class FootprintComponent extends UnitComponent<Footprint, Shape, Footprin
                     break;
                  }
                 }
-                Shape shape=getModel().getUnit().isControlRectClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow());
+                Shape shape=getModel().getUnit().isControlRectClicked(scaledEvent.getX() , scaledEvent.getY());
                 
                 if(shape!=null){
                     if(shape instanceof Arc){

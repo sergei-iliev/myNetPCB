@@ -60,7 +60,7 @@ public class RoundRect extends Shape implements Resizeable,Fillable, Externaliza
             return (long)this.roundRect.area(); 
     }
     @Override
-    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+    public Point isControlRectClicked(double x, double y) {
         double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
         double hitRadius = selectionRectWidth / (2 * scale);
 

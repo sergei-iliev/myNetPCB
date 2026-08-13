@@ -102,20 +102,17 @@ public class SCHBusPin extends AbstractLine implements Textable,Externalizable{
         this.texture.setSelected(selection);
     }
     @Override
-    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
-        Point pt=new Point(x,y);
-		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		pt.move(-viewportWindow.getX(),- viewportWindow.getY());
-		 
-        
-		var tmp=this.polyline.points.get(1).clone();
-        tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-        tmp.move(-viewportWindow.getX(),- viewportWindow.getY());
+    public Point isControlRectClicked(double x, double y) {
+                
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
 
-        if(Utils.LE(pt.distanceTo(tmp),selectionRectWidth/2)){
-              return this.polyline.points.get(1);
+        
+        if (Utils.LE(this.polyline.points.get(1).distanceTo(x, y), hitRadius)) {
+                return this.polyline.points.get(1);
         }
-        return null;
+        
+        return null;        
     }
     @Override
     public void move(double xoffset, double yoffset) {        

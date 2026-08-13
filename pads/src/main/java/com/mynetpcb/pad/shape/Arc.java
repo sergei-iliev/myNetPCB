@@ -181,8 +181,8 @@ public class Arc  extends Shape implements ArcGerberable,Fillable,Resizeable,Ext
     public boolean isClockwise() {
         return arc.endAngle <0;
     }
-
-    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+    @Override
+    public Point isControlRectClicked(double x, double y) {
         double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
         double hitRadius = selectionRectWidth / (2 * scale);
 

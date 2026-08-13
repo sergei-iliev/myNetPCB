@@ -152,11 +152,11 @@ public class SymbolComponent extends UnitComponent<Symbol, Shape, SymbolContaine
                  }
                 }                                
                 
-                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY(),getViewportWindow());
+                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
                 //***is control rect clicked
                 if (shape != null) {
                     if(shape instanceof Arc){
-                    	Point pt=((Arc) shape).isControlRectClicked(scaledEvent.getX() , scaledEvent.getY(),getViewportWindow());
+                    	Point pt=((Arc) shape).isControlRectClicked(scaledEvent.getX() , scaledEvent.getY());
                         if(pt.equals(((Arc)shape).getShape().getStart())){ 
                         	this.getEventMgr().setEventHandle("arc.start.angle",shape);                    
                         }else if(pt.equals(((Arc)shape).getShape().getEnd())){

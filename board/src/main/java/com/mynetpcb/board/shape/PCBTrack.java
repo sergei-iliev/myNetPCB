@@ -1,5 +1,26 @@
 package com.mynetpcb.board.shape;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.UUID;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.board.shape.TrackShape;
@@ -23,30 +44,6 @@ import com.mynetpcb.d2.shapes.Polyline;
 import com.mynetpcb.d2.shapes.Rectangle;
 import com.mynetpcb.d2.shapes.Segment;
 import com.mynetpcb.d2.shapes.Utils;
-
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.UUID;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class PCBTrack extends TrackShape implements PCBShape{
     
@@ -367,8 +364,9 @@ public class PCBTrack extends TrackShape implements PCBShape{
     public void setNetName(String net){
         this.net=net;
     }
-    public boolean isSegmentClicked(Point pt,ViewportWindow viewportWindow){				     
-  	  if(this.isControlRectClicked(pt.x,pt.y,viewportWindow)!=null)
+    @Override
+    public boolean isSegmentClicked(Point pt){				     
+  	  if(this.isControlRectClicked(pt.x,pt.y)!=null)
             return false;
       if(this.polyline.isPointOnSegment(pt,this.thickness)){
   	    return true;

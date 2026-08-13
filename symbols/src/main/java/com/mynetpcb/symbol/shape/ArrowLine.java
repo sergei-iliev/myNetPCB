@@ -110,7 +110,7 @@ public class ArrowLine extends Shape implements Resizeable,Externalizable {
     }
     
     @Override
-    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+    public Point isControlRectClicked(double x, double y) {
         double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
         double hitRadius = selectionRectWidth / (2 * scale);
 

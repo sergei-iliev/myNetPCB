@@ -301,7 +301,7 @@ public abstract class AbstractPopupItemsContainer<T extends UnitComponent> exten
         Trackable trackable = (Trackable)target;
         
         //***insert logic behind menu options availability
-        if (((Resizeable)trackable).isControlRectClicked(e.getX(), e.getY(),getUnitComponent().getViewportWindow())!= null) {
+        if (((Resizeable)trackable).isControlRectClicked(e.getX(), e.getY())!= null) {
             //***is this an end point
             if (trackable.isEndPoint(e.getX(), e.getY())) {
                 this.setEnabled(lineSelectMenu, "Resume", true);

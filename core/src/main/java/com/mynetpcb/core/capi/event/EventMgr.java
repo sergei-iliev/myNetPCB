@@ -56,7 +56,7 @@ public abstract class EventMgr<C extends UnitComponent,S extends Shape>{
      * @return
      */
     public boolean isTrackableEventHandler() {
-    	return (targetEventHandle!=null)&&(targetEventHandle.getTarget() instanceof Trackable);
+    	return (targetEventHandle!=null)&&(targetEventHandle.getTarget() instanceof Trackable)&&(((Trackable)targetEventHandle.getTarget()).isFloating());
     }
 }
 

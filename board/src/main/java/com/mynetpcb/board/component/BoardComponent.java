@@ -172,7 +172,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                     break;
                 }
                 }
-                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY(),getViewportWindow());
+                Shape shape = getModel().getUnit().isControlRectClicked(scaledEvent.getX(), scaledEvent.getY());
 
                 if (shape != null) {                    
                     if(shape instanceof PCBArc){
@@ -225,7 +225,7 @@ public class BoardComponent extends UnitComponent<Board, Shape, BoardContainer> 
                         getEventMgr().setEventHandle("symbol", shape);                    	
                         ((PCBFootprint)shape).setSelectedPad(pad); 
                     }else if(shape instanceof PCBTrack){				    
-                    	  if(((PCBTrack)shape).isSegmentClicked(scaledEvent.getPoint(),getViewportWindow()))
+                    	  if(((PCBTrack)shape).isSegmentClicked(scaledEvent.getPoint()))
     						  if(((PCBTrack)shape).isSingleSegment()){
     				             this.getEventMgr().setEventHandle("move",shape);
     	                      }else{

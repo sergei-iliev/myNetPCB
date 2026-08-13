@@ -11,7 +11,6 @@ import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.capi.ViewportWindow;
 import com.mynetpcb.core.capi.layer.CompositeLayerable;
 import com.mynetpcb.core.capi.layer.Layer;
-import com.mynetpcb.core.capi.shape.Shape.Fill;
 import com.mynetpcb.core.capi.undo.AbstractMemento;
 import com.mynetpcb.core.capi.undo.MementoType;
 import com.mynetpcb.d2.shapes.Box;

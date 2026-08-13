@@ -66,7 +66,7 @@ public abstract class ResizableShape extends Shape implements Resizeable {
     }
     
     @Override
-    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+    public Point isControlRectClicked(double x, double y) {
         double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
         double hitRadius = selectionRectWidth / (2 * scale);
 

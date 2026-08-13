@@ -88,7 +88,7 @@ public class SolidRegion extends Shape implements Resizeable,Fillable, Trackable
    	 return getLinePoints().size()==3; 
     }
     @Override
-    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+    public Point isControlRectClicked(double x, double y) {
         double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
         double hitRadius = selectionRectWidth / (2 * scale);
 

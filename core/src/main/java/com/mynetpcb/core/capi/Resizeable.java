@@ -28,9 +28,9 @@ public interface Resizeable {
    * @param viewportWindow
    * @return
    */
-  public default Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
-	  throw new IllegalAccessError("TODO");
-  }
+//  public default Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+//	  throw new IllegalAccessError("TODO");
+//  }
   /**
      * There is always a point under the mouse pointer,which is being moved/dragged
      * @return the ppoint which is directly controled by the mouse pointer

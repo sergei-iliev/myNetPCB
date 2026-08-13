@@ -90,8 +90,8 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
             polyline.points.add(new LinePoint(x,y));        
     }
     @Override
-    public boolean isSegmentClicked(Point pt,ViewportWindow viewportWindow){				      
-  	  if(this.isControlRectClicked(pt.x,pt.y,viewportWindow)!=null)
+    public boolean isSegmentClicked(Point pt){				      
+  	  if(this.isControlRectClicked(pt.x,pt.y)!=null)
             return false;
       if(this.polyline.isPointOnSegment(pt,this.selectionRectWidth/2)){
   	    return true;
@@ -283,7 +283,7 @@ public abstract class AbstractLine extends Shape implements Trackable<LinePoint>
 //        return opt.orElse(null);
 //    }    
     @Override
-    public Point isControlRectClicked(double x, double y, ViewportWindow viewportWindow) {
+    public Point isControlRectClicked(double x, double y) {
         double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
         double hitRadius = selectionRectWidth / (2 * scale);
 

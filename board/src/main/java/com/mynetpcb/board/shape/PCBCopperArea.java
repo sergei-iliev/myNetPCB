@@ -1,5 +1,23 @@
 package com.mynetpcb.board.shape;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringTokenizer;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import com.mynetpcb.board.unit.Board;
 import com.mynetpcb.core.board.PCBShape;
 import com.mynetpcb.core.board.shape.CopperAreaShape;
@@ -20,26 +38,6 @@ import com.mynetpcb.d2.shapes.PadFactory;
 import com.mynetpcb.d2.shapes.Point;
 import com.mynetpcb.d2.shapes.Polygon;
 import com.mynetpcb.d2.shapes.Utils;
-
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.StringTokenizer;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class PCBCopperArea extends CopperAreaShape implements PCBShape{
     
@@ -157,21 +155,32 @@ public class PCBCopperArea extends CopperAreaShape implements PCBShape{
    	 return getLinePoints().size()==3; 
     }
     @Override
-    public Point isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
-        Point pt=new Point(x,y);
-		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-		pt.move(-viewportWindow.getX(),- viewportWindow.getY());                    
-                  
-        for(Point p:this.polygon.points){
-  		  var tmp=p.clone();
-  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
-  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
-          
-  		  if(Utils.LE(pt.distanceTo(tmp),this.selectionRectWidth/2)){                                  
-             return p;
-          }
+    public Point isControlRectClicked(double x, double y) {
+//        Point pt=new Point(x,y);
+//		pt.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+//		pt.move(-viewportWindow.getX(),- viewportWindow.getY());                    
+//                  
+//        for(Point p:this.polygon.points){
+//  		  var tmp=p.clone();
+//  		  tmp.scale(getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX());
+//  		  tmp.move(-viewportWindow.getX(),- viewportWindow.getY()); 
+//          
+//  		  if(Utils.LE(pt.distanceTo(tmp),this.selectionRectWidth/2)){                                  
+//             return p;
+//          }
+//        }
+//        return null; 
+        
+        
+        double scale = getOwningUnit().getScalableTransformation().getCurrentTransformation().getScaleX();
+        double hitRadius = selectionRectWidth / (2 * scale);
+
+        for (Point p : this.polygon.points) {
+            if (Utils.LE(p.distanceTo(x, y), hitRadius)) {
+                return p;
+            }
         }
-        return null;         
+        return null;        
     }
 
     @Override

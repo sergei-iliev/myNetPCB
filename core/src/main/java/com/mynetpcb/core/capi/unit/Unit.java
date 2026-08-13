@@ -342,14 +342,14 @@ public double getViewportPositionY() {
 //       // }
 //        return null;
 //    }
-        public Shape isControlRectClicked(double x, double y,ViewportWindow viewportWindow) {
+        public Shape isControlRectClicked(double x, double y) {
     	        /*
     	         * if two symbols overlap and one is selected
     	         * then the selected should be checked for control rect click first
     	         */
     	        
     	       Shape shape = getShape(getSelected());
-               if (shape != null && shape instanceof Resizeable && ((Resizeable)shape).isControlRectClicked(x, y,viewportWindow) != null)
+               if (shape != null && shape instanceof Resizeable && ((Resizeable)shape).isControlRectClicked(x, y) != null)
     	                return shape;
     	        
     	        return null;

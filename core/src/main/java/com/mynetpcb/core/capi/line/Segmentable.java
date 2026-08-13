@@ -8,7 +8,7 @@ import com.mynetpcb.d2.shapes.Segment;
 
 public interface Segmentable {
 
-	public boolean isSegmentClicked(Point pt,ViewportWindow viewportWindow);
+	public boolean isSegmentClicked(Point pt);
 	
 	public Segment getSegmentClicked(Point pt);
 	
